@@ -96,4 +96,5 @@ extern time_t finish_time;
 
 /* warnings found */
 extern unsigned warnings;
+
 #endif
