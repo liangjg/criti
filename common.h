@@ -57,7 +57,7 @@
 #define ONE           1.0
 #define TWO           2.0
 
-#define EG0_CUTOFF    1.0E-20
+
 /* Global static read-only key word */
 static const char keyword[KW_NUMBER][MAX_KW_LENGTH] = {
     "UNIVERSE",

@@ -48,7 +48,7 @@ void check_IO_file(int argc, char *argv[]){
         exit(0);
     }
 
-    base_IOfp->opt_fp = fopen(base_IOfp->opt_file_name, "w");
-    base_IOfp->mat_fp = fopen(mat_fn, "w");
-    base_IOfp->tally_fp = fopen(tally_fn, "w");
+    base_IOfp->opt_fp = fopen(base_IOfp->opt_file_name, "wb");
+    base_IOfp->mat_fp = fopen(mat_fn, "wb");
+    base_IOfp->tally_fp = fopen(tally_fn, "wb");
 }
