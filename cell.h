@@ -8,7 +8,6 @@
 #include "common.h"
 
 typedef struct {
-    int index;
     int fill;             /* fill 关键字 */
     int mat;              /* mat 关键字 */
     int imp;              /* imp 关键字 */
@@ -17,4 +16,16 @@ typedef struct {
     bool is_inner_cell;   /* inner 关键字 */
     char *rpn;            /* 面布尔表达式转换而来的RPN表达式 */
 } cell_t;
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+cell_t *cell_init();
+bool particle_is_in_cell(const cell_t *obj, const double pos[3], const double dir[3]);
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif //TTYW_CELL_H
