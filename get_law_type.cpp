@@ -3,6 +3,7 @@
 //
 
 #include "acedata.h"
+#include "RNG.h"
 
 void get_law_type(acedata_t *obj, int nNuc, int nMT, double dIncidErg, int &nLawType, int &LDAT)
 {
@@ -41,7 +42,7 @@ void get_law_type(acedata_t *obj, int nNuc, int nMT, double dIncidErg, int &nLaw
             E1 = obj->nucs[nNuc]->XSS[LOCC + 4 + 2 * NR + j];
             if(dIncidErg <= E1) {
                 E0 = obj->nucs[nNuc]->XSS[LOCC + 4 + 2 * NR + j - 1];
-                if(ORNG.Rand() < (dIncidErg - E0) / (E1 - E0)) { //  En  or  En+1
+                if(get_rand() < (dIncidErg - E0) / (E1 - E0)) { //  En  or  En+1
                     which_Pi = j + 1;
                     Pi = obj->nucs[nNuc]->XSS[LOCC + 4 + 2 * NR + NE + j];
                 } else {
@@ -53,7 +54,7 @@ void get_law_type(acedata_t *obj, int nNuc, int nMT, double dIncidErg, int &nLaw
         }
     }
 
-    ksi = ORNG.Rand();
+    ksi = get_rand();
     while(ksi > Pi) {
         Pi = Pi + obj->nucs[nNuc]->XSS[LDIS + LNW + 4 + 2 * NR + NE + which_Pi - 1];
         if(ksi <= Pi) {

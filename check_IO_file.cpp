@@ -4,7 +4,7 @@
 
 #include "IO_releated.h"
 
-IOfp *base_IOfp = new IOfp;
+IOfp_t *base_IOfp = new IOfp_t;
 
 void check_IO_file(int argc, char *argv[]){
     char mat_fn[MAX_FILENAME_LENGTH];

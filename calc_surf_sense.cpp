@@ -65,7 +65,7 @@ int calc_surf_sense(surface_t *obj, const double pos[3], const double dir[3]){
         }
     }
 
-    if(sense > 0.0) return 1;
-    else if(sense < 0.0) return -1;
+    if(sense > EPSILON) return 1;
+    else if(sense < -EPSILON) return -1;
     else return 0;
 }

@@ -3,6 +3,7 @@
 //
 
 #include "acedata.h"
+#include "RNG.h"
 
 
 void get_ce_exist_erg_mu(acedata_t *obj, int nNuc, int nMT, double dIncidErg, double &dExitErg_Lab, double &dMu_Lab)
@@ -44,6 +45,6 @@ void get_ce_exist_erg_mu(acedata_t *obj, int nNuc, int nMT, double dIncidErg, do
     if(!(dMu_Lab >= -1.000001 && dMu_Lab <= 1.000001)) {
         printf("exit mu_lab out of range. nuc=%d, MT=%d, Mu=%f\n", nNuc, nMT, dMu_Lab);
         warnings++;
-        dMu_Lab = 2 * ORNG.Rand() - 1.;
+        dMu_Lab = 2 * get_rand() - 1.;
     }
 }

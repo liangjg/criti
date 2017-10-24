@@ -4,6 +4,7 @@
 
 #include "acedata.h"
 #include "global_fun.h"
+#include "RNG.h"
 
 void interpolate_xss_table(acedata_t *obj, double dErg, int nNuc, int LDAT, int &nPos, double &dFrac,
                            int &nNumOfInterpRegion, int &nNumOfErgGrid)
@@ -136,9 +137,9 @@ double sample_maxwell(acedata_t *obj, double T)
     double ksi1, ksi2, ksi3;
     double c ;       // cosine of pi/2*r3
 
-    ksi1 = ORNG.Rand();
-    ksi2 = ORNG.Rand();
-    ksi3 = ORNG.Rand();
+    ksi1 = get_rand();
+    ksi2 = get_rand();
+    ksi3 = get_rand();
     c = cos(PI / TWO * ksi3);
 
     return -T * (log(ksi1) + log(ksi2) * c * c);
@@ -155,6 +156,6 @@ double sample_watt(acedata_t *obj, double a, double b)
     //===============================================================================
 
     double w  = sample_maxwell(obj, a);
-    double ksi = ORNG.Rand();
+    double ksi = get_rand();
     return w + a * a * b / 4. + (TWO * ksi - ONE) * sqrt(a * a * b * w);
 }

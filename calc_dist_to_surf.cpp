@@ -7,14 +7,14 @@
 double calc_dist_to_surf_sub(double a1, double b1, bool is_at_surf){
     double t1 = a1 * a1 - b1;
     if(t1 < 0.)
-        return -1;
+        return -ONE;
     if(is_at_surf)
-        return -2 * a1;
+        return -TWO * a1;
     else {
         double t2 = sqrt(t1);
         double d1 = -a1 + t2;
         if(d1 <= 0.)
-            return -1;
+            return -ONE;
         double d2 = -a1 - t2;
 
         return d2 > 1.0E-10 ? d2 : d1;
@@ -31,12 +31,12 @@ double calc_dist_to_surf(surface_t *obj, const double pos[3], const double dir[3
     w = dir[2];
     double t1, t2, t3, t4, a1, b1, uu;
 
-    double dts = -1.0;
+    double dts = -ONE;
 
     switch(obj->type){
         case P:{
             t1 = obj->paras[0] * u + obj->paras[1] * v + obj->paras[2] * w;
-            if(t1 == 0.)
+            if(t1 > -EPSILON && t1 < EPSILON)
                 return dts;
             else {
                 t2 = obj->paras[0] * x + obj->paras[1] * y + obj->paras[2] * z;
@@ -45,7 +45,7 @@ double calc_dist_to_surf(surface_t *obj, const double pos[3], const double dir[3
             }
         }
         case PX:{
-            if(u == 0.0)
+            if(u > -EPSILON && u < EPSILON)
                 return dts;
             else {
                 dts = (obj->paras[0] - x) / u;
@@ -53,7 +53,7 @@ double calc_dist_to_surf(surface_t *obj, const double pos[3], const double dir[3
             }
         }
         case PY:{
-            if(v == 0.0)
+            if(v > -EPSILON && v < EPSILON)
                 return dts;
             else {
                 dts = (obj->paras[0] - y) / v;
@@ -61,7 +61,7 @@ double calc_dist_to_surf(surface_t *obj, const double pos[3], const double dir[3
             }
         }
         case PZ:{
-            if(w == 0.0)
+            if(w > -EPSILON && w < EPSILON)
                 return dts;
             else {
                 dts = (obj->paras[0] - z) / w;
@@ -102,7 +102,7 @@ double calc_dist_to_surf(surface_t *obj, const double pos[3], const double dir[3
         }
         case CX:{
             t1 = v * v + w * w;
-            if(t1 == 0.)
+            if(t1 > -EPSILON && t1 < EPSILON)
                 return dts;
             t1 = 1. / t1;
             a1 = (y * v + z * w) * t1;
@@ -111,7 +111,7 @@ double calc_dist_to_surf(surface_t *obj, const double pos[3], const double dir[3
         }
         case CY:{
             t1 = u * u + w * w;
-            if(t1 == 0.)
+            if(t1 > -EPSILON && t1 < EPSILON)
                 return dts;
             t1 = 1. / t1;
             a1 = (x * u + z * w) * t1;
@@ -120,7 +120,7 @@ double calc_dist_to_surf(surface_t *obj, const double pos[3], const double dir[3
         }
         case CZ:{
             t1 = u * u + v * v;
-            if(t1 == 0.)
+            if(t1 > -EPSILON && t1 < EPSILON)
                 return dts;
             t1 = 1. / t1;
             a1 = (x * u + y * v) * t1;

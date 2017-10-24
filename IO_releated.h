@@ -15,9 +15,9 @@ typedef struct {
 
     char inp_file_name[MAX_FILENAME_LENGTH];
     char opt_file_name[MAX_FILENAME_LENGTH];
-} IOfp;
+} IOfp_t;
 
-extern IOfp *base_IOfp;
+extern IOfp_t *base_IOfp;
 
 #ifdef __cplusplus
 extern "C" {

@@ -4,6 +4,7 @@
 
 #include "acedata.h"
 #include "global_fun.h"
+#include "RNG.h"
 
 void treat_sab_colli_type(acedata_t *obj, int nSabColliNuc, double dSIG_sab_el, double dSIG_sab_inel, double dEin,
                           double *dDirectin, double &dExitErgInLab, double *dDirectout)
@@ -13,7 +14,7 @@ void treat_sab_colli_type(acedata_t *obj, int nSabColliNuc, double dSIG_sab_el, 
     double dMuInLab;
 
     ////////////////// elastic scattering case.  JXS(4) = 0 : without elastic scattering ////////////////
-    if(GetLocOfSabElErg(obj, nSabColliNuc) != 0 && ORNG.Rand() * (dSIG_sab_el + dSIG_sab_inel) > dSIG_sab_inel) {
+    if(GetLocOfSabElErg(obj, nSabColliNuc) != 0 && get_rand() * (dSIG_sab_el + dSIG_sab_inel) > dSIG_sab_inel) {
         dExitErgInLab = dEin;
 
         int NE_el = int(obj->nucs[nSabColliNuc]->XSS[GetLocOfSabElErg(obj, nSabColliNuc)]);
@@ -29,18 +30,18 @@ void treat_sab_colli_type(acedata_t *obj, int nSabColliNuc, double dSIG_sab_el, 
         int Loc;
         int nMode_el = GetSabElMode(obj, nSabColliNuc);
         if(nMode_el == 2) {     ////// equally-probable angle bins.
-            if(ORNG.Rand() <= sab_k_el)
+            if(get_rand() <= sab_k_el)
                 LN = LN + N_el_mu;
-            double ksi = (N_el_mu - 1) * ORNG.Rand() + 1;
+            double ksi = (N_el_mu - 1) * get_rand() + 1;
             int Loc = int(LN + ksi);
             dMuInLab = obj->nucs[nSabColliNuc]->XSS[Loc] + (obj->nucs[nSabColliNuc]->XSS[Loc - 1] - obj->nucs[nSabColliNuc]->XSS[Loc]) * (ksi - int(ksi));
         } else if(nMode_el == 3) { /////// qually-probable discrete angles.
-            Loc = LN + int(N_el_mu * ORNG.Rand());
+            Loc = LN + int(N_el_mu * get_rand());
             dMuInLab = obj->nucs[nSabColliNuc]->XSS[Loc] + sab_k_el * (obj->nucs[nSabColliNuc]->XSS[Loc + N_el_mu] - obj->nucs[nSabColliNuc]->XSS[Loc]);
         } else if(nMode_el == 4) {
             min = GetLocOfSabElXs(obj, nSabColliNuc);
             max = GetLocOfSabElXs(obj, nSabColliNuc) + sab_n_el;
-            double pi = obj->nucs[nSabColliNuc]->XSS[max] * ORNG.Rand();
+            double pi = obj->nucs[nSabColliNuc]->XSS[max] * get_rand();
             get_intplt_pos_double(obj->nucs[nSabColliNuc]->XSS, pi, min, max, &Loc);
             Loc = Loc + 1 - int(obj->nucs[nSabColliNuc]->XSS[GetLocOfSabElErg(obj, nSabColliNuc)]);
             dMuInLab = 1 - 2.0 * obj->nucs[nSabColliNuc]->XSS[Loc] / dEin;
@@ -60,9 +61,9 @@ void treat_sab_colli_type(acedata_t *obj, int nSabColliNuc, double dSIG_sab_el, 
 
         int LE;
         if(GetSabSecErgMode(obj, nSabColliNuc) == 0)
-            LE = int(ORNG.Rand() * GetSabInelEoutNum(obj, nSabColliNuc));
+            LE = int(get_rand() * GetSabInelEoutNum(obj, nSabColliNuc));
         else {
-            double rr = ORNG.Rand() * (GetSabInelEoutNum(obj, nSabColliNuc) - 3);
+            double rr = get_rand() * (GetSabInelEoutNum(obj, nSabColliNuc) - 3);
             if(rr >= 1.0)
                 LE = int(rr + 1);
             else {
@@ -95,13 +96,13 @@ void treat_sab_colli_type(acedata_t *obj, int nSabColliNuc, double dSIG_sab_el, 
         LN = LN + 1;
         int Mode_inel = GetSabInelMode(obj, nSabColliNuc);
         if(Mode_inel == 2) {  // equally-probable angle bins.
-            if(ORNG.Rand() <= sab_k_inel)
+            if(get_rand() <= sab_k_inel)
                 LN = LN + LN_offset;
-            double ksi = (N_inel_mu - 1) * ORNG.Rand() + 1;
+            double ksi = (N_inel_mu - 1) * get_rand() + 1;
             int Loc = int(LN + ksi);
             dMuInLab = obj->nucs[nSabColliNuc]->XSS[Loc] + (obj->nucs[nSabColliNuc]->XSS[Loc - 1] - obj->nucs[nSabColliNuc]->XSS[Loc]) * (ksi - int(ksi));
         } else if(Mode_inel == 3) { // qually-probable discrete angles.
-            int Loc = LN + int(N_inel_mu * ORNG.Rand());
+            int Loc = LN + int(N_inel_mu * get_rand());
             dMuInLab = obj->nucs[nSabColliNuc]->XSS[Loc] + sab_k_inel * (obj->nucs[nSabColliNuc]->XSS[Loc + LN_offset] - obj->nucs[nSabColliNuc]->XSS[Loc]);
         } else {
             printf("incorrect inelastic scattering mode(%d) in sab collision.\n", Mode_inel);
@@ -111,7 +112,7 @@ void treat_sab_colli_type(acedata_t *obj, int nSabColliNuc, double dSIG_sab_el, 
 
 
     //////////// check outgoing angle and energy //////////////////////
-    dMuInLab = MIN(1.00, dMuInLab);
-    dMuInLab = MAX(-1.00, dMuInLab);
+    dMuInLab = MIN(ONE, dMuInLab);
+    dMuInLab = MAX(-ONE, dMuInLab);
     cNeutronTransport.RotateDirection(dMuInLab, dDirectin, dDirectout);
 }

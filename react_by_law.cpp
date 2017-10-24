@@ -3,6 +3,7 @@
 //
 
 #include "acedata.h"
+#include "RNG.h"
 
 void react_by_laws(acedata_t *obj, int nNuc, int nMT, int nLawType, int LDAT, double dEin, double &dExitErgInCm,
                    double &dMuInCm)
@@ -19,7 +20,7 @@ void react_by_laws(acedata_t *obj, int nNuc, int nMT, int nLawType, int LDAT, do
         NET = int(obj->nucs[nNuc]->XSS[LDAT + LN]);
 
         //// Sample outgoing energy bin
-        double ksi1 = ORNG.Rand();
+        double ksi1 = get_rand();
         int k = 1 + int(ksi1 * NET + 1);
 
         //// calculate E_1 and E_K
@@ -33,14 +34,14 @@ void react_by_laws(acedata_t *obj, int nNuc, int nMT, int nLawType, int LDAT, do
         double E_K = E_i_K + dFrac * (E_i1_K - E_i_K);
 
         //// Sample outgoing table for incoming energy E_i and E_(i+1)
-        double ksi3 = ORNG.Rand();
+        double ksi3 = get_rand();
         int nPos_smpl = ksi3 < dFrac ? nPos + 1 : nPos;
 
         //// Calculate E_l_k, E_l_k+1 and E'
         LC = LDAT + LN + (nPos_smpl - 1) * NET;
         double E_l_k  = obj->nucs[nNuc]->XSS[LC + k];
         double E_l_k1 = obj->nucs[nNuc]->XSS[LC + k + 1];
-        double ksi2 = ORNG.Rand();
+        double ksi2 = get_rand();
         double E_pie = E_l_k + ksi2 * (E_l_k1 - E_l_k);
 
         //// scaled interpolation between tables
@@ -62,8 +63,8 @@ void react_by_laws(acedata_t *obj, int nNuc, int nMT, int nLawType, int LDAT, do
         LN = 2 * (NR + NE + 1);
         double TI = get_erg_func_value(obj, nNuc, LDAT, dEin);
         int NET = int(obj->nucs[nNuc]->XSS[LDAT + LN]);
-        int  i = LDAT + LN + 1 + int(ORNG.Rand() * (NET - 1));
-        dExitErgInCm = TI * (obj->nucs[nNuc]->XSS[i] + ORNG.Rand() * (obj->nucs[nNuc]->XSS[i + 1] - obj->nucs[nNuc]->XSS[i]));
+        int  i = LDAT + LN + 1 + int(get_rand() * (NET - 1));
+        dExitErgInCm = TI * (obj->nucs[nNuc]->XSS[i] + get_rand() * (obj->nucs[nNuc]->XSS[i + 1] - obj->nucs[nNuc]->XSS[i]));
     }
 
 
@@ -101,8 +102,8 @@ void react_by_laws(acedata_t *obj, int nNuc, int nMT, int nLawType, int LDAT, do
         if(dCalcTemp > 0) {
             nIterCount = 0;
             for(;;) {
-                double ksi1 = ORNG.Rand();
-                double ksi2 = ORNG.Rand();
+                double ksi1 = get_rand();
+                double ksi2 = get_rand();
                 dExitErgInCm = -T * log(ksi1 * ksi2);
                 if(dExitErgInCm <= dCalcTemp)
                     break;
@@ -150,7 +151,7 @@ void react_by_laws(acedata_t *obj, int nNuc, int nMT, int nLawType, int LDAT, do
         nIterCount = 0;
         do {
             LDAT = ie;
-            double fr = ORNG.Rand();
+            double fr = get_rand();
             do {
                 LDAT = LDAT + 1;
                 fr = fr - obj->nucs[nNuc]->XSS[LDAT];
@@ -169,9 +170,9 @@ void react_by_laws(acedata_t *obj, int nNuc, int nMT, int nLawType, int LDAT, do
         interpolate_xss_table(obj, dEin, nNuc, LDAT, nPos, dFrac, NR, NE);
         LN = 2 * NR + NE + 2 ;
         NET = int(obj->nucs[nNuc]->XSS[LDAT + LN]);
-        int k = int(ORNG.Rand() * (NET - 1));
+        int k = int(get_rand() * (NET - 1));
         int i = LDAT + LN + 1 + NET * (nPos - 1) + k;
-        dExitErgInCm = dEin * (obj->nucs[nNuc]->XSS[i] + ORNG.Rand() * (obj->nucs[nNuc]->XSS[i + 1] - obj->nucs[nNuc]->XSS[i]));
+        dExitErgInCm = dEin * (obj->nucs[nNuc]->XSS[i] + get_rand() * (obj->nucs[nNuc]->XSS[i + 1] - obj->nucs[nNuc]->XSS[i]));
     }
 
     else if(nLawType == 4 || nLawType == 44 || nLawType == 61) {
@@ -182,7 +183,7 @@ void react_by_laws(acedata_t *obj, int nNuc, int nMT, int nLawType, int LDAT, do
         LN = 2 * NR + NE + 2 ;
 
         //// Sample between the ith and (i+1)th bin
-        int nPos_smpl = dFrac > ORNG.Rand() ? nPos + 1 : nPos;
+        int nPos_smpl = dFrac > get_rand() ? nPos + 1 : nPos;
 
         //// obtain endpoints on grid i
         int LDIS = GetLocOfDLW(obj, nNuc);
@@ -229,7 +230,7 @@ void react_by_laws(acedata_t *obj, int nNuc, int nMT, int nLawType, int LDAT, do
 
         //printf("INTTP = %d, INTT = %d, NP = %d\n",INTTp,INTT,NP);
         //// sample outgoing energy bin
-        double r1 = ORNG.Rand();
+        double r1 = get_rand();
         int ic = LC + 2 * NP + 1;
         int ib = LC + 3 * NP;
         int ih;
@@ -291,8 +292,8 @@ void react_by_laws(acedata_t *obj, int nNuc, int nMT, int nLawType, int LDAT, do
 
         ///// sample angular distribution for law 44 & law 61 ////
         if(nLawType == 44) { //// Sampled correlated angle from Kalbach-Mann parameters
-            double ksi3 = ORNG.Rand();
-            double ksi4 = ORNG.Rand();
+            double ksi3 = get_rand();
+            double ksi4 = get_rand();
             if(ksi3 > KM_R) {
                 double T = (2 * ksi4 - 1) * sinh(KM_A);
                 dMuInCm = log(T + sqrt((T * T) + 1)) / KM_A;
@@ -306,7 +307,7 @@ void react_by_laws(acedata_t *obj, int nNuc, int nMT, int nLawType, int LDAT, do
             int LM = int(obj->nucs[nNuc]->XSS[LB]);
 
             if(LM == 0) { // isotropic
-                dMuInCm = 2 * ORNG.Rand() - 1;
+                dMuInCm = 2 * get_rand() - 1;
                 return ;
             }
             LC = GetLocOfDLW(obj, nNuc) + abs(LM) - 2;
@@ -315,7 +316,7 @@ void react_by_laws(acedata_t *obj, int nNuc, int nMT, int nLawType, int LDAT, do
             int NP = int(obj->nucs[nNuc]->XSS[LC + 2]);
 
             //// determine outgoing cosine bin
-            double r3 = ORNG.Rand();
+            double r3 = get_rand();
             double c_k = obj->nucs[nNuc]->XSS[LC + 2 + 2 * NP + 1];
             int k;
             for(k = 1; k <= NP - 1 ; ++k) {
@@ -365,20 +366,20 @@ void react_by_laws(acedata_t *obj, int nNuc, int nMT, int nLawType, int LDAT, do
         if(NPSX == 3)
             ly = sample_maxwell(obj, 1);
         else if(NPSX == 4) {
-            double temp = ORNG.Rand() * ORNG.Rand() * ORNG.Rand();
+            double temp = get_rand() * get_rand() * get_rand();
             ly = log(temp);
         } else {
-            double r1 = ORNG.Rand();
-            double r2 = ORNG.Rand();
-            double r3 = ORNG.Rand();
-            double r4 = ORNG.Rand();
-            double r5 = ORNG.Rand();
-            double r6 = ORNG.Rand();
+            double r1 = get_rand();
+            double r2 = get_rand();
+            double r3 = get_rand();
+            double r4 = get_rand();
+            double r5 = get_rand();
+            double r6 = get_rand();
             ly = -log(r1 * r2 * r3 * r4) - log(r5) * cos(PI / 2.*r6) * cos(PI / 2.*r6);
         }
         double V = lx / (lx + ly);
         dExitErgInCm = V * E_max;
-        dMuInCm = 2 * ORNG.Rand() - 1.;
+        dMuInCm = 2 * get_rand() - 1.;
     }
 
 
@@ -396,7 +397,7 @@ void react_by_laws(acedata_t *obj, int nNuc, int nMT, int nLawType, int LDAT, do
         if(dFrac != 0) {
             LC[2] = GetLocOfDLW(obj, nNuc) + int(obj->nucs[nNuc]->XSS[LN + nPos]) - 1;
             ir = 1;
-            if(ORNG.Rand() <= dFrac)
+            if(get_rand() <= dFrac)
                 ix = 2;
         }
 
@@ -417,7 +418,7 @@ void react_by_laws(acedata_t *obj, int nNuc, int nMT, int nLawType, int LDAT, do
             }
             if(INTMU == 2) { // lin-lin
                 ir = ir + 1;
-                if(ORNG.Rand() < (dMuInCm - obj->nucs[nNuc]->XSS[le + LMU + 1]) / (obj->nucs[nNuc]->XSS[le + LMU + 2] - obj->nucs[nNuc]->XSS[le + LMU + 1]))
+                if(get_rand() < (dMuInCm - obj->nucs[nNuc]->XSS[le + LMU + 1]) / (obj->nucs[nNuc]->XSS[le + LMU + 2] - obj->nucs[nNuc]->XSS[le + LMU + 1]))
                     LMU = LMU + 1;
             } else if(INTMU != 1) { // lin-lin
                 printf("unknown INTMU interpolation type %d.\n", INTMU);
@@ -435,7 +436,7 @@ void react_by_laws(acedata_t *obj, int nNuc, int nMT, int nLawType, int LDAT, do
                 continue;
 
             ir = ir + 1;
-            double ksi4 = ORNG.Rand();
+            double ksi4 = get_rand();
 
             int ic =  lb + 2 * NPEP + 1, ib = lb + 3 * NPEP;
             while(ib - ic > 1) {
@@ -509,6 +510,6 @@ void react_by_laws(acedata_t *obj, int nNuc, int nMT, int nLawType, int LDAT, do
     if(!(dMuInCm >= -1.000001 && dMuInCm <= 1.000001)) {
         printf("exit mu_cm out of range. nuc=%d, MT=%d, Law=%d, Mu=%f \n", nNuc, nMT, nLawType, dMuInCm);
         warnings++;
-        dMuInCm = 2 * ORNG.Rand() - 1.;
+        dMuInCm = 2 * get_rand() - 1.;
     }
 }

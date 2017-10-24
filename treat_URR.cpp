@@ -4,6 +4,7 @@
 
 #include "acedata.h"
 #include "global_fun.h"
+#include "RNG.h"
 
 void treat_URR(acedata_t *obj, int nNuc, double dEg0)  // Treat Unresolved Resonance Range
 {
@@ -30,7 +31,7 @@ void treat_URR(acedata_t *obj, int nNuc, double dEg0)  // Treat Unresolved Reson
     int nj1 = nLoc_prob_table;
     int nj2 = nLoc_prob_table + nLength_table * 6;
 
-    double dRand_num = ORNG.Rand();
+    double dRand_num = get_rand();
     for(;;) {
         if(obj->nucs[nNuc]->XSS[nj1] >= dRand_num)
             break;

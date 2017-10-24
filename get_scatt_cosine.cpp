@@ -3,6 +3,7 @@
 //
 
 #include "acedata.h"
+#include "RNG.h"
 
 double get_scatt_cosine(acedata_t *obj, int nNuc, int nMT, double dIncidErg)
 {
@@ -14,7 +15,7 @@ double get_scatt_cosine(acedata_t *obj, int nNuc, int nMT, double dIncidErg)
 
     //// Isotropic case ////////////
     if(obj->nucs[nNuc]->LAND[nMT] == 0) {
-        dMu_Cm = 2 * ORNG.Rand() - 1;
+        dMu_Cm = 2 * get_rand() - 1;
         return dMu_Cm;
     }
 
@@ -42,20 +43,20 @@ double get_scatt_cosine(acedata_t *obj, int nNuc, int nMT, double dIncidErg)
         }
         dEi = obj->nucs[nNuc]->XSS[min];
         dEii = obj->nucs[nNuc]->XSS[max];
-        if(ORNG.Rand() < (dIncidErg - dEi) / (dEii - dEi))
+        if(get_rand() < (dIncidErg - dEi) / (dEii - dEi))
             min = max;
         nLC = int(obj->nucs[nNuc]->XSS[min + nNE]);
     }
 
     if(nLC == 0) { // Isotropic case
-        dMu_Cm = 2 * ORNG.Rand() - 1;
+        dMu_Cm = 2 * get_rand() - 1;
         return dMu_Cm;
     }
 
     int LOCC2 ;
     LOCC2 = GetLocOfAND(obj, nNuc) + abs(nLC) - 1;
     if(nLC > 0) {
-        dKsi = 32 * ORNG.Rand();
+        dKsi = 32 * get_rand();
         nKsi_int = int(dKsi);
         f1 = obj->nucs[nNuc]->XSS[LOCC2 + nKsi_int] ;
         f2 = obj->nucs[nNuc]->XSS[LOCC2 + nKsi_int + 1] ;
@@ -72,7 +73,7 @@ double get_scatt_cosine(acedata_t *obj, int nNuc, int nMT, double dIncidErg)
 
         min = LOCC2 + 2 * AND_NP + 2;
         max = LOCC2 + 3 * AND_NP + 1;
-        dKsi = ORNG.Rand();
+        dKsi = get_rand();
         while(max - min > 1) {
             mid = (min + max) / 2 ;
             if(dKsi >= obj->nucs[nNuc]->XSS[mid])
@@ -98,7 +99,7 @@ double get_scatt_cosine(acedata_t *obj, int nNuc, int nMT, double dIncidErg)
     if(!(dMu_Cm >= -1.000001 && dMu_Cm <= 1.000001)) {
         printf("exit mu out of range. nuc=%d, MT=%d, Mu_cm=%20.16f\n", nNuc, nMT, dMu_Cm);
         warnings++;
-        dMu_Cm = 2 * ORNG.Rand() - 1;
+        dMu_Cm = 2 * get_rand() - 1;
     }
 
     return dMu_Cm;

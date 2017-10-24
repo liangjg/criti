@@ -26,16 +26,16 @@
 
 #define MAX(_x, _y)     ((_x) < (_y) ? (_y) : (_x))
 #define MIN(_x, _y)     ((_x) < (_y) ? (_x) : (_y))
-#define SQUARE(_x)     ((_x) * (_x))
-#define ISNUMBER(_c)   ((48 <= (_c)) && ((_c) <= 57))
-#define ISUPPER(_c)    ((65 <= (_c)) && ((_c) <= 90))
-#define ISLOWER(_c)    ((97 <= (_c)) && ((_c) <= 122))
-#define ISALPHA(_c)    (ISLOWER(_c) || ISUPPER(_c))
-#define ISRETURN(_c)   (((_c) == 10) || ((_c) == 13))
-#define ISSPACE(_c)    ((_c) == 32)
-#define ISCOMMENT(_c)  ((_c) == 47)
-#define TOUPPER(_c)    (ISLOWER(_c) ? ((_c) - 32) : (_c))
-#define TOLOWER(_c)    (ISUPPER(_c) ? ((_c) + 32) : (_c))
+#define SQUARE(_x)      ((_x) * (_x))
+#define ISNUMBER(_c)    ((48 <= (_c)) && ((_c) <= 57))
+#define ISUPPER(_c)     ((65 <= (_c)) && ((_c) <= 90))
+#define ISLOWER(_c)     ((97 <= (_c)) && ((_c) <= 122))
+#define ISALPHA(_c)     (ISLOWER(_c) || ISUPPER(_c))
+#define ISRETURN(_c)    (((_c) == 10) || ((_c) == 13))
+#define ISSPACE(_c)     ((_c) == 32)
+#define ISCOMMENT(_c)   ((_c) == 47)
+#define TOUPPER(_c)     (ISLOWER(_c) ? ((_c) - 32) : (_c))
+#define TOLOWER(_c)     (ISUPPER(_c) ? ((_c) + 32) : (_c))
 
 
 #define MAX_LINE_LENGTH      220
@@ -56,7 +56,7 @@
 #define HALF          0.5
 #define ONE           1.0
 #define TWO           2.0
-
+#define EPSILON       1.0E-10
 
 /* Global static read-only key word */
 static const char keyword[KW_NUMBER][MAX_KW_LENGTH] = {
