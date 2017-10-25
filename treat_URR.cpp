@@ -44,7 +44,7 @@ void treat_URR(acedata_t *obj, int nNuc, double dEg0)  // Treat Unresolved Reson
     }
     if(nj1 - nLoc_prob_table + 1 > nLength_table || nj2 - (nLoc_prob_table + nLength_table * 6) + 1 > nLength_table) {
         printf("prob table not normed in nuc %s.\n", obj->nucs[nNuc]->id);
-        warnings++;
+        base_warnings++;
         return;
     }
 
@@ -71,7 +71,7 @@ void treat_URR(acedata_t *obj, int nNuc, double dEg0)  // Treat Unresolved Reson
             obj->nucs[nNuc]->fis = exp(log(obj->nucs[nNuc]->XSS[nj1 + i]) + g * log(obj->nucs[nNuc]->XSS[nj2 + i] / obj->nucs[nNuc]->XSS[nj1 + i]));
     } else {
         printf("unknown interpolation type in pTable of nuc %s.\n", obj->nucs[nNuc]->id);
-        warnings++;
+        base_warnings++;
     }
 
     // calculate cross   sections
@@ -139,7 +139,7 @@ void treat_URR(acedata_t *obj, int nNuc, double dEg0)  // Treat Unresolved Reson
         }
         if(nIdx > GetNonElMtNum(obj, nNuc)) {
             puts("total inelastic MT is not in table.");
-            warnings++;
+            base_warnings++;
         }
 
         nIdx_s = GetLocOfSIG(obj, nNuc) + int(obj->nucs[nNuc]->XSS[GetLocOfLSIG(obj, nNuc) + nIdx - 1]);
@@ -173,7 +173,7 @@ void treat_URR(acedata_t *obj, int nNuc, double dEg0)  // Treat Unresolved Reson
         }
         if(nIdx > GetNonElMtNum(obj, nNuc)) {
             puts("other absorption mt not in table.");
-            warnings++;
+            base_warnings++;
         }
 
         nIdx_s = GetLocOfSIG(obj, nNuc) + int(obj->nucs[nNuc]->XSS[GetLocOfLSIG(obj, nNuc) + nIdx - 1]);

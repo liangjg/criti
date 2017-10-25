@@ -6,7 +6,6 @@
 //  Copyright © 2017年 xaq. All rights reserved.
 //
 
-#include <stack.h>
 #include "stack.h"
 
 
@@ -58,6 +57,7 @@ void stack_free(stack *s){
 inline int stack_size(stack *s){
     return s->_size;
 }
+
 /* ------------------------ private API implementation ---------------------- */
 void _stack_expand(stack *s){
     int new_max = s->_max << 1;

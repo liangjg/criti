@@ -17,18 +17,26 @@ double _calc_dist_to_lat_hex(universe_t *obj, const double pos[3], const double 
 /* ----------------------------- API implementation ------------------------- */
 universe_t *univ_init() {
     universe_t *_new_univ = new universe_t;
-    _new_univ->contain_cell_num = 0;
-    _new_univ->is_lattice = false;
-    _new_univ->is_moved = false;
-    _new_univ->is_rotated = false;
-    _new_univ->cos_sita = 0.0;
-    _new_univ->sin_sita = 0.0;
-    _new_univ->sita = 0.0;
-    _new_univ->fill_cells = nullptr;
-    _new_univ->fill_lat_univese = nullptr;
-    _new_univ->filled_lat_num = 0;
-    _new_univ->height = 0.0;
-    _new_univ->lattice_type = 0;
+//    _new_univ->contain_cell_num = 0;
+//    _new_univ->is_lattice = false;
+//    _new_univ->is_moved = false;
+//    _new_univ->is_rotated = false;
+//    _new_univ->cos_sita = 0.0;
+//    _new_univ->sin_sita = 0.0;
+//    _new_univ->sita = 0.0;
+//    _new_univ->fill_cells = nullptr;
+//    _new_univ->fill_lat_univese = nullptr;
+//    _new_univ->filled_lat_num = 0;
+//    _new_univ->height = 0.0;
+//    _new_univ->lattice_type = 0;
+//    for(int i = 0; i < 3; i++){
+//        _new_univ->origin[i] = 0.0;
+//        _new_univ->pitch[i] = 0.0;
+//        _new_univ->scope[i] = 0;
+//        for(int j = 0; j < 3; j++)
+//            _new_univ->rotation[i][j] = 0.0;
+//    }
+    memset(_new_univ, 0x0, sizeof(universe_t));
     return _new_univ;
 }
 
@@ -81,7 +89,7 @@ int find_lat_index(universe_t *obj, const double pos[3], const double dir[3]) {
     if(lat_index <= 0 || lat_index > obj->filled_lat_num){
         puts("failed to locate lattice index.");
         lat_index = -1;
-        warnings++;
+        base_warnings++;
     }
     return lat_index;
 }
@@ -105,7 +113,7 @@ void move_to_origin_lat(universe_t *obj, int lat_index, double pos[3]) {
         pos[1] -= i2 * obj->height;
     } else {
         puts("unknown lattice type.");
-        warnings++;
+        base_warnings++;
     }
 }
 
@@ -117,7 +125,7 @@ double calc_dist_to_lat(universe_t *obj, const double pos[3], const double dir[3
         distance = _calc_dist_to_lat_hex(obj, pos, dir, which_surf);
     else {
         puts("unknown lattice type.");
-        warnings++;
+        base_warnings++;
     }
 
     return distance;

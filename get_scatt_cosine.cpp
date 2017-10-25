@@ -98,7 +98,7 @@ double get_scatt_cosine(acedata_t *obj, int nNuc, int nMT, double dIncidErg)
     end:
     if(!(dMu_Cm >= -1.000001 && dMu_Cm <= 1.000001)) {
         printf("exit mu out of range. nuc=%d, MT=%d, Mu_cm=%20.16f\n", nNuc, nMT, dMu_Cm);
-        warnings++;
+        base_warnings++;
         dMu_Cm = 2 * get_rand() - 1;
     }
 

@@ -41,6 +41,7 @@ extern "C" {
 //        ((vec)[2]) /= LENGTH_VECTOR(vec); \
 //} while(0)
 
+surface_t *surf_init();
 int calc_surf_sense(surface_t *obj, const double pos[3], const double dir[3]);
 void get_surf_norm_vec(surface_t *obj, const double pos[3], double *surf_norm_vec);
 double calc_dist_to_surf(surface_t *obj, const double pos[3], const double dir[3], bool is_at_surf);

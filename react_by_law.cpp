@@ -82,7 +82,7 @@ void react_by_laws(acedata_t *obj, int nNuc, int nMT, int nLawType, int LDAT, do
                     break;
                 if((nIterCount++) >= MAX_ITER) {
                     printf("Waring: too many samples. Nuc=%s, LawType=%d, Ein=%f, U=%f, T=%f\n", obj->nucs[nNuc]->id, nLawType, dEin, U, T);
-                    warnings++;
+                    base_warnings++;
                 }
             }
         } else {
@@ -134,7 +134,7 @@ void react_by_laws(acedata_t *obj, int nNuc, int nMT, int nLawType, int LDAT, do
                     break;
                 if((nIterCount++) >= MAX_ITER) {
                     printf("Waring: too many samples of LawType %d!\n", nLawType);
-                    warnings++;
+                    base_warnings++;
                 }
             }
         } else {
@@ -159,7 +159,7 @@ void react_by_laws(acedata_t *obj, int nNuc, int nMT, int nLawType, int LDAT, do
 
             if((nIterCount++) >= MAX_ITER) {
                 printf("Waring: too many samples of LawType %d!\n", nLawType);
-                warnings++;
+                base_warnings++;
             }
         } while(LDAT > ie + NF) ;
 
@@ -224,7 +224,7 @@ void react_by_laws(acedata_t *obj, int nNuc, int nMT, int nLawType, int LDAT, do
 
         if(ND > 0) {
             puts("wrong discrete lines in continuous tabular.");
-            warnings++;
+            base_warnings++;
             goto End;
         }
 
@@ -280,7 +280,7 @@ void react_by_laws(acedata_t *obj, int nNuc, int nMT, int nLawType, int LDAT, do
         } else {
             printf("unknown interpolation type.MT = %d, LDIS = %d, LDAT = %d ,INTTP = %d, INTT = %d, NP = %d\n",
                    nMT, LDIS, LDAT, INTTp, INTT, NP);
-            warnings++;
+            base_warnings++;
             goto End;
         }
 
@@ -347,7 +347,7 @@ void react_by_laws(acedata_t *obj, int nNuc, int nMT, int nLawType, int LDAT, do
                     dMuInCm = mu_k + (sqrt(p_k * p_k + 2 * fr * (r3 - c_k)) - p_k) / fr;
             } else {
                 puts("unknown interpolation type.");
-                warnings++;
+                base_warnings++;
                 goto End;
             }
         }
@@ -422,7 +422,7 @@ void react_by_laws(acedata_t *obj, int nNuc, int nMT, int nLawType, int LDAT, do
                     LMU = LMU + 1;
             } else if(INTMU != 1) { // lin-lin
                 printf("unknown INTMU interpolation type %d.\n", INTMU);
-                warnings++;
+                base_warnings++;
                 goto End;
             }
 
@@ -465,7 +465,7 @@ void react_by_laws(acedata_t *obj, int nNuc, int nMT, int nLawType, int LDAT, do
                 }
             } else {
                 puts("unknown interpolation type.");
-                warnings++;
+                base_warnings++;
                 goto End;
             }
         }
@@ -480,7 +480,7 @@ void react_by_laws(acedata_t *obj, int nNuc, int nMT, int nLawType, int LDAT, do
 
     else {
         printf("unknown Law type.Law type = %d.\n", nLawType);
-        warnings++;
+        base_warnings++;
         dExitErgInCm = ZERO_ERG;
     }
 
@@ -492,7 +492,7 @@ void react_by_laws(acedata_t *obj, int nNuc, int nMT, int nLawType, int LDAT, do
 
     if(obj->nucs[nNuc]->LAND[nMT] < 0 && nLawType != 44 && nLawType != 61 && nLawType != 66) {
         printf("angular distribution is not processed for LAND[MT] = -1. LAW = %d\n", nLawType);
-        warnings++;
+        base_warnings++;
         dExitErgInCm = ZERO_ERG;
     }
 
@@ -502,14 +502,14 @@ void react_by_laws(acedata_t *obj, int nNuc, int nMT, int nLawType, int LDAT, do
     } else if(!(dExitErgInCm > 0 && dExitErgInCm < 100)) {
         printf("exit energy_cm out of range.\n        nuc=%s, MT=%d, Law=%d, Erg=%9.6E \n",
                obj->nucs[nNuc]->id, nMT, nLawType, dExitErgInCm);
-        warnings++;
+        base_warnings++;
         dExitErgInCm = ZERO_ERG;
     }
 
 
     if(!(dMuInCm >= -1.000001 && dMuInCm <= 1.000001)) {
         printf("exit mu_cm out of range. nuc=%d, MT=%d, Law=%d, Mu=%f \n", nNuc, nMT, nLawType, dMuInCm);
-        warnings++;
+        base_warnings++;
         dMuInCm = 2 * get_rand() - 1.;
     }
 }

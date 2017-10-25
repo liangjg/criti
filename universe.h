@@ -29,6 +29,20 @@ typedef struct {
     int filled_lat_num;
 } universe_t;
 
+
+#define UNIV_KW_NUMBER      7
+#define UNIV_MAX_KW_LENGTH  8
+
+static const char universe_kw[UNIV_KW_NUMBER][UNIV_MAX_KW_LENGTH] = {
+        "MOVE",
+        "ROTATE",
+        "LAT",
+        "PITCH",
+        "SCOPE",
+        "SITA",
+        "FILL"
+};
+
 /////////////////// hexagon lattice ///////////////////////
 ///             E                                       ///
 ///             *               / b1 = (L1, 0)          ///

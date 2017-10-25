@@ -19,7 +19,7 @@ void get_law_type(acedata_t *obj, int nNuc, int nMT, double dIncidErg, int &nLaw
     if(nLawType <= 0) {
         printf("unknown Law type %d. \nNuc = %d, MT = %d, Law_type = XSS[%d] = %9.5E.\n",
                nLawType, obj->nucs[nNuc]->zaid, nMT, LOCC, obj->nucs[nNuc]->XSS[LOCC]);
-        warnings++;
+        base_warnings++;
     }
 
     IDAT = int(obj->nucs[nNuc]->XSS[LOCC + 1]);

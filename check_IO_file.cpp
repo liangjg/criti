@@ -4,7 +4,7 @@
 
 #include "IO_releated.h"
 
-IOfp_t *base_IOfp = new IOfp_t;
+/* base_IOfp is a global variable declared in main.cpp */
 
 void check_IO_file(int argc, char *argv[]){
     char mat_fn[MAX_FILENAME_LENGTH];

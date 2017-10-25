@@ -18,6 +18,17 @@ typedef struct {
     char *rpn;            /* 面布尔表达式转换而来的RPN表达式 */
 } cell_t;
 
+#define CELL_KW_NUMBER        6
+#define CELL_MAX_KW_LENGTH    6
+
+static const char cell_kw[CELL_KW_NUMBER][CELL_MAX_KW_LENGTH] = {
+        "FILL",
+        "MAT",
+        "IMP",
+        "TMP",
+        "VOL",
+        "INNER"
+};
 #ifdef __cplusplus
 extern "C" {
 #endif

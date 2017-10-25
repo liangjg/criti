@@ -61,15 +61,10 @@
 /* Global static read-only key word */
 static const char keyword[KW_NUMBER][MAX_KW_LENGTH] = {
     "UNIVERSE",
-    "CELL",
     "SURFACE",
-    "SURF",
     "MATERIAL",
-    "MAT",
-    "SAB",
     "CRITICALITY",
-    "POWERITER",
-    "INITSRC"
+    "TALLY"
 };
 
 /* number of boolean expression operator */
@@ -94,7 +89,8 @@ static const char priority[N_OPTR][N_OPTR] = {
 extern time_t start_time;
 extern time_t finish_time;
 
-/* warnings found */
-extern unsigned warnings;
+/* warnings and errors found */
+extern unsigned base_warnings;
+extern unsigned base_errors;
 
 #endif

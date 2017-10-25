@@ -47,7 +47,7 @@ void treat_sab_colli_type(acedata_t *obj, int nSabColliNuc, double dSIG_sab_el, 
             dMuInLab = 1 - 2.0 * obj->nucs[nSabColliNuc]->XSS[Loc] / dEin;
         } else {
             printf("incorrect elastic scattering mode(%d) in sab collision.\n", nMode_el);
-            warnings++;
+            base_warnings++;
         }
     }
 
@@ -84,7 +84,7 @@ void treat_sab_colli_type(acedata_t *obj, int nSabColliNuc, double dSIG_sab_el, 
         dExitErgInLab = obj->nucs[nSabColliNuc]->XSS[LN] + sab_k_inel * (obj->nucs[nSabColliNuc]->XSS[LN + LN_offset] - obj->nucs[nSabColliNuc]->XSS[LN]);
         if(dExitErgInLab <= 0) {
             puts("exit energy in sab collision is out of range.");
-            warnings++;
+            base_warnings++;
             dExitErgInLab = EG0_CUTOFF;
         } else if(dExitErgInLab <= 1.0E-11) {
             if(dExitErgInLab > EG0_CUTOFF)
@@ -106,7 +106,7 @@ void treat_sab_colli_type(acedata_t *obj, int nSabColliNuc, double dSIG_sab_el, 
             dMuInLab = obj->nucs[nSabColliNuc]->XSS[Loc] + sab_k_inel * (obj->nucs[nSabColliNuc]->XSS[Loc + LN_offset] - obj->nucs[nSabColliNuc]->XSS[Loc]);
         } else {
             printf("incorrect inelastic scattering mode(%d) in sab collision.\n", Mode_inel);
-            warnings++;
+            base_warnings++;
         }
     }
 
@@ -114,5 +114,5 @@ void treat_sab_colli_type(acedata_t *obj, int nSabColliNuc, double dSIG_sab_el, 
     //////////// check outgoing angle and energy //////////////////////
     dMuInLab = MIN(ONE, dMuInLab);
     dMuInLab = MAX(-ONE, dMuInLab);
-    cNeutronTransport.RotateDirection(dMuInLab, dDirectin, dDirectout);
+//    cNeutronTransport.RotateDirection(dMuInLab, dDirectin, dDirectout);
 }

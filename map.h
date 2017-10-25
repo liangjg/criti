@@ -63,7 +63,7 @@ void map_free(map *m);
 
 map_entry *map_find(map *m, uint64_t key);
 
-uint64_t _murmurHash64A(const void *key, int len, uint64_t seed);
+uint64_t _default_string_has_func(const void *key, int len, uint64_t seed);
 
 uint64_t _default_int_hash_func(uint32_t key);
 

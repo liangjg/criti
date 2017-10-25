@@ -6,7 +6,8 @@
 
 typedef unsigned long long ULL;
 
-RNG_t *base_RNG = new RNG_t;
+
+/* base_RNG is a global variable declared in main.cpp */
 
 /* -------------------------- private prototypes ---------------------------- */
 void _get_skip_para(ULL skip, ULL *GK, ULL *CK);

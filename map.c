@@ -76,7 +76,8 @@ uint64_t _default_int_hash_func(uint32_t key) {
     return key;
 }
 
-uint64_t _murmurHash64A(const void *key, int len, uint64_t seed) {
+/* Murmur hash function 64bit version */
+uint64_t _default_string_has_func(const void *key, int len, uint64_t seed) {
     const uint64_t m = 0xc6a4a7935bd1e995ULL;
     const int r = 47;
 

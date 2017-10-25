@@ -6,6 +6,7 @@
 #define TTYW_IO_RELEATED_H
 
 #include "common.h"
+#include "universe.h"
 
 typedef struct {
     FILE *inp_fp;
@@ -25,9 +26,8 @@ extern "C" {
 
 void check_IO_file(int, char **);
 void read_input_blocks();
-void read_universe_block();
-void read_cell_card();
-void read_cell_surf_bool();
+void read_universe_block(char *);
+void read_cell_card(universe_t *);
 void read_surf_block();
 void read_material_block();
 void read_mat_card();

@@ -38,13 +38,13 @@ void get_ce_exist_erg_mu(acedata_t *obj, int nNuc, int nMT, double dIncidErg, do
         dExitErg_Lab = ZERO_ERG ;
     else if(!(dExitErg_Lab > 0 && dExitErg_Lab < 100)) {
         printf("exit erg_lab out of range. nuc=%d, MT=%d, Erg=%9.6E\n", nNuc, nMT, dExitErg_Lab);
-        warnings++;
+        base_warnings++;
         dExitErg_Lab = ZERO_ERG ;
     }
 
     if(!(dMu_Lab >= -1.000001 && dMu_Lab <= 1.000001)) {
         printf("exit mu_lab out of range. nuc=%d, MT=%d, Mu=%f\n", nNuc, nMT, dMu_Lab);
-        warnings++;
+        base_warnings++;
         dMu_Lab = 2 * get_rand() - 1.;
     }
 }

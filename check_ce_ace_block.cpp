@@ -107,7 +107,7 @@ void check_ce_ace_block(acedata_t *obj, int nTotNucNum, int nTotNonSabNucNum)
 
                 if(nMT_temp <= 0) {
                     printf("unknown MT number.\n   Nuc = %d, MT = XSS[%d] = %d.\n", obj->nucs[nuc]->zaid, nloc + j, nMT_temp);
-                    warnings++;
+                    base_warnings++;
                 }
 
                 int nIE_LOCA = GetLocOfSIG(obj, nuc) + obj->nucs[nuc]->LSIG[nMT_temp] - 1;
