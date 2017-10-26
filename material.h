@@ -15,8 +15,8 @@ typedef struct {
     int tot_nuc_num;
     int tot_sab_nuc_num;
 
-    char (*nuc_id)[12];
-    char (*sab_nuc_id)[12];
+    char **nuc_id;
+    char sab_nuc_id[12];
 
     double *nuc_user_den;
     double *nuc_atom_den;
@@ -26,6 +26,7 @@ typedef struct {
 extern "C" {
 #endif
 
+mat_t *mat_init();
 #define Get_tot_nuc_num(mat)         ((mat)->tot_nuc_num)
 #define Get_tot_sab_nuc_num(mat)     ((mat)->tot_sab_nuc_num)
 #define Get_nuc_id(mat, i)           (*((mat)->nuc_id + (i)))

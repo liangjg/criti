@@ -5,6 +5,7 @@
 #include "IO_releated.h"
 
 time_t start_time = clock();
+extern IOfp_t base_IOfp;
 
 void output_heading(){
 
@@ -33,37 +34,37 @@ void output_heading(){
     puts("MPI parallel: OFF\n");
     # endif
 
-    fputs("Copyrights Reserved by Reactor Engineering Analysis Laboratory(REAL).\n\n", base_IOfp->opt_fp);
-    fputs("      RRRRRRRR       MM         MM        CCCCCCCC   \n", base_IOfp->opt_fp);
-    fputs("      RRRRRRRRR      MMM       MMM      CCCCCCCCC    \n", base_IOfp->opt_fp);
-    fputs("      RRR    RRR     MMMM     MMMM     CCC           \n", base_IOfp->opt_fp);
-    fputs("      RRR    RR      MMMMM   MMMMM    CCC            \n", base_IOfp->opt_fp);
-    fputs("      RRRRRRRR       MM MMM MMM MM    CCC            \n", base_IOfp->opt_fp);
-    fputs("      RRR   RRR      MM  MMMMM  MM    CCC            \n", base_IOfp->opt_fp);
-    fputs("      RRR    RRR     MM   MMM   MM     CCCCCCCCCC    \n", base_IOfp->opt_fp);
-    fputs("      RRR     RRR   MMM         MMM      CCCCCCCCC   \n", base_IOfp->opt_fp);
-    fprintf(base_IOfp->opt_fp, "\nCode version: %s\n", CODE_VERSION);
-    fprintf(base_IOfp->opt_fp, "\nBuild time  : %s %s\n", __TIME__, __DATE__);
+    fputs("Copyrights Reserved by Reactor Engineering Analysis Laboratory(REAL).\n\n", base_IOfp.opt_fp);
+    fputs("      RRRRRRRR       MM         MM        CCCCCCCC   \n", base_IOfp.opt_fp);
+    fputs("      RRRRRRRRR      MMM       MMM      CCCCCCCCC    \n", base_IOfp.opt_fp);
+    fputs("      RRR    RRR     MMMM     MMMM     CCC           \n", base_IOfp.opt_fp);
+    fputs("      RRR    RR      MMMMM   MMMMM    CCC            \n", base_IOfp.opt_fp);
+    fputs("      RRRRRRRR       MM MMM MMM MM    CCC            \n", base_IOfp.opt_fp);
+    fputs("      RRR   RRR      MM  MMMMM  MM    CCC            \n", base_IOfp.opt_fp);
+    fputs("      RRR    RRR     MM   MMM   MM     CCCCCCCCCC    \n", base_IOfp.opt_fp);
+    fputs("      RRR     RRR   MMM         MMM      CCCCCCCCC   \n", base_IOfp.opt_fp);
+    fprintf(base_IOfp.opt_fp, "\nCode version: %s\n", CODE_VERSION);
+    fprintf(base_IOfp.opt_fp, "\nBuild time  : %s %s\n", __TIME__, __DATE__);
     # ifdef GIT_SHA1
-    fprintf(base_IOfp->opt_fp, "Git commit  : %s\n", GIT_SHA1);
+    fprintf(base_IOfp.opt_fp, "Git commit  : %s\n", GIT_SHA1);
     # endif
     # ifdef USE_MPI
-    fprintf(base_IOfp->opt_fp, "MPI parallel: ON, %d processes\n", OParallel.p_nProcsNum);
+    fprintf(base_IOfp.opt_fp, "MPI parallel: ON, %d processes\n", OParallel.p_nProcsNum);
     # else
-    fputs("MPI parallel: OFF\n", base_IOfp->opt_fp);
+    fputs("MPI parallel: OFF\n", base_IOfp.opt_fp);
     # endif
 
-    printf("RMC Calculation Start.\nInput File = %s     %s \n\n", base_IOfp->inp_file_name, start_wall_clock_str);
-    fprintf(base_IOfp->opt_fp, "RMC Calculation Start.\nInput File = %s     %s \n\n", base_IOfp->inp_file_name, start_wall_clock_str);
+    printf("RMC Calculation Start.\nInput File = %s     %s \n\n", base_IOfp.inp_file_name, start_wall_clock_str);
+    fprintf(base_IOfp.opt_fp, "RMC Calculation Start.\nInput File = %s     %s \n\n", base_IOfp.inp_file_name, start_wall_clock_str);
 
-    fputs("------------------ Input File Start --------------------\n", base_IOfp->opt_fp);
+    fputs("------------------ Input File Start --------------------\n", base_IOfp.opt_fp);
     char buf[200];
-    FILE *inp = fopen(base_IOfp->inp_file_name, "r");
+    FILE *inp = fopen(base_IOfp.inp_file_name, "r");
     while(!feof(inp)){
         if(fgets(buf, 200, inp))
-            fputs(buf, base_IOfp->opt_fp);
-//            fprintf(base_IOfp->opt_fp, "%s", buf);
+            fputs(buf, base_IOfp.opt_fp);
+//            fprintf(base_IOfp.opt_fp, "%s", buf);
     }
-    fputs("\n---------------------- Input File End------------------------\n", base_IOfp->opt_fp);
+    fputs("\n---------------------- Input File End------------------------\n", base_IOfp.opt_fp);
     fclose(inp);
 }

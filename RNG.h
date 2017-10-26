@@ -28,8 +28,6 @@ typedef struct RNG{
     int position_pre;
 } RNG_t;
 
-extern RNG_t *base_RNG;
-
 #ifdef __cplusplus
 extern "C" {
 #endif

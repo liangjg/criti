@@ -4,6 +4,8 @@
 
 #include "IO_releated.h"
 
+extern IOfp_t base_IOfp;
+
 /* -------------------------- private prototypes ---------------------------- */
 int _identify_kw(char *kw);
 
@@ -13,7 +15,7 @@ void read_input_blocks(){
     char *ret;
     char *kw_start;
 
-    while((ret = fgets(buf, MAX_LINE_LENGTH, base_IOfp->inp_fp)) != nullptr){
+    while((ret = fgets(buf, MAX_LINE_LENGTH, base_IOfp.inp_fp)) != nullptr){
         /* find the first non-space character */
         while(ISSPACE(*ret)) ret++;
 
@@ -45,9 +47,10 @@ void read_input_blocks(){
                     read_criticality_block();
                     break;
                 case 4:    /* TALLY */
-                    read_tally_block();
+//                    read_tally_block();
                     break;
                 default:
+                    puts("unknown key word.");
                     break;
             }
         }

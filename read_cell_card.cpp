@@ -5,11 +5,11 @@
 #include "IO_releated.h"
 #include "map.h"
 #include "cell.h"
-#include "universe.h"
 #include <vector>
 #include "stack.h"
 
 extern map *base_cells;
+extern IOfp_t base_IOfp;
 
 /* -------------------------- private prototypes ---------------------------- */
 char *_generate_rpn(char *);
@@ -24,18 +24,17 @@ void read_cell_card(universe_t *univ){
     char *ret = nullptr;
     std::vector<int> cells;
 
-    while((ret = fgets(buf, MAX_LINE_LENGTH, base_IOfp->inp_fp)) != nullptr){
+    while((ret = fgets(buf, MAX_LINE_LENGTH, base_IOfp.inp_fp)) != nullptr){
         while(ISSPACE(*ret)) ret++;
         if(ISRETURN(*ret)) break;    /* current line is blank, current UNIVERSE block terminates */
 
         while(!ISNUMBER(*ret)) ret++;
-        int index = *ret - '0';
-        ret++;
-        while(ISNUMBER(*ret)){
+        int index = 0;
+        do{
             index *= 10;
-            index += *ret - '0';
-            ret++;
-        }
+            index += *ret++ - '0';
+        } while(ISNUMBER(*ret));
+
         cell_t *cell = cell_init();
         map_put(base_cells, index, cell);
         cells.push_back(index);
@@ -45,7 +44,6 @@ void read_cell_card(universe_t *univ){
         *(ret - 1) = 0;
         cell->rpn = _generate_rpn(rpn_start);
         while(!ISRETURN(*ret) && !ISCOMMENT(*ret)){
-            while(ISSPACE(*ret)) ret++;
             char *kw_start = ret;
             while(ISALPHA(*ret)){
                 *ret = TOUPPER(*ret);
@@ -84,33 +82,27 @@ void read_cell_card(universe_t *univ){
                     while(!ISNUMBER(*ret)) ret++;
                     if(strtol(ret, &end, 10) == 1)
                         cell->is_inner_cell = true;
+                    ret = end;
+                    break;
+                case 6:    /* void argument */
+                    while(!ISNUMBER(*ret)) ret++;
+                    if(strtol(ret, &end, 10) == 1)
+                        cell->imp = 0;
+                    ret = end;
                     break;
                 default:
                     break;
             }
-            if(TOUPPER(*ret) == 'M'){    /* mat argument */
-                while(!ISNUMBER(*ret)) ret++;
-                cell->mat = strtol(ret, &end, 10);
-                ret = end;
-            }
-            else if(TOUPPER(*ret) == 'F'){    /* fill argument */
-                while(!ISNUMBER(*ret)) ret++;
-                cell->fill = strtol(ret, &end, 10);
-                ret = end;
-            }
-            else if(TOUPPER(*ret) == 'V'){    /* void argument */
-                while(!ISNUMBER(*ret)) ret++;
-                int temp = strtol(ret, &end, 10);
-                if(temp == 1) cell->imp = 0;
-                ret = end;
-            }
+            while(ISSPACE(*ret)) ret++;
         }
     }
 
-    univ->contain_cell_num = cells.size();
-    univ->fill_cells = new int[univ->contain_cell_num];
-    for(int i = 0; i < cells.size(); i++)
-        univ->fill_cells[i] = cells[i];
+    if(!cells.empty()){
+        univ->contain_cell_num = cells.size();
+        univ->fill_cells = new int[univ->contain_cell_num];
+        for(int i = 0; i < cells.size(); i++)
+            univ->fill_cells[i] = cells[i];
+    }
 }
 
 /* ------------------------ private API implementation ---------------------- */

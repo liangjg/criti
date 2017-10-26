@@ -7,23 +7,23 @@
 #include "surface.h"
 
 extern map *base_surfs;
+extern IOfp_t base_IOfp;
 
 void read_surf_block(){
     char buf[256];
     char *ret;
 
-    while((ret = fgets(buf, MAX_LINE_LENGTH, base_IOfp->inp_fp)) != nullptr){
+    while((ret = fgets(buf, MAX_LINE_LENGTH, base_IOfp.inp_fp)) != nullptr){
         while(ISSPACE(*ret)) ret++;
+        if(ISCOMMENT(*ret)) continue;
         if(ISRETURN(*ret)) break;    /* current line is blank, SURFACE block terminates */
 
         while(!ISNUMBER(*ret)) ret++;
-        int index = *ret - '0';
-        ret++;
-        while(ISNUMBER(*ret)){
+        int index = 0;
+        do{
             index *= 10;
-            index += *ret - '0';
-            ret++;
-        }
+            index += *ret++ - '0';
+        } while(ISNUMBER(*ret));
 
         surface_t *surf = surf_init();
         map_put(base_surfs, index, surf);
@@ -70,7 +70,6 @@ void read_surf_block(){
 
         ret += 2;
 
-        while(!ISNUMBER(*ret) && *ret != '-') ret++;
         char *end;
         for(int i = 0; i < 4; i++){
             surf->paras[i] = strtod(ret, &end);

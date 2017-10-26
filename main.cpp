@@ -9,15 +9,18 @@
 #include "IO_releated.h"
 #include "RNG.h"
 #include "map.h"
+#include "criticality.h"
 
 /* 全局变量初始化 */
 unsigned base_warnings = 0;
 
 unsigned base_errors = 0;
 
-IOfp_t *base_IOfp = new IOfp_t;
+criti_t base_criti;
 
-RNG_t *base_RNG = new RNG_t;
+IOfp_t base_IOfp;
+
+RNG_t base_RNG;
 
 /* key: universe index; val: corresponding universe instance address */
 map *base_univs = map_create(nullptr);
@@ -43,6 +46,8 @@ int main(int argc, char *argv[]){
 
     base_univs->type = base_map_type;
     base_mats->type = base_map_type;
+    base_cells->type = base_map_type;
+    base_surfs->type = base_map_type;
 
     /* check command line arguments */
     check_IO_file(argc, argv);
@@ -51,7 +56,7 @@ int main(int argc, char *argv[]){
     output_heading();
 
     /* read input file */
-    //    read_input_blocks();
+    read_input_blocks();
 
     /* run calculation */
     //    run_calculation();

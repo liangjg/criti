@@ -18,8 +18,6 @@ typedef struct {
     char opt_file_name[MAX_FILENAME_LENGTH];
 } IOfp_t;
 
-extern IOfp_t *base_IOfp;
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -30,8 +28,6 @@ void read_universe_block(char *);
 void read_cell_card(universe_t *);
 void read_surf_block();
 void read_material_block();
-void read_mat_card();
-void read_sab_card();
 void read_criticality_block();
 void read_fixed_src_block();
 void read_tally_block();
