@@ -13,7 +13,7 @@
 extern "C" {
 #endif
 
-int locate_particle();
+int locate_particle(const double pos[3], const double dir[3]);
 
 #ifdef __cplusplus
 }

@@ -28,7 +28,7 @@ void sample_fission_source(){
     base_criti.fission_src_cnt++;
 
     /* TODO: complete this function */
-    base_par_state.cell = locate_particle();
+    base_par_state.cell = locate_particle(base_par_state.pos, base_par_state.dir);
 
     if(base_par_state.cell == -1){
         base_par_state.is_killed = true;

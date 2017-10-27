@@ -81,9 +81,9 @@ void trans_univ_dir(universe_t *obj, double dir[3]) {
 int find_lat_index(universe_t *obj, const double pos[3], const double dir[3]) {
     int lat_index = -1;
     if(obj->lattice_type == 1)
-        _find_lat_index_rect(obj, pos, dir);
+        lat_index = _find_lat_index_rect(obj, pos, dir);
     else if(obj->lattice_type == 2)
-        _find_lat_index_hex(obj, pos, dir);
+        lat_index = _find_lat_index_hex(obj, pos, dir);
     else puts("unknown lattice type.");
 
     if(lat_index <= 0 || lat_index > obj->filled_lat_num){
