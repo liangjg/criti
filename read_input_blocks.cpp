@@ -6,6 +6,8 @@
 
 extern IOfp_t base_IOfp;
 
+extern CALC_MODE_T base_mode;
+
 /* -------------------------- private prototypes ---------------------------- */
 int _identify_kw(char *kw);
 
@@ -44,17 +46,32 @@ void read_input_blocks(){
                     read_material_block();
                     break;
                 case 3:    /* CRITICALITY */
+                    base_mode = CRITICALITY;
                     read_criticality_block();
                     break;
                 case 4:    /* TALLY */
 //                    read_tally_block();
                     break;
+                case 5:    /* FIXEDSOURCE */
+                    base_mode = FIXEDSOURCE;
+//                    read_fixed_src_block();
+                case 6:    /* DEPLETION */
+                    base_mode = POINTBURN;
+                    break;
+                case 7:    /* BURNUP */
+                    base_mode = BURNUP;
+//                    read_burnup_block();
+                    break;
                 default:
-                    puts("unknown key word.");
+                    printf("unknown key word %s.\n", kw_start);
                     break;
             }
         }
     }
+
+//    check_input_block();
+
+    fclose(base_IOfp.inp_fp);
 }
 
 /* ------------------------ private API implementation ---------------------- */

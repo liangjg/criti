@@ -11,8 +11,6 @@ extern IOfp_t base_IOfp;
 extern RNG_t base_RNG;
 
 void read_criticality_block(){
-    memset(&base_criti, 0x0, sizeof(criti_t));
-
     /* set the default arguments for base_criti and base_RNG */
     base_criti.keff_final = 1.0;
     set_RNG_paras(2);

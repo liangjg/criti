@@ -79,8 +79,6 @@ double get_total_nu(acedata_t *obj, double dEg0, int nNuc);
 double get_delayed_nu(acedata_t *obj, double dEg0, int nNuc);
 void interpolate_xss_table(acedata_t *obj, double dErg, int nNuc, int LDAT, int &nPos, double &dFrac, int &NR, int &NE);
 double get_erg_func_value(acedata_t *obj, int nNuc, int L, double dErg);
-double sample_maxwell(acedata_t *obj, double T);
-double sample_watt(acedata_t *obj, double a, double b);
 
 /* functions for Doppler Broaden */
 void dpplr_brdn_nuc_tot_cs(acedata_t *obj, int nNuc, double dCell_T, double dEg0);

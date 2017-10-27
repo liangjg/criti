@@ -64,14 +64,17 @@ static const char keyword[KW_NUMBER][MAX_KW_LENGTH] = {
     "SURFACE",
     "MATERIAL",
     "CRITICALITY",
-    "TALLY"
+    "TALLY",
+    "FIXEDSOURCE",
+    "DEPLETION",
+    "BURNUP"
 };
 
 /* number of boolean expression operator */
 #define N_OPTR  6
 
 /* 交,并,补,左括号,右括号,表达式结束 */
-typedef enum {INTER, UNION, COMPLEMENT, L_P, R_P, EOE} Operator;
+typedef enum {INTER, UNION, COMPLEMENT, L_P, R_P, EOE} OPERATOR_T;
 
 /* 大于、小于和等于号表示运算的优先级，空格表示该情况不存在 */
 static const char priority[N_OPTR][N_OPTR] = {
@@ -85,6 +88,14 @@ static const char priority[N_OPTR][N_OPTR] = {
 /*-符-\0-*/ '<',    '<',    '<',    '<',    ' ',    '='
 };
 
+/* calculation mode */
+typedef enum {
+    CRITICALITY = 1,
+    BURNUP,
+    POINTBURN,
+    FIXEDSOURCE,
+} CALC_MODE_T;
+
 /* time elapsed */
 extern time_t start_time;
 extern time_t finish_time;
@@ -92,5 +103,15 @@ extern time_t finish_time;
 /* warnings and errors found */
 extern unsigned base_warnings;
 extern unsigned base_errors;
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+void release_resource();
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

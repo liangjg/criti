@@ -4,6 +4,7 @@
 
 #include "acedata.h"
 #include "RNG.h"
+#include "sample_method.h"
 
 void react_by_laws(acedata_t *obj, int nNuc, int nMT, int nLawType, int LDAT, double dEin, double &dExitErgInCm,
                    double &dMuInCm)
@@ -77,7 +78,7 @@ void react_by_laws(acedata_t *obj, int nNuc, int nMT, int nLawType, int LDAT, do
         if(CalTemp > 0) {
             nIterCount = 0 ;
             for(;;) {
-                dExitErgInCm = sample_maxwell(obj, T);
+                dExitErgInCm = sample_maxwell(T);
                 if(dExitErgInCm <= CalTemp)
                     break;
                 if((nIterCount++) >= MAX_ITER) {
@@ -129,7 +130,7 @@ void react_by_laws(acedata_t *obj, int nNuc, int nMT, int nLawType, int LDAT, do
         if(dCalTemp > 0) {
             nIterCount = 0;
             for(;;) {
-                dExitErgInCm = sample_watt(obj, a, b);
+                dExitErgInCm = sample_watt(a, b);
                 if(dExitErgInCm <= dCalTemp)
                     break;
                 if((nIterCount++) >= MAX_ITER) {
@@ -360,11 +361,11 @@ void react_by_laws(acedata_t *obj, int nNuc, int nMT, int nLawType, int LDAT, do
         double Q = GetNucFisQ(obj, nNuc, nMT); //Nuclides[nuc].XSS[GetLocOfLQR(nuc) + Nuclides[nuc].MTRIndex[mt]-1]; // Q-value
         double E_max = ((Ap - 1) / Ap) * (dEin * aw / (aw + 1) + Q);
 
-        double lx = sample_maxwell(obj, 1);
+        double lx = sample_maxwell(1);
         double ly;
 
         if(NPSX == 3)
-            ly = sample_maxwell(obj, 1);
+            ly = sample_maxwell(1);
         else if(NPSX == 4) {
             double temp = get_rand() * get_rand() * get_rand();
             ly = log(temp);

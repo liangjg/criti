@@ -29,10 +29,9 @@ typedef struct{
     double ksrc_para[6];
     int ksrc_para_sz;
 
-    int current_cycle_neu;    /* 当前代要模拟的中子数目 */
-    int current_active_cycle;
-    int current_cycle;
-    int current_particle;
+    int cycle_neutron_num;    /* 当前代要模拟的中子数目 */
+//    int current_cycle;
+//    int current_particle;
 
     double keff_final;
     double keff_wgt_sum[3];
@@ -57,4 +56,22 @@ typedef struct{
     fission_bank_t *fission_bank;
     int fission_bank_sz;
 } criti_t;
+
+
+#ifdef __cplusplus
+extern "C"{
+#endif
+
+void initiate_fission_source();
+
+void sample_fission_source();
+
+void track_history();
+
+void process_cycle_end();
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif //TTYW_CRITICALITY_H

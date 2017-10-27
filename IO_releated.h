@@ -29,12 +29,15 @@ void read_cell_card(universe_t *);
 void read_surf_block();
 void read_material_block();
 void read_criticality_block();
+void read_burnup_block();
 void read_fixed_src_block();
 void read_tally_block();
 void read_cell_tally_card();
 void read_mesh_tally_card();
 void read_tally_cells();
 void read_cs_tally_card();
+
+void output_summary();
 
 void output_heading();
 void output_ending();
