@@ -21,9 +21,9 @@ typedef struct {
 
     /* geometry state */
     int *loc_univs;             /* Universes where the Particle is located */
-    int loc_univs_sz;           /**/
+    int loc_univs_sz;
     int *loc_cells;             /* The i-th cell in universe where the Particle is located. ==>  Universe[LocUnivs].ContainCells[LocCells] */
-    int loc_cells_sz;           /**/
+    int loc_cells_sz;
     int cell;                   /* CELL in maximum-level universe where the Particle is located */
     int bound_level;            /* Boundary is in the i-th level universe                       */
     int bound_surf;             /* Boundary surface index                                       */
