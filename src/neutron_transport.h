@@ -13,6 +13,10 @@ extern "C"{
 
 void geometry_tracking();
 
+double get_next_track(bool *particle_on_surf);
+
+double sample_free_fly_dis();
+
 void sample_col_nuclide();
 
 void calc_col_nuc_cs();

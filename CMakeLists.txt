@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.4)
-project(ttyw C CXX)
+project(criti C CXX)
 
 # Enable C++ 11 standard
 if (CMAKE_VERSION VERSION_LESS "3.1.3")
@@ -44,8 +44,8 @@ if(GIT_SHA1_SUCCESS EQUAL 0)
     add_definitions(-DGIT_SHA1="${GIT_SHA1}")
 endif()
 
-file(GLOB SRC_H ${CMAKE_SOURCE_DIR}/*.h)
-file(GLOB SRC_C ${CMAKE_SOURCE_DIR}/*.c)
-file(GLOB SRC_CPP ${CMAKE_SOURCE_DIR}/*.cpp)
+file(GLOB SRC_H ${CMAKE_SOURCE_DIR}/src/*.h)
+file(GLOB SRC_C ${CMAKE_SOURCE_DIR}/src/*.c)
+file(GLOB SRC_CPP ${CMAKE_SOURCE_DIR}/src/*.cpp)
 
-add_executable(ttyw ${SRC_C} ${SRC_CPP} ${SRC_H})
+add_executable(criti ${SRC_C} ${SRC_CPP} ${SRC_H})
