@@ -12,6 +12,7 @@
 #include "criticality.h"
 #include "calculation.h"
 #include "particle_state.h"
+#include "acedata.h"
 
 /* 全局变量初始化 */
 unsigned base_warnings = 0;
@@ -30,33 +31,50 @@ CALC_MODE_T base_mode;
 
 particle_state_t base_par_state;
 
+acedata_t base_acedata;
+
 /* key: universe index; val: corresponding universe instance address */
-map *base_univs = map_create(nullptr);
+map *base_univs;
 
 /* key: material index; val: corresponding material instance address */
-map *base_mats = map_create(nullptr);
+map *base_mats;
 
 /* key: cell index; val: corresponding cell instance address */
-map *base_cells = map_create(nullptr);
+map *base_cells;
 
 /* key: surface index; val: corresponding surface instance address */
-map *base_surfs = map_create(nullptr);
+map *base_surfs;
+
+/* key: nuclide id; val: corresponding nuclide instance address */
+map *base_nucs;
 
 /* -------------------------- hash function prototypes ---------------------------- */
 uint64_t _int_hash_func(const void *key);
 
+uint64_t _str_hash_func(const void *key);
+
+int _str_key_comp_func(uint64_t key1, uint64_t key2);
+
 /* ------------------------ main function --------------------------- */
 int main(int argc, char *argv[]){
-    /* set hash function of base_map_type */
-    map_type *base_map_type = new map_type;
-    base_map_type->hash_func = _int_hash_func;
-    base_map_type->value_dup = nullptr;
-    base_map_type->value_free = nullptr;
+    /* set hash function of int_type */
+    map_type *int_type = new map_type;
+    map_type *str_type = new map_type;
 
-    base_univs->type = base_map_type;
-    base_mats->type = base_map_type;
-    base_cells->type = base_map_type;
-    base_surfs->type = base_map_type;
+    int_type->hash_func = _int_hash_func;
+    int_type->value_dup = nullptr;
+    int_type->value_free = nullptr;
+    int_type->key_compare = nullptr;
+    str_type->hash_func = _str_hash_func;
+    str_type->value_dup = nullptr;
+    str_type->value_free = nullptr;
+    str_type->key_compare = _str_key_comp_func;
+
+    base_univs = map_create(int_type);
+    base_mats = map_create(int_type);
+    base_cells = map_create(int_type);
+    base_surfs = map_create(int_type);
+    base_nucs = map_create(str_type);
 
     /* check command line arguments */
     check_IO_file(argc, argv);
@@ -68,7 +86,7 @@ int main(int argc, char *argv[]){
     read_input_blocks();
 
     /* read ACE database */
-//    read_ace_data();
+    read_ace_data();
 
     /* run calculation */
     run_calculation(base_mode);
@@ -79,10 +97,30 @@ int main(int argc, char *argv[]){
     /* release all resource */
     //    release_resource();
 
+    delete int_type;
+    //    delete str_type;
+
     return 0;
 }
 
 /* ------------------------ hash function implementation ---------------------- */
 uint64_t _int_hash_func(const void *key){
     return _default_int_hash_func(*(uint32_t *) key);
+}
+
+/* DJB string hash function */
+uint64_t _str_hash_func(const void *key){
+    char *str = (char *) (*(uint64_t *) key);
+    uint64_t hash = 5381;
+    int c;
+    while((c = *str++))
+        hash = ((hash << 5) + hash) + c;
+    return hash;
+}
+
+int _str_key_comp_func(uint64_t key1, uint64_t key2){
+    const char *s1 = (const char *) key1;
+    const char *s2 = (const char *) key2;
+
+    return strcmp(s1, s2);
 }

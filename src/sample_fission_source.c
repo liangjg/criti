@@ -36,7 +36,13 @@ void sample_fission_source(){
     }
 
     cell_t *cell = (cell_t*) map_get(base_cells, base_par_state.cell);
-    if(cell && cell->imp == 0){
+
+    if(!cell){
+        puts("error: wrong cell found in cell map!");
+        exit(0);
+    }
+
+    if(cell->imp == 0){
         base_par_state.wgt = 0.0;
         base_par_state.is_killed = true;
     }

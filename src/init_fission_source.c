@@ -12,13 +12,13 @@ extern RNG_t base_RNG;
 
 extern double base_start_wgt;
 
-void initiate_fission_source(){
+void init_fission_source(){
     puts("Initiating fission source...");
 
-    base_criti.cycle_neutron_num = base_criti.neutron_num_per_cycle;
+    base_criti.cycle_neutron_num = base_criti.neu_num_per_cycle;
     base_criti.tot_start_wgt = 1.0 * base_criti.cycle_neutron_num;
 
-    int bank_sz = (int)(1.2 * base_criti.neutron_num_per_cycle);
+    int bank_sz = (int)(1.2 * base_criti.neu_num_per_cycle);
     base_criti.fission_bank_sz = bank_sz;
     base_criti.fission_src_sz = bank_sz;
 

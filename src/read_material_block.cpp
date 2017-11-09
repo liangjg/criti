@@ -65,6 +65,18 @@ void read_material_block(){
                 else mat->atom_den = mat->user_den;
             }
             else if(strcmp(kw_start, "SAB") == 0){
+                if(!nucs.empty() && mat){
+                    mat->tot_nuc_num = nucs.size();
+                    mat->nuc_id = new char*[mat->tot_nuc_num];
+                    mat->nuc_user_den = new double[mat->tot_nuc_num];
+                    for(int i = 0; i < mat->tot_nuc_num; i++){
+                        mat->nuc_id[i] = new char[12];
+                        strcpy(mat->nuc_id[i], nucs[i].first.c_str());
+                        mat->nuc_user_den[i] = nucs[i].second;
+                    }
+                    nucs.clear();
+                }
+
                 int sab_index = 0;
                 char sab_id[12];
 

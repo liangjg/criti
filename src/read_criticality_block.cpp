@@ -7,7 +7,9 @@
 #include "RNG.h"
 
 extern criti_t base_criti;
+
 extern IOfp_t base_IOfp;
+
 extern RNG_t base_RNG;
 
 void read_criticality_block(){
@@ -45,7 +47,7 @@ void read_criticality_block(){
                 if(strcmp(sub_kw_start, "POPULATION") == 0){
                     while(!ISNUMBER(*ret)) ret++;
                     char *end;
-                    base_criti.neutron_num_per_cycle = strtol(ret, &end, 10);
+                    base_criti.neu_num_per_cycle = strtol(ret, &end, 10);
                     ret = end;
                     base_criti.inactive_cycle_num = strtol(ret, &end, 10);
                     ret = end;

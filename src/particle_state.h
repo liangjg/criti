@@ -7,7 +7,7 @@
 #ifndef TTYW_PARTICLE_STATE_H
 #define TTYW_PARTICLE_STATE_H
 
-typedef struct {
+typedef struct{
     /* basic state */
     bool is_killed;
     double wgt;
@@ -37,6 +37,29 @@ typedef struct {
     int collision_type;         /* Current reaction MT number                             */
     double cell_tmp;            /* Current cell temperature                               */
 
+    /* cross sections */
+    double macro_tot_xs;
+    double macro_mu_fis_xs;
+
 } particle_state_t;
+
+#ifdef __cplusplus
+extern "C"{
+#endif
+
+//void Fly_by_length(double length);
+#define Fly_by_length(_length)    \
+    do{    \
+        base_par_state.pos[0] += base_par_state.dir[0] * (_length);  \
+        base_par_state.pos[1] += base_par_state.dir[1] * (_length);  \
+        base_par_state.pos[2] += base_par_state.dir[2] * (_length);  \
+        base_par_state.loc_pos[0] += base_par_state.loc_dir[0] * (_length);  \
+        base_par_state.loc_pos[1] += base_par_state.loc_dir[1] * (_length);  \
+        base_par_state.loc_pos[2] += base_par_state.loc_dir[2] * (_length);  \
+} while(0)
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif //TTYW_PARTICLE_STATE_H

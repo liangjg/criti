@@ -9,8 +9,9 @@
 #include "nuclide.h"
 
 typedef struct {
-    nuclide_t **nucs;  /* 长度为tot_nucs的数组，每个元素都是某一核素的地址 */
-    int tot_nucs;      /* 所有的非重复的核素数目，包括热化核素在内 */
+    nuclide_t **nucs;           /* 长度为tot_nucs_include_sab的数组，前tot_nucs_exclude_sab为非热化核素 */
+    int tot_nucs_include_sab;  /* 所有的非重复的核素数目，包括热化核素在内 */
+    int tot_nucs_exclude_sab;  /* 所有非重复核素的数目，不包括热化核素在内 */
     double therm_func[52];
 } acedata_t;
 

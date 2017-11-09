@@ -11,7 +11,7 @@ extern criti_t base_criti;
 extern RNG_t base_RNG;
 
 void calc_criticality(){
-    initiate_fission_source();
+    init_fission_source();
 
     for(int cyc = 1; cyc <= base_criti.tot_cycle_num; cyc++){
         for(int neu = 1; neu <= base_criti.cycle_neutron_num; neu++){

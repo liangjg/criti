@@ -20,7 +20,7 @@ typedef struct{
 } fission_bank_t;
 
 typedef struct{
-    int neutron_num_per_cycle;
+    int neu_num_per_cycle;
     int tot_cycle_num;
     int inactive_cycle_num;
     int active_cycle_num;
@@ -30,8 +30,8 @@ typedef struct{
     int ksrc_para_sz;
 
     int cycle_neutron_num;    /* 当前代要模拟的中子数目 */
-//    int current_cycle;
-//    int current_particle;
+    //    int current_cycle;
+    //    int current_particle;
 
     double keff_final;
     double keff_wgt_sum[3];
@@ -62,13 +62,28 @@ typedef struct{
 extern "C"{
 #endif
 
-void initiate_fission_source();
+void init_fission_source();
 
 void sample_fission_source();
 
 void track_history();
 
 void process_cycle_end();
+
+#define Estimate_keff_col(wgt, macro_mu_fis_xs, macro_tot_xs)  \
+    do{  \
+        base_criti.keff_wgt_sum[0] += (wgt) * (macro_mu_fis_xs) / (macro_tot_xs);  \
+    } while(0)
+
+#define Estimate_keff_abs(wgt, nu, micro_fis_xs, micro_tot_xs)  \
+    do{  \
+        base_criti.keff_wgt_sum[1] += (wgt) * (nu) * (micro_fis_xs) / (micro_tot_xs);  \
+    } while(0)
+
+#define Estimate_keff_tl(wgt, macro_mu_fis_xs, tl)  \
+    do{  \
+        base_criti.keff_wgt_sum[2] += (wgt) * (tl) * (macro_mu_fis_xs);  \
+    } while(0)
 
 #ifdef __cplusplus
 }

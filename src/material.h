@@ -12,7 +12,7 @@ typedef struct {
     double atom_den;
     double gram_den;
 
-    int tot_nuc_num;
+    int tot_nuc_num;        /* 不包括热化核素在内的，该材料的所有核素数目 */
     int tot_sab_nuc_num;
 
     char **nuc_id;
