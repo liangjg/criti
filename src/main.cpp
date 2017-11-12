@@ -98,7 +98,7 @@ int main(int argc, char *argv[]){
     //    release_resource();
 
     delete int_type;
-    //    delete str_type;
+    delete str_type;
 
     return 0;
 }
@@ -119,8 +119,5 @@ uint64_t _str_hash_func(const void *key){
 }
 
 int _str_key_comp_func(uint64_t key1, uint64_t key2){
-    const char *s1 = (const char *) key1;
-    const char *s2 = (const char *) key2;
-
-    return strcmp(s1, s2);
+    return strcmp((const char *)key1, (const char *)key2);
 }

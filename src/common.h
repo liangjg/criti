@@ -2,27 +2,34 @@
 #define COMC_COMMON_H
 
 #ifdef __cplusplus
-  #include <cstdlib>
-  #include <cstdio>
-  #include <cmath>
-  #include <cstring>
-  #include <cfloat>
-  #include <ctime>
-  #include <cstdbool>
+    #include <cstdlib>
+    #include <cstdio>
+    #include <cmath>
+    #include <cstring>
+    #include <cfloat>
+    #include <ctime>
+    #include <cstdbool>
 #else
-  #include <stdlib.h>
-  #include <stdio.h>
-  #include <math.h>
-  #include <string.h>
-  #include <float.h>
-  #include <time.h>
-  #include <stdbool.h>
+    #include <stdlib.h>
+    #include <stdio.h>
+    #include <math.h>
+    #include <string.h>
+    #include <float.h>
+    #include <time.h>
+    #include <stdbool.h>
 #endif
 
 #ifdef USE_MPI
-#include <mpi.h>
+    #include <mpi.h>
 #endif
 
+#if defined(__linux__) || defined(__linux) || defined(linux)
+    #define OS_LINUX
+#elif defined(__WIN32__) || defined(_WIN32) || defined(WIN32)
+    #define OS_WIN32
+#elif defined(__APPLE__)
+    #define OS_MAC
+#endif
 
 #define MAX(_x, _y)     ((_x) < (_y) ? (_y) : (_x))
 #define MIN(_x, _y)     ((_x) < (_y) ? (_x) : (_y))
@@ -61,36 +68,36 @@
 
 /* Global static read-only key word */
 static const char keyword[KW_NUMBER][MAX_KW_LENGTH] = {
-    "UNIVERSE",
-    "SURFACE",
-    "MATERIAL",
-    "CRITICALITY",
-    "TALLY",
-    "FIXEDSOURCE",
-    "DEPLETION",
-    "BURNUP"
+        "UNIVERSE",
+        "SURFACE",
+        "MATERIAL",
+        "CRITICALITY",
+        "TALLY",
+        "FIXEDSOURCE",
+        "DEPLETION",
+        "BURNUP"
 };
 
 /* number of boolean expression operator */
 #define N_OPTR  6
 
 /* 交,并,补,左括号,右括号,表达式结束 */
-typedef enum {INTER, UNION, COMPLEMENT, L_P, R_P, EOE} OPERATOR_T;
+typedef enum{INTER, UNION, COMPLEMENT, L_P, R_P, EOE} OPERATOR_T;
 
 /* 大于、小于和等于号表示运算的优先级，空格表示该情况不存在 */
 static const char priority[N_OPTR][N_OPTR] = {
-/*-----------|---------------当前运算符--------------|*/
-/*-----------&       :       !       (       )      \0*/
-/*-|---&-*/ '>',    '>',    '<',    '<',    '>',    '>',
-/*-栈--:-*/ '>',    '>',    '<',    '<',    '>',    '>',
-/*-顶--!-*/ '>',    '>',    '>',    '<',    '>',    '>',
-/*-运--(-*/ '<',    '<',    '<',    '<',    '=',    ' ',
-/*-算--)-*/ ' ',    ' ',    ' ',    ' ',    ' ',    ' ',
-/*-符-\0-*/ '<',    '<',    '<',    '<',    ' ',    '='
+        /*-----------|---------------当前运算符--------------|*/
+        /*-----------&       :       !       (       )      \0*/
+        /*-|---&-*/ '>', '>', '<', '<', '>', '>',
+        /*-栈--:-*/ '>', '>', '<', '<', '>', '>',
+        /*-顶--!-*/ '>', '>', '>', '<', '>', '>',
+        /*-运--(-*/ '<', '<', '<', '<', '=', ' ',
+        /*-算--)-*/ ' ', ' ', ' ', ' ', ' ', ' ',
+        /*-符-\0-*/ '<', '<', '<', '<', ' ', '='
 };
 
 /* calculation mode */
-typedef enum {
+typedef enum{
     CRITICALITY = 1,
     BURNUP,
     POINTBURN,
