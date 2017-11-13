@@ -92,6 +92,7 @@ void read_material_block(){
 
                 if(mat){
                     mat->tot_sab_nuc_num++;
+                    while(!ISALPHA(*ret)) ret++;
                     sscanf(ret, "%s", mat->sab_nuc_id);
                     nuc_entry = map_find(base_nucs, (uint64_t)mat->sab_nuc_id);
                     if(!nuc_entry){
