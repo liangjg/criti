@@ -116,6 +116,7 @@ int _read_ace(const char *ace_path, int file_type, int start_addr, nuclide_t *nu
         /* read NXS array */
         for(int i = 1; i <= 16; i++)
             fscanf(ace_fp, "%d", nuc->NXS + i);
+
         /* read JXS array */
         for(int i = 1; i <= 32; i++)
             fscanf(ace_fp, "%d", nuc->JXS + i);
@@ -127,13 +128,64 @@ int _read_ace(const char *ace_path, int file_type, int start_addr, nuclide_t *nu
         /* start read XSS array */
         getc(ace_fp);
         nuc->XSS = new double[nuc->XSS_sz + 1];
-        for(int i = 1; i <= nuc->XSS_sz; i++)
-            fscanf(ace_fp, "%lf", nuc->XSS + i);
+        int tot_lines = nuc->XSS_sz / 4 + 1;
+        int k = tot_lines / MAX_LINES;
+        char *start, *end;
+        int j = 1;
+        do{
+            int xss_to_read;
+            k-- == 0 ? xss_to_read = ((tot_lines % MAX_LINES) - 1) * 4 + nuc->XSS_sz % 4
+                     : xss_to_read = MAX_LINES * 4;
+            fread(buf, sizeof(char), 1 << 22, ace_fp);
+            start = buf;
+            for(int i = 1; i <= xss_to_read; i++){
+                nuc->XSS[j++] = strtod(start, &end);
+                start = end;
+            }
+        } while(k > -1);
     }
-//    else if(file_type == 2){
-//
-//    }
+    else if(file_type == 2){
+        char HZ[10], HD[10], HK[70], HM[10];
+        int IZ;
+        double temp;
+        fseek(ace_fp, (start_addr - 1) * 4096, SEEK_SET);
+
+        fread(HZ, sizeof(char), 10, ace_fp);
+        fread(&nuc->atom_wgt, sizeof(double), 1, ace_fp);
+        fread(&nuc->tmp, sizeof(double), 1, ace_fp);
+        fread(HD, 10, 1, ace_fp);
+        fread(HK, 70, 1, ace_fp);
+        fread(HM, 10, 1, ace_fp);
+
+        if(ISNUMBER(*nuc->id)){
+            for(int i = 1; i <= 16; i++){
+                fread(&IZ, sizeof(int), 1, ace_fp);
+                fread(&temp, sizeof(double), 1, ace_fp);
+            }
+        }
+        else{
+            fread(&nuc->zaid, sizeof(int), 1, ace_fp);
+            fread(&temp, sizeof(double), 1, ace_fp);
+            for(int i = 1; i <= 15; i++){
+                fread(&IZ, sizeof(int), 1, ace_fp);
+                fread(&temp, sizeof(double), 1, ace_fp);
+            }
+        }
+
+        fread(nuc->NXS + 1, sizeof(int), 16, ace_fp);
+        fread(nuc->JXS + 1, sizeof(int), 32, ace_fp);
+
+        if(ISNUMBER(*nuc->id))
+            nuc->zaid = nuc->NXS[2];
+
+        fseek(ace_fp, start_addr * 4096, SEEK_SET);
+        nuc->XSS = new double[nuc->XSS_sz + 1];
+        fread(nuc->XSS + 1, sizeof(double), nuc->XSS_sz, ace_fp);
+    }
     else return FILE_TYPE_ERR;
+
+    fclose(ace_fp);
+    delete[]buf;
 
     return 0;
 }
