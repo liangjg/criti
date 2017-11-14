@@ -38,9 +38,19 @@ typedef struct{
     double cell_tmp;            /* Current cell temperature                               */
 
     /* cross sections */
+    int interp_N0;              /* Eg0 interpolation position */
+    double interp_K0;           /* Eg0 interpolation fraction */
+    int interp_N;               /* Erg interpolation position */
+    double interp_K;            /* Erg interpolation fraction */
     double macro_tot_cs;
     double macro_nu_fis_cs;
 
+    /* free-gas/sab state */
+    bool is_sab_col;            /* sab collision                       */
+    bool is_free_gas_col;       /* free gas collision                  */
+    double erg_rel;             /* relative energ in free gas model    */
+    double dir_vel[3];          /* relative velocity in free gas model */
+    double vel_tgt[3];          /* Target velocity in free gas model   */
 } particle_state_t;
 
 #ifdef __cplusplus

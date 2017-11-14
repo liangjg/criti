@@ -17,7 +17,7 @@ void geometry_tracking(){
 
     FFL = sample_free_fly_dis(true);
 
-//    DTB = calc_dist_to_bound();
+    DTB = calc_dist_to_bound();
 
     if(DTB < ZERO){
         puts("failed to calculate distance to boundary.");
@@ -31,6 +31,7 @@ void geometry_tracking(){
         if(iter_cnt++ > MAX_ITER){
             base_par_state.is_killed = true;
             puts("too many times of surface crossing.");
+            base_warnings++;
             return;
         }
 
@@ -38,11 +39,11 @@ void geometry_tracking(){
 
         Fly_by_length(DTB);
 
-//        find_next_cell();
+        find_next_cell();
 
         if(base_par_state.is_killed) return;
 
-//        DTB = calc_dist_to_bound();
+        DTB = calc_dist_to_bound();
         if(DTB < ZERO){
             puts("failed to calculate distance to boundary.");
             base_par_state.is_killed = true;

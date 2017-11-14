@@ -15,7 +15,7 @@ extern "C" {
 
 int locate_particle(const double pos[3], const double dir[3]);
 
-int find_next_cell();
+void find_next_cell();
 
 double calc_dist_to_bound();
 

@@ -4,6 +4,7 @@
 
 #include "IO_releated.h"
 #include "map.h"
+#include "universe.h"
 #include <cassert>
 
 extern map *base_univs;
@@ -63,6 +64,7 @@ void read_universe_block(char *buf){
                 while(!ISNUMBER(*buf)) buf++;
                 univ->lattice_type = *buf - '0';
                 assert(univ->lattice_type == 1 || univ->lattice_type == 2);
+                univ->is_lattice = true;
                 buf++;
                 break;
             }

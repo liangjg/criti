@@ -29,6 +29,8 @@ void update_par_state();
 
 void rotate_dir(double mu, const double *old_dir, double *new_dir);
 
+void treat_free_gas_model(double nuc_wgt);
+
 #ifdef __cplusplus
 }
 #endif

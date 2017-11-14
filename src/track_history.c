@@ -22,11 +22,11 @@ void track_history(){
         if(base_par_state.is_killed) break;
 
         /* sample collision nuclide */
-//        sample_col_nuclide();
+        sample_col_nuclide();
         if(base_par_state.is_killed) break;
 
         /* calculate cross-section */
-//        calc_col_nuc_cs();
+        calc_col_nuc_cs();
 
         /* implicit capture(including fission) */
 //        treat_implicit_capture();

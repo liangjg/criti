@@ -16,8 +16,9 @@ typedef struct {
     int tot_sab_nuc_num;
 
     char **nuc_id;
-    char sab_nuc_id[12];
+    char sab_nuc_id[12];    /* 只考虑了只包含一个热化核素的情况 */
 
+    double sab_nuc_esa;
     double *nuc_user_den;
     double *nuc_atom_den;
 } mat_t;
