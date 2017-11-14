@@ -48,7 +48,7 @@ typedef struct {
 
     int inter_pos;
     double inter_frac;
-    int prob_table_flag;
+//    int prob_table_flag;
 } nuclide_t;
 
 #ifdef __cplusplus

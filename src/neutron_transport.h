@@ -27,6 +27,8 @@ void get_exit_state();
 
 void update_par_state();
 
+void rotate_dir(double mu, const double *old_dir, double *new_dir);
+
 #ifdef __cplusplus
 }
 #endif
