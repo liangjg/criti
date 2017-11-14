@@ -58,7 +58,7 @@
 #define EG0_CUTOFF    1.0E-20
 
 #define PI            3.1415926536
-#define ZERO_ERG      1.0E-25
+#define ZERO_ERG      1.0E-24
 #define MAX_ITER      100000
 #define ZERO          0.0
 #define HALF          0.5

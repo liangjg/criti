@@ -7,7 +7,7 @@
 double get_total_nu(nuclide_t *nuc, double erg){
     int nKNU = GetLocOfNU(nuc);
     if(nKNU == 0)   // no neutron yield
-        return 0;
+        return ZERO;
 
     int nKNU_judge = (int) (nuc->XSS[nKNU]);
 

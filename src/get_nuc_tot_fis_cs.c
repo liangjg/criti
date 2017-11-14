@@ -6,7 +6,7 @@
 #include "global_fun.h"
 
 void get_nuc_tot_fis_cs(acedata_t *obj, nuclide_t *nuc, nuclide_t *sab_nuc, double erg, double cell_tmp){
-    enum eAdjustCsByPTOrNot{NotAdjustCsByPT = 0, AdjustCsByPT = 1};
+//    enum eAdjustCsByPTOrNot{NotAdjustCsByPT = 0, AdjustCsByPT = 1};
 
     int nNE = GetErgGridNum(nuc);
 

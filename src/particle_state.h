@@ -38,8 +38,8 @@ typedef struct{
     double cell_tmp;            /* Current cell temperature                               */
 
     /* cross sections */
-    double macro_tot_xs;
-    double macro_mu_fis_xs;
+    double macro_tot_cs;
+    double macro_nu_fis_cs;
 
 } particle_state_t;
 

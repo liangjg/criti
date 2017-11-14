@@ -8,7 +8,7 @@
 #include "common.h"
 
 #define INTPLT_BY_POS_FR(addr, pos, fr)  \
-    (*((addr) + (pos)) + (*((addr) + ((pos) + 1)) - *((addr) + (pos))) * (fr))
+    ((addr)[(pos)] + ((addr)[(pos) + 1] - (addr)[(pos)]) * (fr))
 
 #ifdef __cplusplus
 template <typename T> void GetIntpltPos(const T *vec, T val, int min, int max, int *pos)
