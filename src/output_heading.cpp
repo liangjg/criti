@@ -5,6 +5,7 @@
 #include "IO_releated.h"
 
 time_t start_time = clock();
+time_t finish_time;
 extern IOfp_t base_IOfp;
 
 void output_heading(){
