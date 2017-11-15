@@ -36,11 +36,11 @@ void track_history(){
         if(base_par_state.is_killed) break;
 
         /* sample collision type */
-//        sample_col_type();
+        base_par_state.collision_type = sample_col_type();
         if(base_par_state.is_killed) break;
 
         /* sample exit state */
-//        get_exit_state();
+        get_exit_state();
         if(base_par_state.is_killed) break;
 
         /* update particle state */

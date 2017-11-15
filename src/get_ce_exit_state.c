@@ -10,12 +10,12 @@
 extern particle_state_t base_par_state;
 extern map *base_nucs;
 
-void get_ce_exit_state(int fis_MT){
+void get_ce_exit_state(int MT){
     double exit_mu_lab;
     double exit_erg_lab;
     nuclide_t *nuc = (nuclide_t *)map_get(base_nucs, base_par_state.nuc);
 
-    get_ce_exist_erg_mu(nuc, fis_MT, base_par_state.erg, &exit_erg_lab, &exit_mu_lab);
+    get_ce_exist_erg_mu(nuc, MT, base_par_state.erg, &exit_erg_lab, &exit_mu_lab);
 
     rotate_dir(exit_mu_lab, base_par_state.dir, base_par_state.exit_dir);
     base_par_state.exit_erg = exit_erg_lab;

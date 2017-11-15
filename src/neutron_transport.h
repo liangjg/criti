@@ -23,7 +23,7 @@ void treat_fission();
 
 void treat_implicit_capture();
 
-void sample_col_type();
+int sample_col_type();
 
 void get_exit_state();
 
@@ -33,7 +33,7 @@ void rotate_dir(double mu, const double *old_dir, double *new_dir);
 
 void treat_free_gas_model(double nuc_wgt);
 
-void get_ce_exit_state(int fis_MT);
+void get_ce_exit_state(int MT);
 
 #ifdef __cplusplus
 }
