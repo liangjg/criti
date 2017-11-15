@@ -21,8 +21,8 @@ void calc_criticality(){
 
             track_history();
         }
-//        process_cycle_end();
+        process_cycle_end();
     }
 
-//    output_summary();
+    output_summary();
 }

@@ -44,7 +44,15 @@ void track_history(){
         if(base_par_state.is_killed) break;
 
         /* update particle state */
-//        update_par_state();
+        base_par_state.erg = base_par_state.exit_erg;
+        for(int i = 0; i < 3; i++)
+            base_par_state.dir[i] = base_par_state.exit_dir[i];
+        double length = ONE / sqrt(SQUARE(base_par_state.dir[0]) +
+                                   SQUARE(base_par_state.dir[1]) +
+                                   SQUARE(base_par_state.dir[2]));
+        base_par_state.dir[0] *= length;
+        base_par_state.dir[1] *= length;
+        base_par_state.dir[2] *= length;
 
     } while(++base_criti.col_cnt < MAX_ITER);
 

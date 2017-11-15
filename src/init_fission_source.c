@@ -7,9 +7,7 @@
 #include "sample_method.h"
 
 extern criti_t base_criti;
-
 extern RNG_t base_RNG;
-
 extern double base_start_wgt;
 
 void init_fission_source(){

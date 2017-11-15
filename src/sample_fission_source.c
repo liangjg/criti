@@ -8,11 +8,8 @@
 
 
 extern particle_state_t base_par_state;
-
 extern criti_t base_criti;
-
 extern double base_start_wgt;
-
 extern map *base_cells;
 
 void sample_fission_source(){

@@ -10,7 +10,7 @@ extern IOfp_t base_IOfp;
 void output_heading(){
 
     char start_wall_clock_str[64];
-    time_t start_wall_clock = time(0);
+    time_t start_wall_clock = time(nullptr);
     strftime(start_wall_clock_str, sizeof(start_wall_clock_str), "%Y/%m/%d %X %A", localtime(&start_wall_clock));
 
     ////////////////////////// Write RMC LOGO///////////////////////

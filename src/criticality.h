@@ -30,18 +30,18 @@ typedef struct{
     int ksrc_para_sz;
 
     int cycle_neutron_num;    /* 当前代要模拟的中子数目 */
-    //    int current_cycle;
+    int current_cycle;
     //    int current_particle;
 
-    double keff_final;
-    double keff_wgt_sum[3];
-    double keff_cycle[3];    /* 0: Collision estimator,  1: Absorption estimator,  2:Track Length estimator */
-    double keff_sum[3];      /* keff_sum: cumulative sums */
-    double keff_cp_sum[3][3];/* keff_cp_sum: keff cross product sums */
-    double keff_individual_ave[3];    /* average and standard deviation of individual estimators */
-    double keff_individual_std[3];
-    double keff_covw_ave[4];    /* covariance-weighted combined averages and standard deviations */
-    double keff_covw_std[4];
+    double keff_final;                /* final keff of each cycle */
+    double keff_wgt_sum[3];           /* 0: Collision estimator,  1: Absorption estimator,  2:Track Length estimator */
+    double keff_cycle[3];             /* 0: Collision estimator,  1: Absorption estimator,  2:Track Length estimator */
+    double keff_sum[3];               /* keff_sum: cumulative sums */
+    double keff_cp_sum[3][3];         /* keff_cp_sum: keff cross product sums */
+    double keff_individual_ave[3];    /* average  deviation of individual estimators */
+    double keff_individual_std[3];    /* standard deviation of individual estimators */
+    double keff_covw_ave[4];          /* covariance-weighted combined averages deviations */
+    double keff_covw_std[4];          /* covariance-weighted combined standard deviations */
     double tot_start_wgt;
 
     unsigned long long tot_col_cnt;
@@ -51,9 +51,9 @@ typedef struct{
     int tot_fission_bank_cnt;
     int fission_src_cnt;
 
-    fission_bank_t *fission_src;
-    int fission_src_sz;
-    fission_bank_t *fission_bank;
+    fission_bank_t *fission_src;      /* 当前代要模拟的中子源，每个中子都从其中抽样产生 */
+    int fission_src_sz;               /* 一般来说，src_sz = bank_sz */
+    fission_bank_t *fission_bank;     /* 存储每一代裂变产生的中子，供下一代模拟用 */
     int fission_bank_sz;
 } criti_t;
 
