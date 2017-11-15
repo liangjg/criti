@@ -28,8 +28,11 @@ void track_history(){
         /* calculate cross-section */
         calc_col_nuc_cs();
 
+        /* treat fission */
+        treat_fission();
+
         /* implicit capture(including fission) */
-//        treat_implicit_capture();
+        treat_implicit_capture();
         if(base_par_state.is_killed) break;
 
         /* sample collision type */

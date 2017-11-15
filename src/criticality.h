@@ -68,6 +68,8 @@ void sample_fission_source();
 
 void track_history();
 
+void get_fis_neu_state(int fis_MT, double fis_wgt);
+
 void process_cycle_end();
 
 #define Estimate_keff_col(wgt, macro_mu_fis_xs, macro_tot_xs)  \
