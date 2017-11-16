@@ -19,6 +19,8 @@ void find_next_cell();
 
 double calc_dist_to_bound();
 
+void find_neighbor_cell();
+
 #ifdef __cplusplus
 }
 #endif

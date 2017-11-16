@@ -16,6 +16,7 @@ typedef struct {
     double vol;           /* vol 关键字 */
     bool is_inner_cell;   /* inner 关键字 */
     char *rpn;            /* 面布尔表达式转换而来的RPN表达式 */
+    bool simple;          /* Is the region simple (intersection only) */
 } cell_t;
 
 #define CELL_KW_NUMBER        7

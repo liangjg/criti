@@ -12,9 +12,9 @@ extern map *base_cells;
 extern IOfp_t base_IOfp;
 
 /* -------------------------- private prototypes ---------------------------- */
-char *_generate_rpn(char *);
+char *_generate_rpn(char *rpn, bool &is_simple);
 
-char _order_between(char a, char b);
+char _order_between(char a, char b, bool &is_simple);
 
 int _identify_cell_kw(char *kw);
 
@@ -23,6 +23,7 @@ void read_cell_card(universe_t *univ){
     char buf[256];
     char *ret = nullptr;
     std::vector<int> cells;
+    bool is_simple = true;
 
     while((ret = fgets(buf, MAX_LINE_LENGTH, base_IOfp.inp_fp)) != nullptr){
         while(ISSPACE(*ret)) ret++;
@@ -42,7 +43,8 @@ void read_cell_card(universe_t *univ){
         char *rpn_start = ret;
         while(!ISALPHA(*ret)) ret++;
         *(ret - 1) = 0;
-        cell->rpn = _generate_rpn(rpn_start);
+        cell->rpn = _generate_rpn(rpn_start, is_simple);
+        cell->simple = is_simple;
         while(!ISRETURN(*ret) && !ISCOMMENT(*ret)){
             char *kw_start = ret;
             while(ISALPHA(*ret)){
@@ -115,7 +117,7 @@ int _identify_cell_kw(char *kw){
     return -1;
 }
 
-char *_generate_rpn(char *exp){
+char *_generate_rpn(char *exp, bool &is_simple){
 #define TOP(s)    (*(char *)stack_top((s)))
 #define POP(s)    (stack_pop((s)))
 
@@ -147,7 +149,7 @@ char *_generate_rpn(char *exp){
             continue;
         }
         else{
-            switch(_order_between(TOP(optr), *exp)){
+            switch(_order_between(TOP(optr), *exp, is_simple)){
                 case '<':
                     c = *exp++;
                     stack_push(optr, &c);
@@ -173,16 +175,18 @@ char *_generate_rpn(char *exp){
     return rpn;
 }
 
-char _order_between(char a, char b){
+char _order_between(char a, char b, bool &is_simple){
     int p, q;
     switch(a){
         case '&':
             p = INTER;
             break;
         case ':':
+            is_simple = false;
             p = UNION;
             break;
         case '!':
+            is_simple = false;
             p = COMPLEMENT;
             break;
         case '(':
