@@ -26,6 +26,9 @@ typedef struct {
     SURF_T type;
     double paras[4];
     int bc;
+
+    int *cell;        /* 使用了这个surface的cell编号 */
+    int cell_sz;      /* 上面数组的大小 */
 } surface_t;
 
 

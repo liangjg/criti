@@ -9,6 +9,7 @@
 #include "map.h"
 
 typedef struct {
+    int id;               /* cell id */
     int fill;             /* fill 关键字 */
     int mat;              /* mat 关键字 */
     int imp;              /* imp 关键字 */
@@ -16,7 +17,10 @@ typedef struct {
     double vol;           /* vol 关键字 */
     bool is_inner_cell;   /* inner 关键字 */
     char *rpn;            /* 面布尔表达式转换而来的RPN表达式 */
-    bool simple;          /* Is the region simple (intersection only) */
+    bool simple;          /* 是否是只含有集合交运算的简单cell */
+
+    int *surfs;           /* 具体的面编号 */
+    int contain_surfs;    /* 包含的面的总数 */
 } cell_t;
 
 #define CELL_KW_NUMBER        7

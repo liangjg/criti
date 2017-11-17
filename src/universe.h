@@ -27,6 +27,9 @@ typedef struct {
 
     int *fill_lat_univese;
     int filled_lat_num;
+
+    /* 在同一个universe内部，每个cell基于每个面的唯一的一个邻居(cell)的cell_id */
+    int **neighbor_lists;
 } universe_t;
 
 

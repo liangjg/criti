@@ -94,7 +94,7 @@ bool _complex_par_in_cell(const cell_t *obj, const double *pos, const double *di
     i_stack = -1;
     bm = bitmap_init(strlen(c));
 
-    while(*c != '0'){
+    while(*c != '\0'){
         if(ISNUMBER(*c)){
             i_stack++;
             surf_index = 0;

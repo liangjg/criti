@@ -16,26 +16,7 @@ double _calc_dist_to_lat_hex(universe_t *obj, const double pos[3], const double 
 
 /* ----------------------------- API implementation ------------------------- */
 universe_t *univ_init() {
-    universe_t *_new_univ = new universe_t;
-//    _new_univ->contain_cell_num = 0;
-//    _new_univ->is_lattice = false;
-//    _new_univ->is_moved = false;
-//    _new_univ->is_rotated = false;
-//    _new_univ->cos_sita = 0.0;
-//    _new_univ->sin_sita = 0.0;
-//    _new_univ->sita = 0.0;
-//    _new_univ->fill_cells = nullptr;
-//    _new_univ->fill_lat_univese = nullptr;
-//    _new_univ->filled_lat_num = 0;
-//    _new_univ->height = 0.0;
-//    _new_univ->lattice_type = 0;
-//    for(int i = 0; i < 3; i++){
-//        _new_univ->origin[i] = 0.0;
-//        _new_univ->pitch[i] = 0.0;
-//        _new_univ->scope[i] = 0;
-//        for(int j = 0; j < 3; j++)
-//            _new_univ->rotation[i][j] = 0.0;
-//    }
+    universe_t *_new_univ = (universe_t *)malloc(sizeof(universe_t));
     memset(_new_univ, 0x0, sizeof(universe_t));
     return _new_univ;
 }
@@ -221,7 +202,7 @@ int _find_lat_index_rect(universe_t *obj, const double pos[3], const double dir[
             xyz[i] = 0;
         else {
             double temp1 = pos[i] / obj->pitch[i];
-            int temp2 = int(temp1 + 0.5);
+            int temp2 = (int)(temp1 + 0.5);
 
             if(fabs(temp1 - temp2) < EPSILON){
                 if(dir[i] >= 0)
@@ -229,7 +210,7 @@ int _find_lat_index_rect(universe_t *obj, const double pos[3], const double dir[
                 else
                     xyz[i] = temp2 - 1;
             } else
-                xyz[i] = int(temp1);
+                xyz[i] = (int)(temp1);
         }
     }
     lat_index = 1 + xyz[0] + obj->scope[0] * xyz[1] + obj->scope[0] * obj->scope[1] * xyz[2];
@@ -249,8 +230,8 @@ int _find_lat_index_hex(universe_t *obj, const double pos[3], const double dir[3
     ////////////////// AM = k1*b1 + k2*b2, where b1=(L1,0) and b2 = (L1/2,height)  ////////////////////
     double dK2 = pos2 / obj->height;
     double dK1 = (pos1 - dK2 * 0.5 * len1) / len1;
-    int i1 = int(floor(dK1)); //// note: ik1,ik2 may be start from -1
-    int i2 = int(floor(dK2));
+    int i1 = (int)(floor(dK1)); //// note: ik1,ik2 may be start from -1
+    int i2 = (int)(floor(dK2));
     ///////////////////// offset r1 r2 to parallelogram of index 0 //////////////////////////
     pos1 = pos1 - (i1 * len1 + i2 * 0.5 * len1);
     pos2 = pos2 - i2 * obj->height;

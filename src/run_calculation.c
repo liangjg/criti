@@ -4,8 +4,11 @@
 
 #include "common.h"
 #include "calculation.h"
+#include "geometry.h"
 
 void run_calculation(CALC_MODE_T mode){
+    build_neighbor_list();
+
     switch(mode){
         case CRITICALITY:
             puts("\n******** Calculation mode: criticality ********\n");

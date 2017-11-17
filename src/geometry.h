@@ -21,6 +21,8 @@ double calc_dist_to_bound();
 
 void find_neighbor_cell();
 
+void build_neighbor_list();
+
 #ifdef __cplusplus
 }
 #endif
