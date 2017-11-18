@@ -4,7 +4,6 @@
 
 #include "cell.h"
 #include "surface.h"
-#include "bitmap.h"
 
 /* -------------------------- private prototypes ---------------------------- */
 static inline bool _has_same_sign(int a, int b);
@@ -80,10 +79,10 @@ bool _simple_par_in_cell(const cell_t *obj, const double pos[3], const double di
     return in_cell;
 }
 
-/* 用bitmap来模拟栈，bit位1代表true，0代表false */
 bool _complex_par_in_cell(const cell_t *obj, const double *pos, const double *dir, map *surfs){
     bool in_cell;
-    bitmap *bm;
+//    bitmap *bm;
+    bool st[16];
     int i_stack;
     int surf_index;
     surface_t *surf;
@@ -92,7 +91,7 @@ bool _complex_par_in_cell(const cell_t *obj, const double *pos, const double *di
 
     c = obj->rpn;
     i_stack = -1;
-    bm = bitmap_init(strlen(c));
+//    bm = bitmap_init(strlen(c));
 
     while(*c != '\0'){
         if(ISNUMBER(*c)){
@@ -106,7 +105,8 @@ bool _complex_par_in_cell(const cell_t *obj, const double *pos, const double *di
             surf = (surface_t *) map_get(surfs, surf_index);
             surf_sense = calc_surf_sense(surf, pos, dir);
             in_cell = _has_same_sign(surf_index, surf_sense);
-            if(in_cell) bitmap_set(bm, i_stack);
+//            if(in_cell) bitmap_set(bm, i_stack);
+            if(in_cell) st[i_stack] = true;
         } else if(*c == '-'){
             i_stack++;
             surf_index = 0;
@@ -120,25 +120,32 @@ bool _complex_par_in_cell(const cell_t *obj, const double *pos, const double *di
             surf_index = (~surf_index) + 1;
             surf_sense = calc_surf_sense(surf, pos, dir);
             in_cell = _has_same_sign(surf_index, surf_sense);
-            if(in_cell) bitmap_set(bm, i_stack);
+//            if(in_cell) bitmap_set(bm, i_stack);
+            if(in_cell) st[i_stack] = true;
         } else if(*c == '&'){
-            if(!bitmap_test(bm, i_stack) || !bitmap_test(bm, i_stack - 1))
-                bitmap_clear(bm, --i_stack);
+//            if(!bitmap_test(bm, i_stack) || !bitmap_test(bm, i_stack - 1))
+//                bitmap_clear(bm, --i_stack);
+            st[i_stack - 1] = st[i_stack] && st[i_stack - 1];
+            i_stack--;
             c++;
         } else if(*c == ':'){
-            if(bitmap_test(bm, i_stack) || bitmap_test(bm, i_stack - 1))
-                bitmap_set(bm, --i_stack);
+//            if(bitmap_test(bm, i_stack) || bitmap_test(bm, i_stack - 1))
+//                bitmap_set(bm, --i_stack);
+            st[i_stack - 1] = st[i_stack] || st[i_stack - 1];
+            i_stack--;
             c++;
         } else if(*c == '!'){
-            bitmap_reverse(bm, i_stack);
+//            bitmap_reverse(bm, i_stack);
+            st[i_stack] = ~st[i_stack];
             c++;
         } else c++;
     }
 
     /* i_stack remains -1 only if there is no region specified */
     /* The only one remained on the top of stack indicates whether the particle is in the cell */
-    in_cell = (i_stack == -1 ? true : bitmap_test(bm, 0));
-    bitmap_free(bm);
+//    in_cell = (i_stack == -1 ? true : bitmap_test(bm, 0));
+//    bitmap_free(bm);
+    in_cell = (i_stack == -1) ? true : st[0];
 
     return in_cell;
 }
