@@ -6,13 +6,13 @@
 #include "map.h"
 #include "cell.h"
 #include <vector>
-#include "stack.h"
+#include <stack>
 
 extern map *base_cells;
 extern IOfp_t base_IOfp;
 
 /* -------------------------- private prototypes ---------------------------- */
-char *_generate_rpn(char *rpn, bool &is_simple);
+char *_generate_rpn(char *exp, bool &is_simple);
 
 char _order_between(char a, char b, bool &is_simple);
 
@@ -118,19 +118,15 @@ int _identify_cell_kw(char *kw){
 }
 
 char *_generate_rpn(char *exp, bool &is_simple){
-#define TOP(s)    (*(char *)stack_top((s)))
-#define POP(s)    (stack_pop((s)))
-
     size_t len = strlen(exp);
     char *rpn = new char[2 * len];
     size_t i = 0;
-
-    stack *optr = stack_init(sizeof(char));
-
     char c = '\0';
-    stack_push(optr, &c);
 
-    while(optr->_size){
+    std::stack<char> optr;
+    optr.push(c);
+
+    while(!optr.empty()){
         if(ISNUMBER(*exp)){
             do{
                 rpn[i++] = *exp++;
@@ -138,10 +134,6 @@ char *_generate_rpn(char *exp, bool &is_simple){
             rpn[i++] = ' ';
         }
         else if(*exp == '-'){
-            if(*(exp - 1) == '-'){
-                printf("ERROR: too many minus(-) before digit\n");
-                exit(0);
-            }
             rpn[i++] = *exp++;
         }
         else if(ISSPACE(*exp)){
@@ -149,18 +141,18 @@ char *_generate_rpn(char *exp, bool &is_simple){
             continue;
         }
         else{
-            switch(_order_between(TOP(optr), *exp, is_simple)){
+            switch(_order_between(optr.top(), *exp, is_simple)){
                 case '<':
                     c = *exp++;
-                    stack_push(optr, &c);
+                    optr.push(c);
                     break;
                 case '=': /* 只可能是左括号碰到右括号，或者头哨兵碰到尾哨兵 */
-                    POP(optr);
+                    optr.pop();
                     exp++;
                     break;
                 case '>':
-                    c = TOP(optr);
-                    POP(optr);
+                    c = optr.top();
+                    optr.pop();
                     rpn[i++] = c;
                     rpn[i++] = ' ';
                     break;
@@ -171,7 +163,6 @@ char *_generate_rpn(char *exp, bool &is_simple){
         }
     }
     rpn[i] = '\0';
-    stack_free(optr);
     return rpn;
 }
 
