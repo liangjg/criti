@@ -40,7 +40,7 @@ bool particle_is_in_cell(const cell_t *obj, const double pos[3], const double di
 
 /* ------------------------ private API implementation ---------------------- */
 inline bool _has_same_sign(int a, int b){
-    return (a ^ b) & 0x80000000 == 0;
+    return ((a ^ b) & 0x80000000) == 0;
 }
 
 bool _simple_par_in_cell(const cell_t *obj, const double pos[3], const double dir[3], map *surfs){
