@@ -57,6 +57,12 @@ map *map_create(map_type *type);
 
 int map_put(map *m, uint64_t key, void *val);
 
+int map_put_int64(map *m, uint64_t key, int64_t s64);
+
+int map_put_uint64(map *m, uint64_t key, uint64_t u64);
+
+int map_put_double(map *m, uint64_t key, double d);
+
 int map_rm(map *m, uint64_t key);
 
 void *map_get(map *m, uint64_t key);
@@ -65,7 +71,7 @@ void map_free(map *m);
 
 map_entry *map_find(map *m, uint64_t key);
 
-uint64_t _default_string_has_func(const void *key, int len, uint64_t seed);
+uint64_t _default_string_hash_func(const void *key, int len, uint64_t seed);
 
 uint64_t _default_int_hash_func(uint32_t key);
 
