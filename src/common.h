@@ -2,7 +2,7 @@
 #define COMC_COMMON_H
 
 #ifdef __cplusplus
-    #include <cstdlib>
+#include <cstdlib>
     #include <cstdio>
     #include <cmath>
     #include <cstring>
@@ -26,7 +26,7 @@
 #if defined(__linux__) || defined(__linux) || defined(linux)
     #define OS_LINUX
 #elif defined(__WIN32__) || defined(_WIN32) || defined(WIN32)
-    #define OS_WIN32
+#define OS_WIN32
 #elif defined(__APPLE__)
     #define OS_MAC
 #endif
@@ -65,6 +65,10 @@
 #define ONE           1.0
 #define TWO           2.0
 #define EPSILON       1.0E-10
+
+#define GT_ZERO(_x)     ((_x) > EPSILON)
+#define LT_ZERO(_x)     ((_x) < -EPSILON)
+#define EQ_ZERO(_X)     (-EPSILON <= (_x) <= EPSILON)
 
 /* Global static read-only key word */
 static const char keyword[KW_NUMBER][MAX_KW_LENGTH] = {
