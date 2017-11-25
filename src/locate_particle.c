@@ -50,7 +50,7 @@ int locate_particle(const double pos[3], const double dir[3]){
             /* TODO: initiate base_par_state.loc_cells */
             base_par_state.loc_cells[base_par_state.loc_cells_sz++] = lat_index;
 
-            int lat_univ = univ->fill_lat_univese[lat_index];
+            int lat_univ = univ->fill_lat_universe[lat_index];
 
             move_to_origin_lat(univ, lat_index, local_pos_temp);
             trans_univ_coord((universe_t *) map_get(base_univs, lat_univ), local_pos_temp, local_dir_temp);

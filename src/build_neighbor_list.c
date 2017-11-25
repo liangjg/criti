@@ -3,49 +3,57 @@
 //
 
 #include "geometry.h"
-#include "particle_state.h"
-#include "cell.h"
-#include "surface.h"
-#include "universe.h"
 
 extern map *base_surfs;
 extern map *base_cells;
 extern map *base_univs;
-extern particle_state_t base_par_state;
+
+/* hash function prototype */
+static void _val_free(void *val);
+static uint64_t _int_hash_func(const void *key);
 
 void build_neighbor_list(){
     universe_t *univ;
-    cell_t *cell, *cell2;
-    surface_t *surf;
-    map_entry *entry, *entry2;
-    int contained_cells;
-    int contained_surfs;
+    cell_t *cell1, *cell2;
+    map_entry *entry;
+    size_t contained_cells;
+    size_t contained_surfs1, contained_surfs2;
+    map_type *type1, *type2;
+    int cell_index;
+    int surf_index1, surf_index2;
 
     int table = base_univs->table;
     int used = base_univs->ht[table].used;
+    type1 = (map_type *)malloc(sizeof(map_type));
+    type2 = (map_type *)malloc(sizeof(map_type));
+    type1->hash_func = _int_hash_func;
+    type1->value_free = _val_free;
+    type2->hash_func = _int_hash_func;
 
     for(int i = 0; i < used; i++){
         entry = base_univs->ht[table].buckets[i];
         while(entry){
             univ = (universe_t *)entry->v.val;
             if(univ->is_lattice) continue;
+            univ->neighbor_lists = map_create(type1);
             contained_cells = univ->contain_cell_num;
-            univ->neighbor_lists = (int **)malloc(contained_cells * sizeof(int *));
             for(int j = 0; j < contained_cells; j++){
-                cell = (cell_t *)map_get(base_cells, univ->fill_cells[i]);
-                contained_surfs = cell->contain_surfs;
-                univ->neighbor_lists[j] = (int *)malloc(contained_surfs * sizeof(int));
-                for(int k = 0; k < contained_surfs; k++){
-                    surf = (surface_t *)map_get(base_surfs, abs(cell->surfs[k]));
-                    for(int m = 0; m < surf->cell_sz; m++){
-                        entry2 = map_find(base_cells, surf->cell[m]);
-                        if(entry2 && entry2->v.val != cell){
-                            cell2 = entry2->v.val;
-                            for(int n = 0; n < cell2->contain_surfs; n++){
-                                if(cell->surfs[k] + cell2->surfs[n] == 0){
-                                    univ->neighbor_lists[j][k] = cell2->id;
-                                    break;
-                                }
+                cell_index = univ->fill_cells[i];
+                cell1 = (cell_t *)map_get(base_cells, cell_index);
+                contained_surfs1 = vector_size(cell1->surfs);
+                map *val = map_create(type2);
+                map_put(univ->neighbor_lists, cell_index, val);
+                for(int k = 0; k < contained_surfs1; k++){
+                    surf_index1 = *(int *)vector_at(cell1->surfs, k);
+                    for(int m = 0; m < contained_cells; m++){
+                        if(j == m) continue;
+                        cell2 = (cell_t *)map_get(base_cells, m);
+                        contained_surfs2 = vector_size(cell2->surfs);
+                        for(int n = 0; n < contained_surfs2; n++){
+                            surf_index2 = *(int *)vector_at(cell2->surfs, n);
+                            if(surf_index1 + surf_index2 == 0){
+                                map_put(val, surf_index1, cell2);
+                                break;
                             }
                         }
                     }
@@ -54,5 +62,12 @@ void build_neighbor_list(){
             entry = entry->next;
         }
     }
+}
 
+static void _val_free(void *val){
+    map_free((map *) val);
+}
+
+static uint64_t _int_hash_func(const void *key){
+    return _default_int_hash_func(*(uint32_t *) key);
 }

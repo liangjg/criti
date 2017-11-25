@@ -6,6 +6,7 @@
 #define TTYW_UNIVERSE_H
 
 #include "common.h"
+#include "map.h"
 
 typedef struct {
     int contain_cell_num;
@@ -25,11 +26,12 @@ typedef struct {
     double cos_sita;
     double height;
 
-    int *fill_lat_univese;
+    int *fill_lat_universe;
     int filled_lat_num;
 
     /* 在同一个universe内部，每个cell基于每个面的唯一的一个邻居(cell)的cell_id */
-    int **neighbor_lists;
+    /* 当前neighbor_lists实现的是map嵌套map，即map<cell_index, map<surface_index, address of neighbor_cell_index>> */
+    map *neighbor_lists;
 } universe_t;
 
 
