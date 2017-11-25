@@ -49,11 +49,11 @@ map *base_surfs;
 map *base_nucs;
 
 /* -------------------------- hash function prototypes ---------------------------- */
-uint64_t _int_hash_func(const void *key);
+static uint64_t _int_hash_func(const void *key);
 
-uint64_t _str_hash_func(const void *key);
+static uint64_t _str_hash_func(const void *key);
 
-int _str_key_comp_func(uint64_t key1, uint64_t key2);
+static int _str_key_comp_func(uint64_t key1, uint64_t key2);
 
 /* ------------------------ main function --------------------------- */
 int main(int argc, char *argv[]){
@@ -104,12 +104,12 @@ int main(int argc, char *argv[]){
 }
 
 /* ------------------------ hash function implementation ---------------------- */
-uint64_t _int_hash_func(const void *key){
+static uint64_t _int_hash_func(const void *key){
     return _default_int_hash_func(*(uint32_t *) key);
 }
 
 /* DJB string hash function */
-uint64_t _str_hash_func(const void *key){
+static uint64_t _str_hash_func(const void *key){
     char *str = (char *) (*(uint64_t *) key);
     uint64_t hash = 5381;
     int c;
@@ -118,6 +118,6 @@ uint64_t _str_hash_func(const void *key){
     return hash;
 }
 
-int _str_key_comp_func(uint64_t key1, uint64_t key2){
+static int _str_key_comp_func(uint64_t key1, uint64_t key2){
     return strcmp((const char *)key1, (const char *)key2);
 }
