@@ -28,11 +28,8 @@ typedef struct map_ht {
 
 typedef struct map_type {
     uint64_t (*hash_func)(const void *key);
-
     void *(*value_dup)(const void *obj);
-
     void (*value_free)(void *val);
-
     int (*key_compare)(uint64_t key1, uint64_t key2);
 } map_type;
 
