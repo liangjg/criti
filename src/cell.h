@@ -7,6 +7,7 @@
 
 #include "common.h"
 #include "map.h"
+#include "vector.h"
 
 typedef struct {
     int id;               /* cell id */
@@ -19,8 +20,7 @@ typedef struct {
     char *rpn;            /* 面布尔表达式转换而来的RPN表达式 */
     bool simple;          /* 是否是只含有集合交运算的简单cell */
 
-    int *surfs;           /* 具体的面编号 */
-    int contain_surfs;    /* 包含的面的总数 */
+    vector *surfs;        /* 当前cell的全部边界面编号 */
 } cell_t;
 
 #define CELL_KW_NUMBER        7

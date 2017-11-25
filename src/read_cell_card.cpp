@@ -18,6 +18,8 @@ char _order_between(char a, char b, bool &is_simple);
 
 int _identify_cell_kw(char *kw);
 
+void _extract_surfs_from_rpn(cell_t *cell);
+
 /* ----------------------------- API implementation ------------------------- */
 void read_cell_card(universe_t *univ){
     char buf[256];
@@ -45,6 +47,7 @@ void read_cell_card(universe_t *univ){
         *(ret - 1) = 0;
         cell->rpn = _generate_rpn(rpn_start, is_simple);
         cell->simple = is_simple;
+        _extract_surfs_from_rpn(cell);
         while(!ISRETURN(*ret) && !ISCOMMENT(*ret)){
             char *kw_start = ret;
             while(ISALPHA(*ret)){
@@ -217,4 +220,23 @@ char _order_between(char a, char b, bool &is_simple){
             exit(0);
     }
     return priority[p][q];
+}
+
+void _extract_surfs_from_rpn(cell_t *cell){
+    int surf_index = 0x00000000;
+    char *start = cell->rpn;
+
+    while(*start != '\0'){
+        if(ISNUMBER(*start)){
+            do{
+                surf_index *= 10;
+                surf_index += *start++ - '0';
+            } while(ISNUMBER(*start));
+            vector_push_back(cell->surfs, &surf_index);
+            surf_index = 0x00000000;
+        }
+        else if(*start == '-')
+            surf_index |= 0x80000000;
+        start++;
+    }
 }
