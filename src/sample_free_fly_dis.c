@@ -9,6 +9,7 @@
 #include "material.h"
 #include "nuclide.h"
 #include "acedata.h"
+#include "map.h"
 
 extern particle_state_t base_par_state;
 extern map *base_cells;

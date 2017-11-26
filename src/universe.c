@@ -333,7 +333,7 @@ int _offset_neighbor_lat_rect(universe_t *obj, int lat_index, int lat_bound_surf
     return new_index;
 }
 
-int __offset_neighbor_lat_hex(universe_t *obj, int lat_index, int lat_bound_surf, double *pos){
+int _offset_neighbor_lat_hex(universe_t *obj, int lat_index, int lat_bound_surf, double *pos){
     int i2 = (lat_index - 1) / obj->scope[0];
     int i1 = lat_index - 1 - i2 * obj->scope[0];
 
