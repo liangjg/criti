@@ -77,33 +77,33 @@ void read_criticality_block(){
 
                 if(strcmp(sub_kw_start, "POINT") == 0){
                     base_criti.ksrc_type = POINT;
-                    base_criti.ksrc_para_sz = 3;
+//                    base_criti.ksrc_para_sz = 3;
 
                     while(!ISNUMBER(*ret)) ret++;
                     char *end;
-                    for(int i = 0; i < base_criti.ksrc_para_sz; i++){
+                    for(int i = 0; i < 3; i++){
                         base_criti.ksrc_para[i] = strtod(ret, &end);
                         ret = end;
                     }
                 }
                 else if(strcmp(sub_kw_start, "SLAB") == 0){
                     base_criti.ksrc_type = SLAB;
-                    base_criti.ksrc_para_sz = 6;
+//                    base_criti.ksrc_para_sz = 6;
 
                     while(!ISNUMBER(*ret)) ret++;
                     char *end;
-                    for(int i = 0; i < base_criti.ksrc_para_sz; i++){
+                    for(int i = 0; i < 6; i++){
                         base_criti.ksrc_para[i] = strtod(ret, &end);
                         ret = end;
                     }
                 }
                 else if(strcmp(sub_kw_start, "SPHERE") == 0){
                     base_criti.ksrc_type = SLAB;
-                    base_criti.ksrc_para_sz = 4;
+//                    base_criti.ksrc_para_sz = 4;
 
                     while(!ISNUMBER(*ret)) ret++;
                     char *end;
-                    for(int i = 0; i < base_criti.ksrc_para_sz; i++){
+                    for(int i = 0; i < 4; i++){
                         base_criti.ksrc_para[i] = strtod(ret, &end);
                         ret = end;
                     }

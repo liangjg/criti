@@ -14,13 +14,14 @@ extern map *base_cells;
 
 void sample_fission_source(){
     base_par_state.is_killed = false;
+    fission_bank_t *fission_src = (fission_bank_t *)vector_at(&base_criti.fission_src, base_criti.fission_src_cnt);
 
     for(int i = 0; i < 3; i++){
-        base_par_state.pos[i] = base_criti.fission_src[base_criti.fission_src_cnt].pos[i];
-        base_par_state.dir[i] = base_criti.fission_src[base_criti.fission_src_cnt].dir[i];
+        base_par_state.pos[i] = fission_src->pos[i];
+        base_par_state.dir[i] = fission_src->dir[i];
     }
 
-    base_par_state.erg = base_criti.fission_src[base_criti.fission_src_cnt].erg;
+    base_par_state.erg = fission_src->erg;
     base_par_state.wgt = base_start_wgt;
     base_criti.fission_src_cnt++;
 

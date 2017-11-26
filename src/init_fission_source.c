@@ -6,6 +6,7 @@
 #include "RNG.h"
 #include "sample_method.h"
 
+
 extern criti_t base_criti;
 extern RNG_t base_RNG;
 extern double base_start_wgt;
@@ -16,22 +17,31 @@ void init_fission_source(){
     base_criti.cycle_neutron_num = base_criti.neu_num_per_cycle;
     base_criti.tot_start_wgt = 1.0 * base_criti.cycle_neutron_num;
 
-    int bank_sz = (int)(1.2 * base_criti.neu_num_per_cycle);
-    base_criti.fission_bank_sz = bank_sz;
-    base_criti.fission_src_sz = bank_sz;
+    size_t general_bank_sz = (size_t)(1.2 * base_criti.neu_num_per_cycle);
 
-    base_criti.fission_bank = (fission_bank_t *)malloc(bank_sz * sizeof(fission_bank_t));
-    base_criti.fission_src = (fission_bank_t *)malloc(bank_sz * sizeof(fission_bank_t));
+    base_criti.fission_bank.ele_size = sizeof(fission_bank_t);
+    base_criti.fission_bank.start = malloc(general_bank_sz * sizeof(fission_bank_t));
+    base_criti.fission_bank.value_free = NULL;
+    base_criti.fission_bank.end_of_storage = base_criti.fission_bank.start + general_bank_sz * sizeof(fission_bank_t);
+    base_criti.fission_bank.finish = base_criti.fission_bank.start;
+
+    base_criti.fission_src.ele_size = sizeof(fission_bank_t);
+    base_criti.fission_src.start = malloc(general_bank_sz * sizeof(fission_bank_t));
+    base_criti.fission_src.value_free = NULL;
+    base_criti.fission_src.end_of_storage = base_criti.fission_src.start + general_bank_sz * sizeof(fission_bank_t);
+    base_criti.fission_src.finish = base_criti.fission_src.start;
 
     double ksi1, ksi2, ksi3;
+    fission_bank_t *fission_src;
     int source_cnt = base_criti.cycle_neutron_num;
     switch(base_criti.ksrc_type){
         case POINT:{
             for(int i = 0; i < source_cnt; i++){
                 get_rand_seed();
-                base_criti.fission_src[i].pos[0] = base_criti.ksrc_para[0];
-                base_criti.fission_src[i].pos[1] = base_criti.ksrc_para[1];
-                base_criti.fission_src[i].pos[2] = base_criti.ksrc_para[2];
+                fission_src = (fission_bank_t *)vector_at(&base_criti.fission_src, i);
+                fission_src->pos[0] = base_criti.ksrc_para[0];
+                fission_src->pos[1] = base_criti.ksrc_para[1];
+                fission_src->pos[2] = base_criti.ksrc_para[2];
             }
             break;
         }
@@ -42,23 +52,25 @@ void init_fission_source(){
 
             for(int i = 0; i < source_cnt; i++){
                 get_rand_seed();
-                base_criti.fission_src[i].pos[0] = base_criti.ksrc_para[0] + get_rand() * len_x;
-                base_criti.fission_src[i].pos[1] = base_criti.ksrc_para[1] + get_rand() * len_x;
-                base_criti.fission_src[i].pos[2] = base_criti.ksrc_para[2] + get_rand() * len_x;
+                fission_src = (fission_bank_t *)vector_at(&base_criti.fission_src, i);
+                fission_src->pos[0] = base_criti.ksrc_para[0] + get_rand() * len_x;
+                fission_src->pos[1] = base_criti.ksrc_para[1] + get_rand() * len_y;
+                fission_src->pos[2] = base_criti.ksrc_para[2] + get_rand() * len_z;
             }
             break;
         }
         case SPHERE:{
             for(int i = 0; i < source_cnt; i++){
                 get_rand_seed();
+                fission_src = (fission_bank_t *)vector_at(&base_criti.fission_src, i);
                 do{
-                    ksi1 = 2 * get_rand() - 1;
-                    ksi2 = 2 * get_rand() - 1;
-                    ksi3 = 2 * get_rand() - 1;
+                    ksi1 = TWO * get_rand() - ONE;
+                    ksi2 = TWO * get_rand() - ONE;
+                    ksi3 = TWO * get_rand() - ONE;
                 } while(SQUARE(ksi1) + SQUARE(ksi2) + SQUARE(ksi3) > 1);
-                base_criti.fission_src[i].pos[0] = base_criti.ksrc_para[0] + base_criti.ksrc_para[3] * ksi1;
-                base_criti.fission_src[i].pos[1] = base_criti.ksrc_para[1] + base_criti.ksrc_para[3] * ksi2;
-                base_criti.fission_src[i].pos[2] = base_criti.ksrc_para[2] + base_criti.ksrc_para[3] * ksi3;
+                fission_src->pos[0] = base_criti.ksrc_para[0] + base_criti.ksrc_para[3] * ksi1;
+                fission_src->pos[1] = base_criti.ksrc_para[1] + base_criti.ksrc_para[3] * ksi2;
+                fission_src->pos[2] = base_criti.ksrc_para[2] + base_criti.ksrc_para[3] * ksi3;
             }
             break;
         }
@@ -75,12 +87,13 @@ void init_fission_source(){
 
         ksi1 = get_rand();
         ksi2 = get_rand();
-        base_criti.fission_src[i].dir[0] = 2 * ksi2 - 1;
-        base_criti.fission_src[i].dir[1] = sqrt(ONE - SQUARE(base_criti.fission_src[i].dir[0])) * cos(TWO * PI * ksi1);
-        base_criti.fission_src[i].dir[2] = sqrt(ONE - SQUARE(base_criti.fission_src[i].dir[0])) * sin(TWO * PI * ksi1);
+        fission_src = (fission_bank_t *)vector_at(&base_criti.fission_src, i);
+        fission_src->dir[0] = 2 * ksi2 - 1;
+        fission_src->dir[1] = sqrt(ONE - SQUARE(fission_src->dir[0])) * cos(TWO * PI * ksi1);
+        fission_src->dir[2] = sqrt(ONE - SQUARE(fission_src->dir[0])) * sin(TWO * PI * ksi1);
 
         double T = 4.0 / 3.0;
-        base_criti.fission_src[i].erg = sample_maxwell(T);
+        fission_src->erg = sample_maxwell(T);
     }
 
     base_start_wgt = 1.0;

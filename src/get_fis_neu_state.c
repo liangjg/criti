@@ -54,19 +54,13 @@ void get_fis_neu_state(int fis_MT, double fis_wgt){
         } else
             get_ce_exit_state(fis_MT);
 
-        if(base_criti.fission_bank_cnt >= base_criti.fission_bank_sz){
-            int old_sz = base_criti.fission_bank_sz;
-            void *old_addr = base_criti.fission_bank;
-            base_criti.fission_bank_sz = (int)(1.2 * base_criti.fission_bank_cnt);
-            base_criti.fission_bank = (fission_bank_t *)malloc(sizeof(fission_bank_t) * base_criti.fission_bank_sz);
-            memcpy(base_criti.fission_bank, old_addr, old_sz * sizeof(fission_bank_t));
-            free(old_addr);
-        }
+        fission_bank_t fission_bank;
         for(int j = 0; j < 3; j++){
-            base_criti.fission_bank[base_criti.fission_bank_cnt].pos[j] = base_par_state.pos[j];
-            base_criti.fission_bank[base_criti.fission_bank_cnt].dir[j] = base_par_state.exit_dir[j];
+            fission_bank.pos[j] = base_par_state.pos[j];
+            fission_bank.dir[j] = base_par_state.exit_dir[j];
         }
-        base_criti.fission_bank[base_criti.fission_bank_cnt].erg = base_par_state.exit_erg;
+        fission_bank.erg = base_par_state.exit_erg;
+        vector_push_back(&base_criti.fission_bank, &fission_bank);
         base_criti.fission_bank_cnt++;
     }
 }

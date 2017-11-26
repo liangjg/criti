@@ -22,8 +22,8 @@ void release_resource(){
     map_free(base_mats);
     map_free(base_nucs);
 
-    free(base_criti.fission_src);
-    free(base_criti.fission_bank);
+    vector_free(&base_criti.fission_src);
+    vector_free(&base_criti.fission_bank);
 
     /* close all FILE structure if opened */
     if(base_IOfp.opt_fp) fclose(base_IOfp.opt_fp);

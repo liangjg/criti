@@ -13,6 +13,13 @@ void _combine_keff();
 
 void _output_keff();
 
+#define SWAP(_a, _b)    \
+    do{    \
+        void *_temp = (_a);    \
+        (_a) = (_b);    \
+        (_b) = _temp;    \
+    } while(0)
+
 void process_cycle_end(){
     /* process eigenvalue */
     base_criti.tot_fission_bank_cnt = base_criti.fission_bank_cnt;
@@ -34,19 +41,9 @@ void process_cycle_end(){
      * 但是这样逐个复制的开销较大。因此这里直接交换两个数组的指针，同时交换bank_sz和src_sz，
      * 用O(1)时间完成交换
      */
-    unsigned long ptr_src = (unsigned long) (base_criti.fission_src);
-    unsigned long ptr_bank = (unsigned long) (base_criti.fission_bank);
-
-    ptr_src = ptr_src ^ ptr_bank;
-    ptr_bank = ptr_src ^ ptr_bank;
-    ptr_src = ptr_src ^ ptr_bank;
-
-    base_criti.fission_src = (fission_bank_t *) (ptr_src);
-    base_criti.fission_bank = (fission_bank_t *) (ptr_bank);
-
-    base_criti.fission_src_sz = base_criti.fission_src_sz ^ base_criti.fission_bank_sz;
-    base_criti.fission_bank_sz = base_criti.fission_src_sz ^ base_criti.fission_bank_sz;
-    base_criti.fission_src_sz = base_criti.fission_src_sz ^ base_criti.fission_bank_sz;
+    SWAP(base_criti.fission_src.start, base_criti.fission_bank.start);
+    SWAP(base_criti.fission_src.finish, base_criti.fission_bank.finish);
+    SWAP(base_criti.fission_src.end_of_storage, base_criti.fission_bank.end_of_storage);
 
     base_criti.cycle_neutron_num = base_criti.fission_bank_cnt;
     base_start_wgt = ONE * base_criti.tot_start_wgt / base_criti.tot_fission_bank_cnt;

@@ -3,6 +3,7 @@
 //
 
 #include "common.h"
+#include "vector.h"
 
 #ifndef TTYW_CRITICALITY_H
 #define TTYW_CRITICALITY_H
@@ -20,18 +21,19 @@ typedef struct{
 } fission_bank_t;
 
 typedef struct{
+    /* 读取输入文件时的参数 */
     int neu_num_per_cycle;
     int tot_cycle_num;
     int inactive_cycle_num;
     int active_cycle_num;
 
+    /* 初始源参数 */
     KSRC_T ksrc_type;
     double ksrc_para[6];
-    int ksrc_para_sz;
+//    int ksrc_para_sz;
 
     int cycle_neutron_num;    /* 当前代要模拟的中子数目 */
     int current_cycle;
-    //    int current_particle;
 
     double keff_final;                /* final keff of each cycle */
     double keff_wgt_sum[3];           /* 0: Collision estimator,  1: Absorption estimator,  2:Track Length estimator */
@@ -45,16 +47,14 @@ typedef struct{
     double tot_start_wgt;
 
     unsigned long long tot_col_cnt;
-    unsigned long col_cnt;
+    unsigned long long col_cnt;
 
     int fission_bank_cnt;
     int tot_fission_bank_cnt;
     int fission_src_cnt;
 
-    fission_bank_t *fission_src;      /* 当前代要模拟的中子源，每个中子都从其中抽样产生 */
-    int fission_src_sz;               /* 一般来说，src_sz = bank_sz */
-    fission_bank_t *fission_bank;     /* 存储每一代裂变产生的中子，供下一代模拟用 */
-    int fission_bank_sz;
+    vector fission_src;     /* 当前代要模拟的中子源，每个中子都从其中抽样产生 */
+    vector fission_bank;    /* 存储每一代裂变产生的中子，供下一代模拟用；一般来说，src_sz = bank_sz*/
 } criti_t;
 
 
