@@ -72,6 +72,7 @@ int find_lat_index(universe_t *obj, const double pos[3], const double dir[3]);
 void move_to_origin_lat(universe_t *obj, int lat_index, double pos[3]);
 double calc_dist_to_lat(universe_t *obj, const double pos[3], const double dir[3], int *which_surf);
 int offset_neighbor_lat(universe_t *obj, int lat_index, int lat_bound_surf, double pos[3]);
+void univ_free(universe_t *obj);
 
 #ifdef __cplusplus
 }

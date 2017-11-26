@@ -13,6 +13,10 @@
 #include "calculation.h"
 #include "particle_state.h"
 #include "acedata.h"
+#include "universe.h"
+#include "cell.h"
+#include "surface.h"
+#include "material.h"
 
 /* 全局变量初始化 */
 unsigned base_warnings = 0;
@@ -55,26 +59,60 @@ static uint64_t _str_hash_func(const void *key);
 
 static int _str_key_comp_func(uint64_t key1, uint64_t key2);
 
+static void _univ_free(void *obj);
+
+static void _cell_free(void *obj);
+
+static void _surf_free(void *obj);
+
+static void _mat_free(void *obj);
+
+static void _nuc_free(void *obj);
+
 /* ------------------------ main function --------------------------- */
 int main(int argc, char *argv[]){
-    /* set hash function of int_type */
-    map_type *int_type = new map_type;
-    map_type *str_type = new map_type;
+    /* set hash functions of every map_type */
+    map_type *mat_type = new map_type;
+    map_type *univ_type = new map_type;
+    map_type *cell_type = new map_type;
+    map_type *surf_type = new map_type;
+    map_type *nuc_type = new map_type;
 
-    int_type->hash_func = _int_hash_func;
-    int_type->value_dup = nullptr;
-    int_type->value_free = nullptr;
-    int_type->key_compare = nullptr;
-    str_type->hash_func = _str_hash_func;
-    str_type->value_dup = nullptr;
-    str_type->value_free = nullptr;
-    str_type->key_compare = _str_key_comp_func;
+    /* univ_type specification */
+    univ_type->hash_func = _int_hash_func;
+    univ_type->value_dup = nullptr;
+    univ_type->value_free = _univ_free;
+    univ_type->key_compare = nullptr;
 
-    base_univs = map_create(int_type);
-    base_mats = map_create(int_type);
-    base_cells = map_create(int_type);
-    base_surfs = map_create(int_type);
-    base_nucs = map_create(str_type);
+    /* cell_type specification */
+    cell_type->hash_func = _int_hash_func;
+    cell_type->value_dup = nullptr;
+    cell_type->value_free = _cell_free;
+    cell_type->key_compare = nullptr;
+
+    /* surf_type specification */
+    surf_type->hash_func = _int_hash_func;
+    surf_type->value_dup = nullptr;
+    surf_type->value_free = _surf_free;
+    surf_type->key_compare = nullptr;
+
+    /* mat_type specification */
+    mat_type->hash_func = _int_hash_func;
+    mat_type->value_dup = nullptr;
+    mat_type->value_free = _mat_free;
+    mat_type->key_compare = nullptr;
+
+    /* nuc_type specification */
+    nuc_type->hash_func = _str_hash_func;
+    nuc_type->value_dup = nullptr;
+    nuc_type->value_free = _nuc_free;
+    nuc_type->key_compare = _str_key_comp_func;
+
+    base_univs = map_create(univ_type);
+    base_mats = map_create(mat_type);
+    base_cells = map_create(cell_type);
+    base_surfs = map_create(surf_type);
+    base_nucs = map_create(nuc_type);
 
     /* check command line arguments */
     check_IO_file(argc, argv);
@@ -95,10 +133,13 @@ int main(int argc, char *argv[]){
     //    output_ending();
 
     /* release all resource */
-    //    release_resource();
+    release_resource();
 
-    delete int_type;
-    delete str_type;
+    delete mat_type;
+    delete univ_type;
+    delete cell_type;
+    delete surf_type;
+    delete nuc_type;
 
     return 0;
 }
@@ -120,4 +161,24 @@ static uint64_t _str_hash_func(const void *key){
 
 static int _str_key_comp_func(uint64_t key1, uint64_t key2){
     return strcmp((const char *)key1, (const char *)key2);
+}
+
+static void _univ_free(void *obj){
+    univ_free((universe_t *)(obj));
+}
+
+static void _cell_free(void *obj){
+    cell_free((cell_t *)(obj));
+}
+
+static void _surf_free(void *obj){
+    surf_free((surface_t *)(obj));
+}
+
+static void _mat_free(void *obj){
+    mat_free((mat_t *)(obj));
+}
+
+static void _nuc_free(void *obj){
+    nuc_free((nuclide_t *)(obj));
 }

@@ -96,6 +96,8 @@ extern "C" {
 #define Get_loc_of_sab_el_xs(nuclide)        ((nuclide)->JXS[5])
 #define Get_loc_of_sab_el_mu(nuclide)        ((nuclide)->JXS[6])
 
+void nuc_free(nuclide_t *obj);
+
 #ifdef __cplusplus
 }
 #endif

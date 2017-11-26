@@ -130,6 +130,14 @@ int offset_neighbor_lat(universe_t *obj, int lat_index, int lat_bound_surf, doub
     return new_lat_index;
 }
 
+
+void univ_free(universe_t *obj){
+    free(obj->fill_cells);
+    free(obj->fill_lat_universe);
+    map_free(obj->neighbor_lists);
+    free(obj);
+}
+
 /* ------------------------ private API implementation ---------------------- */
 double _calc_dist_to_lat_rect(universe_t *obj, const double pos[3], const double dir[3], int *which_surf) {
     double distance = 1.0E+24;

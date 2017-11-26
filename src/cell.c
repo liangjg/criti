@@ -50,6 +50,12 @@ bool particle_is_in_cell(const cell_t *obj, const double pos[3], const double di
     else return _complex_par_in_cell(obj, pos, dir);
 }
 
+void cell_free(cell_t *obj){
+    free(obj->rpn);
+    vector_free(&obj->surfs);
+    free(obj);
+}
+
 /* ------------------------ private API implementation ---------------------- */
 inline bool _has_same_sign(int a, int b){
     return ((a ^ b) & 0x80000000) == 0;

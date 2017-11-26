@@ -40,6 +40,7 @@ extern "C" {
 
 cell_t *cell_init();
 bool particle_is_in_cell(const cell_t *obj, const double pos[3], const double dir[3]);
+void cell_free(cell_t *obj);
 
 #ifdef __cplusplus
 }
