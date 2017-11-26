@@ -4,13 +4,17 @@
 
 #include "cell.h"
 #include "surface.h"
+#include "map.h"
+
+
+extern map *base_surfs;
 
 /* -------------------------- private prototypes ---------------------------- */
 static inline bool _has_same_sign(int a, int b);
 
-static bool _simple_par_in_cell(const cell_t *obj, const double *pos, const double *dir, map *surfs);
+static bool _simple_par_in_cell(const cell_t *obj, const double *pos, const double *dir);
 
-static bool _complex_par_in_cell(const cell_t *obj, const double *pos, const double *dir, map *surfs);
+static bool _complex_par_in_cell(const cell_t *obj, const double *pos, const double *dir);
 
 /* ----------------------------- API implementation ------------------------- */
 cell_t *cell_init(){
@@ -33,9 +37,9 @@ cell_t *cell_init(){
  * 输出: 粒子是否在当前cell
  * ---------------------------------------------------------
  * */
-bool particle_is_in_cell(const cell_t *obj, const double pos[3], const double dir[3], map *surfs){
-    if(obj->simple) return _simple_par_in_cell(obj, pos, dir, surfs);
-    else return _complex_par_in_cell(obj, pos, dir, surfs);
+bool particle_is_in_cell(const cell_t *obj, const double pos[3], const double dir[3]){
+    if(obj->simple) return _simple_par_in_cell(obj, pos, dir);
+    else return _complex_par_in_cell(obj, pos, dir);
 }
 
 /* ------------------------ private API implementation ---------------------- */
@@ -43,7 +47,7 @@ inline bool _has_same_sign(int a, int b){
     return ((a ^ b) & 0x80000000) == 0;
 }
 
-bool _simple_par_in_cell(const cell_t *obj, const double pos[3], const double dir[3], map *surfs){
+bool _simple_par_in_cell(const cell_t *obj, const double pos[3], const double dir[3]){
     bool in_cell = true;
     char *c = obj->rpn;
     int surf_index = 0;
@@ -58,7 +62,7 @@ bool _simple_par_in_cell(const cell_t *obj, const double pos[3], const double di
                 surf_index += *c - '0';
                 c++;
             } while(ISNUMBER(*c));
-            surf = (surface_t *) map_get(surfs, surf_index);
+            surf = (surface_t *) map_get(base_surfs, surf_index);
             surf_sense = calc_surf_sense(surf, pos, dir);
             in_cell = _has_same_sign(surf_index, surf_sense);
             if(!in_cell) break;
@@ -70,7 +74,7 @@ bool _simple_par_in_cell(const cell_t *obj, const double pos[3], const double di
                 surf_index += *c - '0';
                 c++;
             }
-            surf = (surface_t *) map_get(surfs, surf_index);
+            surf = (surface_t *) map_get(base_surfs, surf_index);
             surf_index = (~surf_index) + 1;
             surf_sense = calc_surf_sense(surf, pos, dir);
             in_cell = _has_same_sign(surf_index, surf_sense);
@@ -80,7 +84,7 @@ bool _simple_par_in_cell(const cell_t *obj, const double pos[3], const double di
     return in_cell;
 }
 
-bool _complex_par_in_cell(const cell_t *obj, const double *pos, const double *dir, map *surfs){
+bool _complex_par_in_cell(const cell_t *obj, const double *pos, const double *dir){
     bool in_cell;
     bool st[16];
     int i_stack;
@@ -101,7 +105,7 @@ bool _complex_par_in_cell(const cell_t *obj, const double *pos, const double *di
                 surf_index += *c - '0';
                 c++;
             } while(ISNUMBER(*c));
-            surf = (surface_t *) map_get(surfs, surf_index);
+            surf = (surface_t *) map_get(base_surfs, surf_index);
             surf_sense = calc_surf_sense(surf, pos, dir);
             in_cell = _has_same_sign(surf_index, surf_sense);
             if(in_cell) st[i_stack] = true;
@@ -114,7 +118,7 @@ bool _complex_par_in_cell(const cell_t *obj, const double *pos, const double *di
                 surf_index += *c - '0';
                 c++;
             }
-            surf = (surface_t *) map_get(surfs, surf_index);
+            surf = (surface_t *) map_get(base_surfs, surf_index);
             surf_index = (~surf_index) + 1;
             surf_sense = calc_surf_sense(surf, pos, dir);
             in_cell = _has_same_sign(surf_index, surf_sense);

@@ -6,7 +6,6 @@
 #define TTYW_CELL_H
 
 #include "common.h"
-#include "map.h"
 #include "vector.h"
 
 typedef struct {
@@ -40,7 +39,7 @@ extern "C" {
 #endif
 
 cell_t *cell_init();
-bool particle_is_in_cell(const cell_t *obj, const double pos[3], const double dir[3], map *surfs);
+bool particle_is_in_cell(const cell_t *obj, const double pos[3], const double dir[3]);
 
 #ifdef __cplusplus
 }
