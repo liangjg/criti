@@ -19,7 +19,7 @@ typedef struct {
     char *rpn;            /* 面布尔表达式转换而来的RPN表达式 */
     bool simple;          /* 是否是只含有集合交运算的简单cell */
 
-    vector *surfs;        /* 当前cell的全部边界面编号 */
+    vector surfs;         /* 当前cell的全部边界面编号 */
 } cell_t;
 
 #define CELL_KW_NUMBER        7

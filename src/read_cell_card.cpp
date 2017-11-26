@@ -232,7 +232,7 @@ void _extract_surfs_from_rpn(cell_t *cell){
                 surf_index *= 10;
                 surf_index += *start++ - '0';
             } while(ISNUMBER(*start));
-            vector_push_back(cell->surfs, &surf_index);
+            vector_push_back(&cell->surfs, &surf_index);
             surf_index = 0x00000000;
         }
         else if(*start == '-')

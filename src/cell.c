@@ -5,6 +5,7 @@
 #include "cell.h"
 #include "surface.h"
 #include "map.h"
+#include "vector.h"
 
 
 extern map *base_surfs;
@@ -26,7 +27,14 @@ cell_t *cell_init(){
     _new_cell->vol = 1.0;
     _new_cell->is_inner_cell = false;
     _new_cell->rpn = NULL;
-    _new_cell->surfs = vector_init(8, sizeof(int));
+
+    /* initialize vector surfs */
+    _new_cell->surfs.ele_size = sizeof(int);
+    _new_cell->surfs.start = malloc((size_t)(8) * sizeof(int));    /* 8 elements by default */
+    _new_cell->surfs.finish = _new_cell->surfs.start;
+    _new_cell->surfs.end_of_storage = _new_cell->surfs.start + 8 * sizeof(int);
+    _new_cell->surfs.value_free = NULL;
+
     return _new_cell;
 }
 

@@ -40,17 +40,17 @@ void build_neighbor_list(){
             for(int j = 0; j < contained_cells; j++){
                 cell_index = univ->fill_cells[i];
                 cell1 = (cell_t *)map_get(base_cells, cell_index);
-                contained_surfs1 = vector_size(cell1->surfs);
+                contained_surfs1 = vector_size(&cell1->surfs);
                 map *val = map_create(type2);
                 map_put(univ->neighbor_lists, cell_index, val);
                 for(int k = 0; k < contained_surfs1; k++){
-                    surf_index1 = *(int *)vector_at(cell1->surfs, k);
+                    surf_index1 = *(int *)vector_at(&cell1->surfs, k);
                     for(int m = 0; m < contained_cells; m++){
                         if(j == m) continue;
                         cell2 = (cell_t *)map_get(base_cells, m);
-                        contained_surfs2 = vector_size(cell2->surfs);
+                        contained_surfs2 = vector_size(&cell2->surfs);
                         for(int n = 0; n < contained_surfs2; n++){
-                            surf_index2 = *(int *)vector_at(cell2->surfs, n);
+                            surf_index2 = *(int *)vector_at(&cell2->surfs, n);
                             if(surf_index1 + surf_index2 == 0){
                                 map_put(val, surf_index1, cell2);
                                 break;
