@@ -65,7 +65,7 @@ int locate_particle(const double pos[3], const double dir[3]){
 
                 cell = (cell_t *)map_get(base_cells, cell_index);
 
-                if(particle_is_in_cell(cell, local_pos_temp, local_dir_temp, base_surfs)){
+                if(particle_is_in_cell(cell, local_pos_temp, local_dir_temp)){
                     base_par_state.loc_cells[base_par_state.loc_cells_sz++] = cell_index;
 
                     if(cell->fill < 0){
