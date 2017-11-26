@@ -4,8 +4,7 @@
 
 #include "geometry.h"
 #include "particle_state.h"
-#include "surface.h"
-#include "cell.h"
+
 
 extern map *base_univs;
 extern map *base_cells;
@@ -33,6 +32,7 @@ void find_next_cell(){
             case CROSSING:
                 find_neighbor_cell();
                 break;
+            /* TODO: complete REFLECTIVE case */
             case REFLECTIVE:{
                 break;
             }

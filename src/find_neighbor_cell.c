@@ -3,7 +3,54 @@
 //
 
 #include "geometry.h"
+#include "particle_state.h"
+
+
+extern particle_state_t base_par_state;
+extern map *base_univs;
 
 void find_neighbor_cell(){
+    double loc_pos[3], loc_dir[3];
+    bool found = false;
+    int neighbor_cell_index = -1;
+    int level = base_par_state.bound_level;
+    int univ_index = base_par_state.loc_univs[level];
+    int bound_surf = base_par_state.bound_surf;
+    universe_t *univ = (universe_t *) map_get(base_univs, univ_index);
 
+    for(int i = 0; i < 3; i++){
+        loc_pos[i] = base_par_state.pos[i];
+        loc_dir[i] = base_par_state.dir[i];
+    }
+
+    if(univ->is_lattice){
+        int lat_index = offset_neighbor_lat(univ, base_par_state.loc_cells[level], base_par_state.bound_surf, loc_pos);
+        if(lat_index >= 0){
+            base_par_state.loc_cells[level] = lat_index;
+            int filled_univ = univ->fill_lat_universe[lat_index - 1];
+            trans_univ_coord((universe_t *) map_get(base_univs, filled_univ), loc_pos, loc_dir);
+            neighbor_cell_index = locate_particle(loc_pos, loc_dir);
+        }
+    } else{
+        int current_cell = base_par_state.loc_cells[level];
+        map *val = (map *) map_get(univ->neighbor_lists, current_cell);
+        cell_t *neighbor_cell = (cell_t *) map_get(val, bound_surf);
+        if(particle_is_in_cell(neighbor_cell, loc_pos, loc_dir))
+            found = true;
+
+        if(found){
+            base_par_state.loc_cells[level] = neighbor_cell->id;
+            int filled_univ = neighbor_cell->fill;
+            if(filled_univ > 0){    /* neighbor_cell is a complex cell with universe filled */
+                universe_t *filled_universe = (universe_t *)map_get(base_univs, filled_univ);
+                trans_univ_coord(filled_universe, loc_pos, loc_dir);
+                neighbor_cell_index = locate_particle(loc_pos, loc_dir);
+            }
+        }
+    }
+
+    if(!found)
+        neighbor_cell_index = locate_particle(loc_pos, loc_dir);
+
+    base_par_state.cell = neighbor_cell_index;
 }
