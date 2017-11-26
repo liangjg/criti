@@ -20,21 +20,13 @@
 
 /* 全局变量初始化 */
 unsigned base_warnings = 0;
-
 unsigned base_errors = 0;
-
 double base_start_wgt = 0.0;
-
 criti_t base_criti;
-
 IOfp_t base_IOfp;
-
 RNG_t base_RNG;
-
 CALC_MODE_T base_mode;
-
 particle_state_t base_par_state;
-
 acedata_t base_acedata;
 
 /* key: universe index; val: corresponding universe instance address */
@@ -130,7 +122,7 @@ int main(int argc, char *argv[]){
     run_calculation(base_mode);
 
     /* output ending */
-    //    output_ending();
+    output_ending();
 
     /* release all resource */
     release_resource();
