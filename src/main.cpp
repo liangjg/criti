@@ -25,7 +25,6 @@ double base_start_wgt = 0.0;
 criti_t base_criti;
 IOfp_t base_IOfp;
 RNG_t base_RNG;
-CALC_MODE_T base_mode;
 particle_state_t base_par_state;
 acedata_t base_acedata;
 
@@ -106,6 +105,8 @@ int main(int argc, char *argv[]){
     base_surfs = map_create(surf_type);
     base_nucs = map_create(nuc_type);
 
+    CALC_MODE_T calc_mode;
+
     /* check command line arguments */
     check_IO_file(argc, argv);
 
@@ -113,13 +114,13 @@ int main(int argc, char *argv[]){
     output_heading();
 
     /* read input file */
-    read_input_blocks();
+    read_input_blocks(&calc_mode);
 
     /* read ACE database */
     read_ace_data();
 
     /* run calculation */
-    run_calculation(base_mode);
+    run_calculation(calc_mode);
 
     /* output ending */
     output_ending();

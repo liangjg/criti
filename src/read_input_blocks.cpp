@@ -6,13 +6,11 @@
 
 extern IOfp_t base_IOfp;
 
-extern CALC_MODE_T base_mode;
-
 /* -------------------------- private prototypes ---------------------------- */
 int _identify_kw(char *kw);
 
 /* ----------------------------- API implementation ------------------------- */
-void read_input_blocks(){
+void read_input_blocks(CALC_MODE_T *calc_mode){
     char buf[256];
     char *ret;
     char *kw_start;
@@ -46,20 +44,20 @@ void read_input_blocks(){
                     read_material_block();
                     break;
                 case 3:    /* CRITICALITY */
-                    base_mode = CRITICALITY;
+                    *calc_mode = CRITICALITY;
                     read_criticality_block();
                     break;
                 case 4:    /* TALLY */
 //                    read_tally_block();
                     break;
                 case 5:    /* FIXEDSOURCE */
-                    base_mode = FIXEDSOURCE;
+                    *calc_mode = FIXEDSOURCE;
 //                    read_fixed_src_block();
                 case 6:    /* DEPLETION */
-                    base_mode = POINTBURN;
+                    *calc_mode = POINTBURN;
                     break;
                 case 7:    /* BURNUP */
-                    base_mode = BURNUP;
+                    *calc_mode = BURNUP;
 //                    read_burnup_block();
                     break;
                 default:

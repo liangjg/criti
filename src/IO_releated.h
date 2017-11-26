@@ -8,6 +8,7 @@
 #include "common.h"
 #include "universe.h"
 
+
 typedef struct {
     FILE *inp_fp;
     FILE *opt_fp;
@@ -23,7 +24,7 @@ extern "C" {
 #endif
 
 void check_IO_file(int, char **);
-void read_input_blocks();
+void read_input_blocks(CALC_MODE_T *calc_mode);
 void read_universe_block(char *);
 void read_cell_card(universe_t *);
 void read_surf_block();
