@@ -23,9 +23,10 @@ typedef enum{
 } SURF_T;
 
 typedef struct {
-    SURF_T type;
-    double paras[4];
-    int bc;
+    int id;              /* surface id */
+    SURF_T type;         /* surface type */
+    double paras[4];     /* type parameters */
+    int bc;              /* boundary condition of this surface */
 } surface_t;
 
 
