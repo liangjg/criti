@@ -13,10 +13,8 @@
 #include "calculation.h"
 #include "particle_state.h"
 #include "acedata.h"
-#include "universe.h"
-#include "cell.h"
-#include "surface.h"
 #include "material.h"
+#include "geometry.h"
 
 /* 全局变量初始化 */
 unsigned base_warnings = 0;
@@ -119,8 +117,34 @@ int main(int argc, char *argv[]){
     /* read ACE database */
     read_ace_data();
 
+    /* check ACE data */
+    check_ce_ace_block();
+
+    /* 构建邻居栅元加速几何查找 */
+    build_neighbor_list();
+
     /* run calculation */
-    run_calculation(calc_mode);
+    switch(calc_mode){
+        case CRITICALITY:
+            puts("\n******** Calculation mode: criticality ********\n");
+            calc_criticality();
+            break;
+        case FIXEDSOURCE:
+            puts("\n******** Calculation mode: fixed-source ********\n");
+//            calc_fixed_source();
+            break;
+        case BURNUP:
+            puts("\n******** Calculation mode: burnup ********\n");
+//            calc_burnup();
+            break;
+        case POINTBURN:
+            puts("\n******** Calculation mode: point burnup ********\n");
+//            calc_point_burn();
+            break;
+        default:
+            puts("\n******** Unknown calculation mode. ********\n");
+            break;
+    }
 
     /* output ending */
     output_ending();

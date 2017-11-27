@@ -2,7 +2,6 @@
 // Created by xaq on 10/26/17.
 //
 
-#include "common.h"
 
 #ifndef TTYW_CALCULATION_H
 #define TTYW_CALCULATION_H
@@ -10,8 +9,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-void run_calculation(CALC_MODE_T mode);
 
 void calc_criticality();
 

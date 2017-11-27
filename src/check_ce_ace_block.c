@@ -26,6 +26,7 @@ void check_ce_ace_block(){
                 if(NMT_4 == 0){
                     /// maximum MT = 107 is requireed for reaction rate tally
                     nuc->MTR_index_sz = 110;
+                    nuc->MTR_index = (int *)malloc(sizeof(int) * nuc->MTR_index_sz);
                     nuc->LAND_sz = 3;
                     /// elastic LAND
                     nuc->LAND = (int *)malloc(sizeof(int) * nuc->LAND_sz);
@@ -41,11 +42,11 @@ void check_ce_ace_block(){
                     MT_max_5 = (int)(MAX(nuc->XSS[L3 + NMT_5 - 1], nuc->XSS[L3]));
                     nuc->MTR_index_sz = MAX(110, MT_max_4 + 1);
                     nuc->MTR_index = (int *)malloc(sizeof(int) * nuc->MTR_index_sz); // need MT=107 when tally reaction rate
-                    nuc->LSIG_sz = nuc->MTR_index_sz;
-                    nuc->LSIG = (int)malloc(sizeof(int) * nuc->LSIG_sz);   //  only containing NXS_5 MT actually
+                    nuc->LSIG_sz = MAX(110, MT_max_4 + 1);
+                    nuc->LSIG = (int *)malloc(sizeof(int) * nuc->LSIG_sz);             //  only containing NXS_5 MT actually
                     nuc->LAND_sz = MT_max_5 + 3;
-                    nuc->LAND = (int *)malloc(sizeof(int) * nuc->LAND_sz);             //  only containing NXS_5 MT actually
-                    nuc->LAND[2] = (int)(nuc->XSS[L8]);           //  elastic LAND
+                    nuc->LAND = (int *)malloc(sizeof(int) * nuc->LAND_sz);           //  only containing NXS_5 MT actually
+                    nuc->LAND[2] = (int)(nuc->XSS[L8]);                              //  elastic LAND
                     nuc->LDLW_sz = MT_max_5 + 3;
                     nuc->LDLW = (int *)malloc(sizeof(int) * nuc->LDLW_sz);
                     for(int j = 1; j <= NMT_4; j++){
@@ -60,7 +61,7 @@ void check_ce_ace_block(){
                             old_addr = nuc->MTR_index;
                             old_sz = nuc->MTR_index_sz;
                             nuc->MTR_index_sz = MT_temp + 1;
-                            nuc->MTR_index = (int *)malloc(sizeof(int) * (MT_temp + 1));
+                            nuc->MTR_index = (int *)malloc(sizeof(int) * nuc->MTR_index_sz);
                             memcpy(nuc->MTR_index, old_addr, old_sz * sizeof(int));
                             free(old_addr);
 
@@ -68,7 +69,7 @@ void check_ce_ace_block(){
                             old_addr = nuc->LSIG;
                             old_sz = nuc->LSIG_sz;
                             nuc->LSIG_sz = MT_temp + 1;
-                            nuc->LSIG = (int *)malloc(sizeof(int) * (MT_temp + 1));
+                            nuc->LSIG = (int *)malloc(sizeof(int) * nuc->LSIG_sz);
                             memcpy(nuc->LSIG, old_addr, old_sz * sizeof(int));
                             free(old_addr);
                         }
@@ -89,35 +90,35 @@ void check_ce_ace_block(){
                 nuc->inel_XSS = (double *)malloc(sizeof(double) * (NE + 1));
 
                 bool bMt18Exist = false;
-                for(int j = 1; j <= GetErgGridNum(nuc); ++j) {
+                for(int j = 1; j <= GetErgGridNum(nuc); j++) {
                     nuc->fis_XSS[j] = 0;
                     nuc->inel_XSS[j] = 0;
-                    int nloc = GetLocOfMTR(nuc) - 1;
+                    int loc = GetLocOfMTR(nuc) - 1;
                     for(int k = 1; k <= GetNonElMtNumWithNeu(nuc); k++) {
-                        int MT_temp = (int)(nuc->XSS[nloc + k]);
+                        int MT_temp = (int)(nuc->XSS[loc + k]);
 
                         if(MT_temp <= 0) {
-                            printf("unknown MT number.\n   Nuc = %d, MT = XSS[%d] = %d.\n", nuc->zaid, nloc + k, MT_temp);
+                            printf("unknown MT number.\n   Nuc = %d, MT = XSS[%d] = %d.\n", nuc->zaid, loc + k, MT_temp);
                             base_warnings++;
                         }
 
-                        int nIE_LOCA = GetLocOfSIG(nuc) + nuc->LSIG[MT_temp] - 1;
-                        int nSIG_IE = (int)(nuc->XSS[nIE_LOCA]);
-                        int nSIG_NE = (int)(nuc->XSS[nIE_LOCA + 1]);
-                        if((nSIG_IE + nSIG_NE - 1) != NE) {
+                        int IE_LOCA = GetLocOfSIG(nuc) + nuc->LSIG[MT_temp] - 1;
+                        int SIG_IE = (int)(nuc->XSS[IE_LOCA]);
+                        int SIG_NE = (int)(nuc->XSS[IE_LOCA + 1]);
+                        if((SIG_IE + SIG_NE - 1) != NE) {
                             printf("Abnormal cross-section of reaction MT=%d in nuc=%s \n", MT_temp, nuc->id);
                             exit(0);
                         }
                         if(MT_temp == 18)
                             bMt18Exist = true;
-                        if(k >= nSIG_IE) {
+                        if(j >= SIG_IE) {
                             if(MT_temp != 18 && MT_temp != 19 && MT_temp != 20 && MT_temp != 21 && MT_temp != 38) {
-                                nuc->inel_XSS[k] = nuc->inel_XSS[k] + nuc->XSS[nIE_LOCA + 2 + k - nSIG_IE];
+                                nuc->inel_XSS[j] += nuc->XSS[IE_LOCA + 2 + j - SIG_IE];
                             } else {
-                                if(bMt18Exist && MT_temp == 18)
-                                    nuc->fis_XSS[k] = nuc->XSS[nIE_LOCA + 2 + k - nSIG_IE];
-                                else if(!bMt18Exist)
-                                    nuc->fis_XSS[k] = nuc->fis_XSS[k] + nuc->XSS[nIE_LOCA + 2 + k - nSIG_IE];
+                                if(bMt18Exist)
+                                    nuc->fis_XSS[j] = nuc->XSS[IE_LOCA + 2 + j - SIG_IE];
+                                else
+                                    nuc->fis_XSS[j] += nuc->XSS[IE_LOCA + 2 + j - SIG_IE];
                             }
                         }
                     }
