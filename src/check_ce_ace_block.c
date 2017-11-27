@@ -13,7 +13,7 @@ void check_ce_ace_block(){
     nuclide_t *nuc;
     int *old_addr, old_sz;
     int table = base_nucs->table;
-    for(int i = 0; i < base_nucs->ht->size; i++){
+    for(unsigned long i = 0; i < base_nucs->ht->size; i++){
         nuc_entry = base_nucs->ht[table].buckets[i];
         while(nuc_entry){
             nuc = (nuclide_t *)nuc_entry->v.val;

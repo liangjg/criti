@@ -60,7 +60,6 @@ void _combine_keff(){
     if(base_criti.current_cycle <= base_criti.inactive_cycle_num)
         return;
 
-    double keff_simple_ave[4], keff_simple_std[4];       // simple combined averages and std. devs
     double keff_corr[3];                          // Correlation
     int i, j, k, diffrence;
     double d0, d1, d2, temp;
@@ -75,8 +74,6 @@ void _combine_keff(){
     }
 
     for(i = 0; i < 4; ++i){
-        keff_simple_ave[i] = ZERO;
-        keff_simple_std[i] = ZERO;
         base_criti.keff_covw_ave[i] = ZERO;
         base_criti.keff_covw_std[i] = ZERO;
     }
@@ -103,9 +100,6 @@ void _combine_keff(){
     d2 = sqrt(d0 / (d0 - TWO));
     for(i = 0; i < 3; ++i){
         j = (i + 1) % 3;
-        keff_simple_ave[i] = HALF * (base_criti.keff_individual_ave[i] + base_criti.keff_individual_ave[j]);
-        keff_simple_std[i] =
-                HALF * d1 * sqrt(fabs(keff_covw[i][i] + keff_covw[j][j] + 2 * keff_covw[i][j])) / diffrence;
         base_criti.keff_covw_ave[i] = base_criti.keff_individual_ave[i];
         base_criti.keff_covw_std[i] = base_criti.keff_individual_std[i];
         temp = keff_covw[i][i] + keff_covw[j][j] - TWO * keff_covw[i][j];
@@ -123,9 +117,6 @@ void _combine_keff(){
         if(keff_covw[i][i] * keff_covw[j][j] > 0)
             keff_corr[i] = keff_covw[i][j] / sqrt(fabs(keff_covw[i][i] * keff_covw[j][j]));
     }
-    keff_simple_ave[3] = (base_criti.keff_individual_ave[0] + base_criti.keff_individual_ave[1] +
-                          base_criti.keff_individual_ave[2]) / 3;
-    keff_simple_std[3] = d1 * sqrt(fabs(keff_covw_sum)) / (3 * diffrence);
 
     /// calculate the combined average (col/abs/tl), zc(4). //
     if(diffrence == 3)
