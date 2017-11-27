@@ -60,8 +60,8 @@ int locate_particle(const double pos[3], const double dir[3]){
         } else{
             /* TODO: */
             base_par_state.loc_univs[base_par_state.loc_univs_sz++] = univ_index;
-            for(int i = 0; i < univ->contain_cell_num; i++){
-                int cell_index = univ->fill_cells[i];
+            for(size_t i = 0; i < vector_size(&univ->fill_cells); i++){
+                int cell_index = *(int *)vector_at(&univ->fill_cells, i);
 
                 cell = (cell_t *)map_get(base_cells, cell_index);
 

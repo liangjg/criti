@@ -3,9 +3,7 @@
 //
 
 #include "IO_releated.h"
-#include "map.h"
 #include "cell.h"
-#include <vector>
 #include <stack>
 
 extern map *base_cells;
@@ -24,7 +22,6 @@ void _extract_surfs_from_rpn(cell_t *cell);
 void read_cell_card(universe_t *univ){
     char buf[256];
     char *ret = nullptr;
-    std::vector<int> cells;
     bool is_simple = true;
 
     while((ret = fgets(buf, MAX_LINE_LENGTH, base_IOfp.inp_fp)) != nullptr){
@@ -40,7 +37,7 @@ void read_cell_card(universe_t *univ){
 
         cell_t *cell = cell_init();
         map_put(base_cells, index, cell);
-        cells.push_back(index);
+        vector_push_back(&univ->fill_cells, &index);
 
         char *rpn_start = ret;
         while(!ISALPHA(*ret)) ret++;
@@ -100,13 +97,6 @@ void read_cell_card(universe_t *univ){
             }
             while(ISSPACE(*ret)) ret++;
         }
-    }
-
-    if(!cells.empty()){
-        univ->contain_cell_num = cells.size();
-        univ->fill_cells = new int[univ->contain_cell_num];
-        for(int i = 0; i < cells.size(); i++)
-            univ->fill_cells[i] = cells[i];
     }
 }
 

@@ -7,10 +7,10 @@
 
 #include "common.h"
 #include "map.h"
+#include "vector.h"
 
 typedef struct {
-    int contain_cell_num;
-    int *fill_cells;
+    vector fill_cells;
 
     double origin[3];
     double rotation[3][3];
