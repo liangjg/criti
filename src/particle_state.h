@@ -21,12 +21,8 @@ typedef struct{
     double loc_dir[3];          /* uvw direction in local Universe. */
 
     /* geometry state */
-    vector loc_univs_v;
-    vector loc_cells_v;
-    int *loc_univs;             /* Universes where the Particle is located */
-    int loc_univs_sz;
-    int *loc_cells;             /* The i-th cell in universe where the Particle is located. ==>  Universe[LocUnivs].ContainCells[LocCells] */
-    int loc_cells_sz;
+    vector loc_univs;           /* Universes where the Particle is located */
+    vector loc_cells;           /* The i-th cell in universe where the Particle is located. ==>  Universe[LocUnivs].ContainCells[LocCells] */
     int cell;                   /* CELL in maximum-level universe where the Particle is located */
     int bound_level;            /* Boundary is in the i-th level universe                       */
     int bound_surf;             /* Boundary surface index                                       */
@@ -51,7 +47,7 @@ typedef struct{
     /* free-gas/sab state */
     bool is_sab_col;            /* sab collision                       */
     bool is_free_gas_col;       /* free gas collision                  */
-    double erg_rel;             /* relative energ in free gas model    */
+    double erg_rel;             /* relative energy in free gas model   */
     double dir_vel[3];          /* relative velocity in free gas model */
     double vel_tgt[3];          /* Target velocity in free gas model   */
 } particle_state_t;

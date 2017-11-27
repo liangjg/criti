@@ -37,14 +37,12 @@ int locate_particle(particle_state_t *par_state, const double pos[3], const doub
         univ = (universe_t *) map_get(base_univs, univ_index);
 
         if(univ->is_lattice){
-            /* TODO: initiate par_state->loc_univs */
-            par_state->loc_univs[par_state->loc_univs_sz++] = univ_index;
+            vector_push_back(&par_state->loc_univs, &univ_index);
 
             int lat_index = find_lat_index(univ, local_pos_temp, local_dir_temp);
             if(lat_index < 0) break;
 
-            /* TODO: initiate par_state->loc_cells */
-            par_state->loc_cells[par_state->loc_cells_sz++] = lat_index;
+            vector_push_back(&par_state->loc_cells, &lat_index);
 
             int lat_univ = univ->fill_lat_universe[lat_index];
 
@@ -54,15 +52,14 @@ int locate_particle(particle_state_t *par_state, const double pos[3], const doub
             univ_index = lat_univ;
 
         } else{
-            /* TODO: */
-            par_state->loc_univs[par_state->loc_univs_sz++] = univ_index;
+            vector_push_back(&par_state->loc_univs, &univ_index);
             for(size_t i = 0; i < vector_size(&univ->fill_cells); i++){
                 int cell_index = *(int *)vector_at(&univ->fill_cells, i);
 
                 cell = (cell_t *)map_get(base_cells, cell_index);
 
                 if(particle_is_in_cell(cell, local_pos_temp, local_dir_temp)){
-                    par_state->loc_cells[par_state->loc_cells_sz++] = cell_index;
+                    vector_push_back(&par_state->loc_cells, &cell_index);
 
                     if(cell->fill < 0){
                         for(int j = 0; j < 3; j++){

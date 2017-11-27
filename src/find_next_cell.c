@@ -17,7 +17,7 @@ void find_next_cell(particle_state_t *par_state){
     cell_t *cell;
     surface_t *surf;
 
-    int univ_index = par_state->loc_univs[par_state->bound_level];
+    int univ_index = *(int *)vector_at(&par_state->loc_univs, par_state->bound_level);
     univ = (universe_t *) map_get(base_univs, univ_index);
 
     if(univ->is_lattice)

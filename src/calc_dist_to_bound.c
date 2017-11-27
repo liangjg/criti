@@ -27,8 +27,8 @@ double calc_dist_to_bound(particle_state_t *par_state){
     if(cell->is_inner_cell){
         for(int i = 0; i < 3; i++)
             loc_dir[i] = par_state->dir[i];
-        for(int i = 0; i < par_state->loc_cells_sz; i++){
-            int loc_univ = par_state->loc_univs[i];
+        for(int i = 0; i < vector_size(&par_state->loc_univs); i++){
+            int loc_univ = *(int *)vector_at(&par_state->loc_univs, i);
             univ = (universe_t *) map_find(base_univs, loc_univ);
             trans_univ_dir(univ, loc_dir);
         }
@@ -51,7 +51,7 @@ double calc_dist_to_bound(particle_state_t *par_state){
                     dist_min = distance;
                     par_state->bound_surf = surf_index;
                     par_state->lat_bound_surf = 0;
-                    par_state->bound_level = par_state->loc_cells_sz - 1;
+                    par_state->bound_level = vector_size(&par_state->loc_cells) - 1;
                 }
             } else rpn++;
         }
@@ -61,13 +61,13 @@ double calc_dist_to_bound(particle_state_t *par_state){
             loc_dir[i] = par_state->dir[i];
         }
 
-        for(int i = 0; i < par_state->loc_cells_sz; i++){
-            int loc_univ = par_state->loc_univs[i];
+        for(size_t i = 0; i < vector_size(&par_state->loc_univs); i++){
+            int loc_univ = *(int *)vector_at(&par_state->loc_univs, i);
             univ = (universe_t *)map_get(base_univs, loc_univ);
             trans_univ_coord(univ, loc_pos, loc_dir);
 
             if(univ->is_lattice){
-                int lat_index = par_state->loc_cells[i];
+                int lat_index = *(int *)vector_at(&par_state->loc_cells, i);
                 move_to_origin_lat(univ, lat_index, loc_pos);
                 int lat_bound_surf;
                 double distance = calc_dist_to_lat(univ, loc_pos, loc_dir, &lat_bound_surf);
@@ -87,7 +87,7 @@ double calc_dist_to_bound(particle_state_t *par_state){
                 continue;
             }
 
-            int cell_index = par_state->loc_cells[i];
+            int cell_index = *(int *)vector_at(&par_state->loc_cells, i);
             cell = (cell_t *)map_get(base_cells, cell_index);
 
             char *rpn = cell->rpn;
