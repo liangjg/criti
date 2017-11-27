@@ -36,4 +36,4 @@ void calc_col_nuc_cs(){
 
     get_nuc_abs_scatt_cs(&base_acedata, nuc, base_par_state.erg, base_par_state.interp_N0, base_par_state.interp_K0,
                          base_par_state.interp_N, base_par_state.interp_K);
-};
+}

@@ -35,12 +35,6 @@ extern "C" {
 #endif
 
 #define LENGTH_VECTOR(vec)    (sqrt(SQUARE((vec)[0]) + SQUARE((vec)[1]) + SQUARE((vec)[2])))
-//#define NORMALIZE_VECTOR(vec)  \
-//    do{                       \
-//        ((vec)[0]) /= LENGTH_VECTOR(vec); \
-//        ((vec)[1]) /= LENGTH_VECTOR(vec); \
-//        ((vec)[2]) /= LENGTH_VECTOR(vec); \
-//} while(0)
 
 surface_t *surf_init();
 int calc_surf_sense(surface_t *obj, const double pos[3], const double dir[3]);

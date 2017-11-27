@@ -5,6 +5,8 @@
 #include <string.h>
 #include "vector.h"
 
+#pragma GCC diagnostic ignored "-Wpointer-arith"
+
 /* -------------------------- private prototypes ---------------------------- */
 void _expand(vector *v, size_t new_size);
 
@@ -66,7 +68,6 @@ void vector_pop_back(vector *v){
 }
 
 void vector_resize(vector *v, size_t new_size){
-    void *old = v->start;
     size_t cap = vector_capacity(v);
     if(new_size > cap)
         _expand(v, new_size);

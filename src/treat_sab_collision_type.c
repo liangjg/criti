@@ -81,7 +81,7 @@ void treat_sab_colli_type(const nuclide_t *sab_nuc, double SIG_sab_el, double SI
         int LN_offset = GetSabInelEoutNum(sab_nuc) * (N_inel_mu + 1);
         int LN = (sab_n_inel - 1) * LN_offset + GetLocOfSabInelErgMu(sab_nuc) + LE * (N_inel_mu + 1);
         *exit_erg_lab = sab_nuc->XSS[LN] + sab_k_inel * (sab_nuc->XSS[LN + LN_offset] - sab_nuc->XSS[LN]);
-        if(exit_erg_lab <= 0) {
+        if(*exit_erg_lab <= 0) {
             puts("exit energy in sab collision is out of range.");
             base_warnings++;
             *exit_erg_lab = EG0_CUTOFF;

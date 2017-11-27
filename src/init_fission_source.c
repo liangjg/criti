@@ -19,6 +19,8 @@ void init_fission_source(){
 
     size_t general_bank_sz = (size_t)(1.2 * base_criti.neu_num_per_cycle);
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpointer-arith"
     base_criti.fission_bank.ele_size = sizeof(fission_bank_t);
     base_criti.fission_bank.start = malloc(general_bank_sz * sizeof(fission_bank_t));
     base_criti.fission_bank.value_free = NULL;
@@ -30,6 +32,7 @@ void init_fission_source(){
     base_criti.fission_src.value_free = NULL;
     base_criti.fission_src.end_of_storage = base_criti.fission_src.start + general_bank_sz * sizeof(fission_bank_t);
     base_criti.fission_src.finish = base_criti.fission_src.start;
+#pragma GCC diagnostic pop
 
     double ksi1, ksi2, ksi3;
     fission_bank_t *fission_src;

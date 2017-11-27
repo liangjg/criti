@@ -23,33 +23,33 @@ void build_neighbor_list(){
     int surf_index1, surf_index2;
 
     int table = base_univs->table;
-    int used = base_univs->ht[table].used;
+    unsigned long used = base_univs->ht[table].used;
     type1 = (map_type *)malloc(sizeof(map_type));
     type2 = (map_type *)malloc(sizeof(map_type));
     type1->hash_func = _int_hash_func;
     type1->value_free = _val_free;
     type2->hash_func = _int_hash_func;
 
-    for(int i = 0; i < used; i++){
+    for(unsigned long i = 0; i < used; i++){
         entry = base_univs->ht[table].buckets[i];
         while(entry){
             univ = (universe_t *)entry->v.val;
             if(univ->is_lattice) continue;
             univ->neighbor_lists = map_create(type1);
             contained_cells = univ->contain_cell_num;
-            for(int j = 0; j < contained_cells; j++){
+            for(size_t j = 0; j < contained_cells; j++){
                 cell_index = univ->fill_cells[i];
                 cell1 = (cell_t *)map_get(base_cells, cell_index);
                 contained_surfs1 = vector_size(&cell1->surfs);
                 map *val = map_create(type2);
                 map_put(univ->neighbor_lists, cell_index, val);
-                for(int k = 0; k < contained_surfs1; k++){
+                for(size_t k = 0; k < contained_surfs1; k++){
                     surf_index1 = *(int *)vector_at(&cell1->surfs, k);
-                    for(int m = 0; m < contained_cells; m++){
+                    for(size_t m = 0; m < contained_cells; m++){
                         if(j == m) continue;
                         cell2 = (cell_t *)map_get(base_cells, m);
                         contained_surfs2 = vector_size(&cell2->surfs);
-                        for(int n = 0; n < contained_surfs2; n++){
+                        for(size_t n = 0; n < contained_surfs2; n++){
                             surf_index2 = *(int *)vector_at(&cell2->surfs, n);
                             if(surf_index1 + surf_index2 == 0){
                                 map_put(val, surf_index1, cell2);

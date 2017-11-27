@@ -43,7 +43,7 @@ void get_ce_exist_erg_mu(const nuclide_t *nuc, int MT, double incident_erg, doub
     /////////////////  check exit Erg and Mu in lab /////////////
     if(*exit_erg_lab == 0)  // occasionally with MT = 2
         *exit_erg_lab = ZERO_ERG;
-    else if(!(exit_erg_lab > 0 && *exit_erg_lab < 100)){
+    else if(!(*exit_erg_lab > 0 && *exit_erg_lab < 100)){
         printf("exit erg_lab out of range. nuc=%d, MT=%d, Erg=%9.6E\n", nuc->zaid, MT, *exit_erg_lab);
         base_warnings++;
         *exit_erg_lab = ZERO_ERG;
