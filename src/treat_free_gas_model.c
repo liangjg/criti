@@ -3,20 +3,18 @@
 //
 
 #include "neutron_transport.h"
-#include "particle_state.h"
 #include "RNG.h"
 
-extern particle_state_t base_par_state;
 
-void treat_free_gas_model(double nuc_wgt){
+void treat_free_gas_model(particle_state_t *par_state, double nuc_wgt){
     double dAtomTmp;
     double r1, z2, s, z, c, x2;
     double dYcn;
     int nIterCount = 0;
 
     /////// sample the velocity of the target nucleus.///////////
-    dAtomTmp = nuc_wgt / base_par_state.cell_tmp; //?
-    dYcn = sqrt(base_par_state.erg * dAtomTmp); //Temperature-normalized neutron velocity.
+    dAtomTmp = nuc_wgt / par_state->cell_tmp; //?
+    dYcn = sqrt(par_state->erg * dAtomTmp); //Temperature-normalized neutron velocity.
     do{
         nIterCount++;
         if(nIterCount >= MAX_ITER){
@@ -42,23 +40,23 @@ void treat_free_gas_model(double nuc_wgt){
         x2 = dYcn * dYcn + z2 - 2 * dYcn * z * c;
     } while(pow(get_rand() * (dYcn + z), 2) > x2);
 
-    rotate_dir(c, base_par_state.dir, base_par_state.vel_tgt);
+    rotate_dir(c, par_state->dir, par_state->vel_tgt);
 
     /////////// calculate functions of the target velocity.////////
     for(int i = 0; i < 3; ++i){
-        base_par_state.vel_tgt[i] = z * base_par_state.vel_tgt[i];
-        base_par_state.dir_vel[i] = dYcn * base_par_state.dir[i] - base_par_state.vel_tgt[i];
+        par_state->vel_tgt[i] = z * par_state->vel_tgt[i];
+        par_state->dir_vel[i] = dYcn * par_state->dir[i] - par_state->vel_tgt[i];
     }
 
-    //    CDGlobeFun::Normalize3Array(base_par_state.dir_vel);
-    double length = ONE / sqrt(SQUARE(base_par_state.dir_vel[0] +
-                                      SQUARE(base_par_state.dir_vel[1] + SQUARE(base_par_state.dir_vel[2]))));
-    base_par_state.dir_vel[0] *= length;
-    base_par_state.dir_vel[1] *= length;
-    base_par_state.dir_vel[2] *= length;
+    //    CDGlobeFun::Normalize3Array(par_state->dir_vel);
+    double length = ONE / sqrt(SQUARE(par_state->dir_vel[0] +
+                                      SQUARE(par_state->dir_vel[1] + SQUARE(par_state->dir_vel[2]))));
+    par_state->dir_vel[0] *= length;
+    par_state->dir_vel[1] *= length;
+    par_state->dir_vel[2] *= length;
 
-    base_par_state.erg_rel = x2 / dAtomTmp;
+    par_state->erg_rel = x2 / dAtomTmp;
 
-    if(!(base_par_state.erg_rel > 0 && base_par_state.erg_rel < 100))
-        base_par_state.erg_rel = EG0_CUTOFF;
+    if(!(par_state->erg_rel > 0 && par_state->erg_rel < 100))
+        par_state->erg_rel = EG0_CUTOFF;
 }

@@ -112,9 +112,8 @@ typedef enum{
 extern time_t start_time;
 extern time_t finish_time;
 
-/* warnings and errors found */
+/* warnings found */
 extern unsigned base_warnings;
-extern unsigned base_errors;
 
 #ifdef __cplusplus
 extern "C" {

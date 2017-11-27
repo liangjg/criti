@@ -6,17 +6,13 @@
 //
 
 #include "geometry.h"
-#include "particle_state.h"
 
-extern particle_state_t base_par_state;
 
 extern map *base_univs;
-
 extern map *base_cells;
-
 extern map *base_surfs;
 
-int locate_particle(const double pos[3], const double dir[3]){
+int locate_particle(particle_state_t *par_state, const double pos[3], const double dir[3]){
     int univ_index = 0;
     int found_cell = -1;
     double local_pos_temp[3];
@@ -41,14 +37,14 @@ int locate_particle(const double pos[3], const double dir[3]){
         univ = (universe_t *) map_get(base_univs, univ_index);
 
         if(univ->is_lattice){
-            /* TODO: initiate base_par_state.loc_univs */
-            base_par_state.loc_univs[base_par_state.loc_univs_sz++] = univ_index;
+            /* TODO: initiate par_state->loc_univs */
+            par_state->loc_univs[par_state->loc_univs_sz++] = univ_index;
 
             int lat_index = find_lat_index(univ, local_pos_temp, local_dir_temp);
             if(lat_index < 0) break;
 
-            /* TODO: initiate base_par_state.loc_cells */
-            base_par_state.loc_cells[base_par_state.loc_cells_sz++] = lat_index;
+            /* TODO: initiate par_state->loc_cells */
+            par_state->loc_cells[par_state->loc_cells_sz++] = lat_index;
 
             int lat_univ = univ->fill_lat_universe[lat_index];
 
@@ -59,19 +55,19 @@ int locate_particle(const double pos[3], const double dir[3]){
 
         } else{
             /* TODO: */
-            base_par_state.loc_univs[base_par_state.loc_univs_sz++] = univ_index;
+            par_state->loc_univs[par_state->loc_univs_sz++] = univ_index;
             for(size_t i = 0; i < vector_size(&univ->fill_cells); i++){
                 int cell_index = *(int *)vector_at(&univ->fill_cells, i);
 
                 cell = (cell_t *)map_get(base_cells, cell_index);
 
                 if(particle_is_in_cell(cell, local_pos_temp, local_dir_temp)){
-                    base_par_state.loc_cells[base_par_state.loc_cells_sz++] = cell_index;
+                    par_state->loc_cells[par_state->loc_cells_sz++] = cell_index;
 
                     if(cell->fill < 0){
                         for(int j = 0; j < 3; j++){
-                            base_par_state.loc_pos[j] = local_pos_temp[j];
-                            base_par_state.loc_dir[j] = local_dir_temp[j];
+                            par_state->loc_pos[j] = local_pos_temp[j];
+                            par_state->loc_dir[j] = local_dir_temp[j];
                         }
                         found_cell = cell_index;
                         break;

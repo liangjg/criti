@@ -3,6 +3,7 @@
 //
 
 #include "common.h"
+#include "vector.h"
 
 #ifndef TTYW_PARTICLE_STATE_H
 #define TTYW_PARTICLE_STATE_H
@@ -20,6 +21,8 @@ typedef struct{
     double loc_dir[3];          /* uvw direction in local Universe. */
 
     /* geometry state */
+    vector loc_univs_v;
+    vector loc_cells_v;
     int *loc_univs;             /* Universes where the Particle is located */
     int loc_univs_sz;
     int *loc_cells;             /* The i-th cell in universe where the Particle is located. ==>  Universe[LocUnivs].ContainCells[LocCells] */
@@ -60,12 +63,12 @@ extern "C"{
 //void Fly_by_length(double length);
 #define Fly_by_length(_length)    \
     do{    \
-        base_par_state.pos[0] += base_par_state.dir[0] * (_length);  \
-        base_par_state.pos[1] += base_par_state.dir[1] * (_length);  \
-        base_par_state.pos[2] += base_par_state.dir[2] * (_length);  \
-        base_par_state.loc_pos[0] += base_par_state.loc_dir[0] * (_length);  \
-        base_par_state.loc_pos[1] += base_par_state.loc_dir[1] * (_length);  \
-        base_par_state.loc_pos[2] += base_par_state.loc_dir[2] * (_length);  \
+        par_state->pos[0] += par_state->dir[0] * (_length);  \
+        par_state->pos[1] += par_state->dir[1] * (_length);  \
+        par_state->pos[2] += par_state->dir[2] * (_length);  \
+        par_state->loc_pos[0] += par_state->loc_dir[0] * (_length);  \
+        par_state->loc_pos[1] += par_state->loc_dir[1] * (_length);  \
+        par_state->loc_pos[2] += par_state->loc_dir[2] * (_length);  \
 } while(0)
 
 #ifdef __cplusplus

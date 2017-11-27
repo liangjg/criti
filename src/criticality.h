@@ -4,6 +4,8 @@
 
 #include "common.h"
 #include "vector.h"
+#include "particle_state.h"
+
 
 #ifndef TTYW_CRITICALITY_H
 #define TTYW_CRITICALITY_H
@@ -64,11 +66,11 @@ extern "C"{
 
 void init_fission_source();
 
-void sample_fission_source();
+void sample_fission_source(particle_state_t *par_state);
 
-void track_history();
+void track_history(particle_state_t *par_state);
 
-void get_fis_neu_state(int fis_MT, double fis_wgt);
+void get_fis_neu_state(particle_state_t *par_state, int fis_MT, double fis_wgt);
 
 void process_cycle_end();
 
