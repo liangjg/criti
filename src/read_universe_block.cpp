@@ -96,11 +96,11 @@ void read_universe_block(char *buf){
                 break;
             }
             case 6:{    /* FILL */
-                univ->filled_lat_num = univ->scope[0] * univ->scope[1];
-                if(univ->lattice_type == 1) univ->filled_lat_num *= univ->scope[2];
-                univ->fill_lat_universe = new int[univ->filled_lat_num];
-                for(int i = 0; i < univ->filled_lat_num; i++)
-                    fscanf(base_IOfp.inp_fp, "%d", univ->fill_lat_universe + i);
+                univ->filled_lat_univs_sz = univ->scope[0] * univ->scope[1];
+                if(univ->lattice_type == 1) univ->filled_lat_univs_sz *= univ->scope[2];
+                univ->filled_lat_univs = new int[univ->filled_lat_univs_sz];
+                for(int i = 0; i < univ->filled_lat_univs_sz; i++)
+                    fscanf(base_IOfp.inp_fp, "%d", univ->filled_lat_univs + i);
                 break;
             }
             default:

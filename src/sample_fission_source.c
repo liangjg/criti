@@ -41,7 +41,6 @@ void sample_fission_source(particle_state_t *par_state){
     par_state->loc_cells.value_free = NULL;
 #pragma GCC diagnostic pop
 
-    /* TODO: complete this function */
     par_state->cell = locate_particle(par_state, par_state->pos, par_state->dir);
 
     if(par_state->cell == -1){
@@ -57,4 +56,5 @@ void sample_fission_source(particle_state_t *par_state){
     }
 
     par_state->mat = cell->mat;
+    par_state->cell_tmp = cell->tmp;
 }

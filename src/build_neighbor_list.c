@@ -37,9 +37,9 @@ void build_neighbor_list(){
             univ = (universe_t *)entry->v.val;
             if(univ->is_lattice) continue;
             univ->neighbor_lists = map_create(type1);
-            contained_cells = vector_size(&univ->fill_cells);
+            contained_cells = vector_size(&univ->cells);
             for(size_t j = 0; j < contained_cells; j++){
-                cell_index = *(int *)vector_at(&univ->fill_cells, i);
+                cell_index = *(int *)vector_at(&univ->cells, i);
                 cell1 = (cell_t *)map_get(base_cells, cell_index);
                 contained_surfs1 = vector_size(&cell1->surfs);
                 map *val = map_create(type2);

@@ -37,7 +37,7 @@ void read_cell_card(universe_t *univ){
 
         cell_t *cell = cell_init();
         map_put(base_cells, index, cell);
-        vector_push_back(&univ->fill_cells, &index);
+        vector_push_back(&univ->cells, &index);
 
         char *rpn_start = ret;
         while(!ISALPHA(*ret)) ret++;

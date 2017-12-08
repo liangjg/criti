@@ -91,7 +91,7 @@ void init_fission_source(){
         ksi1 = get_rand();
         ksi2 = get_rand();
         fission_src = (fission_bank_t *)vector_at(&base_criti.fission_src, i);
-        fission_src->dir[0] = 2 * ksi2 - 1;
+        fission_src->dir[0] = TWO * ksi2 - ONE;
         fission_src->dir[1] = sqrt(ONE - SQUARE(fission_src->dir[0])) * cos(TWO * PI * ksi1);
         fission_src->dir[2] = sqrt(ONE - SQUARE(fission_src->dir[0])) * sin(TWO * PI * ksi1);
 
@@ -99,7 +99,7 @@ void init_fission_source(){
         fission_src->erg = sample_maxwell(T);
     }
 
-    base_start_wgt = 1.0;
+    base_start_wgt = ONE;
 
     base_RNG.position_pre = -1000;
     base_RNG.position = 0;

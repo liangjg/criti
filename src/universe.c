@@ -25,11 +25,11 @@ universe_t *univ_init() {
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpointer-arith"
-    _new_univ->fill_cells.ele_size = sizeof(int);
-    _new_univ->fill_cells.start = malloc(sizeof(int) * (size_t)(8));
-    _new_univ->fill_cells.finish = _new_univ->fill_cells.start;
-    _new_univ->fill_cells.end_of_storage = _new_univ->fill_cells.start + 8 * sizeof(int);
-    _new_univ->fill_cells.value_free = NULL;
+    _new_univ->cells.ele_size = sizeof(int);
+    _new_univ->cells.start = malloc(sizeof(int) * (size_t)(8));
+    _new_univ->cells.finish = _new_univ->cells.start;
+    _new_univ->cells.end_of_storage = _new_univ->cells.start + 8 * sizeof(int);
+    _new_univ->cells.value_free = NULL;
 #pragma GCC diagnostic pop
 
     return _new_univ;
@@ -81,7 +81,7 @@ int find_lat_index(universe_t *obj, const double pos[3], const double dir[3]) {
         lat_index = _find_lat_index_hex(obj, pos, dir);
     else puts("unknown lattice type.");
 
-    if(lat_index <= 0 || lat_index > obj->filled_lat_num){
+    if(lat_index <= 0 || lat_index > obj->filled_lat_univs_sz){
         puts("failed to locate lattice index.");
         lat_index = -1;
         base_warnings++;
@@ -133,7 +133,7 @@ int offset_neighbor_lat(universe_t *obj, int lat_index, int lat_bound_surf, doub
     else
         new_lat_index = _offset_neighbor_lat_hex(obj, lat_index, lat_bound_surf, pos);
 
-    if(new_lat_index < 1 || new_lat_index > obj->filled_lat_num){
+    if(new_lat_index < 1 || new_lat_index > obj->filled_lat_univs_sz){
         puts("offset lattice index out of range.");
         new_lat_index = -1;
     }
@@ -142,8 +142,8 @@ int offset_neighbor_lat(universe_t *obj, int lat_index, int lat_bound_surf, doub
 
 
 void univ_free(universe_t *obj){
-    vector_free(&obj->fill_cells);
-    free(obj->fill_lat_universe);
+    vector_free(&obj->cells);
+    free(obj->filled_lat_univs);
     map_free(obj->neighbor_lists);
     free(obj);
 }

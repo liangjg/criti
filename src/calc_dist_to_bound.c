@@ -19,8 +19,8 @@ double calc_dist_to_bound(particle_state_t *par_state){
     double loc_pos[3];
     double loc_dir[3];
     double dist_min = 1.0E+22;
-    int at_surf = par_state->bound_surf;
-    par_state->bound_surf = 0;
+    int at_surf = par_state->surf;
+    par_state->surf = 0;
     par_state->lat_bound_surf = -1;
 
     cell = (cell_t *) map_get(base_cells, par_state->cell);
@@ -49,7 +49,7 @@ double calc_dist_to_bound(particle_state_t *par_state){
                                                     surf_index == at_surf);
                 if(distance > ZERO_DIST && dist_min - distance > OVERLAP_ERR){
                     dist_min = distance;
-                    par_state->bound_surf = surf_index;
+                    par_state->surf = surf_index;
                     par_state->lat_bound_surf = 0;
                     par_state->bound_level = vector_size(&par_state->loc_cells) - 1;
                 }
@@ -78,7 +78,7 @@ double calc_dist_to_bound(particle_state_t *par_state){
                     dist_min = distance;
                     par_state->bound_level = i;
                     par_state->lat_bound_surf = lat_bound_surf;
-                    par_state->bound_surf = 0;
+                    par_state->surf = 0;
                     for(int j = 0; j < 3; j++){
                         par_state->loc_pos[j] = loc_pos[j];
                         par_state->loc_dir[j] = loc_dir[j];
@@ -104,7 +104,7 @@ double calc_dist_to_bound(particle_state_t *par_state){
                                                         surf_index == at_surf);
                     if(distance > ZERO_DIST && dist_min - distance > OVERLAP_ERR){
                         dist_min = distance;
-                        par_state->bound_surf = surf_index;
+                        par_state->surf = surf_index;
                         par_state->lat_bound_surf = 0;
                         par_state->bound_level = i;
                     }
@@ -113,7 +113,7 @@ double calc_dist_to_bound(particle_state_t *par_state){
         }
     }
 
-    if(par_state->bound_surf == 0 && par_state->lat_bound_surf == -1)
+    if(par_state->surf == 0 && par_state->lat_bound_surf == -1)
         dist_min = -1.0;
     return dist_min;
 }

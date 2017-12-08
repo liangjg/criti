@@ -10,7 +10,7 @@
 #include "vector.h"
 
 typedef struct {
-    vector fill_cells;
+    vector cells;
 
     double origin[3];
     double rotation[3][3];
@@ -26,8 +26,8 @@ typedef struct {
     double cos_sita;
     double height;
 
-    int *fill_lat_universe;
-    int filled_lat_num;
+    int *filled_lat_univs;
+    int filled_lat_univs_sz;
 
     /* 在同一个universe内部，每个cell基于每个面的唯一的一个邻居(cell)的cell_id */
     /* 当前neighbor_lists实现的是map嵌套map，即map<cell_index, map<surface_index, address of neighbor_cell_index>> */

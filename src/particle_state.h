@@ -11,22 +11,22 @@
 typedef struct{
     /* basic state */
     bool is_killed;
-    double wgt;
-    double pos[3];              /* xyz position in Universe 0 */
-    double dir[3];
+    double wgt;                 /* 粒子当前的权重 */
+    double pos[3];              /* 粒子在universe 0中的位置坐标 */
+    double dir[3];              /* 粒子在universe 0中的方向坐标 */
     double exit_dir[3];
-    double erg;
+    double erg;                 /* 粒子当前的能量 */
     double exit_erg;
-    double loc_pos[3];          /* xyz position in local Universe. It changes when new Bound is found */
-    double loc_dir[3];          /* uvw direction in local Universe. */
+    double loc_pos[3];          /* 粒子在当前universe中的坐标 */
+    double loc_dir[3];          /* 粒子在当前universe中的方向 */
 
     /* geometry state */
-    vector loc_univs;           /* Universes where the Particle is located */
-    vector loc_cells;           /* The i-th cell in universe where the Particle is located. ==>  Universe[LocUnivs].ContainCells[LocCells] */
-    int cell;                   /* CELL in maximum-level universe where the Particle is located */
-    int bound_level;            /* Boundary is in the i-th level universe                       */
-    int bound_surf;             /* Boundary surface index                                       */
-    int bound_index;            /* Boundary is the i-th surface of the CELL                     */
+    vector loc_univs;           /* 粒子在定位到当前cell的过程中，进入的每一层universe */
+    vector loc_cells;           /* 定位到的cell是在loc_univs[i]中的第几个cell；注意，这里是第几个，而不是直接存储的相应cell，存储的是univ->filled_cells这个vector的下标 */
+    int cell;                   /* 最终定位到的粒子所在的底层cell */
+    int surf;                   /* 粒子如果要穿面的话，穿出的面的序号；注意，这里是带符号的，有正负的 */
+    int bound_index;            /* 当前要穿出的面在cell->surfs这个vector中的下标 */
+    int bound_level;            /* 穿出的这个面是在第几层universe中 */
     int lat_bound_surf;         /* 1:-x ;  2:+x ;  3:-y;  4:+y                                  */
 
     /* collision state */
