@@ -25,43 +25,33 @@ double calc_dist_to_bound(particle_state_t *par_state){
 
     cell = (cell_t *) map_get(base_cells, par_state->cell);
     if(cell->is_inner_cell){
-        for(int i = 0; i < 3; i++)
-            loc_dir[i] = par_state->dir[i];
         for(int i = 0; i < vector_size(&par_state->loc_univs); i++){
             int loc_univ = *(int *)vector_at(&par_state->loc_univs, i);
             univ = (universe_t *) map_find(base_univs, loc_univ);
-            trans_univ_dir(univ, loc_dir);
+            trans_univ_dir(univ, par_state->loc_dir);
         }
-        for(int i = 0; i < 3; i++)
-            par_state->loc_dir[i] = loc_dir[i];
 
-        char *rpn = cell->rpn;
-        while(*rpn != '\0'){
-            int surf_index = 0;
-            if(ISNUMBER(*rpn)){
-                do{
-                    surf_index *= 10;
-                    surf_index += *rpn - '0';
-                    rpn++;
-                } while(ISNUMBER(*rpn));
-                surf = (surface_t *) map_get(base_univs, surf_index);
-                double distance = calc_dist_to_surf(surf, par_state->loc_pos, par_state->loc_dir,
-                                                    surf_index == at_surf);
-                if(distance > ZERO_DIST && dist_min - distance > OVERLAP_ERR){
-                    dist_min = distance;
-                    par_state->surf = surf_index;
-                    par_state->lat_bound_surf = 0;
-                    par_state->bound_level = vector_size(&par_state->loc_cells) - 1;
-                }
-            } else rpn++;
+        for(size_t i = 0; i < vector_size(&cell->surfs); i++){
+            int signed_surf_index = *(int *)vector_at(&cell->surfs, i);
+            int surf_index = abs(signed_surf_index);
+            surf = (surface_t *)map_get(base_surfs, surf_index);
+            double distance = calc_dist_to_surf(surf, par_state->loc_pos, par_state->loc_dir, surf_index == at_surf);
+
+            if(distance > ZERO_DIST && dist_min - distance > OVERLAP_ERR){
+                dist_min = distance;
+                par_state->surf = signed_surf_index;
+                par_state->bound_index = i;
+            }
         }
+        par_state->lat_bound_surf = 0;
+        par_state->bound_level = vector_size(&par_state->loc_cells) - 1;
     } else{
         for(int i = 0; i < 3; i++){
             loc_pos[i] = par_state->pos[i];
             loc_dir[i] = par_state->dir[i];
         }
 
-        for(size_t i = 0; i < vector_size(&par_state->loc_univs); i++){
+        for(size_t i = 0; i < vector_size(&par_state->loc_cells); i++){
             int loc_univ = *(int *)vector_at(&par_state->loc_univs, i);
             univ = (universe_t *)map_get(base_univs, loc_univ);
             trans_univ_coord(univ, loc_pos, loc_dir);
@@ -90,30 +80,27 @@ double calc_dist_to_bound(particle_state_t *par_state){
             int cell_index = *(int *)vector_at(&par_state->loc_cells, i);
             cell = (cell_t *)map_get(base_cells, cell_index);
 
-            char *rpn = cell->rpn;
-            while(*rpn != '\0'){
-                int surf_index = 0;
-                if(ISNUMBER(*rpn)){
-                    do{
-                        surf_index *= 10;
-                        surf_index += *rpn - '0';
-                        rpn++;
-                    } while(ISNUMBER(*rpn));
-                    surf = (surface_t *) map_get(base_univs, surf_index);
-                    double distance = calc_dist_to_surf(surf, par_state->loc_pos, par_state->loc_dir,
-                                                        surf_index == at_surf);
-                    if(distance > ZERO_DIST && dist_min - distance > OVERLAP_ERR){
-                        dist_min = distance;
-                        par_state->surf = surf_index;
-                        par_state->lat_bound_surf = 0;
-                        par_state->bound_level = i;
+            for(size_t j = 0; j < vector_size(&cell->surfs); j++){
+                int signed_surf_index = *(int *)vector_at(&cell->surfs, i);
+                int surf_index = abs(signed_surf_index);
+                surf = (surface_t *)map_get(base_surfs, surf_index);
+                double distance = calc_dist_to_surf(surf, par_state->loc_pos, par_state->loc_dir, surf_index == at_surf);
+
+                if(distance > ZERO_DIST && dist_min - distance > OVERLAP_ERR){
+                    dist_min = distance;
+                    par_state->surf = surf_index;
+                    par_state->lat_bound_surf = 0;
+                    par_state->bound_level = i;
+                    for(int k = 0; j < 3; j++){
+                        par_state->loc_pos[k] = loc_pos[k];
+                        par_state->loc_dir[k] = loc_dir[k];
                     }
-                } else rpn++;
+                }
             }
         }
     }
 
     if(par_state->surf == 0 && par_state->lat_bound_surf == -1)
-        dist_min = -1.0;
+        dist_min = -ONE;
     return dist_min;
 }
