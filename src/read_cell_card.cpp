@@ -36,6 +36,7 @@ void read_cell_card(universe_t *univ){
         } while(ISNUMBER(*ret));
 
         cell_t *cell = cell_init();
+        cell->id = index;
         map_put(base_cells, index, cell);
         vector_push_back(&univ->cells, &index);
 
@@ -213,7 +214,8 @@ char _order_between(char a, char b, bool &is_simple){
 }
 
 void _extract_surfs_from_rpn(cell_t *cell){
-    int surf_index = 0x00000000;
+    int surf_index = 0;
+    int is_minus = 1;
     char *start = cell->rpn;
 
     while(*start != '\0'){
@@ -222,11 +224,13 @@ void _extract_surfs_from_rpn(cell_t *cell){
                 surf_index *= 10;
                 surf_index += *start++ - '0';
             } while(ISNUMBER(*start));
+            surf_index *= is_minus;
+            is_minus = 1;
             vector_push_back(&cell->surfs, &surf_index);
-            surf_index = 0x00000000;
+            surf_index = 0;
         }
         else if(*start == '-')
-            surf_index |= 0x80000000;
+            is_minus = -1;
         start++;
     }
 }
