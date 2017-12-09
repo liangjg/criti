@@ -68,7 +68,7 @@
 
 #define GT_ZERO(_x)     ((_x) > EPSILON)
 #define LT_ZERO(_x)     ((_x) < -EPSILON)
-#define EQ_ZERO(_X)     (-EPSILON <= (_x) <= EPSILON)
+#define EQ_ZERO(_x)     ((-EPSILON <= (_x)) && ((_x) <= EPSILON))
 
 /* Global static read-only key word */
 static const char keyword[KW_NUMBER][MAX_KW_LENGTH] = {
