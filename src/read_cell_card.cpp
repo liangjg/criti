@@ -215,22 +215,27 @@ char _order_between(char a, char b, bool &is_simple){
 
 void _extract_surfs_from_rpn(cell_t *cell){
     int surf_index = 0;
-    int is_minus = 1;
     char *start = cell->rpn;
 
     while(*start != '\0'){
         if(ISNUMBER(*start)){
+            surf_index = 0;
             do{
                 surf_index *= 10;
                 surf_index += *start++ - '0';
             } while(ISNUMBER(*start));
-            surf_index *= is_minus;
-            is_minus = 1;
             vector_push_back(&cell->surfs, &surf_index);
-            surf_index = 0;
         }
-        else if(*start == '-')
-            is_minus = -1;
+        else if(*start == '-'){
+            surf_index = 0;
+            start++;
+            do{
+                surf_index *= 10;
+                surf_index += *start++ - '0';
+            } while(ISNUMBER(*start));
+            surf_index = (~surf_index) + 1;
+            vector_push_back(&cell->surfs, &surf_index);
+        }
         start++;
     }
 }
