@@ -124,7 +124,7 @@ bool _complex_par_in_cell(const cell_t *obj, const double *pos, const double *di
             surf = (surface_t *) map_get(base_surfs, surf_index);
             surf_sense = calc_surf_sense(surf, pos, dir);
             in_cell = _has_same_sign(surf_index, surf_sense);
-            if(in_cell) st[i_stack] = true;
+            st[i_stack] = in_cell;
         } else if(*c == '-'){
             i_stack++;
             surf_index = 0;
@@ -138,7 +138,7 @@ bool _complex_par_in_cell(const cell_t *obj, const double *pos, const double *di
             surf_index = (~surf_index) + 1;
             surf_sense = calc_surf_sense(surf, pos, dir);
             in_cell = _has_same_sign(surf_index, surf_sense);
-            if(in_cell) st[i_stack] = true;
+            st[i_stack] = in_cell;
         } else if(*c == '&'){
             st[i_stack - 1] = st[i_stack] && st[i_stack - 1];
             i_stack--;
@@ -153,8 +153,7 @@ bool _complex_par_in_cell(const cell_t *obj, const double *pos, const double *di
         } else c++;
     }
 
-    /* i_stack remains -1 only if there is no region specified */
-    /* The only one remained on the top of stack indicates whether the particle is in the cell */
+    /* i_stack等于-1只可能是因为RPN表达式为空；如果RPN表达式非空的话，最后的结果就是st[0] */
     in_cell = (i_stack == -1) ? true : st[0];
 
     return in_cell;
