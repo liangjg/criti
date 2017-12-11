@@ -30,8 +30,9 @@ void find_next_cell(particle_state_t *par_state){
             case CROSSING:
                 find_neighbor_cell(par_state);
                 break;
-            /* TODO: complete REFLECTIVE case */
             case REFLECTIVE:{
+                /* TODO: 当cell为凹多边形时，可能存在假的反射面，这时应该继续输运而不进行反射 */
+                reflect_par(surf, par_state->pos, par_state->dir, par_state->loc_dir);
                 break;
             }
             default:
