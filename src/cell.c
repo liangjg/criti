@@ -148,7 +148,7 @@ bool _complex_par_in_cell(const cell_t *obj, const double *pos, const double *di
             i_stack--;
             c++;
         } else if(*c == '!'){
-            st[i_stack] = ~st[i_stack];
+            st[i_stack] = !st[i_stack];
             c++;
         } else c++;
     }
