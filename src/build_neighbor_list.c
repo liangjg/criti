@@ -24,7 +24,6 @@ void build_neighbor_list(){
     int surf_index1, surf_index2;
 
     int table = base_univs->table;
-    unsigned long used = base_univs->ht[table].used;
     type1 = (map_type *)malloc(sizeof(map_type));
     type2 = (map_type *)malloc(sizeof(map_type));
 
@@ -38,7 +37,7 @@ void build_neighbor_list(){
     type2->value_dup = NULL;
     type2->value_free = NULL;
 
-    for(unsigned long i = 0; i < used; i++){
+    for(unsigned long i = 0; i < base_univs->ht[table].size; i++){
         entry = base_univs->ht[table].buckets[i];
         while(entry){
             univ = (universe_t *)entry->v.val;
