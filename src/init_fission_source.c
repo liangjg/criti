@@ -25,13 +25,13 @@ void init_fission_source(){
     base_criti.fission_bank.start = malloc(general_bank_sz * sizeof(fission_bank_t));
     base_criti.fission_bank.value_free = NULL;
     base_criti.fission_bank.end_of_storage = base_criti.fission_bank.start + general_bank_sz * sizeof(fission_bank_t);
-    base_criti.fission_bank.finish = base_criti.fission_bank.start;
+    base_criti.fission_bank.finish = base_criti.fission_bank.end_of_storage;
 
     base_criti.fission_src.ele_size = sizeof(fission_bank_t);
     base_criti.fission_src.start = malloc(general_bank_sz * sizeof(fission_bank_t));
     base_criti.fission_src.value_free = NULL;
     base_criti.fission_src.end_of_storage = base_criti.fission_src.start + general_bank_sz * sizeof(fission_bank_t);
-    base_criti.fission_src.finish = base_criti.fission_src.start;
+    base_criti.fission_src.finish = base_criti.fission_src.end_of_storage;
 #pragma GCC diagnostic pop
 
     double ksi1, ksi2, ksi3;
