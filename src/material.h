@@ -35,6 +35,7 @@ mat_t *mat_init();
 #define Get_nuc_user_den(mat, i)     (*((mat)->nuc_user_den + (i)))
 #define Get_nuc_atom_den(mat, i)     (*((mat)->nuc_atom_den + (i)))
 void mat_free(mat_t *obj);
+void convert_mat_nuc_den();
 
 #ifdef __cplusplus
 }

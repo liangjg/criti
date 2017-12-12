@@ -65,8 +65,7 @@ void read_material_block(){
                 mat = mat_init();
                 map_put(base_mats, index, mat);
                 while(!ISNUMBER(*ret) && *ret != '-') ret++;
-                (mat->user_den = strtod(ret, &end)) < 0.0 ? mat->gram_den = mat->user_den
-                                                          : mat->atom_den = mat->user_den;
+                mat->user_den = strtod(ret, &end);
             } else if(strcmp(kw_start, "SAB") == 0){
                 if(!nucs.empty() && mat){
                     mat->tot_nuc_num = nucs.size();

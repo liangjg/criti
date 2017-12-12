@@ -118,6 +118,9 @@ int main(int argc, char *argv[]){
     /* check ACE data */
     check_ce_ace_block();
 
+    /* 将用户输入的密度转换成程序使用的原子密度 */
+    convert_mat_nuc_den();
+
     /* 构建邻居栅元加速几何查找 */
     build_neighbor_list();
 
