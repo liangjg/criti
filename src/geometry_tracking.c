@@ -33,7 +33,7 @@ void geometry_tracking(particle_state_t *par_state){
             return;
         }
 
-        Estimate_keff_tl(par_state->wgt, 123, DTB);
+        Estimate_keff_tl(par_state->wgt, par_state->macro_nu_fis_cs, DTB);
 
         Fly_by_length(DTB);
 
@@ -51,9 +51,9 @@ void geometry_tracking(particle_state_t *par_state){
         FFL = sample_free_fly_dis(par_state, false);
     }
 
-    Estimate_keff_tl(par_state->wgt, 0, FFL);
+    Estimate_keff_tl(par_state->wgt, par_state->macro_nu_fis_cs, FFL);
 
-    Estimate_keff_col(par_state->wgt, 0, 0);
+    Estimate_keff_col(par_state->wgt, par_state->macro_nu_fis_cs, par_state->macro_tot_cs);
 
     Fly_by_length(DTB);
 }
