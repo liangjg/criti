@@ -62,25 +62,27 @@ int locate_particle(particle_state_t *par_state, const double pos[3], const doub
                 cell = (cell_t *) map_get(base_cells, cell_index);
 
                 if(particle_is_in_cell(cell, local_pos_temp, local_dir_temp)){
-                    vector_push_back(&par_state->loc_cells, &cell_index);
+                    vector_push_back(&par_state->loc_cells, &i);
                     if(cell->fill < 0){    /* current cell is a simple cell which has no fills */
                         for(int j = 0; j < 3; j++){
                             par_state->loc_pos[j] = local_pos_temp[j];
                             par_state->loc_dir[j] = local_dir_temp[j];
                         }
                         found_cell = cell_index;
-                        break;
+                        goto END;
                     } else{    /* current cell has a universe filled in */
                         filled_univ = cell->fill;
                         trans_univ_coord((universe_t *) map_get(base_univs, filled_univ), local_pos_temp,
                                          local_dir_temp);
                         univ_index = filled_univ;
+                        break;
                     }
                 }
             }
         }
     }
 
+END:
     if(found_cell == -1)
         puts("failed to locate particle.");
 
