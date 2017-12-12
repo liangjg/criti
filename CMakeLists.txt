@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.4)
 project(criti C CXX)
 
+# Setup output directories
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules)
+
 # Enable C++ 11 standard
 if (CMAKE_VERSION VERSION_LESS "3.1.3")
     if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
