@@ -128,21 +128,24 @@ int _read_ace(const char *ace_path, int file_type, int start_addr, nuclide_t *nu
         /* start read XSS array */
         getc(ace_fp);
         nuc->XSS = new double[nuc->XSS_sz + 1];
-        int tot_lines = nuc->XSS_sz / 4 + 1;
-        int k = tot_lines / MAX_LINES;
-        char *start, *end;
-        int j = 1;
-        do{
-            int xss_to_read;
-            k-- == 0 ? xss_to_read = ((tot_lines % MAX_LINES) - 1) * 4 + nuc->XSS_sz % 4
-                     : xss_to_read = MAX_LINES * 4;
-            fread(buf, sizeof(char), 1 << 22, ace_fp);
-            start = buf;
-            for(int i = 1; i <= xss_to_read; i++){
-                nuc->XSS[j++] = strtod(start, &end);
-                start = end;
-            }
-        } while(k > -1);
+        for(int i = 1; i <= nuc->XSS_sz; i++)
+            fscanf(ace_fp, "%lf", &nuc->XSS[i]);
+        fgets(buf, CHAR_PER_LINE, ace_fp);
+//        int tot_lines = nuc->XSS_sz / 4 + 1;
+//        int k = tot_lines / MAX_LINES;
+//        char *start, *end;
+//        int j = 1;
+//        do{
+//            int xss_to_read;
+//            k-- == 0 ? xss_to_read = ((tot_lines % MAX_LINES) - 1) * 4 + nuc->XSS_sz % 4
+//                     : xss_to_read = MAX_LINES * 4;
+//            fread(buf, sizeof(char), 1 << 22, ace_fp);
+//            start = buf;
+//            for(int i = 1; i <= xss_to_read; i++){
+//                nuc->XSS[j++] = strtod(start, &end);
+//                start = end;
+//            }
+//        } while(k > -1);
     }
     else if(file_type == 2){
         char HZ[10], HD[10], HK[70], HM[10];
