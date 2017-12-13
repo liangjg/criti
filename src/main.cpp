@@ -121,6 +121,9 @@ int main(int argc, char *argv[]){
     /* 将用户输入的密度转换成程序使用的原子密度 */
     convert_mat_nuc_den();
 
+    /* 输出material文件 */
+    output_mat_file();
+
     /* 构建邻居栅元加速几何查找 */
     build_neighbor_list();
 

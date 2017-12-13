@@ -40,6 +40,7 @@ void read_cs_tally_card();
 
 void read_ace_data();
 
+void output_mat_file();
 void output_summary();
 
 void output_heading();
