@@ -77,11 +77,12 @@ double calc_dist_to_bound(particle_state_t *par_state){
                 continue;
             }
 
-            int cell_index = *(int *)vector_at(&par_state->loc_cells, i);
+            int univ_cell_index = *(int *)vector_at(&par_state->loc_cells, i);
+            int cell_index = *(int *)vector_at(&univ->cells, univ_cell_index);
             cell = (cell_t *)map_get(base_cells, cell_index);
 
             for(size_t j = 0; j < vector_size(&cell->surfs); j++){
-                int signed_surf_index = *(int *)vector_at(&cell->surfs, i);
+                int signed_surf_index = *(int *)vector_at(&cell->surfs, j);
                 int surf_index = abs(signed_surf_index);
                 surf = (surface_t *)map_get(base_surfs, surf_index);
                 double distance = calc_dist_to_surf(surf, par_state->loc_pos, par_state->loc_dir, surf_index == at_surf);
