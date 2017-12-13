@@ -12,6 +12,7 @@ mat_t *mat_init(){
 
 void mat_free(mat_t *obj){
     free(obj->nuc_user_den);
+    free(obj->nuc_gram_den);
     free(obj->nuc_atom_den);
 
     for(int i = 0; i < obj->tot_nuc_num; i++)

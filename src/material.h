@@ -20,6 +20,7 @@ typedef struct {
 
     double sab_nuc_esa;
     double *nuc_user_den;
+    double *nuc_gram_den;
     double *nuc_atom_den;
 } mat_t;
 
