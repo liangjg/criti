@@ -23,7 +23,7 @@ void output_mat_file(){
     fprintf(base_IOfp.mat_fp, "                           (g/cm^3)      (10^24atom/cm^3)             \n");
 
     for(unsigned long i = 0; i < base_mats->ht[table].size; i++){
-        entry = (map_entry *) base_mats->ht[table].buckets[i];
+        entry = base_mats->ht[table].buckets[i];
         while(entry){
             mat = (mat_t *) entry->v.val;
             tot_nuc_num = mat->tot_nuc_num;
@@ -36,5 +36,4 @@ void output_mat_file(){
         }
     }
     fprintf(base_IOfp.mat_fp, "======================= Material Information End =======================\n\n");
-    fclose(base_IOfp.mat_fp);
 }

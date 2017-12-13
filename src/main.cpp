@@ -124,6 +124,9 @@ int main(int argc, char *argv[]){
     /* 输出material文件 */
     output_mat_file();
 
+    /* 多普勒展宽 */
+    doppler_broaden();
+
     /* 构建邻居栅元加速几何查找 */
     build_neighbor_list();
 

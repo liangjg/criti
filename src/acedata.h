@@ -62,7 +62,7 @@ void check_ce_ace_block();
 
 void calc_therm_Gfun(acedata_t *obj);
 
-int dpplr_brd_nuc_tmp(acedata_t *obj, nuclide_t *nuc, double tmp);
+void doppler_broaden();
 
 double erf2_function(double a);
 
@@ -101,9 +101,11 @@ void interpolate_xss_table(const nuclide_t *nuc, double incident_erg, int LDAT, 
 double get_erg_func_value(const nuclide_t *nuc, int LDAT, double erg);
 
 /* functions for Doppler Broaden */
-void dpplr_brdn_nuc_tot_cs(acedata_t *obj, nuclide_t *nuc, double cell_tmp, double erg);
+void dppler_brdn_nuc_tot_cs(acedata_t *obj, nuclide_t *nuc, double cell_tmp, double erg);
 
 void dppler_brdn_nuc_abs_scatt(acedata_t *obj, nuclide_t *nuc, double erg);
+
+int dppler_brdn_nuc_tmp(acedata_t *obj, nuclide_t *nuc, double tmp);
 
 #ifdef __cplusplus
 }

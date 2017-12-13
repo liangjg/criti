@@ -36,7 +36,7 @@ void get_nuc_tot_fis_cs(acedata_t *obj, nuclide_t *nuc, nuclide_t *sab_nuc, doub
     if(!sab_nuc){
         nuc->tot = INTPLT_BY_POS_FR(nuc->XSS, nuc->inter_pos + nNE, nuc->inter_frac);
         nuc->fis = INTPLT_BY_POS_FR(nuc->fis_XSS, nuc->inter_pos, nuc->inter_frac);
-        dpplr_brdn_nuc_tot_cs(obj, nuc, cell_tmp, erg);
+        dppler_brdn_nuc_tot_cs(obj, nuc, cell_tmp, erg);
         return;
     }
 
@@ -44,7 +44,7 @@ void get_nuc_tot_fis_cs(acedata_t *obj, nuclide_t *nuc, nuclide_t *sab_nuc, doub
     interpolate_sab(nuc, sab_nuc, erg);
 }
 
-void dpplr_brdn_nuc_tot_cs(acedata_t *obj, nuclide_t *nuc, double cell_tmp, double erg){
+void dppler_brdn_nuc_tot_cs(acedata_t *obj, nuclide_t *nuc, double cell_tmp, double erg){
     double a, b, a2, f;
     int bi, j;
     if(nuc->broaden_tmp == ZERO && nuc->broaden_tmp != cell_tmp){ //th_ad:  thermal adjustment

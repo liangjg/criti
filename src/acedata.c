@@ -4,7 +4,7 @@
 
 #include "acedata.h"
 
-int dpplr_brd_nuc_tmp(acedata_t *obj, nuclide_t *nuc, double tmp){
+int dppler_brdn_nuc_tmp(acedata_t *obj, nuclide_t *nuc, double tmp){
     int i;
     double a, b, f1, f2;
     //// adjust elastic and total cross-section
