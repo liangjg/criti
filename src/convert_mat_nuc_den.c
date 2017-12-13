@@ -8,7 +8,7 @@
 #include "vector.h"
 
 
-#define AVGDN    (1.0E-24 * 6.022043446928244e+23 / 1.008664967)
+#define AVGDN    (BARN * AVG / NEU_MASS)
 extern map *base_mats;
 extern map *base_nucs;
 
@@ -34,30 +34,28 @@ void convert_mat_nuc_den(){
             sum_gram_den = ZERO;
             for(int j = 0; j < tot_nuc_num; j++){
                 nuc_id = mat->nuc_id[j];
-                nuc = (nuclide_t *)map_get(base_nucs, (uint64_t)nuc_id);
+                nuc = (nuclide_t *) map_get(base_nucs, (uint64_t) nuc_id);
                 atom_wgt = nuc->atom_wgt;
                 if(LT_ZERO(mat->nuc_user_den[j])){    /* Convert mass fractions to atom fractions */
                     mat->nuc_atom_den[j] = -mat->nuc_user_den[j] / atom_wgt;
-                    *(double *)vector_at(nuc_gram_den, j) = -mat->nuc_user_den[j];
-                }
-                else{
+                    *(double *) vector_at(nuc_gram_den, j) = -mat->nuc_user_den[j];
+                } else{
                     mat->nuc_atom_den[j] = mat->nuc_user_den[j];
-                    *(double *)vector_at(nuc_gram_den, j) = mat->nuc_user_den[j] * atom_wgt;
+                    *(double *) vector_at(nuc_gram_den, j) = mat->nuc_user_den[j] * atom_wgt;
                 }
                 sum_atom_den += mat->nuc_atom_den[j];
-                sum_gram_den += *(double *)vector_at(nuc_gram_den, j);
+                sum_gram_den += *(double *) vector_at(nuc_gram_den, j);
             }
             /* Normalize the atom fraction and mass fraction */
             for(int j = 0; j < tot_nuc_num; j++){
                 mat->nuc_atom_den[j] /= sum_atom_den;
-                *(double *)vector_at(nuc_gram_den, j) /= sum_gram_den;
+                *(double *) vector_at(nuc_gram_den, j) /= sum_gram_den;
             }
             /* Density of material */
             if(LT_ZERO(mat->user_den)){
                 mat->gram_den = -mat->user_den;
                 mat->atom_den = -mat->user_den * (AVGDN * sum_atom_den / sum_gram_den);
-            }
-            else{
+            } else{
                 mat->gram_den = mat->user_den / (AVGDN * sum_atom_den / sum_gram_den);
                 mat->atom_den = mat->user_den;
             }

@@ -58,6 +58,9 @@
 #define EG0_CUTOFF    1.0E-20
 
 #define PI            3.1415926536
+#define AVG           6.022043446928244e+23
+#define NEU_MASS      1.008664967
+#define BARN          1.0E-24
 #define ZERO_ERG      1.0E-24
 #define MAX_ITER      100000
 #define ZERO          0.0
