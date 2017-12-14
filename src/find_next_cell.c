@@ -23,7 +23,7 @@ void find_next_cell(particle_state_t *par_state){
     if(univ->is_lattice)
         find_neighbor_cell(par_state);
     else{
-        int surf_index = par_state->surf;
+        int surf_index = abs(par_state->surf);
         surf = (surface_t *) map_get(base_surfs, surf_index);
 
         switch(surf->bc){
@@ -45,8 +45,8 @@ void find_next_cell(particle_state_t *par_state){
     }
 
     cell = (cell_t *)map_get(base_cells, par_state->cell);
-    if(cell->imp == 0){
+    if(cell->imp == 0)
         par_state->is_killed = true;
-        return;
-    }
+    par_state->mat = cell->mat;
+    par_state->cell_tmp = cell->tmp;
 }

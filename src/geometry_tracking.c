@@ -12,20 +12,11 @@ extern criti_t base_criti;
 void geometry_tracking(particle_state_t *par_state){
     double FFL;    /* free fly length */
     double DTB;    /* distance to boundary */
+    double distance;
+    int iter_cnt = 0;
+    bool par_on_surf = false;
 
-    FFL = sample_free_fly_dis(par_state, true);
-
-    DTB = calc_dist_to_bound(par_state);
-
-    if(LT_ZERO(DTB)){
-        puts("failed to calculate distance to boundary.");
-        par_state->is_killed = true;
-        return;
-    }
-
-    int iter_cnt = 1;
-
-    while(FFL >= DTB){
+    do{
         if(iter_cnt++ > MAX_ITER){
             par_state->is_killed = true;
             puts("too many times of surface crossing.");
@@ -33,11 +24,8 @@ void geometry_tracking(particle_state_t *par_state){
             return;
         }
 
-        Estimate_keff_tl(par_state->wgt, par_state->macro_nu_fis_cs, DTB);
-
-        Fly_by_length(DTB);
-
-        find_next_cell(par_state);
+        if(par_on_surf)
+            find_next_cell(par_state);
 
         if(par_state->is_killed) return;
 
@@ -45,15 +33,23 @@ void geometry_tracking(particle_state_t *par_state){
         if(LT_ZERO(DTB)){
             puts("failed to calculate distance to boundary.");
             par_state->is_killed = true;
-            return;
+            DTB = ZERO;
         }
 
-        FFL = sample_free_fly_dis(par_state, false);
-    }
+        FFL = sample_free_fly_dis(par_state, !par_on_surf);
 
-    Estimate_keff_tl(par_state->wgt, par_state->macro_nu_fis_cs, FFL);
+        if(FFL >= DTB){
+            par_on_surf = true;
+            distance = DTB;
+        } else{
+            par_on_surf = false;
+            distance = FFL;
+        }
+
+        Estimate_keff_tl(par_state->wgt, par_state->macro_nu_fis_cs, distance);
+
+        Fly_by_length(DTB);
+    } while(par_on_surf);
 
     Estimate_keff_col(par_state->wgt, par_state->macro_nu_fis_cs, par_state->macro_tot_cs);
-
-    Fly_by_length(DTB);
 }
