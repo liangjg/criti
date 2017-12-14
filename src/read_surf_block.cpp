@@ -26,6 +26,7 @@ void read_surf_block(){
         } while(ISNUMBER(*ret));
 
         surface_t *surf = surf_init();
+        surf->id = index;
         map_put(base_surfs, index, surf);
 
         while(!ISALPHA(*ret)) ret++;
