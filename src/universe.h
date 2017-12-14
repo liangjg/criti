@@ -10,7 +10,7 @@
 #include "vector.h"
 
 typedef struct {
-    vector cells;
+    vector cells;    /* 存储的是直接的cell_index，而不是某个数组的下标 */
 
     double origin[3];
     double rotation[3][3];
