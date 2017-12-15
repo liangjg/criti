@@ -71,6 +71,14 @@ int calc_surf_sense(surface_t *obj, const double pos[3], const double dir[3]){
         }
     }
 
+    if(fabs(sense) < EPSILON){
+        double norm_vec[3];
+        get_surf_norm_vec(obj, pos, norm_vec);
+        sense = ZERO;
+        for(int i = 0; i < 3; i++)
+            sense += dir[i] * norm_vec[i];
+    }
+
     if(GT_ZERO(sense)) return 1;
     else if(LT_ZERO(sense)) return -1;
     else return 0;
