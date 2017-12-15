@@ -27,14 +27,14 @@ typedef struct{
     int surf;                   /* 粒子如果要穿面的话，穿出的面的序号；注意，这里是带符号的，有正负的 */
     int bound_index;            /* 当前要穿出的面在cell->surfs这个vector中的下标 */
     int bound_level;            /* 穿出的这个面是在第几层universe中 */
-    int lat_bound_surf;         /* 1:-x ;  2:+x ;  3:-y;  4:+y                                  */
+    int lat_bound_surf;         /* 1:-x ;  2:+x ;  3:-y;  4:+y */
 
     /* collision state */
-    int mat;                    /* Current cell material                                  */
-    int nuc;                    /* Current collision nuclide                              */
-    int sab_nuc;                /* Sab nuclide corresponding to current collision nuclide */
-    int collision_type;         /* Current reaction MT number                             */
-    double cell_tmp;            /* Current cell temperature                               */
+    int mat;                    /* 当前cell的材料 */
+    int nuc;                    /* 当前发生碰撞的核素，在相应的mat->nuc_id中的下标 */
+    int sab_nuc;                /* 和当前碰撞核素相应的热化核素 */
+    int collision_type;         /* 当前反应的MT号 */
+    double cell_tmp;            /* 当前cell的温度 */
 
     /* cross sections */
     int interp_N0;              /* Eg0 interpolation position */
