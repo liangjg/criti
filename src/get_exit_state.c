@@ -3,15 +3,18 @@
 //
 
 #include "neutron_transport.h"
-#include "nuclide.h"
+#include "material.h"
 #include "RNG.h"
 #include "map.h"
 #include "acedata.h"
 
+
+extern map *base_mats;
 extern map *base_nucs;
 
 void get_exit_state(particle_state_t *par_state){
-    nuclide_t *nuc = (nuclide_t *) map_get(base_nucs, par_state->nuc);
+    mat_t *mat = (mat_t *) map_get(base_mats, par_state->mat);
+    nuclide_t *nuc = (nuclide_t *) map_get(base_nucs, (uint64_t) mat->nuc_id[par_state->nuc]);
 
     if(par_state->is_sab_col){
         treat_sab_colli_type(nuc, nuc->el, nuc->inel, par_state->erg, par_state->dir, &par_state->exit_erg,
@@ -27,8 +30,7 @@ void get_exit_state(particle_state_t *par_state){
     if(emiss_neu_num == 0){
         par_state->is_killed = true;
         return;
-    }
-    else if(emiss_neu_num > 100)
+    } else if(emiss_neu_num > 100)
         emiss_neu_num = 1;
 
     par_state->wgt *= emiss_neu_num;

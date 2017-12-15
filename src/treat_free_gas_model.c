@@ -49,8 +49,8 @@ void treat_free_gas_model(particle_state_t *par_state, double nuc_wgt){
     }
 
     //    CDGlobeFun::Normalize3Array(par_state->dir_vel);
-    double length = ONE / sqrt(SQUARE(par_state->dir_vel[0] +
-                                      SQUARE(par_state->dir_vel[1] + SQUARE(par_state->dir_vel[2]))));
+    double length = ONE / sqrt(SQUARE(par_state->dir_vel[0]) +
+                                      SQUARE(par_state->dir_vel[1]) + SQUARE(par_state->dir_vel[2]));
     par_state->dir_vel[0] *= length;
     par_state->dir_vel[1] *= length;
     par_state->dir_vel[2] *= length;
