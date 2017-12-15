@@ -48,7 +48,7 @@ void geometry_tracking(particle_state_t *par_state){
 
         Estimate_keff_tl(par_state->wgt, par_state->macro_nu_fis_cs, distance);
 
-        Fly_by_length(DTB);
+        Fly_by_length(distance);
     } while(par_on_surf);
 
     Estimate_keff_col(par_state->wgt, par_state->macro_nu_fis_cs, par_state->macro_tot_cs);
