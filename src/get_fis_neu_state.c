@@ -3,7 +3,7 @@
 //
 
 #include "criticality.h"
-#include "nuclide.h"
+#include "material.h"
 #include "map.h"
 #include "RNG.h"
 #include "acedata.h"
@@ -11,10 +11,12 @@
 
 
 extern map *base_nucs;
+extern map *base_mats;
 extern criti_t base_criti;
 
 void get_fis_neu_state(particle_state_t *par_state, int fis_MT, double fis_wgt){
-    nuclide_t *nuc = (nuclide_t *) map_get(base_nucs, par_state->nuc);
+    mat_t *mat = (mat_t *) map_get(base_mats, par_state->mat);
+    nuclide_t *nuc = (nuclide_t *) map_get(base_nucs, (uint64_t) mat->nuc_id[par_state->nuc]);
     double erg = par_state->erg;
     int fis_neu_num = (int) (fis_wgt + get_rand());
     double nu_delayed = get_delayed_nu(nuc, erg);
@@ -23,14 +25,14 @@ void get_fis_neu_state(particle_state_t *par_state, int fis_MT, double fis_wgt){
     for(int i = 0; i < fis_neu_num; i++){
         /* sample prompt/delayed fission neutrons */
         if(get_rand() < beta){
-            int NPCR = GetNPCR(nuc);
-            int Loc = GetLocOfBDD(nuc);
+            int NPCR = Get_NPCR(nuc);
+            int Loc = Get_loc_of_BDD(nuc);
             double ksi = get_rand();
             double prob_sum = ZERO;
             int j = 1;
             for(j = 1; j < NPCR; j++){
-                int NR = (int)(nuc->XSS[Loc + 1]);
-                int NE = (int)(nuc->XSS[Loc + 2 + 2 * NR]);
+                int NR = (int) (nuc->XSS[Loc + 1]);
+                int NE = (int) (nuc->XSS[Loc + 2 + 2 * NR]);
                 double yield = get_erg_func_value(nuc, Loc + 1, erg);
                 prob_sum += yield;
 
@@ -51,7 +53,7 @@ void get_fis_neu_state(particle_state_t *par_state, int fis_MT, double fis_wgt){
             par_state->exit_dir[2] = sqrt(ONE - SQUARE(exit_mu)) * sin(phi);
             par_state->exit_erg = exit_erg;
         } else
-            get_ce_exit_state(NULL, fis_MT);
+            get_ce_exit_state(par_state, fis_MT, false);
 
         fission_bank_t fission_bank;
         for(int j = 0; j < 3; j++){

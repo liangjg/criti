@@ -32,7 +32,7 @@ void rotate_dir(double mu, const double *old_dir, double *new_dir);
 
 void treat_free_gas_model(particle_state_t *par_state, double nuc_wgt);
 
-void get_ce_exit_state(particle_state_t *par_state, int MT);
+void get_ce_exit_state(particle_state_t *par_state, int MT, bool is_free_gas_col);
 
 #ifdef __cplusplus
 }

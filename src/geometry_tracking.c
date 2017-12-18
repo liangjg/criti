@@ -15,6 +15,7 @@ void geometry_tracking(particle_state_t *par_state){
     double distance;
     int iter_cnt = 0;
     bool par_on_surf = false;
+    par_state->surf = 0;    /* particle is not on surface at hte beginning */
 
     do{
         if(iter_cnt++ > MAX_ITER){

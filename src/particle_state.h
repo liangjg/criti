@@ -31,6 +31,7 @@ typedef struct{
 
     /* collision state */
     int mat;                    /* 当前cell的材料 */
+    /* TODO: 将nuc和sab_nuc改为字符数组，即char nuc[10]和char sab_nuc[10] */
     int nuc;                    /* 当前发生碰撞的核素，在相应的mat->nuc_id中的下标 */
     int sab_nuc;                /* 和当前碰撞核素相应的热化核素 */
     int collision_type;         /* 当前反应的MT号 */

@@ -25,7 +25,7 @@ int sample_col_type(particle_state_t *par_state){
         double ksi = get_rand() * nuc->inel;
         int Loc = Get_loc_of_MTR(nuc) - 1;
         int MT_num = Get_non_el_mt_num_with_neu(nuc);
-        for(int i = 0; i < MT_num; i++){
+        for(int i = 1; i <= MT_num; i++){
             int MT = (int) (nuc->XSS[Loc + i]);
             if(MT == 18 || MT == 19 || MT == 20 || MT == 21 || MT == 38)
                 continue;

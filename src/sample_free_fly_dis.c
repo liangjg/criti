@@ -42,7 +42,7 @@ double sample_free_fly_dis(particle_state_t *par_state, bool is_erg_changed){
     for(int i = 0; i < mat->tot_nuc_num; i++){
         nuc = (nuclide_t *) map_get(base_nucs, (uint64_t) mat->nuc_id[i]);
         sab_nuc = (nuclide_t *) map_get(base_nucs, (uint64_t) mat->sab_nuc_id);
-        if(par_state->erg >= mat->sab_nuc_esa) sab_nuc = NULL;
+        if(par_state->erg >= mat->sab_nuc_esa || nuc->zaid != sab_nuc->zaid) sab_nuc = NULL;
         nuc_atom_den = mat->nuc_atom_den[i];
 
         nuc->inter_pos = -1;

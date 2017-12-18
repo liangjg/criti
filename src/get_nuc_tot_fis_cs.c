@@ -8,7 +8,7 @@
 void get_nuc_tot_fis_cs(acedata_t *obj, nuclide_t *nuc, nuclide_t *sab_nuc, double erg, double cell_tmp){
 //    enum eAdjustCsByPTOrNot{NotAdjustCsByPT = 0, AdjustCsByPT = 1};
 
-    int nNE = GetErgGridNum(nuc);
+    int NE = Get_erg_grid_num(nuc);
 
     /////////////////////// Cal NU /////////////////////////////
     nuc->nu = get_total_nu(nuc, erg);
@@ -16,7 +16,7 @@ void get_nuc_tot_fis_cs(acedata_t *obj, nuclide_t *nuc, nuclide_t *sab_nuc, doub
     //////// binary search for Interpolation parameters /////////
     int min, max;
     min = 1;
-    max = GetErgGridNum(nuc);
+    max = NE;
 
     get_intplt_pos_fr_double(nuc->XSS, erg, min, max, &nuc->inter_pos, &nuc->inter_frac);
 
@@ -34,7 +34,7 @@ void get_nuc_tot_fis_cs(acedata_t *obj, nuclide_t *nuc, nuclide_t *sab_nuc, doub
 
     //tot_cs:
     if(!sab_nuc){
-        nuc->tot = INTPLT_BY_POS_FR(nuc->XSS, nuc->inter_pos + nNE, nuc->inter_frac);
+        nuc->tot = INTPLT_BY_POS_FR(nuc->XSS, nuc->inter_pos + NE, nuc->inter_frac);
         nuc->fis = INTPLT_BY_POS_FR(nuc->fis_XSS, nuc->inter_pos, nuc->inter_frac);
         dppler_brdn_nuc_tot_cs(obj, nuc, cell_tmp, erg);
         return;
@@ -58,7 +58,7 @@ void dppler_brdn_nuc_tot_cs(acedata_t *obj, nuclide_t *nuc, double cell_tmp, dou
                 bi = (int) (b);
                 f = (obj->therm_func[bi] + (b - bi) * (obj->therm_func[bi + 1] - obj->therm_func[bi])) / a - ONE;
             }
-            j = nuc->inter_pos + 3 * GetErgGridNum(nuc);
+            j = nuc->inter_pos + 3 * Get_erg_grid_num(nuc);
             nuc->tot += f * (nuc->XSS[j] + nuc->inter_frac * (nuc->XSS[j + 1] - nuc->XSS[j]));
         }
     }

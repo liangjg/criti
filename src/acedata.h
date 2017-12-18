@@ -71,7 +71,7 @@ void get_nuc_tot_fis_cs(acedata_t *obj, nuclide_t *nuc, nuclide_t *sab_nuc, doub
 void get_nuc_abs_scatt_cs(acedata_t *obj, nuclide_t *nuc, double erg, int nInterpPos0, double dInterpFrac0,
                           int nInterpPos, double dInterpFrac);
 
-double get_nuc_mt_cs(nuclide_t *nuc, int MT, int nInterpPos, double dInterpFrac);
+double get_nuc_mt_cs(nuclide_t *nuc, int MT, int interp_pos, double interp_frac);
 
 void interpolate_sab(nuclide_t *nuc, nuclide_t *sab_nuc, double erg);
 
@@ -79,7 +79,7 @@ void treat_URR(nuclide_t *nuc, double erg);
 
 void get_ce_exist_erg_mu(const nuclide_t *nuc, int MT, double incident_erg, double *exit_erg_lab, double *exit_mu_lab);
 
-double get_scatt_cosine(const nuclide_t *nuc, int MT, double dIncidErg);
+double get_scatt_cosine(const nuclide_t *nuc, int MT, double incident_erg);
 
 int get_law_type(const nuclide_t *nuc, int MT, double incident_erg, int *LDAT);
 

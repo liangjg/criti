@@ -29,10 +29,10 @@ void sample_col_nuclide(particle_state_t *par_state){
         }
     }
 
+    par_state->is_sab_col = false;
     if(mat->tot_sab_nuc_num){
         sab_nuc = (nuclide_t *)map_get(base_nucs, (uint64_t)mat->sab_nuc_id);
         if(sab_nuc->zaid == nuc->zaid && par_state->erg < mat->sab_nuc_esa)
             par_state->is_sab_col = true;
     }
-    else par_state->is_sab_col = false;
 }

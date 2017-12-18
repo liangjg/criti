@@ -23,11 +23,11 @@ void get_ce_exist_erg_mu(const nuclide_t *nuc, int MT, double incident_erg, doub
     if(MT == 2){
         double aw = nuc->atom_wgt;
         if(aw >= 1){
-            *exit_erg_lab = incident_erg * (1 + (aw * aw) + 2 * aw * exit_mu_cm) / ((1 + aw) * (1 + aw));
-            *exit_mu_lab = (1 + aw * exit_mu_cm) / sqrt(1 + 2 * aw * exit_mu_cm + (aw * aw));
+            *exit_erg_lab = incident_erg * (ONE + SQUARE(aw) + TWO * aw * exit_mu_cm) / ((ONE + aw) * (ONE + aw));
+            *exit_mu_lab = (ONE + aw * exit_mu_cm) / sqrt(ONE + TWO * aw * exit_mu_cm + SQUARE(aw));
         } else{
-            *exit_erg_lab = 0.5 * incident_erg * (1 + exit_mu_cm);
-            *exit_mu_lab = sqrt(0.5 + 0.5 * exit_mu_cm);
+            *exit_erg_lab = HALF * incident_erg * (ONE + exit_mu_cm);
+            *exit_mu_lab = sqrt(HALF + HALF * exit_mu_cm);
         }
     }/// 非弹性散射情形
     else{

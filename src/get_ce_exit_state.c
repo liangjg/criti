@@ -11,16 +11,33 @@
 extern map *base_nucs;
 extern map *base_mats;
 
-void get_ce_exit_state(particle_state_t *par_state, int MT){
+void get_ce_exit_state(particle_state_t *par_state, int MT, bool is_free_gas_col){
     double exit_mu_lab;
     double exit_erg_lab;
     mat_t *mat = (mat_t *) map_get(base_mats, par_state->mat);
     nuclide_t *nuc = (nuclide_t *) map_get(base_nucs, (uint64_t) mat->nuc_id[par_state->nuc]);
 
-    get_ce_exist_erg_mu(nuc, MT, par_state->erg, &exit_erg_lab, &exit_mu_lab);
+    get_ce_exist_erg_mu(nuc, MT, par_state->erg_rel, &exit_erg_lab, &exit_mu_lab);
 
-    rotate_dir(exit_mu_lab, par_state->dir, par_state->exit_dir);
-    par_state->exit_erg = exit_erg_lab;
+    /* 如果使用了自由气体模型则进一步转换出射方向和能量 */
+    if(is_free_gas_col){
+        double atom_tmp, temp1, temp2;
+
+        rotate_dir(exit_mu_lab, par_state->dir_vel, par_state->exit_dir);
+
+        atom_tmp = nuc->atom_wgt / par_state->cell_tmp;
+        temp1 = sqrt(exit_erg_lab * atom_tmp);
+        for(int i = 0; i < 3; i++)
+            par_state->exit_dir[i] = temp1 * par_state->exit_dir[i] + par_state->vel_tgt[i];
+        temp2 = SQUARE(par_state->exit_dir[0]) + SQUARE(par_state->exit_dir[1]) + SQUARE(par_state->exit_dir[2]);
+        for(int i = 0; i < 3; i++)
+            par_state->exit_dir[i] /= sqrt(temp2);
+        par_state->exit_erg = temp2 / atom_tmp;
+    } else{    /* 转换出射方向 */
+        rotate_dir(exit_mu_lab, par_state->dir, par_state->exit_dir);
+        par_state->exit_erg = exit_erg_lab;
+    }
+
 
     if(!(par_state->exit_erg >= ZERO && par_state->exit_erg < 100)){
         puts("exit energy out of range.");

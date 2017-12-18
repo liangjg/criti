@@ -7,6 +7,9 @@
 int dppler_brdn_nuc_tmp(acedata_t *obj, nuclide_t *nuc, double tmp){
     int i;
     double a, b, f1, f2;
+
+    calc_therm_Gfun(obj);
+
     //// adjust elastic and total cross-section
     if(fabs(nuc->tmp - tmp) <= 0.01 * tmp)
         return 0;   // no adjustment
