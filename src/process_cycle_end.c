@@ -180,17 +180,17 @@ void _output_keff(){
 
     /* output to file */
     if(base_criti.current_cycle == base_criti.inactive_cycle_num + 1)
-        fputs("================== start active cycles ==================================================================================================",
+        fputs("================== start active cycles ==================================================================================================\n",
               base_IOfp.opt_fp);
     else if(base_criti.current_cycle == 1){
-        fputs("\n=========================================================================================================================================",
+        fputs("\n=========================================================================================================================================\n",
               base_IOfp.opt_fp);
-        fputs("                      keff estimators by cycle             individual average keff and deviation           combined average keff",
+        fputs("                      keff estimators by cycle             individual average keff and deviation           combined average keff\n",
               base_IOfp.opt_fp);
-        fputs("cycle   history      k(col)    k(abs)     k(tl)     k(col)   st dev     k(abs)  st dev      k(tl) st dev     k(c/a/t)  st dev    Time(min)",
+        fputs("cycle   history      k(col)    k(abs)     k(tl)     k(col)   st dev     k(abs)  st dev      k(tl) st dev     k(c/a/t)  st dev    Time(min)\n",
               base_IOfp.opt_fp);
     } else if(base_criti.current_cycle % 10 == 1)
-        fputs("=========================================================================================================================================",
+        fputs("=========================================================================================================================================\n",
               base_IOfp.opt_fp);
 
 
