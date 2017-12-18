@@ -68,8 +68,6 @@ void read_input_blocks(CALC_MODE_T *calc_mode){
     }
 
 //    check_input_block();
-
-    fclose(base_IOfp.inp_fp);
 }
 
 /* ------------------------ private API implementation ---------------------- */

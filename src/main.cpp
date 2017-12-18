@@ -50,8 +50,6 @@ static void _univ_free(void *obj);
 
 static void _cell_free(void *obj);
 
-static void _surf_free(void *obj);
-
 static void _mat_free(void *obj);
 
 static void _nuc_free(void *obj);
@@ -80,7 +78,7 @@ int main(int argc, char *argv[]){
     /* surf_type specification */
     surf_type->hash_func = _int_hash_func;
     surf_type->value_dup = nullptr;
-    surf_type->value_free = _surf_free;
+    surf_type->value_free = nullptr;
     surf_type->key_compare = nullptr;
 
     /* mat_type specification */
@@ -193,10 +191,6 @@ static void _univ_free(void *obj){
 
 static void _cell_free(void *obj){
     cell_free((cell_t *)(obj));
-}
-
-static void _surf_free(void *obj){
-    surf_free((surface_t *)(obj));
 }
 
 static void _mat_free(void *obj){

@@ -340,7 +340,3 @@ void reflect_par(surface_t *obj, const double pos[3], double *dir, double *loc_d
     loc_dir[1] /= loc_dir_lenth;
     loc_dir[2] /= loc_dir_lenth;
 }
-
-void surf_free(surface_t *obj){
-    free(obj);
-}

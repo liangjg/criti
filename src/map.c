@@ -47,30 +47,6 @@ int map_put(map *m, uint64_t key, void *val){
     return SUCC;
 }
 
-int map_put_int64(map *m, uint64_t key, int64_t s64){
-    map_entry *entry = _map_put_base(m, key, NULL);
-
-    if(!entry) return ERROR;
-    entry->v.s64 = s64;
-    return SUCC;
-}
-
-int map_put_uint64(map *m, uint64_t key, uint64_t u64){
-    map_entry *entry = _map_put_base(m, key, NULL);
-
-    if(!entry) return ERROR;
-    entry->v.u64 = u64;
-    return SUCC;
-}
-
-int map_put_double(map *m, uint64_t key, double d){
-    map_entry *entry = _map_put_base(m, key, NULL);
-
-    if(!entry) return ERROR;
-    entry->v.d = d;
-    return SUCC;
-}
-
 void *map_get(map *m, uint64_t key){
     map_entry *entry = _map_find(m, key);
     return entry ? entry->v.val : NULL;
@@ -83,7 +59,6 @@ int map_rm(map *m, uint64_t key){
 void map_free(map *m){
     _map_clear(m, &m->ht[0]);
     _map_clear(m, &m->ht[1]);
-    free(m);
 }
 
 map_entry *map_find(map *m, uint64_t key){

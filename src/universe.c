@@ -145,7 +145,6 @@ void univ_free(universe_t *obj){
     vector_free(&obj->cells);
     free(obj->filled_lat_univs);
     map_free(obj->neighbor_lists);
-    free(obj);
 }
 
 /* ------------------------ private API implementation ---------------------- */

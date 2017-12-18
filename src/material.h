@@ -29,12 +29,6 @@ extern "C" {
 #endif
 
 mat_t *mat_init();
-#define Get_tot_nuc_num(mat)         ((mat)->tot_nuc_num)
-#define Get_tot_sab_nuc_num(mat)     ((mat)->tot_sab_nuc_num)
-#define Get_nuc_id(mat, i)           (*((mat)->nuc_id + (i)))
-#define Get_sab_nuc_id(mat, i)       (*((mat)->sab_nuc_id + (i)))
-#define Get_nuc_user_den(mat, i)     (*((mat)->nuc_user_den + (i)))
-#define Get_nuc_atom_den(mat, i)     (*((mat)->nuc_atom_den + (i)))
 void mat_free(mat_t *obj);
 void convert_mat_nuc_den();
 

@@ -17,10 +17,15 @@ extern IOfp_t base_IOfp;
 
 void release_resource(){
     map_free(base_univs);
+    free(base_univs);
     map_free(base_cells);
+    free(base_cells);
     map_free(base_surfs);
+    free(base_surfs);
     map_free(base_mats);
+    free(base_mats);
     map_free(base_nucs);
+    free(base_nucs);
 
     vector_free(&base_criti.fission_src);
     vector_free(&base_criti.fission_bank);

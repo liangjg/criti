@@ -18,6 +18,4 @@ void mat_free(mat_t *obj){
     for(int i = 0; i < obj->tot_nuc_num; i++)
         free(obj->nuc_id[i]);
     free(obj->nuc_id);
-
-    free(obj);
 }
