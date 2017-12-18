@@ -127,7 +127,7 @@ int _read_ace(const char *ace_path, int file_type, int start_addr, nuclide_t *nu
 
         /* start read XSS array */
         getc(ace_fp);
-        nuc->XSS = new double[nuc->XSS_sz + 1];
+        nuc->XSS = (double *) malloc((nuc->XSS_sz + 1) * sizeof(double));
         for(int i = 1; i <= nuc->XSS_sz; i++)
             fscanf(ace_fp, "%lf", &nuc->XSS[i]);
         fgets(buf, CHAR_PER_LINE, ace_fp);

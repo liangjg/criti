@@ -55,6 +55,7 @@ bool particle_is_in_cell(const cell_t *obj, const double pos[3], const double di
 void cell_free(cell_t *obj){
     free(obj->rpn);
     vector_free(&obj->surfs);
+    free(obj);
 }
 
 /* ------------------------ private API implementation ---------------------- */

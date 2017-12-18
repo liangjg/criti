@@ -74,6 +74,7 @@ void build_neighbor_list(){
 
 static void _val_free(void *val){
     map_free((map *) val);
+    free(val);
 }
 
 static uint64_t _int_hash_func(const void *key){

@@ -113,7 +113,7 @@ int _identify_cell_kw(char *kw){
 
 char *_generate_rpn(char *exp, bool &is_simple){
     size_t len = strlen(exp);
-    char *rpn = new char[2 * len];
+    char *rpn = (char *) malloc(2 * len * sizeof(char));
     size_t i = 0;
     char c = '\0';
 
@@ -126,15 +126,12 @@ char *_generate_rpn(char *exp, bool &is_simple){
                 rpn[i++] = *exp++;
             } while(ISNUMBER(*exp));
             rpn[i++] = ' ';
-        }
-        else if(*exp == '-'){
+        } else if(*exp == '-'){
             rpn[i++] = *exp++;
-        }
-        else if(ISSPACE(*exp)){
+        } else if(ISSPACE(*exp)){
             exp++;
             continue;
-        }
-        else{
+        } else{
             switch(_order_between(optr.top(), *exp, is_simple)){
                 case '<':
                     c = *exp++;
@@ -225,8 +222,7 @@ void _extract_surfs_from_rpn(cell_t *cell){
                 surf_index += *start++ - '0';
             } while(ISNUMBER(*start));
             vector_push_back(&cell->surfs, &surf_index);
-        }
-        else if(*start == '-'){
+        } else if(*start == '-'){
             surf_index = 0;
             start++;
             do{

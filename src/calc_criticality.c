@@ -23,8 +23,14 @@ void calc_criticality(){
 
             /* neutron history */
             track_history(&par_state);
+
+            /* 释放par_state的资源 */
+            free(par_state.loc_univs.start);
+            free(par_state.loc_cells.start);
         }
         process_cycle_end();
     }
     output_summary();
+
+
 }

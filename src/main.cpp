@@ -50,6 +50,8 @@ static void _univ_free(void *obj);
 
 static void _cell_free(void *obj);
 
+static void _surf_free(void *obj);
+
 static void _mat_free(void *obj);
 
 static void _nuc_free(void *obj);
@@ -78,7 +80,7 @@ int main(int argc, char *argv[]){
     /* surf_type specification */
     surf_type->hash_func = _int_hash_func;
     surf_type->value_dup = nullptr;
-    surf_type->value_free = nullptr;
+    surf_type->value_free = _surf_free;
     surf_type->key_compare = nullptr;
 
     /* mat_type specification */
@@ -136,15 +138,15 @@ int main(int argc, char *argv[]){
             break;
         case FIXEDSOURCE:
             puts("\n******** Calculation mode: fixed-source ********\n");
-//            calc_fixed_source();
+            //            calc_fixed_source();
             break;
         case BURNUP:
             puts("\n******** Calculation mode: burnup ********\n");
-//            calc_burnup();
+            //            calc_burnup();
             break;
         case POINTBURN:
             puts("\n******** Calculation mode: point burnup ********\n");
-//            calc_point_burn();
+            //            calc_point_burn();
             break;
         default:
             puts("\n******** Unknown calculation mode. ********\n");
@@ -182,21 +184,25 @@ static uint64_t _str_hash_func(const void *key){
 }
 
 static int _str_key_comp_func(uint64_t key1, uint64_t key2){
-    return strcmp((const char *)key1, (const char *)key2);
+    return strcmp((const char *) key1, (const char *) key2);
 }
 
 static void _univ_free(void *obj){
-    univ_free((universe_t *)(obj));
+    univ_free((universe_t *) (obj));
 }
 
 static void _cell_free(void *obj){
-    cell_free((cell_t *)(obj));
+    cell_free((cell_t *) (obj));
+}
+
+static void _surf_free(void *obj){
+    surf_free((surface_t *) obj);
 }
 
 static void _mat_free(void *obj){
-    mat_free((mat_t *)(obj));
+    mat_free((mat_t *) (obj));
 }
 
 static void _nuc_free(void *obj){
-    nuc_free((nuclide_t *)(obj));
+    nuc_free((nuclide_t *) (obj));
 }

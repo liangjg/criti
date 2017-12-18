@@ -12,4 +12,5 @@ void nuc_free(nuclide_t *obj){
     free(obj->LDLW);
     free(obj->fis_XSS);
     free(obj->inel_XSS);
+    free(obj);
 }
