@@ -14,12 +14,12 @@ int dppler_brdn_nuc_tmp(acedata_t *obj, nuclide_t *nuc, double tmp){
     if(fabs(nuc->tmp - tmp) <= 0.01 * tmp)
         return 0;   // no adjustment
     b = 500.0 * fabs(tmp - nuc->tmp) / nuc->atom_wgt;
-    for(int j = 1; j <= GetErgGridNum(nuc); j++){
+    for(int j = 1; j <= Get_erg_grid_num(nuc); j++){
         if(nuc->XSS[j] > b)
             break;
         ///////////////calculate f1 //////////////
         f1 = ONE;
-        if(nuc->tmp != 0.){
+        if(!EQ_ZERO(nuc->tmp)){
             a = sqrt(nuc->atom_wgt * nuc->XSS[j] / nuc->tmp);
             if(a >= TWO)
                 f1 = ONE + HALF / (a * a);
@@ -29,7 +29,7 @@ int dppler_brdn_nuc_tmp(acedata_t *obj, nuclide_t *nuc, double tmp){
         }
         ///////////////calculate f2 //////////////
         f2 = ONE;
-        if(tmp != 0.){
+        if(!EQ_ZERO(tmp)){
             a = sqrt(nuc->atom_wgt * nuc->XSS[j] / tmp);
             if(a >= TWO)
                 f2 = ONE + HALF / (a * a);
@@ -38,11 +38,11 @@ int dppler_brdn_nuc_tmp(acedata_t *obj, nuclide_t *nuc, double tmp){
                 f2 = (obj->therm_func[i] + (a / 0.04 - i) * (obj->therm_func[i + 1] - obj->therm_func[i])) / a;
         }
         ///////////////calculate a //////////////
-        a = nuc->XSS[j + 3 * GetErgGridNum(nuc)] * (f2 - f1) / f1;
+        a = nuc->XSS[j + 3 * Get_erg_grid_num(nuc)] * (f2 - f1) / f1;
 
         ///////////////calculate xs //////////////
-        nuc->XSS[j + GetErgGridNum(nuc)] = nuc->XSS[j + GetErgGridNum(nuc)] + a;
-        nuc->XSS[j + 3 * GetErgGridNum(nuc)] = nuc->XSS[j + 3 * GetErgGridNum(nuc)] + a;
+        nuc->XSS[j + Get_erg_grid_num(nuc)] = nuc->XSS[j + Get_erg_grid_num(nuc)] + a;
+        nuc->XSS[j + 3 * Get_erg_grid_num(nuc)] = nuc->XSS[j + 3 * Get_erg_grid_num(nuc)] + a;
     }
     nuc->broaden_tmp = tmp;
     return 1;

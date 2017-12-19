@@ -12,7 +12,7 @@ void get_nuc_abs_scatt_cs(acedata_t *obj, nuclide_t *nuc, double erg, int nInter
 //        return;
 
     ///////// Norma case: interpolate SIG (a,el,inel) //////////
-    int NE = GetErgGridNum(nuc);
+    int NE = Get_erg_grid_num(nuc);
     nuc->abs = INTPLT_BY_POS_FR(nuc->XSS, nInterpPos0 + 2 * NE, dInterpFrac0);  // absorption, E0
     nuc->el = INTPLT_BY_POS_FR(nuc->XSS, nInterpPos + 3 * NE, dInterpFrac); // elastic, Er
     nuc->inel = INTPLT_BY_POS_FR(nuc->inel_XSS, nInterpPos, dInterpFrac);    // inelastic, Er

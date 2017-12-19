@@ -19,8 +19,8 @@ int get_law_type(const nuclide_t *nuc, const int MT, const double incident_erg, 
     int LNW, IDAT, NR, NE;
     int which_Pi = 1;
 
-    int LDIS = MT > 0 ? GetLocOfDLW(nuc) : GetLocOfDNED(nuc);
-    int LOCC = MT > 0 ? LDIS + nuc->LDLW[MT] : LDIS + (int)(nuc->XSS[GetLocOfDNEDL(nuc) - MT - 1]);
+    int LDIS = MT > 0 ? Get_loc_of_DLW(nuc) : Get_loc_of_DNED(nuc);
+    int LOCC = MT > 0 ? LDIS + nuc->LDLW[MT] : LDIS + (int)(nuc->XSS[Get_loc_of_DNEDL(nuc) - MT - 1]);
 
     LNW = (int)(nuc->XSS[LOCC - 1]);
     law_type = (int)(nuc->XSS[LOCC]);

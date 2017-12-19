@@ -130,7 +130,7 @@ void react_by_laws(const nuclide_t *nuc, int MT, int law_type, int LDAT, double 
     } else if(law_type == 22){
         interpolate_xss_table(nuc, incident_erg, LDAT, &pos, &frac, &NR, &NE);
         LN = 2 * NR + NE + 2;
-        int ie = GetLocOfDLW(nuc) - 1 + (int) (nuc->XSS[LDAT + LN + pos - 1]);
+        int ie = Get_loc_of_DLW(nuc) - 1 + (int) (nuc->XSS[LDAT + LN + pos - 1]);
         int NF = (int) (nuc->XSS[ie]);
 
         nIterCount = 0;
@@ -167,9 +167,9 @@ void react_by_laws(const nuclide_t *nuc, int MT, int law_type, int LDAT, double 
         int nPos_smpl = frac > get_rand() ? pos + 1 : pos;
 
         //// obtain endpoints on grid i
-        int LDIS = GetLocOfDLW(nuc);
+        int LDIS = Get_loc_of_DLW(nuc);
         if(MT == -1)
-            LDIS = GetLocOfDNED(nuc);
+            LDIS = Get_loc_of_DNED(nuc);
 
         int LC1 = LDIS + (int) (nuc->XSS[LDAT - 1 + LN + pos]);
 
@@ -291,7 +291,7 @@ void react_by_laws(const nuclide_t *nuc, int MT, int law_type, int LDAT, double 
                 *exit_mu_cm = 2 * get_rand() - 1;
                 return;
             }
-            LC = GetLocOfDLW(nuc) + abs(LM) - 2;
+            LC = Get_loc_of_DLW(nuc) + abs(LM) - 2;
             // interpolation type and number of points in angular distribution
             int JJ = (int) (nuc->XSS[LC + 1]);
             int NP = (int) (nuc->XSS[LC + 2]);
@@ -334,7 +334,7 @@ void react_by_laws(const nuclide_t *nuc, int MT, int law_type, int LDAT, double 
         int NPSX = (int) (nuc->XSS[LDAT]); // number of bodies in phase space
         double Ap = nuc->XSS[LDAT + 1]; // total mass ratio
         double aw = nuc->atom_wgt;  // atomic weight
-        double Q = GetNucFisQ(nuc, MT); //Nuclides[nuc].XSS[GetLocOfLQR(nuc) + Nuclides[nuc].MTRIndex[mt]-1]; // Q-value
+        double Q = Get_nuc_fis_Q(nuc, MT); //Nuclides[nuc].XSS[GetLocOfLQR(nuc) + Nuclides[nuc].MTRIndex[mt]-1]; // Q-value
         double E_max = ((Ap - 1) / Ap) * (incident_erg * aw / (aw + 1) + Q);
 
         double lx = sample_maxwell(1);
@@ -363,13 +363,13 @@ void react_by_laws(const nuclide_t *nuc, int MT, int law_type, int LDAT, double 
 
         ///// go to appropriate table for incident energy ////
         int LC[3];   // p2-49    l,  i,   i+1
-        LC[1] = GetLocOfDLW(nuc) + (int) (nuc->XSS[LN + pos - 1]) - 1;
+        LC[1] = Get_loc_of_DLW(nuc) + (int) (nuc->XSS[LN + pos - 1]) - 1;
         LC[2] = 0;
 
         int ix = 1;
         int ir = 0;
         if(frac != 0){
-            LC[2] = GetLocOfDLW(nuc) + (int) (nuc->XSS[LN + pos]) - 1;
+            LC[2] = Get_loc_of_DLW(nuc) + (int) (nuc->XSS[LN + pos]) - 1;
             ir = 1;
             if(get_rand() <= frac)
                 ix = 2;
@@ -402,7 +402,7 @@ void react_by_laws(const nuclide_t *nuc, int MT, int law_type, int LDAT, double 
             }
 
             // sample from tabulated energy distribution
-            int lb = GetLocOfDLW(nuc) + (int) (nuc->XSS[le + LMU + NMU + 1]);
+            int lb = Get_loc_of_DLW(nuc) + (int) (nuc->XSS[le + LMU + NMU + 1]);
             int INTEP = (int) (nuc->XSS[lb - 1]);
             int NPEP = (int) (nuc->XSS[lb]);
             E_i_1[i] = nuc->XSS[lb + 1];

@@ -5,7 +5,7 @@
 #include "acedata.h"
 
 double get_total_nu(nuclide_t *nuc, double erg){
-    int nKNU = GetLocOfNU(nuc);
+    int nKNU = Get_loc_of_NU(nuc);
     if(nKNU == 0)   // no neutron yield
         return ZERO;
 
@@ -28,7 +28,7 @@ double get_total_nu(nuclide_t *nuc, double erg){
 
 
 double get_delayed_nu(nuclide_t *nuc, double erg){
-    int nKNU = GetLocOfDNU(nuc);
+    int nKNU = Get_loc_of_DNU(nuc);
     if(nKNU == 0)
         return 0;
 
