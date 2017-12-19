@@ -6,49 +6,49 @@
 #include "global_fun.h"
 
 double get_erg_func_value(const nuclide_t *nuc, int LDAT, double erg){
-    double Ti = 0;
-    double erg_1 = 0, erg_2 = 0, func_val_1 = 0, func_val_2 = 0;
-    int nNumOfInterpRegion = (int) (nuc->XSS[LDAT]);
-    int nE_grid_base = LDAT + 2 * nNumOfInterpRegion + 1;
-    int nNumOfErgGrid = (int) (nuc->XSS[nE_grid_base]);
+    double Ti = ZERO;
+    double erg_1, erg_2, func_val_1, func_val_2;
+    int num_of_interp_region = (int) (nuc->XSS[LDAT]);
+    int E_grid_base = LDAT + 2 * num_of_interp_region + 1;
+    int num_of_erg_grid = (int) (nuc->XSS[E_grid_base]);
 
     //use the extreme value if erg is off either end of the table.
-    if(erg >= nuc->XSS[nE_grid_base + nNumOfErgGrid]){
-        Ti = nuc->XSS[nE_grid_base + 2 * nNumOfErgGrid];
+    if(erg >= nuc->XSS[E_grid_base + num_of_erg_grid]){
+        Ti = nuc->XSS[E_grid_base + 2 * num_of_erg_grid];
         return Ti;
-    } else if(erg <= nuc->XSS[nE_grid_base + 1]){
-        Ti = nuc->XSS[nE_grid_base + nNumOfErgGrid + 1];
+    } else if(erg <= nuc->XSS[E_grid_base + 1]){
+        Ti = nuc->XSS[E_grid_base + num_of_erg_grid + 1];
         return Ti;
     }
 
     //binary search for the location of erg in the table.
-    int min = nE_grid_base + 1;
-    int max = nE_grid_base + nNumOfErgGrid;
+    int min = E_grid_base + 1;
+    int max = E_grid_base + num_of_erg_grid;
 
     double fr;
-    int nPos;
-    get_intplt_pos_fr_double(nuc->XSS, erg, min, max, &nPos, &fr);
+    int pos;
+    get_intplt_pos_fr_double(nuc->XSS, erg, min, max, &pos, &fr);
 
-    erg_1 = nuc->XSS[nPos];
-    erg_2 = nuc->XSS[nPos + 1];
-    func_val_1 = nuc->XSS[nPos + nNumOfErgGrid];
-    func_val_2 = nuc->XSS[nPos + 1 + nNumOfErgGrid];
+    erg_1 = nuc->XSS[pos];
+    erg_2 = nuc->XSS[pos + 1];
+    func_val_1 = nuc->XSS[pos + num_of_erg_grid];
+    func_val_2 = nuc->XSS[pos + 1 + num_of_erg_grid];
 
     //find out which kind of interpolation should be used.
-    if(nNumOfInterpRegion == 0){
+    if(num_of_interp_region == 0){
         Ti = func_val_1 + (func_val_2 - func_val_1) * (erg - erg_1) / (erg_2 - erg_1);
         return Ti;
     }
     int n = 0;
-    for(n = 1; n <= nNumOfInterpRegion; n++){
-        if(nPos + 1 - nE_grid_base <= (int) (nuc->XSS[LDAT + n]))
+    for(n = 1; n <= num_of_interp_region; n++){
+        if(pos + 1 - E_grid_base <= (int) (nuc->XSS[LDAT + n]))
             goto Interp;
     }
-    n = nNumOfInterpRegion;
+    n = num_of_interp_region;
 
     // interpolate between table entries.
 Interp:
-    switch((int) (nuc->XSS[LDAT + nNumOfInterpRegion + n])){
+    switch((int) (nuc->XSS[LDAT + num_of_interp_region + n])){
         case 1 :{
             Ti = func_val_1;
             break;

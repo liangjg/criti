@@ -13,7 +13,7 @@ void react_by_laws(const nuclide_t *nuc, int MT, int law_type, int LDAT, double 
     int pos;
     double frac;
 
-    int nIterCount = 0;
+    int iter_cnt = 0;
 
     if(law_type == 1){ // TABULAR EQUIPROBABLE ENERGY BINS
         interpolate_xss_table(nuc, incident_erg, LDAT, &pos, &frac, &NR, &NE);
@@ -36,22 +36,22 @@ void react_by_laws(const nuclide_t *nuc, int MT, int law_type, int LDAT, double 
 
         //// Sample outgoing table for incoming energy E_i and E_(i+1)
         double ksi3 = get_rand();
-        int nPos_smpl = ksi3 < frac ? pos + 1 : pos;
+        int pos_smpl = ksi3 < frac ? pos + 1 : pos;
 
         //// Calculate E_l_k, E_l_k+1 and E'
-        LC = LDAT + LN + (nPos_smpl - 1) * NET;
+        LC = LDAT + LN + (pos_smpl - 1) * NET;
         double E_l_k = nuc->XSS[LC + k];
         double E_l_k1 = nuc->XSS[LC + k + 1];
         double ksi2 = get_rand();
         double E_pie = E_l_k + ksi2 * (E_l_k1 - E_l_k);
 
         //// scaled interpolation between tables
-        if(nPos_smpl == pos)
+        if(pos_smpl == pos)
             *exit_erg_cm = E_1 + (E_pie - E_i_1) * (E_K - E_1) / (E_i_K - E_i_1);
         else
             *exit_erg_cm = E_1 + (E_pie - E_i1_1) * (E_K - E_1) / (E_i1_K - E_i1_1);
     } else if(law_type == 3){ // INELASTIC LEVEL SCATTERING
-        *exit_erg_cm = nuc->XSS[LDAT + 1] * (incident_erg - nuc->XSS[LDAT]); //ExitErgInCm
+        *exit_erg_cm = nuc->XSS[LDAT + 1] * (incident_erg - nuc->XSS[LDAT]);
     } else if(law_type == 5){ // GENERAL EVAPORATION SPECTRUM
         NR = (int) (nuc->XSS[LDAT]);
         NE = (int) (nuc->XSS[LDAT + 2 * NR + 1]);
@@ -67,12 +67,12 @@ void react_by_laws(const nuclide_t *nuc, int MT, int law_type, int LDAT, double 
         double U = nuc->XSS[LDAT + 2 * (NR + NE + 1)];
         double CalTemp = incident_erg - U;
         if(CalTemp > 0){
-            nIterCount = 0;
+            iter_cnt = 0;
             for(;;){
                 *exit_erg_cm = sample_maxwell(T);
                 if(*exit_erg_cm <= CalTemp)
                     break;
-                if((nIterCount++) >= MAX_ITER){
+                if((iter_cnt++) >= MAX_ITER){
                     printf("Waring: too many samples. Nuc=%s, LawType=%d, Ein=%f, U=%f, T=%f\n", nuc->id, law_type,
                            incident_erg, U, T);
                     base_warnings++;
@@ -90,7 +90,7 @@ void react_by_laws(const nuclide_t *nuc, int MT, int law_type, int LDAT, double 
         double U = nuc->XSS[LDAT + LN];
         double dCalcTemp = incident_erg - U;
         if(dCalcTemp > 0){
-            nIterCount = 0;
+            iter_cnt = 0;
             for(;;){
                 double ksi1 = get_rand();
                 double ksi2 = get_rand();
@@ -114,12 +114,12 @@ void react_by_laws(const nuclide_t *nuc, int MT, int law_type, int LDAT, double 
         double U = nuc->XSS[LDAT + LN1 + LN2]; // restriction energy
         double dCalTemp = incident_erg - U;
         if(dCalTemp > 0){
-            nIterCount = 0;
+            iter_cnt = 0;
             for(;;){
                 *exit_erg_cm = sample_watt(a, b);
                 if(*exit_erg_cm <= dCalTemp)
                     break;
-                if((nIterCount++) >= MAX_ITER){
+                if((iter_cnt++) >= MAX_ITER){
                     printf("Waring: too many samples of LawType %d!\n", law_type);
                     base_warnings++;
                 }
@@ -133,7 +133,7 @@ void react_by_laws(const nuclide_t *nuc, int MT, int law_type, int LDAT, double 
         int ie = Get_loc_of_DLW(nuc) - 1 + (int) (nuc->XSS[LDAT + LN + pos - 1]);
         int NF = (int) (nuc->XSS[ie]);
 
-        nIterCount = 0;
+        iter_cnt = 0;
         do{
             LDAT = ie;
             double fr = get_rand();
@@ -142,7 +142,7 @@ void react_by_laws(const nuclide_t *nuc, int MT, int law_type, int LDAT, double 
                 fr = fr - nuc->XSS[LDAT];
             } while(fr > 0.);
 
-            if((nIterCount++) >= MAX_ITER){
+            if((iter_cnt++) >= MAX_ITER){
                 printf("Waring: too many samples of LawType %d!\n", law_type);
                 base_warnings++;
             }
@@ -334,7 +334,8 @@ void react_by_laws(const nuclide_t *nuc, int MT, int law_type, int LDAT, double 
         int NPSX = (int) (nuc->XSS[LDAT]); // number of bodies in phase space
         double Ap = nuc->XSS[LDAT + 1]; // total mass ratio
         double aw = nuc->atom_wgt;  // atomic weight
-        double Q = Get_nuc_fis_Q(nuc, MT); //Nuclides[nuc].XSS[GetLocOfLQR(nuc) + Nuclides[nuc].MTRIndex[mt]-1]; // Q-value
+        double Q = Get_nuc_fis_Q(nuc,
+                                 MT); //Nuclides[nuc].XSS[GetLocOfLQR(nuc) + Nuclides[nuc].MTRIndex[mt]-1]; // Q-value
         double E_max = ((Ap - 1) / Ap) * (incident_erg * aw / (aw + 1) + Q);
 
         double lx = sample_maxwell(1);

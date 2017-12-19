@@ -29,8 +29,8 @@ double erf2_function(double a);
 
 void get_nuc_tot_fis_cs(acedata_t *obj, nuclide_t *nuc, nuclide_t *sab_nuc, double erg, double cell_tmp);
 
-void get_nuc_abs_scatt_cs(acedata_t *obj, nuclide_t *nuc, double erg, int nInterpPos0, double dInterpFrac0,
-                          int nInterpPos, double dInterpFrac);
+void get_nuc_abs_scatt_cs(acedata_t *obj, nuclide_t *nuc, double erg, int interp_pos0, double interp_frac0,
+                          int interp_pos, double interp_frac);
 
 double get_nuc_mt_cs(nuclide_t *nuc, int MT, int interp_pos, double interp_frac);
 

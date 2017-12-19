@@ -15,7 +15,7 @@
 int get_law_type(const nuclide_t *nuc, const int MT, const double incident_erg, int *LDAT)
 {
     int law_type;
-    double E1, E0, Pi = 0, ksi;
+    double E1, E0, Pi = ZERO, ksi;
     int LNW, IDAT, NR, NE;
     int which_Pi = 1;
 
