@@ -67,8 +67,8 @@ void read_ace_data(){
         nuc_entry = map_find(base_nucs, (uint64_t)temp);
         if(nuc_entry){
             nuc = (nuclide_t *)nuc_entry->v.val;
-            fscanf(xsdir_fp, "%lf %s %*d %d %d %d %*d %*d %lf",
-                   &nuc->atom_wgt, ace_path, &file_type, &start_addr, &nuc->XSS_sz, &nuc->tmp);
+            fscanf(xsdir_fp, "%lf %s %*d %d %d %d %*d %*d %*lf",
+                   &nuc->atom_wgt, ace_path, &file_type, &start_addr, &nuc->XSS_sz);
             switch(_read_ace(ace_path, file_type, start_addr, nuc)) {
                 case FILE_NOT_EXIST:
                     printf("file %s does not exist in directory %s.\n", ace_path, data_path);
@@ -106,11 +106,14 @@ int _read_ace(const char *ace_path, int file_type, int start_addr, nuclide_t *nu
         for(int i = 1; i < start_addr; i++)
             fgets(buf, CHAR_PER_LINE, ace_fp);
 
+        fgets(buf, CHAR_PER_LINE, ace_fp);
+        sscanf(buf, "%*s %lf %lf", &nuc->atom_wgt, &nuc->tmp);
+
         if(ISNUMBER(*nuc->id))    /* CE ACE data */
-            fseek(ace_fp, 45 + 80 + 72 * 4 + 6, SEEK_CUR);
+            fseek(ace_fp, 80 + 72 * 4 + 5, SEEK_CUR);
         else{                     /* SAB ACE data */
-            fread(buf, sizeof(char), 45 + 80 + 72 * 4 + 6, ace_fp);
-            nuc->zaid = (int)strtol(buf + 45 + 80 + 2, nullptr, 10);
+            fread(buf, sizeof(char), 80 + 72 * 4 + 5, ace_fp);
+            nuc->zaid = (int)strtol(buf + 80 + 1, nullptr, 10);
         }
 
         /* read NXS array */

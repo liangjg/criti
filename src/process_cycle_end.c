@@ -45,6 +45,9 @@ void process_cycle_end(){
     SWAP(base_criti.fission_src.finish, base_criti.fission_bank.finish);
     SWAP(base_criti.fission_src.end_of_storage, base_criti.fission_bank.end_of_storage);
 
+    /* 将fission_bank清空，以便之后使用vector_push_back函数追加裂变产生的粒子 */
+    base_criti.fission_bank.finish = base_criti.fission_bank.start;
+
     base_criti.cycle_neutron_num = base_criti.fission_bank_cnt;
     base_start_wgt = ONE * base_criti.tot_start_wgt / base_criti.tot_fission_bank_cnt;
 
