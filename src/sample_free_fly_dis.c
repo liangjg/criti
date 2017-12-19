@@ -14,13 +14,10 @@ extern map *base_mats;
 extern map *base_nucs;
 extern acedata_t base_acedata;
 
-double sample_free_fly_dis(particle_state_t *par_state, bool is_erg_changed){
+double sample_free_fly_dis(particle_state_t *par_state){
     mat_t *mat;
     nuclide_t *nuc, *sab_nuc;
     double nuc_atom_den;
-
-//    if(!is_erg_changed)
-//        goto END;
 
     /* vacuum material */
     if(par_state->mat == 0){
@@ -49,12 +46,11 @@ double sample_free_fly_dis(particle_state_t *par_state, bool is_erg_changed){
         get_nuc_tot_fis_cs(&base_acedata, nuc, sab_nuc, par_state->erg, par_state->cell_tmp);
 
         par_state->macro_tot_cs += nuc_atom_den * nuc->tot;
-        if(nuc->fis <= ZERO)
-            continue;
-        par_state->macro_nu_fis_cs += nuc_atom_den * nuc->fis * nuc->nu;
+        if(GT_ZERO(nuc->fis))
+            par_state->macro_nu_fis_cs += nuc_atom_den * nuc->fis * nuc->nu;
     }
 
-    if(par_state->macro_tot_cs <= ZERO){
+    if(!GT_ZERO(par_state->macro_tot_cs)){
         par_state->macro_tot_cs = ZERO_ERG;
         par_state->macro_nu_fis_cs = ZERO;
     }

@@ -14,7 +14,7 @@ extern "C"{
 
 void geometry_tracking(particle_state_t *par_state);
 
-double sample_free_fly_dis(particle_state_t *par_state, bool is_erg_changed);
+double sample_free_fly_dis(particle_state_t *par_state);
 
 void sample_col_nuclide(particle_state_t *par_state);
 
