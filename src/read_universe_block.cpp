@@ -3,9 +3,8 @@
 //
 
 #include "IO_releated.h"
-#include "map.h"
-#include "universe.h"
 #include <cassert>
+
 
 extern map *base_univs;
 extern IOfp_t base_IOfp;
@@ -70,21 +69,16 @@ void read_universe_block(char *buf){
             }
             case 3:{    /* PITCH */
                 while(!ISNUMBER(*buf)) buf++;
-                double pitch = 0.0;
                 for(int i = 0; i < 3; i++){
-                    pitch = strtod(buf, &end);
-                    if(pitch > EPSILON)    /* pitch != 0.0 */
-                        univ->pitch[i] = pitch;
+                    univ->pitch[i] = strtod(buf, &end);
                     buf = end;
                 }
                 break;
             }
             case 4:{    /* SCOPE */
                 while(!ISNUMBER(*buf)) buf++;
-                int scope = 0;
                 for(int i = 0; i < 3; i++){
-                    scope = strtol(buf, &end, 10);
-                    univ->scope[i] = scope;
+                    univ->scope[i] = strtol(buf, &end, 10);
                     buf = end;
                 }
                 break;

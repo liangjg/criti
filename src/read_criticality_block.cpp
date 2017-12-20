@@ -6,10 +6,9 @@
 #include "criticality.h"
 #include "RNG.h"
 
+
 extern criti_t base_criti;
-
 extern IOfp_t base_IOfp;
-
 extern RNG_t base_RNG;
 
 void read_criticality_block(){
@@ -54,7 +53,7 @@ void read_criticality_block(){
                     base_criti.tot_cycle_num = strtol(ret, &end, 10);
                     ret = end;
                 }
-                else if(strcmp(sub_kw_start, "KEFF0") == 0){
+                else if(strcmp(sub_kw_start, "KEFF") == 0){
                     while(!ISNUMBER(*ret)) ret++;
                     char *end;
                     base_criti.keff_final = strtod(ret, &end);
@@ -77,7 +76,6 @@ void read_criticality_block(){
 
                 if(strcmp(sub_kw_start, "POINT") == 0){
                     base_criti.ksrc_type = POINT;
-//                    base_criti.ksrc_para_sz = 3;
 
                     while(!ISNUMBER(*ret)) ret++;
                     char *end;
@@ -85,10 +83,10 @@ void read_criticality_block(){
                         base_criti.ksrc_para[i] = strtod(ret, &end);
                         ret = end;
                     }
+                    break;
                 }
                 else if(strcmp(sub_kw_start, "SLAB") == 0){
                     base_criti.ksrc_type = SLAB;
-//                    base_criti.ksrc_para_sz = 6;
 
                     while(!ISNUMBER(*ret)) ret++;
                     char *end;
@@ -96,10 +94,10 @@ void read_criticality_block(){
                         base_criti.ksrc_para[i] = strtod(ret, &end);
                         ret = end;
                     }
+                    break;
                 }
                 else if(strcmp(sub_kw_start, "SPHERE") == 0){
                     base_criti.ksrc_type = SLAB;
-//                    base_criti.ksrc_para_sz = 4;
 
                     while(!ISNUMBER(*ret)) ret++;
                     char *end;
@@ -107,11 +105,13 @@ void read_criticality_block(){
                         base_criti.ksrc_para[i] = strtod(ret, &end);
                         ret = end;
                     }
+                    break;
                 }
                 else puts("unknown key word.");
 
                 while(ISSPACE(*ret)) ret++;
             }
+            if(feof(base_IOfp.inp_fp)) return;
         }
         else if(strcmp(kw_start, "RNG") == 0){
             /* TODO: complete this section */

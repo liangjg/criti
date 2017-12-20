@@ -34,7 +34,7 @@ void find_neighbor_cell(particle_state_t *par_state){
         cell_index = par_state->cell;
         map *val = (map *) map_get(univ->neighbor_lists, cell_index);
         cell_t *neighbor_cell = (cell_t *) map_get(val, bound_surf);
-        if(particle_is_in_cell(neighbor_cell, loc_pos, loc_dir))
+        if(neighbor_cell && particle_is_in_cell(neighbor_cell, loc_pos, loc_dir))
             found = true;
 
         if(found){

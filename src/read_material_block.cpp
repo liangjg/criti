@@ -113,4 +113,22 @@ void read_material_block(){
         else if(ISRETURN(*ret)) break;
         else puts("error in processing MATERIAL block.");
     }
+    if(!nucs.empty() && mat){
+        mat->tot_nuc_num = nucs.size();
+        mat->nuc_id = (char **) malloc(mat->tot_nuc_num * sizeof(char *));
+        mat->nuc_user_den = (double *) malloc(mat->tot_nuc_num * sizeof(double));
+        for(int i = 0; i < mat->tot_nuc_num; i++){
+            mat->nuc_id[i] = (char *) malloc(12 * sizeof(char));
+            strcpy(mat->nuc_id[i], nucs[i].first.c_str());
+            mat->nuc_user_den[i] = nucs[i].second;
+            nuc_entry = map_find(base_nucs, (uint64_t)mat->nuc_id[i]);
+            if(!nuc_entry){
+                nuc = (nuclide_t *) malloc(sizeof(nuclide_t));
+                memset(nuc, 0x0, sizeof(nuclide_t));
+                strcpy(nuc->id, mat->nuc_id[i]);
+                map_put(base_nucs, (uint64_t)mat->nuc_id[i], nuc);
+            }
+        }
+        nucs.clear();
+    }
 }

@@ -26,7 +26,8 @@ void read_cell_card(universe_t *univ){
 
     while((ret = fgets(buf, MAX_LINE_LENGTH, base_IOfp.inp_fp)) != nullptr){
         while(ISSPACE(*ret)) ret++;
-        if(ISRETURN(*ret)) break;    /* current line is blank, current UNIVERSE block terminates */
+        if(ISCOMMENT(*ret)) continue;  /* 当前行是以注释符开头的，继续读取下一行 */
+        if(ISRETURN(*ret)) break;      /* 当前行是空行，意味着当前UNIVERSE已经结束了 */
 
         while(!ISNUMBER(*ret)) ret++;
         int index = 0;
