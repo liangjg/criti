@@ -12,7 +12,7 @@ extern map *base_univs;
 extern map *base_cells;
 extern map *base_surfs;
 
-int locate_particle(particle_state_t *par_state, const double pos[3], const double dir[3]){
+int locate_particle(particle_state_t *par_state, int start_univ, const double pos[3], const double dir[3]){
     universe_t *univ;
     cell_t *cell;
     int level, univ_index, cell_index, found_cell;
@@ -25,7 +25,7 @@ int locate_particle(particle_state_t *par_state, const double pos[3], const doub
         local_dir_temp[i] = dir[i];
     }
 
-    univ_index = 0;
+    univ_index = start_univ;
     found_cell = -1;
     level = 0;
 
@@ -51,7 +51,7 @@ int locate_particle(particle_state_t *par_state, const double pos[3], const doub
             }
 
             vector_push_back(&par_state->loc_cells, &lat_index);
-            lat_univ = univ->filled_lat_univs[lat_index];
+            lat_univ = univ->filled_lat_univs[lat_index - 1];
             move_to_origin_lat(univ, lat_index, local_pos_temp);
             trans_univ_coord((universe_t *) map_get(base_univs, lat_univ), local_pos_temp, local_dir_temp);
             univ_index = lat_univ;

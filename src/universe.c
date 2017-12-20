@@ -144,8 +144,10 @@ int offset_neighbor_lat(universe_t *obj, int lat_index, int lat_bound_surf, doub
 void univ_free(universe_t *obj){
     vector_free(&obj->cells);
     free(obj->filled_lat_univs);
-    map_free(obj->neighbor_lists);
-    free(obj->neighbor_lists);
+    if(obj->neighbor_lists){
+        map_free(obj->neighbor_lists);
+        free(obj->neighbor_lists);
+    }
     free(obj);
 }
 
@@ -156,10 +158,10 @@ double _calc_dist_to_lat_rect(universe_t *obj, const double pos[3], const double
     int surf_order;
 
     for(int i = 0; i < 3; i++){
-        if(obj->scope[i] == 1 || pos[i] < EPSILON || pos[i] > -EPSILON)
+        if(obj->scope[i] == 1 || EQ_ZERO(dir[i]))
             continue;
 
-        if(pos[i] > EPSILON){
+        if(GT_ZERO(dir[i])){
             distance_temp = (obj->pitch[i] - pos[i]) / dir[i];
             surf_order = 2 * i + 2;
         } else {

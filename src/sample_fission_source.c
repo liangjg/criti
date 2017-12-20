@@ -42,7 +42,7 @@ void sample_fission_source(particle_state_t *par_state){
 #pragma GCC diagnostic pop
     base_criti.fission_src_cnt++;
 
-    par_state->cell = locate_particle(par_state, par_state->pos, par_state->dir);
+    par_state->cell = locate_particle(par_state, 0, par_state->pos, par_state->dir);
 
     if(par_state->cell == -1){
         par_state->is_killed = true;

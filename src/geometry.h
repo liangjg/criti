@@ -14,7 +14,7 @@
 extern "C" {
 #endif
 
-int locate_particle(particle_state_t *par_state, const double pos[3], const double dir[3]);
+int locate_particle(particle_state_t *par_state, int start_univ, const double pos[3], const double dir[3]);
 
 void find_next_cell(particle_state_t *par_state);
 

@@ -41,7 +41,10 @@ void build_neighbor_list(){
         entry = base_univs->ht[table].buckets[i];
         while(entry){
             univ = (universe_t *)entry->v.val;
-            if(univ->is_lattice) continue;
+            if(univ->is_lattice) {
+                entry = entry->next;
+                continue;
+            }
             univ->neighbor_lists = map_create(type1);
             contained_cells = vector_size(&univ->cells);
             for(size_t j = 0; j < contained_cells; j++){

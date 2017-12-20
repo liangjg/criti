@@ -32,7 +32,7 @@ void read_universe_block(char *buf){
     while(!ISRETURN(*buf) && !ISCOMMENT(*buf)){
         while(ISSPACE(*buf)) buf++;
         char *kw_start = buf;
-        while(ISALPHA(*buf)) {
+        while(ISALPHA(*buf)){
             *buf = TOUPPER(*buf);
             buf++;
         }
@@ -98,10 +98,10 @@ void read_universe_block(char *buf){
             case 6:{    /* FILL */
                 univ->filled_lat_univs_sz = univ->scope[0] * univ->scope[1];
                 if(univ->lattice_type == 1) univ->filled_lat_univs_sz *= univ->scope[2];
-                univ->filled_lat_univs = new int[univ->filled_lat_univs_sz];
+                univ->filled_lat_univs = (int *) malloc(univ->filled_lat_univs_sz * sizeof(int));
                 for(int i = 0; i < univ->filled_lat_univs_sz; i++)
                     fscanf(base_IOfp.inp_fp, "%d", univ->filled_lat_univs + i);
-                break;
+                return;
             }
             default:
                 break;

@@ -29,11 +29,15 @@ double calc_dist_to_bound(particle_state_t *par_state){
 
     cell = (cell_t *) map_get(base_cells, par_state->cell);
     if(cell->is_inner_cell){
-        for(int i = 0; i < vector_size(&par_state->loc_univs); i++){
+        for(int i = 0; i < 3; i++)
+            loc_dir[i] = par_state->dir[i];
+        for(size_t i = 0; i < vector_size(&par_state->loc_univs); i++){
             loc_univ = *(int *)vector_at(&par_state->loc_univs, i);
-            univ = (universe_t *) map_find(base_univs, loc_univ);
-            trans_univ_dir(univ, par_state->loc_dir);
+            univ = (universe_t *) map_get(base_univs, loc_univ);
+            trans_univ_dir(univ, loc_dir);
         }
+        for(int i = 0; i < 3; i++)
+            par_state->loc_dir[i] = loc_dir[i];
 
         for(size_t i = 0; i < vector_size(&cell->surfs); i++){
             signed_surf_index = *(int *)vector_at(&cell->surfs, i);
@@ -64,10 +68,8 @@ double calc_dist_to_bound(particle_state_t *par_state){
                 lat_index = *(int *)vector_at(&par_state->loc_cells, i);
                 move_to_origin_lat(univ, lat_index, loc_pos);
                 distance = calc_dist_to_lat(univ, loc_pos, loc_dir, &lat_bound_surf);
-                if(distance < ZERO_DIST)
-                    break;
 
-                if(dist_min - distance > OVERLAP_ERR){
+                if(distance > ZERO_DIST && dist_min - distance > OVERLAP_ERR){
                     dist_min = distance;
                     par_state->bound_level = i;
                     par_state->lat_bound_surf = lat_bound_surf;

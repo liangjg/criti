@@ -23,12 +23,12 @@ void find_neighbor_cell(particle_state_t *par_state){
     }
 
     if(univ->is_lattice){
-        lat_index = offset_neighbor_lat(univ, *(int *)vector_at(&par_state->loc_cells, level), par_state->surf, loc_pos);
+        lat_index = offset_neighbor_lat(univ, *(int *)vector_at(&par_state->loc_cells, level), par_state->lat_bound_surf, loc_pos);
         if(lat_index >= 0){
             *(int *)vector_at(&par_state->loc_cells, level) = lat_index;
             filled_univ = univ->filled_lat_univs[lat_index - 1];
             trans_univ_coord((universe_t *) map_get(base_univs, filled_univ), loc_pos, loc_dir);
-            neighbor_cell_index = locate_particle(par_state, loc_pos, loc_dir);
+            neighbor_cell_index = locate_particle(par_state, filled_univ, loc_pos, loc_dir);
         }
     } else{
         cell_index = par_state->cell;
@@ -50,13 +50,13 @@ void find_neighbor_cell(particle_state_t *par_state){
             if(filled_univ > 0){    /* neighbor_cell is a complex cell with universe filled */
                 universe_t *filled_universe = (universe_t *)map_get(base_univs, filled_univ);
                 trans_univ_coord(filled_universe, loc_pos, loc_dir);
-                neighbor_cell_index = locate_particle(par_state, loc_pos, loc_dir);
+                neighbor_cell_index = locate_particle(par_state, filled_univ, loc_pos, loc_dir);
             }
         }
     }
 
     if(!found)
-        neighbor_cell_index = locate_particle(par_state, loc_pos, loc_dir);
+        neighbor_cell_index = locate_particle(par_state, 0, par_state->pos, par_state->dir);
 
     par_state->cell = neighbor_cell_index;
 }
