@@ -51,5 +51,5 @@ void check_IO_file(int argc, char *argv[]){
 
     base_IOfp.opt_fp = fopen(base_IOfp.opt_file_name, "wb");
     base_IOfp.mat_fp = fopen(mat_fn, "wb");
-    base_IOfp.tally_fp = fopen(tally_fn, "wb");
+//    base_IOfp.tally_fp = fopen(tally_fn, "wb");
 }
