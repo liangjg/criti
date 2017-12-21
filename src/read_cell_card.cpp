@@ -150,6 +150,7 @@ char *_generate_rpn(char *exp, bool &is_simple){
                     break;
                 default:
                     printf("Error expression!\n");
+                    release_resource();
                     exit(0);
             }
         }
@@ -183,6 +184,7 @@ char _order_between(char a, char b, bool &is_simple){
             break;
         default:
             printf("Error: unknown operator %c\n", a);
+            release_resource();
             exit(0);
     }
     switch(b){
@@ -206,6 +208,7 @@ char _order_between(char a, char b, bool &is_simple){
             break;
         default:
             printf("Error: unknown operator %c\n", b);
+            release_resource();
             exit(0);
     }
     return priority[p][q];

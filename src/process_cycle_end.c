@@ -26,6 +26,7 @@ void process_cycle_end(){
 
     if(base_criti.tot_fission_bank_cnt < 5){
         puts("Insufficient fission source to be sampled.");
+        release_resource();
         exit(0);
     }
 

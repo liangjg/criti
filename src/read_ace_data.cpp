@@ -40,6 +40,7 @@ void read_ace_data(){
     xsdir_fp = fopen("xsdir", "r");
     if(!xsdir_fp){
         puts("Library index file \"xsdir\" does not exist!");
+        release_resource();
         exit(0);
     }
 
@@ -59,6 +60,8 @@ void read_ace_data(){
         fgets(buf, 90, xsdir_fp);
         if(feof(xsdir_fp)){
             puts("keyword 'directory' is not found in xsdir file");
+            fclose(xsdir_fp);
+            release_resource();
             exit(0);
         }
     }
@@ -73,9 +76,13 @@ void read_ace_data(){
             switch(_read_ace(ace_path, file_type, start_addr, nuc)) {
                 case FILE_NOT_EXIST:
                     printf("file %s does not exist in directory %s.\n", ace_path, data_path);
+                    fclose(xsdir_fp);
+                    release_resource();
                     exit(0);
                 case FILE_TYPE_ERR:
                     printf("wrong ACE file type in xsdir, nuclide: %s.\n", nuc->id);
+                    fclose(xsdir_fp);
+                    release_resource();
                     exit(0);
                 default:
                     break;
@@ -190,7 +197,10 @@ int _read_ace(const char *ace_path, int file_type, int start_addr, nuclide_t *nu
         nuc->XSS = new double[nuc->XSS_sz + 1];
         fread(nuc->XSS + 1, sizeof(double), nuc->XSS_sz, ace_fp);
     }
-    else return FILE_TYPE_ERR;
+    else {
+        fclose(ace_fp);
+        return FILE_TYPE_ERR;
+    }
 
     fclose(ace_fp);
     delete[]buf;

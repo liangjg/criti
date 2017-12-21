@@ -63,6 +63,7 @@ void check_ce_ace_block(){
                         int MT_temp = (int) (nuc->XSS[L3 + j - 1]);
                         if(MT_temp <= 0){
                             printf("negative MT = %d for nuclide %s", MT_temp, nuc->id);
+                            release_resource();
                             exit(0);
                         }
 
@@ -118,6 +119,7 @@ void check_ce_ace_block(){
                         int SIG_NE = (int) (nuc->XSS[IE_LOCA + 1]);
                         if((SIG_IE + SIG_NE - 1) != NE){
                             printf("Abnormal cross-section of reaction MT=%d in nuc=%s \n", MT_temp, nuc->id);
+                            release_resource();
                             exit(0);
                         }
                         if(MT_temp == 18)

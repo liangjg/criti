@@ -18,6 +18,7 @@ void treat_free_gas_model(particle_state_t *par_state, double nuc_wgt){
     do{
         if((iter_count++) >= MAX_ITER){
             puts("Waring: too many samples of Free gas model.");
+            release_resource();
             exit(0);
         }
 

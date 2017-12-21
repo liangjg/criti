@@ -67,6 +67,7 @@ int calc_surf_sense(surface_t *obj, const double pos[3], const double dir[3]){
         }
         default:{
             puts("unknown surface type.");
+            release_resource();
             exit(0);
         }
     }
@@ -164,6 +165,7 @@ void get_surf_norm_vec(surface_t *obj, const double pos[3], double *surf_norm_ve
         }
         default:{
             puts("unknown surface type.");
+            release_resource();
             exit(0);
         }
     }
@@ -301,6 +303,7 @@ double calc_dist_to_surf(surface_t *obj, const double pos[3], const double dir[3
         }
         default:{
             puts("unknown surface type.");
+            release_resource();
             exit(0);
         }
     }

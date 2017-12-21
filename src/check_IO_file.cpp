@@ -19,6 +19,7 @@ void check_IO_file(int argc, char *argv[]){
         }
         else{
             puts("filename too long.");
+            release_resource();
             exit(0);
         }
 
@@ -28,6 +29,7 @@ void check_IO_file(int argc, char *argv[]){
             strcpy(base_IOfp.inp_file_name, argv[1]);
         else{
             puts("filename too long.");
+            release_resource();
             exit(0);
         }
         strcpy(base_IOfp.opt_file_name, base_IOfp.inp_file_name);
@@ -46,6 +48,7 @@ void check_IO_file(int argc, char *argv[]){
     base_IOfp.inp_fp = fopen(base_IOfp.inp_file_name, "rb");
     if(!base_IOfp.inp_fp){
         printf("%s does not exist.\n", base_IOfp.inp_file_name);
+        release_resource();
         exit(0);
     }
 
