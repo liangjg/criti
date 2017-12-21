@@ -12,7 +12,7 @@ extern RNG_t base_RNG;
 extern double base_start_wgt;
 
 void init_fission_source(){
-    puts("Initiating fission source...");
+    printf("Initiating fission source...");
 
     base_criti.cycle_neutron_num = base_criti.neu_num_per_cycle;
     base_criti.tot_start_wgt = 1.0 * base_criti.cycle_neutron_num;

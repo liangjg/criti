@@ -12,13 +12,13 @@
     #include <windows.h>
 #endif
 
+
 #define MAX_LINES         51781
 #define CHAR_PER_LINE     81
 
 #define FILE_NOT_EXIST    1
 #define FILE_TYPE_ERR     2
 
-//extern acedata_t base_acedata;
 
 extern map *base_nucs;
 static char data_path[64];
@@ -36,6 +36,7 @@ void read_ace_data(){
     nuclide_t *nuc;
     FILE *xsdir_fp;
 
+    printf("Reading XSDIR/ACE library...");
     xsdir_fp = fopen("xsdir", "r");
     if(!xsdir_fp){
         puts("Library index file \"xsdir\" does not exist!");
@@ -84,6 +85,7 @@ void read_ace_data(){
     }
 
     fclose(xsdir_fp);
+    puts("Finished.");
 
 #if defined(OS_LINUX) || defined(OS_MAC)
     chdir(cwd);
