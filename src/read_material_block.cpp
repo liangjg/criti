@@ -50,6 +50,9 @@ void read_material_block(){
                             map_put(base_nucs, (uint64_t)mat->nuc_id[i], nuc);
                         }
                     }
+                    if(EQ_ZERO(mat->user_den))
+                        for(int i = 0; i < mat->tot_nuc_num; i++)
+                            mat->user_den += mat->nuc_user_den[i];
                     nucs.clear();
                 }
 
@@ -83,6 +86,9 @@ void read_material_block(){
                             map_put(base_nucs, (uint64_t)mat->nuc_id[i], nuc);
                         }
                     }
+                    if(EQ_ZERO(mat->user_den))
+                        for(int i = 0; i < mat->tot_nuc_num; i++)
+                            mat->user_den += mat->nuc_user_den[i];
                     nucs.clear();
                 }
 
@@ -129,6 +135,9 @@ void read_material_block(){
                 map_put(base_nucs, (uint64_t)mat->nuc_id[i], nuc);
             }
         }
+        if(EQ_ZERO(mat->user_den))
+            for(int i = 0; i < mat->tot_nuc_num; i++)
+                mat->user_den += mat->nuc_user_den[i];
         nucs.clear();
     }
 }
