@@ -5,18 +5,24 @@
 #include "IO_releated.h"
 #include "cell.h"
 #include <stack>
+#include <string>
+
 
 extern map *base_cells;
 extern IOfp_t base_IOfp;
 
 /* -------------------------- private prototypes ---------------------------- */
-char *_generate_rpn(char *exp, bool &is_simple);
+char *_generate_rpn(const char *exp, bool &is_simple);
 
 char _order_between(char a, char b, bool &is_simple);
 
 int _identify_cell_kw(char *kw);
 
 void _extract_surfs_from_rpn(cell_t *cell);
+
+void _simplify(const char *exp, char **simplified_exp);
+
+void _transform(std::string &s);
 
 /* ----------------------------- API implementation ------------------------- */
 void read_cell_card(universe_t *univ){
@@ -112,8 +118,17 @@ int _identify_cell_kw(char *kw){
     return -1;
 }
 
-char *_generate_rpn(char *exp, bool &is_simple){
-    size_t len = strlen(exp);
+char *_generate_rpn(const char *exp, bool &is_simple){
+    char *simplified_exp, *origin;
+    /* *************************************************************
+     * 将原表达式中的'!'运算符去掉，一定程度上简化表达式；
+     * 其中simplified_exp指向由_simplify分配好的地址，存放化简后的表达式；
+     * 在此函数结束处释放掉
+     * *************************************************************/
+    _simplify(exp, &simplified_exp);
+    origin = simplified_exp;
+
+    size_t len = strlen(simplified_exp);
     char *rpn = (char *) malloc(2 * len * sizeof(char));
     size_t i = 0;
     char c = '\0';
@@ -122,25 +137,25 @@ char *_generate_rpn(char *exp, bool &is_simple){
     optr.push(c);
 
     while(!optr.empty()){
-        if(ISNUMBER(*exp)){
+        if(ISNUMBER(*simplified_exp)){
             do{
-                rpn[i++] = *exp++;
-            } while(ISNUMBER(*exp));
+                rpn[i++] = *simplified_exp++;
+            } while(ISNUMBER(*simplified_exp));
             rpn[i++] = ' ';
-        } else if(*exp == '-'){
-            rpn[i++] = *exp++;
-        } else if(ISSPACE(*exp)){
-            exp++;
+        } else if(*simplified_exp == '-'){
+            rpn[i++] = *simplified_exp++;
+        } else if(ISSPACE(*simplified_exp)){
+            simplified_exp++;
             continue;
         } else{
-            switch(_order_between(optr.top(), *exp, is_simple)){
+            switch(_order_between(optr.top(), *simplified_exp, is_simple)){
                 case '<':
-                    c = *exp++;
+                    c = *simplified_exp++;
                     optr.push(c);
                     break;
                 case '=': /* 只可能是左括号碰到右括号，或者头哨兵碰到尾哨兵 */
                     optr.pop();
-                    exp++;
+                    simplified_exp++;
                     break;
                 case '>':
                     c = optr.top();
@@ -149,13 +164,14 @@ char *_generate_rpn(char *exp, bool &is_simple){
                     rpn[i++] = ' ';
                     break;
                 default:
-                    printf("Error expression!\n");
+                    printf("Error simplified_expression!\n");
                     release_resource();
                     exit(0);
             }
         }
     }
     rpn[i] = '\0';
+    free(origin);
     return rpn;
 }
 
@@ -237,5 +253,52 @@ void _extract_surfs_from_rpn(cell_t *cell){
             vector_push_back(&cell->surfs, &surf_index);
         }
         start++;
+    }
+}
+
+void _simplify(const char *exp, char **simplified_exp){
+    std::string s(exp);
+
+    size_t found = 0;
+    size_t start, pos;
+    int num_of_lp = 0;
+
+    while((found = s.find('!')) != std::string::npos){
+        s.erase(found, 1);
+        start = found;
+        if(s[start] == '('){
+            num_of_lp++;
+            pos = start + 1;
+            while(num_of_lp){
+                if(s[pos] == '(') num_of_lp++;
+                else if(s[pos] == ')') num_of_lp--;
+                pos++;
+            }
+        }
+        std::string sub_s = s.substr(start, pos - start);
+        _transform(sub_s);
+        s.replace(start, pos - start, sub_s);
+    }
+
+    size_t sz = s.size() + 1;
+    *simplified_exp = (char *) malloc(sz * sizeof(char));
+    strcpy(*simplified_exp, s.c_str());
+}
+
+void _transform(std::string &s){
+    size_t len = s.size();
+    size_t i = 0;
+    while(i < len){
+        if(s[i] == '&') s[i++] = ':';
+        else if(s[i] == ':') s[i++] = '&';
+        else if(s[i] == '-'){
+            s[i++] = ' ';
+            while(ISNUMBER(s[i])) i++;
+        } else if(ISNUMBER(s[i])){
+            s.insert(i, 1, '-');
+            len++;
+            i += 2;
+            while(ISNUMBER(s[i])) i++;
+        } else i++;
     }
 }
