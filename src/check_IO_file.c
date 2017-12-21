@@ -4,7 +4,7 @@
 
 #include "IO_releated.h"
 
-/* base_IOfp is a global variable declared in main.cpp */
+
 extern IOfp_t base_IOfp;
 
 void check_IO_file(int argc, char *argv[]){

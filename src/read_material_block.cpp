@@ -108,6 +108,8 @@ void read_material_block(){
                     }
                 } else{
                     puts("error SAB index.");
+                    release_resource();
+                    exit(0);
                 }
             } else puts("error in processing MATERIAL block.");
         } else if(ISNUMBER(*ret)){

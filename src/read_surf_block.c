@@ -6,6 +6,7 @@
 #include "map.h"
 #include "surface.h"
 
+
 extern map *base_surfs;
 extern IOfp_t base_IOfp;
 
@@ -13,7 +14,7 @@ void read_surf_block(){
     char buf[256];
     char *ret;
 
-    while((ret = fgets(buf, MAX_LINE_LENGTH, base_IOfp.inp_fp)) != nullptr){
+    while((ret = fgets(buf, MAX_LINE_LENGTH, base_IOfp.inp_fp))){
         while(ISSPACE(*ret)) ret++;
         if(ISCOMMENT(*ret)) continue;
         if(ISRETURN(*ret)) break;    /* current line is blank, SURFACE block terminates */

@@ -105,7 +105,7 @@ int _read_ace(const char *ace_path, int file_type, int start_addr, nuclide_t *nu
     FILE *ace_fp;
     char *buf;
 
-    buf = new char[1UL << 22];    /* 4M bytes buffer */
+    buf = (char *)malloc(1UL << 22);    /* 4M bytes buffer */
     ace_fp = fopen(ace_path, "rb");
 
     if(!ace_fp) return FILE_NOT_EXIST;
@@ -122,7 +122,7 @@ int _read_ace(const char *ace_path, int file_type, int start_addr, nuclide_t *nu
             fseek(ace_fp, 80 + 72 * 4 + 5, SEEK_CUR);
         else{                     /* SAB ACE data */
             fread(buf, sizeof(char), 80 + 72 * 4 + 5, ace_fp);
-            nuc->zaid = (int)strtol(buf + 80 + 1, nullptr, 10);
+            nuc->zaid = (int)strtol(buf + 80 + 1, NULL, 10);
         }
 
         /* read NXS array */
@@ -194,7 +194,7 @@ int _read_ace(const char *ace_path, int file_type, int start_addr, nuclide_t *nu
             nuc->zaid = nuc->NXS[2];
 
         fseek(ace_fp, start_addr * 4096, SEEK_SET);
-        nuc->XSS = new double[nuc->XSS_sz + 1];
+        nuc->XSS = (double *)malloc((nuc->XSS_sz + 1) * sizeof(double));
         fread(nuc->XSS + 1, sizeof(double), nuc->XSS_sz, ace_fp);
     }
     else {
@@ -203,7 +203,7 @@ int _read_ace(const char *ace_path, int file_type, int start_addr, nuclide_t *nu
     }
 
     fclose(ace_fp);
-    delete[]buf;
+    free(buf);
 
     return 0;
 }

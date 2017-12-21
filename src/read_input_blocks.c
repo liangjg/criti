@@ -17,7 +17,7 @@ void read_input_blocks(CALC_MODE_T *calc_mode){
 
     printf("Reading input file...");
 
-    while((ret = fgets(buf, MAX_LINE_LENGTH, base_IOfp.inp_fp)) != nullptr){
+    while((ret = fgets(buf, MAX_LINE_LENGTH, base_IOfp.inp_fp))){
         /* find the first non-space character */
         while(ISSPACE(*ret)) ret++;
 

@@ -4,14 +4,14 @@
 
 #include "IO_releated.h"
 
-time_t start_time = clock();
+time_t start_time;
 time_t finish_time;
 extern IOfp_t base_IOfp;
 
 void output_heading(){
-
+    start_time = clock();
     char start_wall_clock_str[64];
-    time_t start_wall_clock = time(nullptr);
+    time_t start_wall_clock = time(NULL);
     strftime(start_wall_clock_str, sizeof(start_wall_clock_str), "%Y/%m/%d %X %A", localtime(&start_wall_clock));
 
     ////////////////////////// Write RMC LOGO///////////////////////

@@ -8,7 +8,7 @@ extern IOfp_t base_IOfp;
 
 void output_ending(){
     char finish_wall_clock_str[64];
-    time_t finish_wall_clock = time(nullptr);
+    time_t finish_wall_clock = time(NULL);
     strftime(finish_wall_clock_str, sizeof(finish_wall_clock_str), "%Y/%m/%d %X %A", localtime(&finish_wall_clock));
 
     finish_time = clock();

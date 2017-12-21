@@ -19,7 +19,7 @@ void read_criticality_block(){
     char buf[256];
     char *ret;
 
-    while((ret = fgets(buf, MAX_LINE_LENGTH, base_IOfp.inp_fp)) != nullptr){
+    while((ret = fgets(buf, MAX_LINE_LENGTH, base_IOfp.inp_fp))){
         while(ISSPACE(*ret)) ret++;
 
         if(ISCOMMENT(*ret)) continue;
