@@ -17,6 +17,9 @@ void find_neighbor_cell(particle_state_t *par_state){
     int bound_surf = par_state->surf;
     universe_t *univ = (universe_t *) map_get(base_univs, univ_index);
 
+    vector_resize(&par_state->loc_univs, level + 1);
+    vector_resize(&par_state->loc_cells, level + 1);
+
     for(int i = 0; i < 3; i++){
         loc_pos[i] = par_state->loc_pos[i];
         loc_dir[i] = par_state->loc_dir[i];
@@ -31,7 +34,7 @@ void find_neighbor_cell(particle_state_t *par_state){
             neighbor_cell_index = locate_particle(par_state, filled_univ, loc_pos, loc_dir);
         }
     } else{
-        cell_index = par_state->cell;
+        cell_index = *(int *)vector_at(&univ->cells, *(int *)vector_at(&par_state->loc_cells, level));
         map *val = (map *) map_get(univ->neighbor_lists, cell_index);
         cell_t *neighbor_cell = (cell_t *) map_get(val, bound_surf);
         if(neighbor_cell && particle_is_in_cell(neighbor_cell, loc_pos, loc_dir))

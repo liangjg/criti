@@ -30,8 +30,10 @@ int locate_particle(particle_state_t *par_state, int start_univ, const double po
     level = 0;
 
     /* 清空当前univs和cells，全部重新定位 */
-    vector_clear(&par_state->loc_univs);
-    vector_clear(&par_state->loc_cells);
+    if(start_univ == 0){
+        vector_clear(&par_state->loc_univs);
+        vector_clear(&par_state->loc_cells);
+    }
 
     while(1){
         if(++level > 99){
