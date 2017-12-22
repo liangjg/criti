@@ -14,10 +14,18 @@ extern map *base_mats;
 extern map *base_nucs;
 extern acedata_t base_acedata;
 
-double sample_free_fly_dis(particle_state_t *par_state){
+double sample_free_fly_dis(particle_state_t *par_state, bool erg_changed){
     mat_t *mat;
     nuclide_t *nuc, *sab_nuc;
     double nuc_atom_den;
+
+    /* **********************************************************************
+     * 如果粒子当前的材料以及材料温度与上次相比都没有发生变化，那么直接使用上一次的计算结果
+     * 即可，不用重新计算。这种情况在大规模的重复几何结构中比较常见，采取这种方法，可以提高
+     * 重复几何结构的计算的效率
+     * **********************************************************************/
+    if(!erg_changed && !par_state->mat_changed && !par_state->cell_tmp_changed)
+        goto END;
 
     /* vacuum material */
     if(par_state->mat == 0){

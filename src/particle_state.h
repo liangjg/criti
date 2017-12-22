@@ -36,6 +36,8 @@ typedef struct{
     int sab_nuc;                /* 和当前碰撞核素相应的热化核素 */
     int collision_type;         /* 当前反应的MT号 */
     double cell_tmp;            /* 当前cell的温度 */
+    bool cell_tmp_changed;      /* 粒子穿面之后，所处的材料有没有发生变化 */
+    bool mat_changed;           /* 粒子穿面之后，所处的材料温度有没有发生变化 */
 
     /* cross sections */
     int interp_N0;              /* Eg0 interpolation position */

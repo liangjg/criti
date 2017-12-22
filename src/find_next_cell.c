@@ -16,9 +16,13 @@ void find_next_cell(particle_state_t *par_state){
     universe_t *univ;
     cell_t *cell;
     surface_t *surf;
+    int prev_mat;
+    double prev_cell_tmp;
 
     int univ_index = *(int *)vector_at(&par_state->loc_univs, par_state->bound_level);
     univ = (universe_t *) map_get(base_univs, univ_index);
+    prev_mat = par_state->mat;
+    prev_cell_tmp = par_state->cell_tmp;
 
     if(univ->is_lattice)
         find_neighbor_cell(par_state);
@@ -49,4 +53,6 @@ void find_next_cell(particle_state_t *par_state){
         par_state->is_killed = true;
     par_state->mat = cell->mat;
     par_state->cell_tmp = cell->tmp;
+    par_state->mat_changed = (prev_mat != par_state->mat);
+    par_state->cell_tmp_changed = !EQ_ZERO(prev_cell_tmp - par_state->cell_tmp);
 }
