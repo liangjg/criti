@@ -23,7 +23,6 @@ void build_neighbor_list(){
     int cell1_index, cell2_index;
     int surf_index1, surf_index2;
 
-    int table = base_univs->table;
     type1 = (map_type *)malloc(sizeof(map_type));
     type2 = (map_type *)malloc(sizeof(map_type));
 
@@ -37,8 +36,8 @@ void build_neighbor_list(){
     type2->value_dup = NULL;
     type2->value_free = NULL;
 
-    for(unsigned long i = 0; i < base_univs->ht[table].size; i++){
-        entry = base_univs->ht[table].buckets[i];
+    for(unsigned long i = 0; i < base_univs->ht.size; i++){
+        entry = base_univs->ht.buckets[i];
         while(entry){
             univ = (universe_t *)entry->v.val;
             if(univ->is_lattice) {

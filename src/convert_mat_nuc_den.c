@@ -18,10 +18,9 @@ void convert_mat_nuc_den(){
     int tot_nuc_num;
     double sum_atom_den, sum_gram_den, atom_wgt;
     char *nuc_id;
-    int table = base_mats->table;
 
-    for(unsigned long i = 0; i < base_mats->ht[table].size; i++){
-        entry = base_mats->ht[table].buckets[i];
+    for(unsigned long i = 0; i < base_mats->ht.size; i++){
+        entry = base_mats->ht.buckets[i];
         while(entry){
             mat = (mat_t *) entry->v.val;
             tot_nuc_num = mat->tot_nuc_num;

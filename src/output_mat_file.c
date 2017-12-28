@@ -16,14 +16,13 @@ void output_mat_file(){
     mat_t *mat;
     map_entry *entry;
     int tot_nuc_num;
-    int table = base_mats->table;
 
     fprintf(base_IOfp.mat_fp, "====================== Material Information Start ======================\n");
     fprintf(base_IOfp.mat_fp, "Material    Nuclide       Mass Density     Atom Density     User Input\n");
     fprintf(base_IOfp.mat_fp, "                           (g/cm^3)      (10^24atom/cm^3)             \n");
 
-    for(unsigned long i = 0; i < base_mats->ht[table].size; i++){
-        entry = base_mats->ht[table].buckets[i];
+    for(unsigned long i = 0; i < base_mats->ht.size; i++){
+        entry = base_mats->ht.buckets[i];
         while(entry){
             mat = (mat_t *) entry->v.val;
             tot_nuc_num = mat->tot_nuc_num;

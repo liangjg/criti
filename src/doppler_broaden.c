@@ -25,15 +25,13 @@ void doppler_broaden(){
     nuclide_t *nuc;
     cell_t *cell;
     map_entry *cell_entry, *nuc_entry;
-    int cnt, cell_table, nuc_table;
+    int cnt;
     double broaden_tmp;
     bool first_time;    /* 是否所有cell都是相同的温度 */
 
     cnt = 0;
-    cell_table = base_cells->table;
-    nuc_table = base_nucs->table;
-    for(unsigned long i = 0; i < base_nucs->ht[nuc_table].size; i++){
-        nuc_entry = base_nucs->ht[nuc_table].buckets[i];
+    for(unsigned long i = 0; i < base_nucs->ht.size; i++){
+        nuc_entry = base_nucs->ht.buckets[i];
         while(nuc_entry){
             nuc = (nuclide_t *) nuc_entry->v.val;
             nuc->broaden_tmp = nuc->tmp;
@@ -43,8 +41,8 @@ void doppler_broaden(){
             }
             first_time = true;
             broaden_tmp = ZERO;
-            for(unsigned long j = 0; j < base_cells->ht[cell_table].size; j++){
-                cell_entry = base_cells->ht[cell_table].buckets[j];
+            for(unsigned long j = 0; j < base_cells->ht.size; j++){
+                cell_entry = base_cells->ht.buckets[j];
                 while(cell_entry){
                     cell = (cell_t *) cell_entry->v.val;
                     mat = (mat_t *) map_get(base_mats, cell->mat);

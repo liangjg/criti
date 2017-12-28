@@ -28,15 +28,17 @@ typedef struct map_ht {
 
 typedef struct map_type {
     uint64_t (*hash_func)(const void *key);
+
     void *(*value_dup)(const void *obj);
+
     void (*value_free)(void *val);
+
     int (*key_compare)(uint64_t key1, uint64_t key2);
 } map_type;
 
 typedef struct map {
     map_type *type;
-    map_ht ht[2];
-    int table;
+    map_ht ht;
 } map;
 
 #define MAP_HT_INITIAL_SIZE    4
@@ -54,12 +56,6 @@ map *map_create(map_type *type);
 
 int map_put(map *m, uint64_t key, void *val);
 
-int map_put_int64(map *m, uint64_t key, int64_t s64);
-
-int map_put_uint64(map *m, uint64_t key, uint64_t u64);
-
-int map_put_double(map *m, uint64_t key, double d);
-
 int map_rm(map *m, uint64_t key);
 
 void *map_get(map *m, uint64_t key);
@@ -68,7 +64,7 @@ void map_free(map *m);
 
 map_entry *map_find(map *m, uint64_t key);
 
-uint64_t _default_string_hash_func(const void *key, int len, uint64_t seed);
+uint64_t _default_string_has_func(const void *key, int len, uint64_t seed);
 
 uint64_t _default_int_hash_func(uint32_t key);
 

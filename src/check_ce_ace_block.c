@@ -17,11 +17,10 @@ void check_ce_ace_block(){
     double esa1, esa2;
     int location;
     int *old_addr, old_sz;
-    int table = base_nucs->table;
 
     /* 连续能量ACE截面模块 */
-    for(unsigned long i = 0; i < base_nucs->ht[table].size; i++){
-        entry = base_nucs->ht[table].buckets[i];
+    for(unsigned long i = 0; i < base_nucs->ht.size; i++){
+        entry = base_nucs->ht.buckets[i];
         while(entry){
             nuc = (nuclide_t *) entry->v.val;
             if(ISNUMBER(*nuc->id)){
@@ -142,9 +141,8 @@ void check_ce_ace_block(){
     }
 
     /* 检查SAB截面模块 */
-    table = base_mats->table;
-    for(unsigned long i = 0; i < base_mats->ht[table].size; i++){
-        entry = base_mats->ht[table].buckets[i];
+    for(unsigned long i = 0; i < base_mats->ht.size; i++){
+        entry = base_mats->ht.buckets[i];
         while(entry){
             mat = (mat_t *) entry->v.val;
             if(mat->tot_sab_nuc_num){
