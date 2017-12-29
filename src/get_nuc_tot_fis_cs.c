@@ -18,7 +18,7 @@ void get_nuc_tot_fis_cs(acedata_t *obj, nuclide_t *nuc, nuclide_t *sab_nuc, doub
     min = 1;
     max = NE;
 
-    get_intplt_pos_fr_double(nuc->XSS, erg, min, max, &nuc->inter_pos, &nuc->inter_frac);
+    nuc->inter_pos = get_intplt_pos_fr(nuc->XSS, erg, min, max, &nuc->inter_frac);
 
 //    if(use_ptable){
 //        nuc->prob_table_flag = NotAdjustCsByPT;
@@ -34,8 +34,8 @@ void get_nuc_tot_fis_cs(acedata_t *obj, nuclide_t *nuc, nuclide_t *sab_nuc, doub
 
     //tot_cs:
     if(!sab_nuc){
-        nuc->tot = INTPLT_BY_POS_FR(nuc->XSS, nuc->inter_pos + NE, nuc->inter_frac);
-        nuc->fis = INTPLT_BY_POS_FR(nuc->fis_XSS, nuc->inter_pos, nuc->inter_frac);
+        nuc->tot = intplt_by_pos_fr(nuc->XSS, nuc->inter_pos + NE, nuc->inter_frac);
+        nuc->fis = intplt_by_pos_fr(nuc->fis_XSS, nuc->inter_pos, nuc->inter_frac);
         dppler_brdn_nuc_tot_cs(obj, nuc, cell_tmp, erg);
         return;
     }

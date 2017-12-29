@@ -17,6 +17,6 @@ double get_nuc_mt_cs(nuclide_t *nuc, int MT, int interp_pos, double interp_frac)
     if(interp_pos < SIG_IE)
         return 0;
     else
-        return INTPLT_BY_POS_FR(nuc->XSS, IE_LOCA + 2 + interp_pos - SIG_IE, interp_frac);
+        return intplt_by_pos_fr(nuc->XSS, IE_LOCA + 2 + interp_pos - SIG_IE, interp_frac);
 
 }

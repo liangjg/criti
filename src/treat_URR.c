@@ -203,7 +203,7 @@ void treat_URR(nuclide_t *nuc, double erg)  // Treat Unresolved Resonance Range
     nuc->abs = nuc->abs + abs_balance;    // absorption=capture +  other absorption
     if(nuc->abs < 0){
         int NE = Get_erg_grid_num(nuc);
-        nuc->abs = INTPLT_BY_POS_FR(nuc->XSS, nuc->inter_pos + 2 * NE, nuc->inter_frac); // absorption, E0
+        nuc->abs = intplt_by_pos_fr(nuc->XSS, nuc->inter_pos + 2 * NE, nuc->inter_frac); // absorption, E0
     }
 
     nuc->inel = inel_balance;

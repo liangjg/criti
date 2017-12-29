@@ -21,8 +21,7 @@ void treat_sab_colli_type(const nuclide_t *sab_nuc, double SIG_sab_el, double SI
         int min = Get_loc_of_sab_el_erg(sab_nuc) + 1;
         int max = Get_loc_of_sab_el_erg(sab_nuc) + NE_el;
 
-        get_intplt_pos_fr_double(sab_nuc->XSS, incident_erg, min, max, &sab_n_el,
-                                 &sab_k_el); //// sab_n_el never reach max
+        sab_n_el = get_intplt_pos_fr(sab_nuc->XSS, incident_erg, min, max, &sab_k_el); //// sab_n_el never reach max
         sab_n_el = sab_n_el - Get_loc_of_sab_el_erg(sab_nuc);
         int LN = Get_loc_of_sab_el_mu(sab_nuc) + (sab_n_el - 1) * (abs(Get_sab_el_dim_para(sab_nuc)) + 1);
         int N_el_mu = Get_sab_el_dim_para(sab_nuc) + 1;
@@ -41,7 +40,7 @@ void treat_sab_colli_type(const nuclide_t *sab_nuc, double SIG_sab_el, double SI
             min = Get_loc_of_sab_el_xs(sab_nuc);
             max = Get_loc_of_sab_el_xs(sab_nuc) + sab_n_el;
             double pi = sab_nuc->XSS[max] * get_rand();
-            get_intplt_pos_double(sab_nuc->XSS, pi, min, max, &Loc);
+            Loc = get_intplt_pos(sab_nuc->XSS, pi, min, max);
             Loc = Loc + 1 - (int) (sab_nuc->XSS[Get_loc_of_sab_el_erg(sab_nuc)]);
             exit_mu_lab = 1 - 2.0 * sab_nuc->XSS[Loc] / incident_erg;
         } else{
@@ -55,7 +54,7 @@ void treat_sab_colli_type(const nuclide_t *sab_nuc, double SIG_sab_el, double SI
         int NE_inel = (int) (sab_nuc->XSS[Get_loc_of_sab_inel_erg(sab_nuc)] + 0.5);
         int min = Get_loc_of_sab_inel_erg(sab_nuc) + 1;
         int max = Get_loc_of_sab_inel_erg(sab_nuc) + NE_inel;
-        get_intplt_pos_fr_double(sab_nuc->XSS, incident_erg, min, max, &sab_n_inel, &sab_k_inel);
+        sab_n_inel = get_intplt_pos_fr(sab_nuc->XSS, incident_erg, min, max, &sab_k_inel);
         sab_n_inel = sab_n_inel - Get_loc_of_sab_inel_erg(sab_nuc);
 
         int LE;

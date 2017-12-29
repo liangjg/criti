@@ -29,7 +29,7 @@ void interpolate_xss_table(const nuclide_t *nuc, const double incident_erg, cons
     }
 
 
-    get_intplt_pos_fr_double(nuc->XSS, incident_erg, interp_1, interp_2, pos, frac);
+    *pos = get_intplt_pos_fr(nuc->XSS, incident_erg, interp_1, interp_2, frac);
     *pos = *pos - E_grid_base;
 
     if(*num_of_interp_region == 0)

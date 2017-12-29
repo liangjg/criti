@@ -27,7 +27,7 @@ double get_erg_func_value(const nuclide_t *nuc, int LDAT, double erg){
 
     double fr;
     int pos;
-    get_intplt_pos_fr_double(nuc->XSS, erg, min, max, &pos, &fr);
+    pos = get_intplt_pos_fr(nuc->XSS, erg, min, max, &fr);
 
     erg_1 = nuc->XSS[pos];
     erg_2 = nuc->XSS[pos + 1];

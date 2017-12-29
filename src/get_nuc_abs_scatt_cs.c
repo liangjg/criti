@@ -13,9 +13,9 @@ void get_nuc_abs_scatt_cs(acedata_t *obj, nuclide_t *nuc, double erg, int interp
 
     ///////// Norma case: interpolate SIG (a,el,inel) //////////
     int NE = Get_erg_grid_num(nuc);
-    nuc->abs = INTPLT_BY_POS_FR(nuc->XSS, interp_pos0 + 2 * NE, interp_frac0);  // absorption, E0
-    nuc->el = INTPLT_BY_POS_FR(nuc->XSS, interp_pos + 3 * NE, interp_frac); // elastic, Er
-    nuc->inel = INTPLT_BY_POS_FR(nuc->inel_XSS, interp_pos, interp_frac);    // inelastic, Er
+    nuc->abs = intplt_by_pos_fr(nuc->XSS, interp_pos0 + 2 * NE, interp_frac0);  // absorption, E0
+    nuc->el = intplt_by_pos_fr(nuc->XSS, interp_pos + 3 * NE, interp_frac); // elastic, Er
+    nuc->inel = intplt_by_pos_fr(nuc->inel_XSS, interp_pos, interp_frac);    // inelastic, Er
 
     dppler_brdn_nuc_abs_scatt(obj, nuc, erg);
 }
