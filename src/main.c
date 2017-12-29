@@ -59,39 +59,39 @@ static void _nuc_free(void *obj);
 /* ------------------------ main function --------------------------- */
 int main(int argc, char *argv[]){
     /* set hash functions of every map_type */
-    map_type *mat_type = new map_type;
-    map_type *univ_type = new map_type;
-    map_type *cell_type = new map_type;
-    map_type *surf_type = new map_type;
-    map_type *nuc_type = new map_type;
+    map_type *mat_type = (map_type *) malloc(sizeof(map_type));
+    map_type *univ_type = (map_type *) malloc(sizeof(map_type));
+    map_type *cell_type = (map_type *) malloc(sizeof(map_type));
+    map_type *surf_type = (map_type *) malloc(sizeof(map_type));
+    map_type *nuc_type = (map_type *) malloc(sizeof(map_type));
 
     /* univ_type specification */
     univ_type->hash_func = _int_hash_func;
-    univ_type->value_dup = nullptr;
+    univ_type->value_dup = NULL;
     univ_type->value_free = _univ_free;
-    univ_type->key_compare = nullptr;
+    univ_type->key_compare = NULL;
 
     /* cell_type specification */
     cell_type->hash_func = _int_hash_func;
-    cell_type->value_dup = nullptr;
+    cell_type->value_dup = NULL;
     cell_type->value_free = _cell_free;
-    cell_type->key_compare = nullptr;
+    cell_type->key_compare = NULL;
 
     /* surf_type specification */
     surf_type->hash_func = _int_hash_func;
-    surf_type->value_dup = nullptr;
+    surf_type->value_dup = NULL;
     surf_type->value_free = _surf_free;
-    surf_type->key_compare = nullptr;
+    surf_type->key_compare = NULL;
 
     /* mat_type specification */
     mat_type->hash_func = _int_hash_func;
-    mat_type->value_dup = nullptr;
+    mat_type->value_dup = NULL;
     mat_type->value_free = _mat_free;
-    mat_type->key_compare = nullptr;
+    mat_type->key_compare = NULL;
 
     /* nuc_type specification */
     nuc_type->hash_func = _str_hash_func;
-    nuc_type->value_dup = nullptr;
+    nuc_type->value_dup = NULL;
     nuc_type->value_free = _nuc_free;
     nuc_type->key_compare = _str_key_comp_func;
 
@@ -159,11 +159,11 @@ int main(int argc, char *argv[]){
     /* release all resource */
     release_resource();
 
-    delete mat_type;
-    delete univ_type;
-    delete cell_type;
-    delete surf_type;
-    delete nuc_type;
+    free(mat_type);
+    free(univ_type);
+    free(cell_type);
+    free(surf_type);
+    free(nuc_type);
 
     return 0;
 }
