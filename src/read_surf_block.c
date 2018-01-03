@@ -33,7 +33,7 @@ void read_surf_block(){
         while(!ISALPHA(*ret)) ret++;
         char *type_start = ret;
 
-        if(TOUPPER(*type_start) == 'P'){
+        if(TOUPPER(*type_start) == 'P'){    /* 平面类型 */
             type_start++;
             if(ISALPHA(*type_start)){
                 char c = TOUPPER(*type_start);
@@ -46,7 +46,7 @@ void read_surf_block(){
             }
             else surf->type = P;
         }
-        else if(TOUPPER(*type_start) == 'S'){
+        else if(TOUPPER(*type_start) == 'S'){    /* 球面类型 */
             type_start++;
             if(ISALPHA(*type_start)){
                 char c = TOUPPER(*type_start);
@@ -56,21 +56,36 @@ void read_surf_block(){
                     surf->type = SY;
                 else if(c == 'Z')
                     surf->type = SZ;
+                else if(c == 'O')
+                    surf->type = SO;
             }
             else surf->type = S;
         }
-        else if(TOUPPER(*type_start) == 'C'){
+        else if(TOUPPER(*type_start) == 'C'){    /* 圆柱类型 */
             type_start++;
-            char c = TOUPPER(*type_start);
-            if(c == 'X')
-                surf->type = CX;
-            else if(c == 'Y')
-                surf->type = CY;
-            else if(c == 'Z')
-                surf->type = CZ;
+            char c;
+            if(*type_start == '/'){
+                type_start++;
+                c = TOUPPER(*type_start);
+                if(c == 'X')
+                    surf->type = C_X;
+                else if(c == 'Y')
+                    surf->type = C_Y;
+                else if(c == 'Z')
+                    surf->type = C_Z;
+            }
+            else{
+                c = TOUPPER(*type_start);
+                if(c == 'X')
+                    surf->type = CX;
+                else if(c == 'Y')
+                    surf->type = CY;
+                else if(c == 'Z')
+                    surf->type = CZ;
+            }
         }
 
-        ret += 2;
+        ret += 3;
 
         char *end;
         for(int i = 0; i < 4; i++){

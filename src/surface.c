@@ -53,6 +53,18 @@ int calc_surf_sense(surface_t *obj, const double pos[3], const double dir[3]){
             sense = SQUARE(x) + SQUARE(y) + SQUARE(z - obj->paras[0]) - SQUARE(obj->paras[1]);
             break;
         }
+        case C_X:{
+            sense = SQUARE(y - obj->paras[0]) + SQUARE(z - obj->paras[1]) - SQUARE(obj->paras[2]);
+            break;
+        }
+        case C_Y:{
+            sense = SQUARE(x - obj->paras[0]) + SQUARE(z - obj->paras[1]) - SQUARE(obj->paras[2]);
+            break;
+        }
+        case C_Z:{
+            sense = SQUARE(x - obj->paras[0]) + SQUARE(y - obj->paras[1]) - SQUARE(obj->paras[2]);
+            break;
+        }
         case CX:{
             sense = SQUARE(y) + SQUARE(z) - SQUARE(obj->paras[0]);
             break;
@@ -143,6 +155,24 @@ void get_surf_norm_vec(surface_t *obj, const double pos[3], double *surf_norm_ve
             surf_norm_vec[0] = x;
             surf_norm_vec[1] = y;
             surf_norm_vec[2] = z - obj->paras[0];
+            break;
+        }
+        case C_X:{
+            surf_norm_vec[0] = ZERO;
+            surf_norm_vec[1] = y - obj->paras[0];
+            surf_norm_vec[2] = z - obj->paras[1];
+            break;
+        }
+        case C_Y:{
+            surf_norm_vec[0] = x - obj->paras[0];
+            surf_norm_vec[1] = ZERO;
+            surf_norm_vec[2] = z - obj->paras[1];
+            break;
+        }
+        case C_Z:{
+            surf_norm_vec[0] = x - obj->paras[0];
+            surf_norm_vec[1] = y - obj->paras[1];
+            surf_norm_vec[2] = ZERO;
             break;
         }
         case CX: {
@@ -273,8 +303,41 @@ double calc_dist_to_surf(surface_t *obj, const double pos[3], const double dir[3
             b1 = x * x + y * y + t3 * t3 - obj->paras[1] * obj->paras[1];
             return calc_dist_to_surf_sub(a1, b1, is_at_surf);
         }
+        case C_X: {
+            t1 = SQUARE(v) + SQUARE(w);
+            if(EQ_ZERO(t1))
+                return dts;
+            t1 = ONE / t1;
+            t2 = y - obj->paras[0];
+            t3 = z - obj->paras[1];
+            a1 = (t2 * v + t3 * w) * t1;
+            b1 = (t2 * t2 + t3 * t3 - obj->paras[2] * obj->paras[2]) * t1;
+            return calc_dist_to_surf_sub(a1, b1, is_at_surf);
+        }
+        case C_Y: {
+            t1 = SQUARE(u) + SQUARE(w);
+            if(EQ_ZERO(t1))
+                return dts;
+            t1 = ONE / t1;
+            t2 = x - obj->paras[0];
+            t3 = z - obj->paras[1];
+            a1 = (t2 * u + t3 * w) * t1;
+            b1 = (t2 * t2 + t3 * t3 - obj->paras[2] * obj->paras[2]) * t1;
+            return calc_dist_to_surf_sub(a1, b1, is_at_surf);
+        }
+        case C_Z: {
+            t1 = SQUARE(u) + SQUARE(v);
+            if(EQ_ZERO(t1))
+                return dts;
+            t1 = ONE / t1;
+            t2 = x - obj->paras[0];
+            t3 = y - obj->paras[1];
+            a1 = (t2 * u + t3 * v) * t1;
+            b1 = (t2 * t2 + t3 * t3 - obj->paras[2] * obj->paras[2]) * t1;
+            return calc_dist_to_surf_sub(a1, b1, is_at_surf);
+        }
         case CX:{
-            t1 = v * v + w * w;
+            t1 = SQUARE(v) + SQUARE(w);
             if(EQ_ZERO(t1))
                 return dts;
             t1 = ONE / t1;
@@ -283,7 +346,7 @@ double calc_dist_to_surf(surface_t *obj, const double pos[3], const double dir[3
             return calc_dist_to_surf_sub(a1, b1, is_at_surf);
         }
         case CY:{
-            t1 = u * u + w * w;
+            t1 = SQUARE(u) + SQUARE(w);
             if(EQ_ZERO(t1))
                 return dts;
             t1 = ONE / t1;
@@ -292,7 +355,7 @@ double calc_dist_to_surf(surface_t *obj, const double pos[3], const double dir[3
             return calc_dist_to_surf_sub(a1, b1, is_at_surf);
         }
         case CZ:{
-            t1 = u * u + v * v;
+            t1 = SQUARE(u) + SQUARE(v);
             if(EQ_ZERO(t1))
                 return dts;
             t1 = ONE / t1;
