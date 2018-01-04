@@ -3,6 +3,7 @@
 //
 
 #include "geometry.h"
+#include "vector.h"
 
 
 extern map *base_surfs;
@@ -12,6 +13,7 @@ extern map *base_univs;
 /* hash function prototype */
 static void _val_free(void *val);
 static uint64_t _int_hash_func(const void *key);
+static void _vector_free(void *val);
 
 void build_neighbor_list(){
     universe_t *univ;
@@ -34,12 +36,12 @@ void build_neighbor_list(){
     type2->hash_func = _int_hash_func;
     type2->key_compare = NULL;
     type2->value_dup = NULL;
-    type2->value_free = NULL;
+    type2->value_free = _vector_free;
 
     for(unsigned long i = 0; i < base_univs->ht.size; i++){
         entry = base_univs->ht.buckets[i];
         while(entry){
-            univ = (universe_t *)entry->v.val;
+            univ = entry->v.val;
             if(univ->is_lattice) {
                 entry = entry->next;
                 continue;
@@ -53,6 +55,7 @@ void build_neighbor_list(){
                 map *val = map_create(type2);
                 map_put(univ->neighbor_lists, cell1_index, val);
                 for(size_t k = 0; k < contained_surfs1; k++){
+                    vector *neighbor_cells = vector_init(4, sizeof(cell_t *));
                     surf_index1 = *(int *)vector_at(&cell1->surfs, k);
                     for(size_t m = 0; m < contained_cells; m++){
                         if(j == m) continue;
@@ -62,10 +65,12 @@ void build_neighbor_list(){
                         for(size_t n = 0; n < contained_surfs2; n++){
                             surf_index2 = *(int *)vector_at(&cell2->surfs, n);
                             if(surf_index1 + surf_index2 == 0){
-                                map_put(val, surf_index1, cell2);
+                                vector_push_back(neighbor_cells, &cell2);
+//                                map_put(val, surf_index1, cell2);
                                 break;
                             }
                         }
+                        map_put(val, surf_index1, neighbor_cells);
                     }
                 }
             }
@@ -81,4 +86,9 @@ static void _val_free(void *val){
 
 static uint64_t _int_hash_func(const void *key){
     return _default_int_hash_func(*(uint32_t *) key);
+}
+
+static void _vector_free(void *val){
+    vector_free((vector *) val);
+    free(val);
 }

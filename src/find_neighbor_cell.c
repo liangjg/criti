@@ -3,6 +3,7 @@
 //
 
 #include "geometry.h"
+#include "vector.h"
 
 
 extern map *base_univs;
@@ -13,7 +14,7 @@ void find_neighbor_cell(particle_state_t *par_state){
     bool found = false;
     int neighbor_cell_index = -1;
     int level = par_state->bound_level;
-    int univ_index = *(int *)vector_at(&par_state->loc_univs, level);
+    int univ_index = *(int *) vector_at(&par_state->loc_univs, level);
     int bound_surf = par_state->surf;
     universe_t *univ = (universe_t *) map_get(base_univs, univ_index);
 
@@ -26,32 +27,39 @@ void find_neighbor_cell(particle_state_t *par_state){
     }
 
     if(univ->is_lattice){
-        lat_index = offset_neighbor_lat(univ, *(int *)vector_at(&par_state->loc_cells, level), par_state->lat_bound_surf, loc_pos);
+        lat_index = offset_neighbor_lat(univ, *(int *) vector_at(&par_state->loc_cells, level),
+                                        par_state->lat_bound_surf, loc_pos);
         if(lat_index >= 0){
-            *(int *)vector_at(&par_state->loc_cells, level) = lat_index;
+            *(int *) vector_at(&par_state->loc_cells, level) = lat_index;
             filled_univ = univ->filled_lat_univs[lat_index - 1];
             trans_univ_coord((universe_t *) map_get(base_univs, filled_univ), loc_pos, loc_dir);
             neighbor_cell_index = locate_particle(par_state, filled_univ, loc_pos, loc_dir);
         }
     } else{
-        cell_index = *(int *)vector_at(&univ->cells, *(int *)vector_at(&par_state->loc_cells, level));
+        cell_index = *(int *) vector_at(&univ->cells, *(int *) vector_at(&par_state->loc_cells, level));
         map *val = (map *) map_get(univ->neighbor_lists, cell_index);
-        cell_t *neighbor_cell = (cell_t *) map_get(val, bound_surf);
-        if(neighbor_cell && particle_is_in_cell(neighbor_cell, loc_pos, loc_dir))
-            found = true;
+        vector *neighbor_cells = (vector *) map_get(val, bound_surf);
+        cell_t *neighbor_cell;
+        for(size_t i = 0; i < vector_size(neighbor_cells); i++){
+            neighbor_cell = *(cell_t **) vector_at(neighbor_cells, i);
+            if(neighbor_cell && particle_is_in_cell(neighbor_cell, loc_pos, loc_dir)){
+                found = true;
+                break;
+            }
+        }
 
         if(found){
             /* 不得已而为之，因为loc_cells存储的是当前universe中的第几个，而不是直接存储的cell_index */
             for(int i = 0; i < vector_size(&univ->cells); i++)
-                if(neighbor_cell->id == *(int *)vector_at(&univ->cells, i)){
-                    *(int *)vector_at(&par_state->loc_cells, level) = i;
+                if(neighbor_cell->id == *(int *) vector_at(&univ->cells, i)){
+                    *(int *) vector_at(&par_state->loc_cells, level) = i;
                     break;
                 }
 
             neighbor_cell_index = neighbor_cell->id;
             filled_univ = neighbor_cell->fill;
             if(filled_univ > 0){    /* neighbor_cell is a complex cell with universe filled */
-                universe_t *filled_universe = (universe_t *)map_get(base_univs, filled_univ);
+                universe_t *filled_universe = (universe_t *) map_get(base_univs, filled_univ);
                 trans_univ_coord(filled_universe, loc_pos, loc_dir);
                 neighbor_cell_index = locate_particle(par_state, filled_univ, loc_pos, loc_dir);
             }
