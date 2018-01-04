@@ -44,15 +44,33 @@ double sample_free_fly_dis(particle_state_t *par_state, bool erg_changed){
      * and then, sum them up.
      *************************************************/
 
+    if(erg_changed){
+        map_entry *entry;
+        for(size_t i = 0; i < base_nucs->ht.size; i++){
+            entry = base_nucs->ht.buckets[i];
+            while(entry){
+                nuc = entry->v.val;
+                if(ISNUMBER(*nuc->id))    /* 非热化核素，特点是nuc->id以数字开头 */
+                    nuc->inter_pos = -1;
+                entry = entry->next;
+            }
+        }
+    }
+
     for(int i = 0; i < mat->tot_nuc_num; i++){
         nuc = (nuclide_t *) map_get(base_nucs, (uint64_t) mat->nuc_id[i]);
         sab_nuc = (nuclide_t *) map_get(base_nucs, (uint64_t) mat->sab_nuc_id);
-        if(par_state->erg >= mat->sab_nuc_esa || nuc->zaid != sab_nuc->zaid) sab_nuc = NULL;
-        nuc_atom_den = mat->nuc_atom_den[i];
 
-        nuc->inter_pos = -1;
+        if(nuc->inter_pos > 0)
+            if(sab_nuc == NULL && !par_state->cell_tmp_changed)
+                goto SUM_UP;
+
+        if(par_state->erg >= mat->sab_nuc_esa || nuc->zaid != sab_nuc->zaid)
+            sab_nuc = NULL;
         get_nuc_tot_fis_cs(&base_acedata, nuc, sab_nuc, par_state->erg, par_state->cell_tmp);
 
+SUM_UP:
+        nuc_atom_den = mat->nuc_atom_den[i];
         par_state->macro_tot_cs += nuc_atom_den * nuc->tot;
         if(GT_ZERO(nuc->fis))
             par_state->macro_nu_fis_cs += nuc_atom_den * nuc->fis * nuc->nu;
