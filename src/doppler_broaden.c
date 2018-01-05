@@ -29,7 +29,7 @@ void doppler_broaden(){
     double broaden_tmp;
     bool first_time;    /* 是否所有cell都是相同的温度 */
     map_iterator *nuc_iter = map_get_iter(base_nucs);
-    map_iterator *cell_iter = map_get_iter(base_cells);
+    map_iterator *cell_iter;
 
     cnt = 0;
     while((nuc_entry = map_iter_next(nuc_iter))){
@@ -39,6 +39,7 @@ void doppler_broaden(){
             continue;
         first_time = true;
         broaden_tmp = ZERO;
+        cell_iter = map_get_iter(base_cells);
         while((cell_entry = map_iter_next(cell_iter))){
             cell = cell_entry->v.val;
             mat = map_get(base_mats, cell->mat);
@@ -58,10 +59,10 @@ void doppler_broaden(){
         }
 END:
         cnt += dppler_brdn_nuc_tmp(&base_acedata, nuc, broaden_tmp);
+        map_release_iter(cell_iter);
     }
 
     map_release_iter(nuc_iter);
-    map_release_iter(cell_iter);
 
     fputs("===================== Cross-section doppler broaden ====================\n", base_IOfp.mat_fp);
     fprintf(base_IOfp.mat_fp, "Doppler broaden applied to %d nuclide.\n", cnt);
