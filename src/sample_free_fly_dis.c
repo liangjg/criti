@@ -46,15 +46,15 @@ double sample_free_fly_dis(particle_state_t *par_state, bool erg_changed){
 
     if(erg_changed){
         map_entry *entry;
-        for(size_t i = 0; i < base_nucs->ht.size; i++){
-            entry = base_nucs->ht.buckets[i];
-            while(entry){
-                nuc = entry->v.val;
-                if(ISNUMBER(*nuc->id))    /* 非热化核素，特点是nuc->id以数字开头 */
-                    nuc->inter_pos = -1;
-                entry = entry->next;
-            }
+        map_iterator *nuc_iter = map_get_iter(base_nucs);
+
+        while((entry = map_iter_next(nuc_iter))){
+            nuc = entry->v.val;
+            if(ISNUMBER(*nuc->id))    /* 非热化核素，特点是nuc->id以数字开头 */
+                nuc->inter_pos = -1;
         }
+
+        map_release_iter(nuc_iter);
     }
 
     for(int i = 0; i < mat->tot_nuc_num; i++){

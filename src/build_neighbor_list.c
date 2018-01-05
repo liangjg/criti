@@ -38,45 +38,42 @@ void build_neighbor_list(){
     type2->value_dup = NULL;
     type2->value_free = _vector_free;
 
-    for(unsigned long i = 0; i < base_univs->ht.size; i++){
-        entry = base_univs->ht.buckets[i];
-        while(entry){
-            univ = entry->v.val;
-            if(univ->is_lattice) {
-                entry = entry->next;
-                continue;
-            }
-            univ->neighbor_lists = map_create(type1);
-            contained_cells = vector_size(&univ->cells);
-            for(size_t j = 0; j < contained_cells; j++){
-                cell1_index = *(int *)vector_at(&univ->cells, j);
-                cell1 = (cell_t *)map_get(base_cells, cell1_index);
-                contained_surfs1 = vector_size(&cell1->surfs);
-                map *val = map_create(type2);
-                map_put(univ->neighbor_lists, cell1_index, val);
-                for(size_t k = 0; k < contained_surfs1; k++){
-                    vector *neighbor_cells = vector_init(4, sizeof(cell_t *));
-                    surf_index1 = *(int *)vector_at(&cell1->surfs, k);
-                    for(size_t m = 0; m < contained_cells; m++){
-                        if(j == m) continue;
-                        cell2_index = *(int *)vector_at(&univ->cells, m);
-                        cell2 = (cell_t *)map_get(base_cells, cell2_index);
-                        contained_surfs2 = vector_size(&cell2->surfs);
-                        for(size_t n = 0; n < contained_surfs2; n++){
-                            surf_index2 = *(int *)vector_at(&cell2->surfs, n);
-                            if(surf_index1 + surf_index2 == 0){
-                                vector_push_back(neighbor_cells, &cell2);
-//                                map_put(val, surf_index1, cell2);
-                                break;
-                            }
+    map_iterator *univ_iter = map_get_iter(base_univs);
+
+    while((entry = map_iter_next(univ_iter))){
+        univ = entry->v.val;
+        if(univ->is_lattice)
+            continue;
+        univ->neighbor_lists = map_create(type1);
+        contained_cells = vector_size(&univ->cells);
+        for(size_t j = 0; j < contained_cells; j++){
+            cell1_index = *(int *)vector_at(&univ->cells, j);
+            cell1 = map_get(base_cells, cell1_index);
+            contained_surfs1 = vector_size(&cell1->surfs);
+            map *val = map_create(type2);
+            map_put(univ->neighbor_lists, cell1_index, val);
+            for(size_t k = 0; k < contained_surfs1; k++){
+                vector *neighbor_cells = vector_init(4, sizeof(cell_t *));
+                surf_index1 = *(int *)vector_at(&cell1->surfs, k);
+                for(size_t m = 0; m < contained_cells; m++){
+                    if(j == m) continue;
+                    cell2_index = *(int *)vector_at(&univ->cells, m);
+                    cell2 = map_get(base_cells, cell2_index);
+                    contained_surfs2 = vector_size(&cell2->surfs);
+                    for(size_t n = 0; n < contained_surfs2; n++){
+                        surf_index2 = *(int *)vector_at(&cell2->surfs, n);
+                        if(surf_index1 + surf_index2 == 0){
+                            vector_push_back(neighbor_cells, &cell2);
+                            break;
                         }
-                        map_put(val, surf_index1, neighbor_cells);
                     }
+                    map_put(val, surf_index1, neighbor_cells);
                 }
             }
-            entry = entry->next;
         }
     }
+
+    map_release_iter(univ_iter);
 }
 
 static void _val_free(void *val){
