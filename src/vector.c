@@ -29,16 +29,16 @@ size_t vector_capacity(vector *v){
     return (size_t) ((v->end_of_storage - v->start) / v->ele_size);
 }
 
-void *vector_at(vector *v, size_t position){
-#if defined(_DEBUG) || defined(DEBUG)
-    if(position >= vector_size(v)){
-        puts("out of range!.");
-        printf("size: %d, position: %d", vector_size(v), position);
-        return NULL;
-    }
-#endif
-    return v->start + position * v->ele_size;
-}
+//void *vector_at(vector *v, size_t position){
+//#if defined(_DEBUG) || defined(DEBUG)
+//    if(position >= vector_size(v)){
+//        puts("out of range!.");
+//        printf("size: %d, position: %d", vector_size(v), position);
+//        return NULL;
+//    }
+//#endif
+//    return v->start + position * v->ele_size;
+//}
 
 void *vector_back(vector *v){
     return v->finish - v->ele_size;

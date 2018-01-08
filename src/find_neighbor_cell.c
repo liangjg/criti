@@ -11,6 +11,7 @@ extern map *base_univs;
 void find_neighbor_cell(particle_state_t *par_state){
     double loc_pos[3], loc_dir[3];
     int lat_index, filled_univ, cell_index;
+    size_t v_sz;
     bool found = false;
     int neighbor_cell_index = -1;
     int level = par_state->bound_level;
@@ -40,7 +41,8 @@ void find_neighbor_cell(particle_state_t *par_state){
         map *val = (map *) map_get(univ->neighbor_lists, cell_index);
         vector *neighbor_cells = (vector *) map_get(val, bound_surf);
         cell_t *neighbor_cell;
-        for(size_t i = 0; i < vector_size(neighbor_cells); i++){
+        v_sz = vector_size(neighbor_cells);
+        for(size_t i = 0; i < v_sz; i++){
             neighbor_cell = *(cell_t **) vector_at(neighbor_cells, i);
             if(neighbor_cell && particle_is_in_cell(neighbor_cell, loc_pos, loc_dir)){
                 found = true;
@@ -50,7 +52,8 @@ void find_neighbor_cell(particle_state_t *par_state){
 
         if(found){
             /* 不得已而为之，因为loc_cells存储的是当前universe中的第几个，而不是直接存储的cell_index */
-            for(int i = 0; i < vector_size(&univ->cells); i++)
+            v_sz = vector_size(&univ->cells);
+            for(int i = 0; i < v_sz; i++)
                 if(neighbor_cell->id == *(int *) vector_at(&univ->cells, i)){
                     *(int *) vector_at(&par_state->loc_cells, level) = i;
                     break;

@@ -30,7 +30,8 @@ size_t vector_size(vector *v);
 size_t vector_capacity(vector *v);
 
 /* Element access */
-void *vector_at(vector *v, size_t position);
+//void *vector_at(vector *v, size_t position);
+#define vector_at(v, pos)   ((v)->start + (pos) * (v)->ele_size)
 
 void *vector_back(vector *v);
 

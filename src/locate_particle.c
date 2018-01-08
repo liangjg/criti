@@ -17,6 +17,7 @@ int locate_particle(particle_state_t *par_state, int start_univ, const double po
     cell_t *cell;
     int level, univ_index, cell_index, found_cell;
     int filled_univ, lat_univ;
+    size_t v_sz;
     double local_pos_temp[3];
     double local_dir_temp[3];
 
@@ -59,7 +60,8 @@ int locate_particle(particle_state_t *par_state, int start_univ, const double po
             univ_index = lat_univ;
 
         } else{    /* current universe has some cells and has no lattice */
-            for(size_t i = 0; i < vector_size(&univ->cells); i++){
+            v_sz = vector_size(&univ->cells);
+            for(size_t i = 0; i < v_sz; i++){
                 cell_index = *(int *) vector_at(&univ->cells, i);
                 cell = (cell_t *) map_get(base_cells, cell_index);
 
