@@ -25,9 +25,10 @@ extern "C" {
 vector *vector_init(int n, size_t ele_size);
 
 /* Capacity */
-size_t vector_size(vector *v);
-
-size_t vector_capacity(vector *v);
+//size_t vector_size(vector *v);
+#define vector_size(v)    (((v)->finish - (v)->start) / (v)->ele_size)
+//size_t vector_capacity(vector *v);
+#define vector_capacity(v)    (((v)->end_of_storage - (v)->start) / (v)->ele_size)
 
 /* Element access */
 //void *vector_at(vector *v, size_t position);

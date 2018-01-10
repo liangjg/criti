@@ -56,14 +56,14 @@ int locate_particle(particle_state_t *par_state, int start_univ, const double po
             vector_push_back(&par_state->loc_cells, &lat_index);
             lat_univ = univ->filled_lat_univs[lat_index - 1];
             move_to_origin_lat(univ, lat_index, local_pos_temp);
-            trans_univ_coord((universe_t *) map_get(base_univs, lat_univ), local_pos_temp, local_dir_temp);
+            trans_univ_coord(map_get(base_univs, lat_univ), local_pos_temp, local_dir_temp);
             univ_index = lat_univ;
 
         } else{    /* current universe has some cells and has no lattice */
             v_sz = vector_size(&univ->cells);
             for(size_t i = 0; i < v_sz; i++){
                 cell_index = *(int *) vector_at(&univ->cells, i);
-                cell = (cell_t *) map_get(base_cells, cell_index);
+                cell = map_get(base_cells, cell_index);
 
                 if(particle_is_in_cell(cell, local_pos_temp, local_dir_temp)){
                     vector_push_back(&par_state->loc_cells, &i);
@@ -76,8 +76,7 @@ int locate_particle(particle_state_t *par_state, int start_univ, const double po
                         goto END;
                     } else{    /* current cell has a universe filled in */
                         filled_univ = cell->fill;
-                        trans_univ_coord((universe_t *) map_get(base_univs, filled_univ), local_pos_temp,
-                                         local_dir_temp);
+                        trans_univ_coord(map_get(base_univs, filled_univ), local_pos_temp, local_dir_temp);
                         univ_index = filled_univ;
                         break;
                     }

@@ -6,7 +6,6 @@
 #include "vector.h"
 
 
-extern map *base_surfs;
 extern map *base_cells;
 extern map *base_univs;
 
@@ -16,7 +15,7 @@ static uint64_t _int_hash_func(const void *key);
 static void _vector_free(void *val);
 
 void build_neighbor_list(){
-    universe_t *univ;
+    register universe_t *univ;
     cell_t *cell1, *cell2;
     map_entry *entry;
     size_t contained_cells;
@@ -24,6 +23,7 @@ void build_neighbor_list(){
     map_type *type1, *type2;
     int cell1_index, cell2_index;
     int surf_index1, surf_index2;
+    register map *local_base_cells = base_cells;
 
     type1 = (map_type *)malloc(sizeof(map_type));
     type2 = (map_type *)malloc(sizeof(map_type));
@@ -48,7 +48,7 @@ void build_neighbor_list(){
         contained_cells = vector_size(&univ->cells);
         for(size_t j = 0; j < contained_cells; j++){
             cell1_index = *(int *)vector_at(&univ->cells, j);
-            cell1 = map_get(base_cells, cell1_index);
+            cell1 = map_get(local_base_cells, cell1_index);
             contained_surfs1 = vector_size(&cell1->surfs);
             map *val = map_create(type2);
             map_put(univ->neighbor_lists, cell1_index, val);
@@ -58,7 +58,7 @@ void build_neighbor_list(){
                 for(size_t m = 0; m < contained_cells; m++){
                     if(j == m) continue;
                     cell2_index = *(int *)vector_at(&univ->cells, m);
-                    cell2 = map_get(base_cells, cell2_index);
+                    cell2 = map_get(local_base_cells, cell2_index);
                     contained_surfs2 = vector_size(&cell2->surfs);
                     for(size_t n = 0; n < contained_surfs2; n++){
                         surf_index2 = *(int *)vector_at(&cell2->surfs, n);
@@ -67,8 +67,8 @@ void build_neighbor_list(){
                             break;
                         }
                     }
-                    map_put(val, surf_index1, neighbor_cells);
                 }
+                map_put(val, surf_index1, neighbor_cells);
             }
         }
     }

@@ -21,13 +21,13 @@ vector *vector_init(int n, size_t ele_size){
     return _v;
 }
 
-size_t vector_size(vector *v){
-    return (size_t) ((v->finish - v->start) / v->ele_size);
-}
-
-size_t vector_capacity(vector *v){
-    return (size_t) ((v->end_of_storage - v->start) / v->ele_size);
-}
+//size_t vector_size(vector *v){
+//    return (size_t) ((v->finish - v->start) / v->ele_size);
+//}
+//
+//size_t vector_capacity(vector *v){
+//    return (size_t) ((v->end_of_storage - v->start) / v->ele_size);
+//}
 
 //void *vector_at(vector *v, size_t position){
 //#if defined(_DEBUG) || defined(DEBUG)

@@ -3,7 +3,7 @@
 //
 
 #include "geometry.h"
-#include "vector.h"
+
 
 
 extern map *base_univs;
@@ -17,7 +17,7 @@ void find_neighbor_cell(particle_state_t *par_state){
     int level = par_state->bound_level;
     int univ_index = *(int *) vector_at(&par_state->loc_univs, level);
     int bound_surf = par_state->surf;
-    universe_t *univ = (universe_t *) map_get(base_univs, univ_index);
+    universe_t *univ = map_get(base_univs, univ_index);
 
     vector_resize(&par_state->loc_univs, level + 1);
     vector_resize(&par_state->loc_cells, level + 1);
@@ -38,13 +38,13 @@ void find_neighbor_cell(particle_state_t *par_state){
         }
     } else{
         cell_index = *(int *) vector_at(&univ->cells, *(int *) vector_at(&par_state->loc_cells, level));
-        map *val = (map *) map_get(univ->neighbor_lists, cell_index);
-        vector *neighbor_cells = (vector *) map_get(val, bound_surf);
+        map *val = map_get(univ->neighbor_lists, cell_index);
+        vector *neighbor_cells = map_get(val, bound_surf);
         cell_t *neighbor_cell;
         v_sz = vector_size(neighbor_cells);
         for(size_t i = 0; i < v_sz; i++){
             neighbor_cell = *(cell_t **) vector_at(neighbor_cells, i);
-            if(neighbor_cell && particle_is_in_cell(neighbor_cell, loc_pos, loc_dir)){
+            if(particle_is_in_cell(neighbor_cell, loc_pos, loc_dir)){
                 found = true;
                 break;
             }

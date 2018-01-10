@@ -65,10 +65,11 @@ inline bool _has_same_sign(int a, int b){
 
 bool _simple_par_in_cell(const cell_t *obj, const double pos[3], const double dir[3]){
     bool in_cell = true;
-    char *c = obj->rpn;
+    register char *c = obj->rpn;
     int surf_index = 0;
     surface_t *surf;
     int surf_sense;
+    register map *local_base_surfs = base_surfs;
 
     while(*c != '\0'){
         if(ISNUMBER(*c)){
@@ -78,7 +79,7 @@ bool _simple_par_in_cell(const cell_t *obj, const double pos[3], const double di
                 surf_index += *c - '0';
                 c++;
             } while(ISNUMBER(*c));
-            surf = (surface_t *) map_get(base_surfs, surf_index);
+            surf = (surface_t *) map_get(local_base_surfs, surf_index);
             surf_sense = calc_surf_sense(surf, pos, dir);
             in_cell = _has_same_sign(surf_index, surf_sense);
             if(!in_cell) break;
@@ -90,7 +91,7 @@ bool _simple_par_in_cell(const cell_t *obj, const double pos[3], const double di
                 surf_index += *c - '0';
                 c++;
             }
-            surf = (surface_t *) map_get(base_surfs, surf_index);
+            surf = (surface_t *) map_get(local_base_surfs, surf_index);
             surf_index = (~surf_index) + 1;
             surf_sense = calc_surf_sense(surf, pos, dir);
             in_cell = _has_same_sign(surf_index, surf_sense);
@@ -107,7 +108,8 @@ bool _complex_par_in_cell(const cell_t *obj, const double *pos, const double *di
     int surf_index;
     surface_t *surf;
     int surf_sense;
-    char *c;
+    register char *c;
+    register map *local_base_surfs = base_surfs;
 
     c = obj->rpn;
     i_stack = -1;
@@ -121,7 +123,7 @@ bool _complex_par_in_cell(const cell_t *obj, const double *pos, const double *di
                 surf_index += *c - '0';
                 c++;
             } while(ISNUMBER(*c));
-            surf = (surface_t *) map_get(base_surfs, surf_index);
+            surf = (surface_t *) map_get(local_base_surfs, surf_index);
             surf_sense = calc_surf_sense(surf, pos, dir);
             in_cell = _has_same_sign(surf_index, surf_sense);
             st[i_stack] = in_cell;
@@ -134,7 +136,7 @@ bool _complex_par_in_cell(const cell_t *obj, const double *pos, const double *di
                 surf_index += *c - '0';
                 c++;
             }
-            surf = (surface_t *) map_get(base_surfs, surf_index);
+            surf = (surface_t *) map_get(local_base_surfs, surf_index);
             surf_index = (~surf_index) + 1;
             surf_sense = calc_surf_sense(surf, pos, dir);
             in_cell = _has_same_sign(surf_index, surf_sense);

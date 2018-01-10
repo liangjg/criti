@@ -31,8 +31,8 @@ set(IGNORED_WARNINGS "-Wno-pointer-arith")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${COMPILE_FLAGS} ${IGNORED_WARNINGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${COMPILE_FLAGS} ${IGNORED_WARNINGS}")
 if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -ggdb")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -ggdb")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -ggdb -pg")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -ggdb -pg")
 endif()
 
 # Output compiling flags
