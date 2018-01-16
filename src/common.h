@@ -111,6 +111,16 @@ typedef enum{
     FIXEDSOURCE,
 } CALC_MODE_T;
 
+/* source type */
+typedef enum{
+    POINT,
+    SLAB,
+    SPHERE,
+    CYL_X,
+    CYL_y,
+    CYL_Z
+} SRC_TYPE_T;
+
 /* time elapsed */
 extern time_t start_time;
 extern time_t finish_time;

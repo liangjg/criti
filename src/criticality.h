@@ -10,12 +10,6 @@
 #ifndef TTYW_CRITICALITY_H
 #define TTYW_CRITICALITY_H
 
-typedef enum{
-    POINT,
-    SLAB,
-    SPHERE
-} KSRC_T;
-
 typedef struct{
     double pos[3];
     double dir[3];
@@ -30,7 +24,7 @@ typedef struct{
     int active_cycle_num;
 
     /* 初始源参数 */
-    KSRC_T ksrc_type;
+    SRC_TYPE_T ksrc_type;
     double ksrc_para[6];
 //    int ksrc_para_sz;
 
