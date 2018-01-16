@@ -117,7 +117,7 @@ typedef enum{
     SLAB,
     SPHERE,
     CYL_X,
-    CYL_y,
+    CYL_Y,
     CYL_Z
 } SRC_TYPE_T;
 

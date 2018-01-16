@@ -7,6 +7,7 @@
 
 
 extern fixed_src_t base_fixed_src;
+
 void calc_fixed_source(){
     init_external_source();
 
@@ -24,7 +25,8 @@ void calc_fixed_source(){
 
             if(base_fixed_src.fixed_src_bank_cnt)
                 sample_fission_source_fixed(&par_state);
-            else break;
+            else
+                break;
         }
     }
 }
