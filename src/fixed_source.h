@@ -52,11 +52,11 @@ void sample_fission_source_fixed(particle_state_t *par_state);
 
 void track_history_fixed(particle_state_t *par_state);
 
-void ray_tracking_fixed(particle_state_t *par_state);
+void geometry_tracking_fixed(particle_state_t *par_state);
 
 void treat_fission_fixed(particle_state_t *par_state);
 
-void get_fis_neu_state_fixed(particle_state_t *par_state, int fis_MT, double fis_wgt);
+void get_fis_neu_state_fixed(particle_state_t *par_state);
 
 #ifdef __cplusplus
 }

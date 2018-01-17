@@ -4,6 +4,7 @@
 
 #include "fixed_source.h"
 #include "RNG.h"
+#include "IO_releated.h"
 
 
 extern fixed_src_t base_fixed_src;
@@ -29,4 +30,5 @@ void calc_fixed_source(){
                 break;
         }
     }
+    output_summary_fixed();
 }
