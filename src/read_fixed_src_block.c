@@ -4,6 +4,7 @@
 
 #include "IO_releated.h"
 #include "fixed_source.h"
+#include "RNG.h"
 
 
 extern IOfp_t base_IOfp;
@@ -20,7 +21,10 @@ extern fixed_src_t base_fixed_src;
 
 void read_fixed_src_block(){
     char buf[256];
+    char *end;
     char *ret = fgets(buf, MAX_LINE_LENGTH, base_IOfp.inp_fp);
+
+    set_RNG_paras(2);
 
     while(ISSPACE(*ret)) ret++;
 
@@ -45,6 +49,9 @@ void read_fixed_src_block(){
         release_resource();
         exit(0);
     }
+    while(!ISNUMBER(*ret)) ret++;
+    base_fixed_src.tot_neu_num = (int) strtol(ret, &end, 10);
+    ret = end;
 
     while(!ISALPHA(*ret)) ret++;
 
@@ -55,7 +62,6 @@ void read_fixed_src_block(){
     if(strcmp(kw_start, "POINT") == 0){    /* POINT source */
         base_fixed_src.src_type = POINT;
         while(!ISNUMBER(*ret)) ret++;
-        char *end;
         for(int i = 0; i < 3; i++){
             base_fixed_src.src_paras[i] = strtod(ret, &end);
             ret = end;
@@ -63,7 +69,6 @@ void read_fixed_src_block(){
     } else if(strcmp(kw_start, "SLAB") == 0){    /* SLAB source */
         base_fixed_src.src_type = SLAB;
         while(!ISNUMBER(*ret)) ret++;
-        char *end;
         for(int i = 0; i < 6; i++){
             base_fixed_src.src_paras[i] = strtod(ret, &end);
             ret = end;
@@ -71,7 +76,6 @@ void read_fixed_src_block(){
     } else if(strcmp(kw_start, "SPH") == 0){    /* SPHERE source */
         base_fixed_src.src_type = SPHERE;
         while(!ISNUMBER(*ret)) ret++;
-        char *end;
         for(int i = 0; i < 4; i++){
             base_fixed_src.src_paras[i] = strtod(ret, &end);
             ret = end;
@@ -79,7 +83,6 @@ void read_fixed_src_block(){
     } else if(strcmp(kw_start, "CYL/X") == 0){    /* CYL/X source */
         base_fixed_src.src_type = CYL_X;
         while(!ISNUMBER(*ret)) ret++;
-        char *end;
         for(int i = 0; i < 5; i++){
             base_fixed_src.src_paras[i] = strtod(ret, &end);
             ret = end;
@@ -87,7 +90,6 @@ void read_fixed_src_block(){
     } else if(strcmp(kw_start, "CYL/Y") == 0){    /* CYL/Y source */
         base_fixed_src.src_type = CYL_Y;
         while(!ISNUMBER(*ret)) ret++;
-        char *end;
         for(int i = 0; i < 5; i++){
             base_fixed_src.src_paras[i] = strtod(ret, &end);
             ret = end;
@@ -95,7 +97,6 @@ void read_fixed_src_block(){
     } else if(strcmp(kw_start, "CYL/Z") == 0){    /* CYL/Z source */
         base_fixed_src.src_type = CYL_Z;
         while(!ISNUMBER(*ret)) ret++;
-        char *end;
         for(int i = 0; i < 5; i++){
             base_fixed_src.src_paras[i] = strtod(ret, &end);
             ret = end;
@@ -119,6 +120,5 @@ void read_fixed_src_block(){
     }
 
     while(!ISNUMBER(*ret)) ret++;
-    char *end;
     base_fixed_src.fixed_src_erg = strtod(ret, &end);
 }

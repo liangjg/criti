@@ -17,8 +17,8 @@ void sample_fixed_source(particle_state_t *par_state){
     fixed_src = (fixed_src_bank_t *) vector_at(&base_fixed_src.fixed_src, base_fixed_src.fixed_src_cnt);
 
     for(int i = 0; i < 3; i++){
-        par_state->pos[0] = fixed_src->pos[i];
-        par_state->dir[0] = fixed_src->dir[i];
+        par_state->pos[i] = fixed_src->pos[i];
+        par_state->dir[i] = fixed_src->dir[i];
     }
     par_state->erg = fixed_src->erg;
     par_state->wgt = base_start_wgt;

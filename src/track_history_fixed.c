@@ -16,22 +16,22 @@ void track_history_fixed(particle_state_t *par_state){
 
     do{
         geometry_tracking_fixed(par_state);
-        if(par_state->is_killed) return;
+        if(par_state->is_killed) break;
 
         sample_col_nuclide(par_state);
-        if(par_state->is_killed) return;
+        if(par_state->is_killed) break;
 
         calc_col_nuc_cs(par_state);
 
         /* implicit capture(excluding fission) */
         treat_implicit_capture(par_state);
-        if(par_state->is_killed) return;
+        if(par_state->is_killed) break;
 
         par_state->collision_type = sample_col_type_fixed(par_state);
-        if(par_state->is_killed) return;
+        if(par_state->is_killed) break;
 
         get_exit_state_fixed(par_state);
-        if(par_state->is_killed) return;
+        if(par_state->is_killed) break;
 
         /* update particle state */
         par_state->erg = par_state->exit_erg;
