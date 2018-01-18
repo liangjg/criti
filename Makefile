@@ -4,9 +4,9 @@ TARGET = criti
 # CC_HOST = sw5cc -host
 # CXX_HOST = sw5CC -host
 # LINK = sw5CC -hybrid
-CC = clang
-CXX = clang++
-LINK = clang++
+CC = cc
+CXX = c++
+LINK = c++
 
 C_FLAGS = -Wall -Wextra -pedantic
 CXX_FLAGS = -Wall -Wextra -pedantic
