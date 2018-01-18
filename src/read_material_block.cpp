@@ -22,7 +22,7 @@ void read_material_block(){
     char *ret, *end;
     map_entry *nuc_entry;
     nuclide_t *nuc;
-    mat_t *mat = nullptr;
+    mat_t *mat = NULL;
     int index;
     std::vector<std::pair<std::string, double> > nucs;
 

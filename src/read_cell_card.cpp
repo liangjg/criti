@@ -30,10 +30,10 @@ void _transform(std::string &s);
 void read_cell_card(universe_t *univ){
     std::vector<int> cells;
     char buf[256];
-    char *ret = nullptr;
+    char *ret = NULL;
     bool is_simple = true;
 
-    while((ret = fgets(buf, MAX_LINE_LENGTH, base_IOfp.inp_fp)) != nullptr){
+    while((ret = fgets(buf, MAX_LINE_LENGTH, base_IOfp.inp_fp)) != NULL){
         while(ISSPACE(*ret)) ret++;
         if(ISCOMMENT(*ret)) continue;  /* 当前行是以注释符开头的，继续读取下一行 */
         if(ISRETURN(*ret)) break;      /* 当前行是空行，意味着当前UNIVERSE已经结束了 */
