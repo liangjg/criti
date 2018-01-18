@@ -112,7 +112,7 @@ typedef enum{
     CRITICALITY = 1,
     BURNUP,
     POINTBURN,
-    FIXEDSOURCE,
+    FIXEDSOURCE
 } CALC_MODE_T;
 
 /* time elapsed */

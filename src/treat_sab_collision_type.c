@@ -12,7 +12,7 @@ void treat_sab_colli_type(const nuclide_t *sab_nuc, double SIG_sab_el, double SI
                           double *incident_dir, double *exit_erg_lab, double *exit_dir){
     int sab_n_el, sab_n_inel;
     double sab_k_el, sab_k_inel;
-    double exit_mu_lab;
+    double exit_mu_lab = ZERO;
 
     ////////////////// elastic scattering case.  JXS(4) = 0 : without elastic scattering ////////////////
     if(Get_loc_of_sab_el_erg(sab_nuc) != 0 && get_rand() * (SIG_sab_el + SIG_sab_inel) > SIG_sab_inel){
