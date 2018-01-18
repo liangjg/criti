@@ -5,23 +5,14 @@
 #ifndef CRITI_COMMON_H
 #define CRITI_COMMON_H
 
-#ifdef __cplusplus
-#include <cstdlib>
-    #include <cstdio>
-    #include <cmath>
-    #include <cstring>
-    #include <cfloat>
-    #include <ctime>
-    #include <cstdbool>
-#else
-    #include <stdlib.h>
-    #include <stdio.h>
-    #include <math.h>
-    #include <string.h>
-    #include <float.h>
-    #include <time.h>
-    #include <stdbool.h>
-#endif
+#include <stdlib.h>
+#include <stdio.h>
+#include <math.h>
+#include <string.h>
+#include <float.h>
+#include <time.h>
+#include <stdbool.h>
+
 
 #ifdef USE_MPI
     #include <mpi.h>
