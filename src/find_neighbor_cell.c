@@ -5,7 +5,6 @@
 #include "geometry.h"
 
 
-
 extern map *base_univs;
 
 void find_neighbor_cell(particle_state_t *par_state){
@@ -15,12 +14,9 @@ void find_neighbor_cell(particle_state_t *par_state){
     bool found = false;
     int neighbor_cell_index = -1;
     int level = par_state->bound_level;
-    int univ_index = *(int *) vector_at(&par_state->loc_univs, level);
+    int univ_index = par_state->loc_univs[level];
     int bound_surf = par_state->surf;
     universe_t *univ = map_get(base_univs, univ_index);
-
-    vector_resize(&par_state->loc_univs, level + 1);
-    vector_resize(&par_state->loc_cells, level + 1);
 
     for(int i = 0; i < 3; i++){
         loc_pos[i] = par_state->loc_pos[i];
@@ -28,16 +24,16 @@ void find_neighbor_cell(particle_state_t *par_state){
     }
 
     if(univ->is_lattice){
-        lat_index = offset_neighbor_lat(univ, *(int *) vector_at(&par_state->loc_cells, level),
-                                        par_state->lat_bound_surf, loc_pos);
+        lat_index = offset_neighbor_lat(univ, par_state->loc_cells[level], par_state->lat_bound_surf, loc_pos);
         if(lat_index >= 0){
-            *(int *) vector_at(&par_state->loc_cells, level) = lat_index;
+            par_state->loc_cells[level] = lat_index;
             filled_univ = univ->filled_lat_univs[lat_index - 1];
             trans_univ_coord((universe_t *) map_get(base_univs, filled_univ), loc_pos, loc_dir);
             neighbor_cell_index = locate_particle(par_state, filled_univ, loc_pos, loc_dir);
+            found = true;
         }
     } else{
-        cell_index = *(int *) vector_at(&univ->cells, *(int *) vector_at(&par_state->loc_cells, level));
+        cell_index = *(int *) vector_at(&univ->cells, par_state->loc_cells[level]);
         map *val = map_get(univ->neighbor_lists, cell_index);
         vector *neighbor_cells = map_get(val, bound_surf);
         cell_t *neighbor_cell;
@@ -55,7 +51,7 @@ void find_neighbor_cell(particle_state_t *par_state){
             v_sz = vector_size(&univ->cells);
             for(int i = 0; i < v_sz; i++)
                 if(neighbor_cell->id == *(int *) vector_at(&univ->cells, i)){
-                    *(int *) vector_at(&par_state->loc_cells, level) = i;
+                    par_state->loc_cells[level] = i;
                     break;
                 }
 

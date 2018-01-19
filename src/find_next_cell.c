@@ -19,7 +19,7 @@ void find_next_cell(particle_state_t *par_state){
     int prev_mat;
     double prev_cell_tmp;
 
-    int univ_index = *(int *)vector_at(&par_state->loc_univs, par_state->bound_level);
+    int univ_index = par_state->loc_univs[par_state->bound_level];
     univ = (universe_t *) map_get(base_univs, univ_index);
     prev_mat = par_state->mat;
     prev_cell_tmp = par_state->cell_tmp;

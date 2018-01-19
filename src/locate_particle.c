@@ -32,8 +32,12 @@ int locate_particle(particle_state_t *par_state, int start_univ, const double po
 
     /* 清空当前univs和cells，全部重新定位 */
     if(start_univ == 0){
-        vector_clear(&par_state->loc_univs);
-        vector_clear(&par_state->loc_cells);
+        for(int i = 0; i < 8; i++){
+            par_state->loc_univs[i] = 0;
+            par_state->loc_cells[i] = 0;
+            par_state->loc_univs_sz = 0;
+            par_state->loc_cells_sz = 0;
+        }
     }
 
     while(1){
@@ -43,7 +47,7 @@ int locate_particle(particle_state_t *par_state, int start_univ, const double po
         }
 
         univ = (universe_t *) map_get(base_univs, univ_index);
-        vector_push_back(&par_state->loc_univs, &univ_index);
+        par_state->loc_univs[par_state->loc_univs_sz++] = univ_index;
 
         if(univ->is_lattice){    /* current universe has lattice structure */
             int lat_index = find_lat_index(univ, local_pos_temp, local_dir_temp);
@@ -53,7 +57,7 @@ int locate_particle(particle_state_t *par_state, int start_univ, const double po
                 break;
             }
 
-            vector_push_back(&par_state->loc_cells, &lat_index);
+            par_state->loc_cells[par_state->loc_cells_sz++] = lat_index;
             lat_univ = univ->filled_lat_univs[lat_index - 1];
             move_to_origin_lat(univ, lat_index, local_pos_temp);
             trans_univ_coord(map_get(base_univs, lat_univ), local_pos_temp, local_dir_temp);
@@ -66,7 +70,7 @@ int locate_particle(particle_state_t *par_state, int start_univ, const double po
                 cell = map_get(base_cells, cell_index);
 
                 if(particle_is_in_cell(cell, local_pos_temp, local_dir_temp)){
-                    vector_push_back(&par_state->loc_cells, &i);
+                    par_state->loc_cells[par_state->loc_cells_sz++] = i;
                     if(cell->fill < 0){    /* current cell is a simple cell which has no fills */
                         for(int j = 0; j < 3; j++){
                             par_state->loc_pos[j] = local_pos_temp[j];
@@ -88,6 +92,13 @@ int locate_particle(particle_state_t *par_state, int start_univ, const double po
 END:
     if(found_cell == -1)
         puts("failed to locate particle.");
+
+#ifdef _Debug
+    if(par_state->loc_cells_sz != par_state->loc_univs_sz){
+        puts("Error: loc_univs.size != loc_cells.size");
+        release_resource();
+    }
+#endif
 
     return found_cell;
 }

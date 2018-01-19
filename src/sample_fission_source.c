@@ -24,22 +24,6 @@ void sample_fission_source(particle_state_t *par_state){
 
     par_state->erg = fission_src->erg;
     par_state->wgt = base_start_wgt;
-
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpointer-arith"
-    par_state->loc_univs.ele_size = sizeof(int);
-    par_state->loc_univs.start = malloc((size_t) (8) * sizeof(int));
-    par_state->loc_univs.finish = par_state->loc_univs.start;
-    par_state->loc_univs.end_of_storage = par_state->loc_univs.start + 8 * sizeof(int);
-    par_state->loc_univs.value_free = NULL;
-
-    par_state->loc_cells.ele_size = sizeof(int);
-    par_state->loc_cells.start = malloc((size_t) (8) * sizeof(int));
-    par_state->loc_cells.finish = par_state->loc_univs.start;
-    par_state->loc_cells.end_of_storage = par_state->loc_univs.start + 8 * sizeof(int);
-    par_state->loc_cells.value_free = NULL;
-
-#pragma GCC diagnostic pop
     base_criti.fission_src_cnt++;
 
     par_state->cell = locate_particle(par_state, 0, par_state->pos, par_state->dir);

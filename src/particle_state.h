@@ -21,8 +21,10 @@ typedef struct{
     double loc_dir[3];          /* 粒子在当前universe中的方向 */
 
     /* geometry state */
-    vector loc_univs;           /* 粒子在定位到当前cell的过程中，进入的每一层universe */
-    vector loc_cells;           /* 定位到的cell是在loc_univs[i]中的第几个cell；注意，这里是第几个，而不是直接存储的相应cell，存储的是univ->cells这个vector的下标 */
+    int loc_univs[8];           /* 粒子在定位到当前cell的过程中，进入的每一层universe */
+    int loc_cells[8];           /* 定位到的cell是在loc_univs[i]中的第几个cell；注意，这里是第几个，而不是直接存储的相应cell，存储的是univ->cells这个vector的下标 */
+    int loc_univs_sz;           /* loc_univs的size */
+    int loc_cells_sz;           /* loc_cells的size */
     int cell;                   /* 最终定位到的粒子所在的底层cell */
     int surf;                   /* 粒子如果要穿面的话，穿出的面的序号；注意，这里是带符号的，有正负的 */
     int bound_index;            /* 当前要穿出的面在cell->surfs这个vector中的下标 */

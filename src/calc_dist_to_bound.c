@@ -32,9 +32,9 @@ double calc_dist_to_bound(particle_state_t *par_state){
     if(cell->is_inner_cell){
         for(int i = 0; i < 3; i++)
             loc_dir[i] = par_state->dir[i];
-        v_sz = vector_size(&par_state->loc_univs);
+        v_sz = par_state->loc_univs_sz;
         for(size_t i = 0; i < v_sz; i++){
-            loc_univ = *(int *)vector_at(&par_state->loc_univs, i);
+            loc_univ = par_state->loc_univs[i];
             univ = (universe_t *) map_get(base_univs, loc_univ);
             trans_univ_dir(univ, loc_dir);
         }
@@ -55,20 +55,20 @@ double calc_dist_to_bound(particle_state_t *par_state){
             }
         }
         par_state->lat_bound_surf = 0;
-        par_state->bound_level = vector_size(&par_state->loc_cells) - 1;
+        par_state->bound_level = par_state->loc_cells_sz - 1;
     } else{
         for(int i = 0; i < 3; i++){
             loc_pos[i] = par_state->pos[i];
             loc_dir[i] = par_state->dir[i];
         }
 
-        for(size_t i = 0; i < vector_size(&par_state->loc_cells); i++){
-            loc_univ = *(int *)vector_at(&par_state->loc_univs, i);
+        for(size_t i = 0; i < par_state->loc_cells_sz; i++){
+            loc_univ = par_state->loc_univs[i];
             univ = (universe_t *)map_get(base_univs, loc_univ);
             trans_univ_coord(univ, loc_pos, loc_dir);
 
             if(univ->is_lattice){
-                lat_index = *(int *)vector_at(&par_state->loc_cells, i);
+                lat_index = par_state->loc_cells[i];
                 move_to_origin_lat(univ, lat_index, loc_pos);
                 distance = calc_dist_to_lat(univ, loc_pos, loc_dir, &lat_bound_surf);
 
@@ -85,7 +85,7 @@ double calc_dist_to_bound(particle_state_t *par_state){
                 continue;
             }
 
-            univ_cell_index = *(int *)vector_at(&par_state->loc_cells, i);
+            univ_cell_index = par_state->loc_cells[i];
             cell_index = *(int *)vector_at(&univ->cells, univ_cell_index);
             cell = (cell_t *)map_get(base_cells, cell_index);
 
