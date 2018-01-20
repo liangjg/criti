@@ -18,6 +18,9 @@ void find_neighbor_cell(particle_state_t *par_state){
     int bound_surf = par_state->surf;
     universe_t *univ = map_get(base_univs, univ_index);
 
+    par_state->loc_cells_sz = level + 1;
+    par_state->loc_univs_sz = level + 1;
+
     for(int i = 0; i < 3; i++){
         loc_pos[i] = par_state->loc_pos[i];
         loc_dir[i] = par_state->loc_dir[i];
