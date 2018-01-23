@@ -24,10 +24,8 @@ typedef struct{
 
 typedef struct{
     /* 读取输入文件时的参数 */
-    int neu_num_per_cycle;
     int tot_cycle_num;
     int inactive_cycle_num;
-    int active_cycle_num;
 
     /* 初始源参数 */
     KSRC_T ksrc_type;
@@ -47,15 +45,15 @@ typedef struct{
     double keff_covw_std[4];          /* covariance-weighted combined standard deviations */
     double tot_start_wgt;
 
-    unsigned long long tot_col_cnt;
-    unsigned long long col_cnt;
-
-    int fission_bank_cnt;
+    int fission_src_cnt[64];
+    int fission_bank_cnt[64];
     int tot_fission_bank_cnt;
-    int fission_src_cnt;
 
-    vector fission_src;     /* 当前代要模拟的中子源，每个中子都从其中抽样产生 */
-    vector fission_bank;    /* 存储每一代裂变产生的中子，供下一代模拟用；一般来说，src_sz = bank_sz*/
+    fission_bank_t *fission_src[64];    /* 当前代要模拟的中子源，每个中子都从其中抽样产生 */
+    fission_bank_t *fission_bank[64];   /* 存储每一代裂变产生的中子，供下一代模拟用；一般来说，src_sz = bank_sz*/
+
+    unsigned long long tot_col_cnt;     /* 总碰撞次数 */
+    int tot_transfer_num;               /* 主核总共要向从核传输多少次数据 */
 } criti_t;
 
 
@@ -75,17 +73,17 @@ void process_cycle_end();
 
 #define Estimate_keff_col(wgt, macro_mu_fis_xs, macro_tot_xs)  \
     do{  \
-        base_criti.keff_wgt_sum[0] += (wgt) * (macro_mu_fis_xs) / (macro_tot_xs);  \
+        keff_wgt_sum_slave[0] += (wgt) * (macro_mu_fis_xs) / (macro_tot_xs);  \
     } while(0)
 
 #define Estimate_keff_abs(wgt, nu, micro_fis_xs, micro_tot_xs)  \
     do{  \
-        base_criti.keff_wgt_sum[1] += (wgt) * (nu) * (micro_fis_xs) / (micro_tot_xs);  \
+        keff_wgt_sum_slave[1] += (wgt) * (nu) * (micro_fis_xs) / (micro_tot_xs);  \
     } while(0)
 
 #define Estimate_keff_tl(wgt, macro_mu_fis_xs, tl)  \
     do{  \
-        base_criti.keff_wgt_sum[2] += (wgt) * (tl) * (macro_mu_fis_xs);  \
+        keff_wgt_sum_slave[2] += (wgt) * (tl) * (macro_mu_fis_xs);  \
     } while(0)
 
 #ifdef __cplusplus

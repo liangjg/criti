@@ -22,7 +22,8 @@ void _output_keff();
 
 void process_cycle_end(){
     /* process eigenvalue */
-    base_criti.tot_fission_bank_cnt = base_criti.fission_bank_cnt;
+    for(int i = 0; i < 64; i++)
+        base_criti.tot_fission_bank_cnt += base_criti.fission_bank_cnt[i];
 
     if(base_criti.tot_fission_bank_cnt < 5){
         puts("Insufficient fission source to be sampled.");
@@ -42,19 +43,11 @@ void process_cycle_end(){
      * 但是这样逐个复制的开销较大。因此这里直接交换两个数组的指针，同时交换bank_sz和src_sz，
      * 用O(1)时间完成交换
      */
-    SWAP(base_criti.fission_src.start, base_criti.fission_bank.start);
-    SWAP(base_criti.fission_src.finish, base_criti.fission_bank.finish);
-    SWAP(base_criti.fission_src.end_of_storage, base_criti.fission_bank.end_of_storage);
+    for(int i = 0; i < 64; i++)
+        SWAP(base_criti.fission_bank[i], base_criti.fission_src[i]);
 
-    /* 将fission_bank清空，以便之后使用vector_push_back函数追加裂变产生的粒子 */
-    base_criti.fission_bank.finish = base_criti.fission_bank.start;
-
-    base_criti.cycle_neutron_num = base_criti.fission_bank_cnt;
+    base_criti.cycle_neutron_num = base_criti.tot_fission_bank_cnt;
     base_start_wgt = ONE * base_criti.tot_start_wgt / base_criti.tot_fission_bank_cnt;
-
-    /* reset criticality */
-    base_criti.fission_bank_cnt = 0;
-    base_criti.fission_src_cnt = 0;
 
     for(int i = 0; i < 3; i++)
         base_criti.keff_wgt_sum[i] = ZERO;

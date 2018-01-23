@@ -9,9 +9,13 @@
 #include "criticality.h"
 
 
+/* 全局变量，所有从核都相同 */
 extern map *base_nucs;
 extern map *base_mats;
-extern criti_t base_criti;
+
+/* 从核LDM中的变量 */
+extern double keff_final;
+extern double keff_wgt_sum_slave[3];
 
 static int fis_MT[5] = {18, 19, 20, 21, 38};
 
@@ -19,6 +23,7 @@ void treat_fission(particle_state_t *par_state){
     mat_t *mat;
     nuclide_t *nuc;
     double fis_sub_cs[5];
+    double fis_R;
 
     mat = (mat_t *) map_get(base_mats, par_state->mat);
     nuc = (nuclide_t *) map_get(base_nucs, (uint64_t) mat->nuc_id[par_state->nuc]);
@@ -33,16 +38,15 @@ void treat_fission(particle_state_t *par_state){
 
     Estimate_keff_abs(par_state->wgt, nuc->nu, nuc->fis, nuc->tot);
 
-    double fis_R;
     if(nuc->LSIG[18] > 0){
         if(fis_sub_cs[0] > 0){
-            fis_R = par_state->wgt * nuc->nu * fis_sub_cs[0] / nuc->tot / base_criti.keff_final;
+            fis_R = par_state->wgt * nuc->nu * fis_sub_cs[0] / nuc->tot / keff_final;
             get_fis_neu_state(par_state, fis_MT[0], fis_R);
         }
     } else{
         for(int i = 1; i < 5; i++){
             if(fis_sub_cs[i] > 0){
-                fis_R = par_state->wgt * nuc->nu * fis_sub_cs[i] / nuc->tot / base_criti.keff_final;
+                fis_R = par_state->wgt * nuc->nu * fis_sub_cs[i] / nuc->tot / keff_final;
                 get_fis_neu_state(par_state, fis_MT[i], fis_R);
             }
         }

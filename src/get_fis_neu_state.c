@@ -10,9 +10,13 @@
 #include "neutron_transport.h"
 
 
+/* 全局变量，所有从核都相同 */
 extern map *base_nucs;
 extern map *base_mats;
-extern criti_t base_criti;
+
+/* 从核LDM中的变量 */
+extern fission_bank_t fis_bank_slave[600];
+extern int fis_bank_cnt;
 
 void get_fis_neu_state(particle_state_t *par_state, int fis_MT, double fis_wgt){
     mat_t *mat = (mat_t *) map_get(base_mats, par_state->mat);
@@ -21,6 +25,7 @@ void get_fis_neu_state(particle_state_t *par_state, int fis_MT, double fis_wgt){
     int fis_neu_num = (int) (fis_wgt + get_rand());
     double nu_delayed = get_delayed_nu(nuc, erg);
     double beta = nu_delayed / nuc->nu;
+    int fis_bank_cnt_local = fis_bank_cnt;
 
     for(int i = 0; i < fis_neu_num; i++){
         /* sample prompt/delayed fission neutrons */
@@ -55,13 +60,12 @@ void get_fis_neu_state(particle_state_t *par_state, int fis_MT, double fis_wgt){
         } else
             get_ce_exit_state(par_state, fis_MT, false);
 
-        fission_bank_t fission_bank;
         for(int j = 0; j < 3; j++){
-            fission_bank.pos[j] = par_state->pos[j];
-            fission_bank.dir[j] = par_state->exit_dir[j];
+            fis_bank_slave[fis_bank_cnt_local].pos[j] = par_state->pos[j];
+            fis_bank_slave[fis_bank_cnt_local].dir[j] = par_state->exit_dir[j];
         }
-        fission_bank.erg = par_state->exit_erg;
-        vector_push_back(&base_criti.fission_bank, &fission_bank);
-        base_criti.fission_bank_cnt++;
+        fis_bank_slave[fis_bank_cnt_local].erg = par_state->exit_erg;
+        fis_bank_cnt_local++;
     }
+    fis_bank_cnt = fis_bank_cnt_local;
 }
