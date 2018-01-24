@@ -5,6 +5,7 @@
 #include "criticality.h"
 #include "IO_releated.h"
 
+
 extern criti_t base_criti;
 extern double base_start_wgt;
 extern IOfp_t base_IOfp;
@@ -20,11 +21,14 @@ void _output_keff();
         (_b) = _temp;    \
     } while(0)
 
-void process_cycle_end(){
-    /* process eigenvalue */
-    for(int i = 0; i < 64; i++)
-        base_criti.tot_fission_bank_cnt += base_criti.fission_bank_cnt[i];
+#define NUMBERS_PER_TRANS    25600
+#define NUMBERS_SLAVES       64
 
+void process_cycle_end(){
+    int remainder1, remainder2;
+    int quotient;
+
+    /* process eigenvalue */
     if(base_criti.tot_fission_bank_cnt < 5){
         puts("Insufficient fission source to be sampled.");
         release_resource();
@@ -51,6 +55,23 @@ void process_cycle_end(){
 
     for(int i = 0; i < 3; i++)
         base_criti.keff_wgt_sum[i] = ZERO;
+    base_criti.tot_fission_bank_cnt = 0;
+
+    /* 更新tot_transfer_num和fission_src_cnt */
+    base_criti.tot_transfer_num = base_criti.cycle_neutron_num / NUMBERS_PER_TRANS;
+    remainder1 = base_criti.cycle_neutron_num - NUMBERS_PER_TRANS * base_criti.tot_transfer_num;
+    for(int i = 0; i < NUMBERS_SLAVES; i++)
+        base_criti.fission_src_cnt[i] = base_criti.tot_transfer_num * 400;
+    if(remainder1 > 0){
+        base_criti.tot_transfer_num++;
+        quotient = remainder1 / NUMBERS_SLAVES;
+        remainder2 = remainder1 - quotient * NUMBERS_SLAVES;
+        for(int i = 0; i < NUMBERS_SLAVES; i++)
+            base_criti.fission_src_cnt[i] += quotient;
+        if(remainder2 > 0)
+            for(int i = 0; i < remainder2; i++)
+                base_criti.fission_src_cnt[i] += 1;
+    }
 }
 
 void _combine_keff(){

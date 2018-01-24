@@ -5,11 +5,10 @@
 #include "criticality.h"
 #include "RNG.h"
 #include "IO_releated.h"
+#include <athread.h>
 
 
-//extern SLAVE_FUN(do_calc)();
-
-extern void do_calc();
+extern SLAVE_FUN(do_calc)();
 
 extern criti_t base_criti;
 
@@ -26,6 +25,7 @@ void calc_criticality(){
     /* 初始化裂变源 */
     init_fission_source();
 
+    athread_init();
     for(int cyc = 1; cyc <= base_criti.tot_cycle_num; cyc++){
         base_criti.current_cycle = cyc;
 
@@ -37,17 +37,18 @@ void calc_criticality(){
 
         for(int i = 0; i < base_criti.tot_transfer_num; i++){
             /* 准备从核需要的数据 */
-            if(i == base_criti.tot_transfer_num - 1){
+            if(i == base_criti.tot_transfer_num - 1){    /* 如果已经是最后一次传输数据，那么把剩下的全部全部传过去 */
                 for(int j = 0; j < 64; j++)
                     numbers_per_slave[j] = base_criti.fission_src_cnt[j] - 400 * i;
             }
-            else{
+            else{    /* 如果不是最后一次传输数据，说明后续还有数据，那么这次最多传输400个 */
                 for(int j = 0; j < 64; j++)
                     numbers_per_slave[j] = 400;
             }
 
             /* 执行计算 */
-            do_calc();
+            athread_spawn(do_calc, NULL);
+            athread_join();
 
             /* 处理从核回传的计算结果 */
             for(int m = 0; m < 64; m++){
@@ -55,8 +56,7 @@ void calc_criticality(){
                     base_criti.keff_wgt_sum[n] += keff_wgt_sum[m][n];
 
                 base_criti.tot_col_cnt += col_cnt[m];
-            }
-            for(int m = 0; m < 64; m++){
+                base_criti.tot_fission_bank_cnt += base_criti.fission_bank_cnt[m];
                 offset_get_per_slave[m] += numbers_per_slave[m];
                 offset_put_per_slave[m] += base_criti.fission_bank_cnt[m];
             }
@@ -66,4 +66,6 @@ void calc_criticality(){
         process_cycle_end();
     }
     output_summary();
+
+    athread_halt();
 }

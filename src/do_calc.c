@@ -4,8 +4,7 @@
 
 #include "RNG.h"
 #include "criticality.h"
-
-#define __thread_local
+#include "slave.h"
 
 
 __thread_local volatile unsigned int get_reply, put_reply;
@@ -76,7 +75,6 @@ void do_calc(){
 
     /* 从主核处取得put的位置偏移 */
     athread_get(PE_MODE, &offset_put_per_slave[my_id], &offset_put, sizeof(unsigned int), &get_reply, 0, 0, 0);
-    while(get_reply != 5);
 
     /* 初始化部分变量 */
     fis_src_cnt = 0;
@@ -87,12 +85,15 @@ void do_calc(){
 
     /* 模拟每个粒子 */
     for(int neu = 1; neu <= numbers_to_get; neu++){
-        get_rand();
+        get_rand_seed();
 
         sample_fission_source(&par_state_slave);
 
         track_history(&par_state_slave);
     }
+
+    /* 等待最后一次athread_get完成 */
+    while(get_reply != 5);
 
     /* 写回计算结果 */
     athread_put(PE_MODE, keff_wgt_sum_slave, &keff_wgt_sum[my_id], 3 * sizeof(double), &put_reply, 0, 0);
