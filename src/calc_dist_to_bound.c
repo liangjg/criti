@@ -41,9 +41,9 @@ double calc_dist_to_bound(particle_state_t *par_state){
         for(int i = 0; i < 3; i++)
             par_state->loc_dir[i] = loc_dir[i];
 
-        v_sz = vector_size(&cell->surfs);
+        v_sz = cell->surfs_sz;
         for(size_t i = 0; i < v_sz; i++){
-            signed_surf_index = *(int *)vector_at(&cell->surfs, i);
+            signed_surf_index = cell->surfs[i];
             surf_index = abs(signed_surf_index);
             surf = (surface_t *)map_get(base_surfs, surf_index);
             distance = calc_dist_to_surf(surf, par_state->loc_pos, par_state->loc_dir, surf_index == at_surf);
@@ -89,9 +89,9 @@ double calc_dist_to_bound(particle_state_t *par_state){
             cell_index = univ->cells[univ_cell_index];
             cell = (cell_t *)map_get(base_cells, cell_index);
 
-            v_sz = vector_size(&cell->surfs);
+            v_sz = cell->surfs_sz;
             for(size_t j = 0; j < v_sz; j++){
-                signed_surf_index = *(int *)vector_at(&cell->surfs, j);
+                signed_surf_index = cell->surfs[j];
                 surf_index = abs(signed_surf_index);
                 surf = (surface_t *)map_get(base_surfs, surf_index);
                 distance = calc_dist_to_surf(surf, loc_pos, loc_dir, surf_index == at_surf);

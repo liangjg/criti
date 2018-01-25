@@ -238,6 +238,7 @@ char _order_between(char a, char b, bool &is_simple){
 }
 
 void _extract_surfs_from_rpn(cell_t *cell){
+    std::vector<int> surfs;
     int surf_index = 0;
     char *start = cell->rpn;
 
@@ -248,7 +249,7 @@ void _extract_surfs_from_rpn(cell_t *cell){
                 surf_index *= 10;
                 surf_index += *start++ - '0';
             } while(ISNUMBER(*start));
-            vector_push_back(&cell->surfs, &surf_index);
+            surfs.push_back(surf_index);
         } else if(*start == '-'){
             surf_index = 0;
             start++;
@@ -257,10 +258,14 @@ void _extract_surfs_from_rpn(cell_t *cell){
                 surf_index += *start++ - '0';
             } while(ISNUMBER(*start));
             surf_index = (~surf_index) + 1;
-            vector_push_back(&cell->surfs, &surf_index);
+            surfs.push_back(surf_index);
         }
         start++;
     }
+    cell->surfs_sz = surfs.size();
+    cell->surfs = (int *) malloc(cell->surfs_sz * sizeof(int));
+    for(int i = 0; i < cell->surfs_sz; i++)
+        cell->surfs[i] = surfs[i];
 }
 
 void _simplify(const char *exp, char **simplified_exp){

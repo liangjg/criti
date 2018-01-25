@@ -27,16 +27,9 @@ cell_t *cell_init(){
     _new_cell->vol = 1.0;
     _new_cell->is_inner_cell = false;
     _new_cell->rpn = NULL;
+    _new_cell->surfs = NULL;
+    _new_cell->surfs_sz = 0;
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpointer-arith"
-    /* initialize vector surfs */
-    _new_cell->surfs.ele_size = sizeof(int);
-    _new_cell->surfs.start = malloc((size_t)(8) * sizeof(int));    /* 8 elements by default */
-    _new_cell->surfs.finish = _new_cell->surfs.start;
-    _new_cell->surfs.end_of_storage = _new_cell->surfs.start + 8 * sizeof(int);
-    _new_cell->surfs.value_free = NULL;
-#pragma GCC diagnostic pop
     return _new_cell;
 }
 
@@ -54,7 +47,7 @@ bool particle_is_in_cell(const cell_t *obj, const double pos[3], const double di
 
 void cell_free(cell_t *obj){
     free(obj->rpn);
-    vector_free(&obj->surfs);
+    free(obj->surfs);
     free(obj);
 }
 

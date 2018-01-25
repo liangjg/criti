@@ -6,7 +6,7 @@
 #define TTYW_CELL_H
 
 #include "common.h"
-#include "vector.h"
+
 
 typedef struct {
     int id;               /* cell id */
@@ -19,8 +19,8 @@ typedef struct {
     char *rpn;            /* 面布尔表达式转换而来的RPN表达式 */
     bool simple;          /* 是否是只含有集合交运算的简单cell */
 
-    vector surfs;         /* 当前cell的全部边界面编号，包含符号在内 */
-    int surf_sz;
+    int *surfs;         /* 当前cell的全部边界面编号，包含符号在内 */
+    int surfs_sz;
 } cell_t;
 
 #define CELL_KW_NUMBER        7
@@ -35,6 +35,7 @@ static const char cell_kw[CELL_KW_NUMBER][CELL_MAX_KW_LENGTH] = {
         "INNER",
         "VOID"
 };
+
 #ifdef __cplusplus
 extern "C" {
 #endif
