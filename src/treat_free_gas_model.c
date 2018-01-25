@@ -6,6 +6,8 @@
 #include "RNG.h"
 
 
+extern RNG_t RNG_slave;
+
 void treat_free_gas_model(particle_state_t *par_state, double nuc_wgt){
     double atom_tmp;
     double r1, z2, s, z, c, x2;
@@ -23,22 +25,22 @@ void treat_free_gas_model(particle_state_t *par_state, double nuc_wgt){
         }
 
 
-        if(get_rand() * (Ycn + 1.12837917) > Ycn){
-            r1 = get_rand();
-            z2 = -log(r1 * get_rand());
+        if(get_rand(&RNG_slave) * (Ycn + 1.12837917) > Ycn){
+            r1 = get_rand(&RNG_slave);
+            z2 = -log(r1 * get_rand(&RNG_slave));
         } else{
             do{
-                double ksi1 = get_rand();
-                double ksi2 = get_rand();
+                double ksi1 = get_rand(&RNG_slave);
+                double ksi2 = get_rand(&RNG_slave);
                 r1 = ksi1 * ksi1;
                 s = r1 + ksi2 * ksi2;
             } while(s > 1);
-            z2 = -r1 * log(s) / s - log(get_rand());
+            z2 = -r1 * log(s) / s - log(get_rand(&RNG_slave));
         }
         z = sqrt(z2);
-        c = 2 * get_rand() - 1.;
+        c = 2 * get_rand(&RNG_slave) - 1.;
         x2 = Ycn * Ycn + z2 - 2 * Ycn * z * c;
-    } while(pow(get_rand() * (Ycn + z), 2) > x2);
+    } while(pow(get_rand(&RNG_slave) * (Ycn + z), 2) > x2);
 
     rotate_dir(c, par_state->dir, par_state->vel_tgt);
 

@@ -10,6 +10,9 @@
 __thread_local volatile unsigned int get_reply, put_reply;
 __thread_local int my_id;
 
+/* 每个从核的随机数发生器RNG */
+__thread_local RNG_t RNG_slave;
+
 /* 每个从核需要从主核取的source的个数 */
 __thread_local int numbers_to_get;
 
@@ -31,7 +34,7 @@ __thread_local int fis_src_cnt, fis_bank_cnt;
 __thread_local particle_state_t par_state_slave;
 
 /* 每个从核在本代模拟的粒子发送到总碰撞次数 */
-__thread_local int col_cnt;
+__thread_local int col_cnt_slave;
 
 /* 上一代计算得到的k-effective */
 __thread_local double keff_final;
@@ -46,6 +49,8 @@ extern int numbers_per_slave[64];
 extern unsigned int offset_get_per_slave[64];
 extern unsigned int offset_put_per_slave[64];
 extern double keff_wgt_sum[64][3];
+extern RNG_t RNGs[64];
+extern int col_cnt[64];
 
 void do_calc(){
     void *start_addr;
@@ -73,19 +78,23 @@ void do_calc(){
     athread_get(PE_MODE, &base_criti.keff_final, &keff_final, sizeof(double), &get_reply, 0, 0, 0);
     while(get_reply != 4);
 
+    /* 从主核处取得随机数发生器RNG */
+    athread_get(PE_MODE, &RNGs[my_id], &RNG_slave, sizeof(RNG_t), &get_reply, 0, 0, 0);
+    while(get_reply != 5);
+
     /* 从主核处取得put的位置偏移 */
     athread_get(PE_MODE, &offset_put_per_slave[my_id], &offset_put, sizeof(unsigned int), &get_reply, 0, 0, 0);
 
     /* 初始化部分变量 */
     fis_src_cnt = 0;
     fis_bank_cnt = 0;
-    col_cnt = 0;
+    col_cnt_slave = 0;
     for(int i = 0; i < 3; i++)
         keff_wgt_sum_slave[i] = ZERO;
 
     /* 模拟每个粒子 */
     for(int neu = 1; neu <= numbers_to_get; neu++){
-        get_rand_seed();
+        get_rand_seed(&RNG_slave);
 
         sample_fission_source(&par_state_slave);
 
@@ -93,7 +102,7 @@ void do_calc(){
     }
 
     /* 等待最后一次athread_get完成 */
-    while(get_reply != 5);
+    while(get_reply != 6);
 
     /* 写回计算结果 */
     athread_put(PE_MODE, keff_wgt_sum_slave, &keff_wgt_sum[my_id], 3 * sizeof(double), &put_reply, 0, 0);
@@ -105,4 +114,10 @@ void do_calc(){
     start_addr = base_criti.fission_bank[my_id] + offset_put * sizeof(fission_bank_t);
     athread_put(PE_MODE, fis_bank_slave, start_addr, fis_bank_cnt * sizeof(fission_bank_t), &put_reply, 0, 0);
     while(put_reply != 3);
+
+    athread_put(PE_MODE, &RNG_slave, &RNGs[my_id], sizeof(RNG_t), &put_reply, 0, 0);
+    while(put_reply != 4);
+
+    athread_put(PE_MODE, &col_cnt_slave, &col_cnt[my_id], sizeof(int), &put_reply, 0, 0);
+    while(put_reply != 5);
 }

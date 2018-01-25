@@ -5,13 +5,15 @@
 #ifndef CRITI_SAMPLE_METHOD_H
 #define CRITI_SAMPLE_METHOD_H
 
+#include "RNG.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-double sample_maxwell(double T);
+double sample_maxwell(RNG_t *RNG, double T);
 
-double sample_watt(double a, double b);
+double sample_watt(RNG_t *RNG, double a, double b);
 
 #ifdef __cplusplus
 }

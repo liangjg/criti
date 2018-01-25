@@ -3,7 +3,6 @@
 //
 
 #include "common.h"
-#include "vector.h"
 #include "particle_state.h"
 
 
@@ -70,6 +69,8 @@ void track_history(particle_state_t *par_state);
 void get_fis_neu_state(particle_state_t *par_state, int fis_MT, double fis_wgt);
 
 void process_cycle_end();
+
+void prepare_RNG();
 
 #define Estimate_keff_col(wgt, macro_mu_fis_xs, macro_tot_xs)  \
     do{  \

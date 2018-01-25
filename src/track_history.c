@@ -7,7 +7,7 @@
 
 
 /* 从核LDM中的变量 */
-extern int col_cnt;
+extern int col_cnt_slave;
 
 void track_history(particle_state_t *par_state){
     if(par_state->is_killed) return;
@@ -50,5 +50,5 @@ void track_history(particle_state_t *par_state){
         par_state->dir[2] *= length;
     } while(++col_cnt_cur < MAX_ITER);
 
-    col_cnt += col_cnt_cur;
+    col_cnt_slave += col_cnt_cur;
 }

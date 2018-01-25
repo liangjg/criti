@@ -13,13 +13,14 @@ extern SLAVE_FUN(do_calc)();
 extern criti_t base_criti;
 
 /* 主核需要准备的数据 */
-extern int numbers_per_slave[64];
-extern unsigned int offset_get_per_slave[64];
-extern unsigned int offset_put_per_slave[64];
+int numbers_per_slave[64];
+unsigned int offset_get_per_slave[64];
+unsigned int offset_put_per_slave[64];
 
 /* 从核写回的计算结果 */
-extern double keff_wgt_sum[64][3];
-extern int col_cnt[64];
+double keff_wgt_sum[64][3];
+RNG_t RNGs[64];
+int col_cnt[64];
 
 void calc_criticality(){
     /* 初始化裂变源 */
@@ -64,6 +65,9 @@ void calc_criticality(){
 
         /* 处理这一代计算完之后的结果 */
         process_cycle_end();
+
+        /* 为每个从核准备随机数 */
+        prepare_RNG();
     }
     output_summary();
 

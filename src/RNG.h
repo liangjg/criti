@@ -32,9 +32,9 @@ typedef struct RNG{
 extern "C" {
 #endif
 
-double get_rand();
-void set_RNG_paras(int type);
-void get_rand_seed();
+double get_rand(RNG_t *RNG);
+void set_RNG_paras(RNG_t *RNG, int type);
+void get_rand_seed(RNG_t *RNG);
 
 #ifdef __cplusplus
 }

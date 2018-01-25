@@ -3,7 +3,6 @@
 //
 
 #include "criticality.h"
-#include "RNG.h"
 #include "sample_method.h"
 
 
@@ -13,6 +12,7 @@
 extern criti_t base_criti;
 extern RNG_t base_RNG;
 extern double base_start_wgt;
+extern RNG_t RNGs[64];
 
 void init_fission_source(){
     int remainder1, remainder2;
@@ -52,7 +52,7 @@ void init_fission_source(){
             for(int i = 0; i < NUMBERS_SLAVES; i++){
                 fis_src_cnt = base_criti.fission_src_cnt[i];
                 for(int j = 0; j < fis_src_cnt; j++){
-                    get_rand_seed();
+                    get_rand_seed(&base_RNG);
                     fission_src = base_criti.fission_src[i] + j;
                     fission_src->pos[0] = base_criti.ksrc_para[0];
                     fission_src->pos[1] = base_criti.ksrc_para[1];
@@ -69,11 +69,11 @@ void init_fission_source(){
             for(int i = 0; i < NUMBERS_SLAVES; i++){
                 fis_src_cnt = base_criti.fission_src_cnt[i];
                 for(int j = 0; j < fis_src_cnt; j++){
-                    get_rand_seed();
+                    get_rand_seed(&base_RNG);
                     fission_src = base_criti.fission_src[i] + j;
-                    fission_src->pos[0] = base_criti.ksrc_para[0] + get_rand() * len_x;
-                    fission_src->pos[1] = base_criti.ksrc_para[1] + get_rand() * len_y;
-                    fission_src->pos[2] = base_criti.ksrc_para[2] + get_rand() * len_z;
+                    fission_src->pos[0] = base_criti.ksrc_para[0] + get_rand(&base_RNG) * len_x;
+                    fission_src->pos[1] = base_criti.ksrc_para[1] + get_rand(&base_RNG) * len_y;
+                    fission_src->pos[2] = base_criti.ksrc_para[2] + get_rand(&base_RNG) * len_z;
                 }
             }
             break;
@@ -82,12 +82,12 @@ void init_fission_source(){
             for(int i = 0; i < NUMBERS_SLAVES; i++){
                 fis_src_cnt = base_criti.fission_src_cnt[i];
                 for(int j = 0; j < fis_src_cnt; j++){
-                    get_rand_seed();
+                    get_rand_seed(&base_RNG);
                     fission_src = base_criti.fission_src[i] + j;
                     do{
-                        ksi1 = TWO * get_rand() - ONE;
-                        ksi2 = TWO * get_rand() - ONE;
-                        ksi3 = TWO * get_rand() - ONE;
+                        ksi1 = TWO * get_rand(&base_RNG) - ONE;
+                        ksi2 = TWO * get_rand(&base_RNG) - ONE;
+                        ksi3 = TWO * get_rand(&base_RNG) - ONE;
                     } while(SQUARE(ksi1) + SQUARE(ksi2) + SQUARE(ksi3) > 1);
                     fission_src->pos[0] = base_criti.ksrc_para[0] + base_criti.ksrc_para[3] * ksi1;
                     fission_src->pos[1] = base_criti.ksrc_para[1] + base_criti.ksrc_para[3] * ksi2;
@@ -107,17 +107,17 @@ void init_fission_source(){
     for(int i = 0; i < NUMBERS_SLAVES; i++){
         fis_src_cnt = base_criti.fission_src_cnt[i];
         for(int j = 0; j < fis_src_cnt; j++){
-            get_rand_seed();
+            get_rand_seed(&base_RNG);
 
-            ksi1 = get_rand();
-            ksi2 = get_rand();
+            ksi1 = get_rand(&base_RNG);
+            ksi2 = get_rand(&base_RNG);
             fission_src = base_criti.fission_src[i] + j;
             fission_src->dir[0] = TWO * ksi2 - ONE;
             fission_src->dir[1] = sqrt(ONE - SQUARE(fission_src->dir[0])) * cos(TWO * PI * ksi1);
             fission_src->dir[2] = sqrt(ONE - SQUARE(fission_src->dir[0])) * sin(TWO * PI * ksi1);
 
             double T = 4.0 / 3.0;
-            fission_src->erg = sample_maxwell(T);
+            fission_src->erg = sample_maxwell(&base_RNG, T);
         }
     }
 
@@ -125,6 +125,16 @@ void init_fission_source(){
 
     base_RNG.position_pre = -1000;
     base_RNG.position = 0;
+
+    /* 为所有从核准备初始的RNG */
+    memcpy(&RNGs[0], &base_RNG, sizeof(RNG_t));    /* 将当前的base_RNG复制到RNGs[0]，也就是准备好了0号从核的RNG */
+    for(int i = 1; i < 64; i++){                   /* 准备1～63号从核的RNG */
+        memcpy(&RNGs[i], &RNGs[i - 1], sizeof(RNG_t));
+
+        int skip_src = base_criti.fission_src_cnt[i - 1];
+        for(int j = 1; j < skip_src; j++)
+            get_rand_seed(&RNGs[i]);
+    }
 
     puts("Finished.");
 }

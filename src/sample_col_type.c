@@ -9,8 +9,12 @@
 #include "acedata.h"
 
 
+/* 主核上的全局变量 */
 extern map *base_nucs;
 extern map *base_mats;
+
+/* 从核LDM上的全局变量 */
+extern RNG_t RNG_slave;
 
 int sample_col_type(particle_state_t *par_state){
     if(par_state->is_sab_col) return 0;
@@ -18,11 +22,11 @@ int sample_col_type(particle_state_t *par_state){
     mat_t *mat = (mat_t *) map_get(base_mats, par_state->mat);
     nuclide_t *nuc = (nuclide_t *) map_get(base_nucs, (uint64_t) mat->nuc_id[par_state->nuc]);
     while(1){
-        if(get_rand() * (nuc->el + nuc->inel) - nuc->el <= ZERO)
+        if(get_rand(&RNG_slave) * (nuc->el + nuc->inel) - nuc->el <= ZERO)
             return 2;
 
         double sum = 0;
-        double ksi = get_rand() * nuc->inel;
+        double ksi = get_rand(&RNG_slave) * nuc->inel;
         int Loc = Get_loc_of_MTR(nuc) - 1;
         int MT_num = Get_non_el_mt_num_with_neu(nuc);
         for(int i = 1; i <= MT_num; i++){

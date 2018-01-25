@@ -6,6 +6,9 @@
 #include "global_fun.h"
 #include "RNG.h"
 
+
+extern RNG_t RNG_slave;
+
 void treat_URR(nuclide_t *nuc, double erg)  // Treat Unresolved Resonance Range
 {
     double el_factor, fis_factor, C_factor, interp_value, smooth_total, inel_balance, abs_balance;
@@ -32,7 +35,7 @@ void treat_URR(nuclide_t *nuc, double erg)  // Treat Unresolved Resonance Range
     int nj1 = loc_prob_table;
     int nj2 = loc_prob_table + length_table * 6;
 
-    double rand_num = get_rand();
+    double rand_num = get_rand(&RNG_slave);
     for(;;){
         if(nuc->XSS[nj1] >= rand_num)
             break;

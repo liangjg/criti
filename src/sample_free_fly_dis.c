@@ -10,9 +10,13 @@
 #include "map.h"
 
 
+/* 主核上的全局变量 */
 extern map *base_mats;
 extern map *base_nucs;
 extern acedata_t base_acedata;
+
+/* 从核LDM上的全局变量 */
+extern RNG_t RNG_slave;
 
 double sample_free_fly_dis(particle_state_t *par_state, bool erg_changed){
     mat_t *mat;
@@ -81,5 +85,5 @@ SUM_UP:
         par_state->macro_nu_fis_cs = ZERO;
     }
 END:
-    return -log(get_rand()) / par_state->macro_tot_cs;
+    return -log(get_rand(&RNG_slave)) / par_state->macro_tot_cs;
 }

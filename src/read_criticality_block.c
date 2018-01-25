@@ -14,7 +14,7 @@ extern RNG_t base_RNG;
 void read_criticality_block(){
     /* set the default arguments for base_criti and base_RNG */
     base_criti.keff_final = 1.0;
-    set_RNG_paras(2);
+    set_RNG_paras(&base_RNG, 2);
 
     char buf[256];
     char *ret;
