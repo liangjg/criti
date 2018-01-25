@@ -20,6 +20,7 @@ typedef struct {
     bool simple;          /* 是否是只含有集合交运算的简单cell */
 
     vector surfs;         /* 当前cell的全部边界面编号，包含符号在内 */
+    int surf_sz;
 } cell_t;
 
 #define CELL_KW_NUMBER        7

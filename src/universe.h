@@ -7,11 +7,9 @@
 
 #include "common.h"
 #include "map.h"
-#include "vector.h"
+
 
 typedef struct {
-    vector cells;    /* 存储的是直接的cell_index，而不是某个数组的下标 */
-
     double origin[3];
     double rotation[3][3];
 
@@ -28,6 +26,9 @@ typedef struct {
 
     int *filled_lat_univs;
     int filled_lat_univs_sz;
+
+    int *cells;           /* 存储的是直接的cell_index，而不是某个数组的下标 */
+    int cells_sz;         /* 当前universe包含的cell数目 */
 
     /* 在同一个universe内部，每个cell基于每个面的唯一的一个邻居(cell)的cell_id */
     /* 当前neighbor_lists实现的是map嵌套map，即map<cell_index, map<surface_index, address of neighbor_cell_index>> */

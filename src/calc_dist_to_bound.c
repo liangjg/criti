@@ -86,7 +86,7 @@ double calc_dist_to_bound(particle_state_t *par_state){
             }
 
             univ_cell_index = par_state->loc_cells[i];
-            cell_index = *(int *)vector_at(&univ->cells, univ_cell_index);
+            cell_index = univ->cells[univ_cell_index];
             cell = (cell_t *)map_get(base_cells, cell_index);
 
             v_sz = vector_size(&cell->surfs);

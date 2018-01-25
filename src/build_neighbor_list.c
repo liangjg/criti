@@ -4,6 +4,7 @@
 
 #include "geometry.h"
 #include "vector.h"
+#include "universe.h"
 
 
 extern map *base_cells;
@@ -45,9 +46,9 @@ void build_neighbor_list(){
         if(univ->is_lattice)
             continue;
         univ->neighbor_lists = map_create(type1);
-        contained_cells = vector_size(&univ->cells);
+        contained_cells = univ->cells_sz;
         for(size_t j = 0; j < contained_cells; j++){
-            cell1_index = *(int *)vector_at(&univ->cells, j);
+            cell1_index = univ->cells[j];
             cell1 = map_get(local_base_cells, cell1_index);
             contained_surfs1 = vector_size(&cell1->surfs);
             map *val = map_create(type2);
@@ -57,7 +58,7 @@ void build_neighbor_list(){
                 surf_index1 = *(int *)vector_at(&cell1->surfs, k);
                 for(size_t m = 0; m < contained_cells; m++){
                     if(j == m) continue;
-                    cell2_index = *(int *)vector_at(&univ->cells, m);
+                    cell2_index = univ->cells[m];
                     cell2 = map_get(local_base_cells, cell2_index);
                     contained_surfs2 = vector_size(&cell2->surfs);
                     for(size_t n = 0; n < contained_surfs2; n++){

@@ -22,16 +22,6 @@ int _offset_neighbor_lat_hex(universe_t *obj, int lat_index, int lat_bound_surf,
 universe_t *univ_init() {
     universe_t *_new_univ = (universe_t *)malloc(sizeof(universe_t));
     memset(_new_univ, 0x0, sizeof(universe_t));
-
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpointer-arith"
-    _new_univ->cells.ele_size = sizeof(int);
-    _new_univ->cells.start = malloc(sizeof(int) * (size_t)(8));
-    _new_univ->cells.finish = _new_univ->cells.start;
-    _new_univ->cells.end_of_storage = _new_univ->cells.start + 8 * sizeof(int);
-    _new_univ->cells.value_free = NULL;
-#pragma GCC diagnostic pop
-
     return _new_univ;
 }
 
@@ -142,7 +132,7 @@ int offset_neighbor_lat(universe_t *obj, int lat_index, int lat_bound_surf, doub
 
 
 void univ_free(universe_t *obj){
-    vector_free(&obj->cells);
+    free(obj->cells);
     free(obj->filled_lat_univs);
     if(obj->neighbor_lists){
         map_free(obj->neighbor_lists);

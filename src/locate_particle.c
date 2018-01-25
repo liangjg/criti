@@ -6,6 +6,7 @@
 //
 
 #include "geometry.h"
+#include "universe.h"
 
 
 extern map *base_univs;
@@ -64,9 +65,8 @@ int locate_particle(particle_state_t *par_state, int start_univ, const double po
             univ_index = lat_univ;
 
         } else{    /* current universe has some cells and has no lattice */
-            v_sz = vector_size(&univ->cells);
-            for(size_t i = 0; i < v_sz; i++){
-                cell_index = *(int *) vector_at(&univ->cells, i);
+            for(size_t i = 0; i < univ->cells_sz; i++){
+                cell_index = univ->cells[i];
                 cell = map_get(base_cells, cell_index);
 
                 if(particle_is_in_cell(cell, local_pos_temp, local_dir_temp)){

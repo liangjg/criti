@@ -4,8 +4,10 @@
 
 #include "IO_releated.h"
 #include "cell.h"
+#include "universe.h"
 #include <stack>
 #include <string>
+#include <vector>
 
 
 extern map *base_cells;
@@ -26,6 +28,7 @@ void _transform(std::string &s);
 
 /* ----------------------------- API implementation ------------------------- */
 void read_cell_card(universe_t *univ){
+    std::vector<int> cells;
     char buf[256];
     char *ret = nullptr;
     bool is_simple = true;
@@ -45,7 +48,7 @@ void read_cell_card(universe_t *univ){
         cell_t *cell = cell_init();
         cell->id = index;
         map_put(base_cells, index, cell);
-        vector_push_back(&univ->cells, &index);
+        cells.push_back(index);
 
         char *rpn_start = ret;
         while(!ISALPHA(*ret)) ret++;
@@ -106,6 +109,10 @@ void read_cell_card(universe_t *univ){
             while(ISSPACE(*ret)) ret++;
         }
     }
+    univ->cells_sz = cells.size();
+    univ->cells = (int *) malloc(univ->cells_sz * sizeof(int));
+    for(int i = 0; i < univ->cells_sz; i++)
+        univ->cells[i] = cells[i];
 }
 
 /* ------------------------ private API implementation ---------------------- */

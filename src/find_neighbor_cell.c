@@ -3,6 +3,7 @@
 //
 
 #include "geometry.h"
+#include "universe.h"
 
 
 extern map *base_univs;
@@ -36,10 +37,10 @@ void find_neighbor_cell(particle_state_t *par_state){
             found = true;
         }
     } else{
-        cell_index = *(int *) vector_at(&univ->cells, par_state->loc_cells[level]);
+        cell_index = univ->cells[par_state->loc_cells[level]];
         map *val = map_get(univ->neighbor_lists, cell_index);
         vector *neighbor_cells = map_get(val, bound_surf);
-        cell_t *neighbor_cell;
+        cell_t *neighbor_cell = NULL;
         v_sz = vector_size(neighbor_cells);
         for(size_t i = 0; i < v_sz; i++){
             neighbor_cell = *(cell_t **) vector_at(neighbor_cells, i);
@@ -51,9 +52,8 @@ void find_neighbor_cell(particle_state_t *par_state){
 
         if(found){
             /* 不得已而为之，因为loc_cells存储的是当前universe中的第几个，而不是直接存储的cell_index */
-            v_sz = vector_size(&univ->cells);
-            for(int i = 0; i < v_sz; i++)
-                if(neighbor_cell->id == *(int *) vector_at(&univ->cells, i)){
+            for(int i = 0; i < univ->cells_sz; i++)
+                if(neighbor_cell->id == univ->cells[i]){
                     par_state->loc_cells[level] = i;
                     break;
                 }
