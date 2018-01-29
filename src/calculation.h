@@ -3,8 +3,8 @@
 //
 
 
-#ifndef TTYW_CALCULATION_H
-#define TTYW_CALCULATION_H
+#ifndef CRITI_CALCULATION_H
+#define CRITI_CALCULATION_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -22,4 +22,4 @@ void calc_point_burn();
 }
 #endif
 
-#endif //TTYW_CALCULATION_H
+#endif //CRITI_CALCULATION_H

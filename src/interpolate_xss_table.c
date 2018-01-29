@@ -5,6 +5,7 @@
 #include "acedata.h"
 #include "global_fun.h"
 
+
 void interpolate_xss_table(const nuclide_t *nuc, const double incident_erg, const int LDAT, int *pos, double *frac,
                            int *num_of_interp_region, int *num_of_erg_grid){
     //// obtain number of interpolation regions and incoming energies

@@ -1,5 +1,9 @@
-#ifndef COMC_COMMON_H
-#define COMC_COMMON_H
+//
+// Created by xaq on 9/8/17.
+//
+
+#ifndef CRITI_COMMON_H
+#define CRITI_COMMON_H
 
 #ifdef __cplusplus
 #include <cstdlib>
@@ -128,4 +132,4 @@ void release_resource();
 }
 #endif
 
-#endif
+#endif //CRITI_COMMON_H

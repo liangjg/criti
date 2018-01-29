@@ -2,8 +2,8 @@
 // Created by xaq on 9/2/17.
 //
 
-#ifndef TTYW_ACEDATA_H
-#define TTYW_ACEDATA_H
+#ifndef CRITI_ACEDATA_H
+#define CRITI_ACEDATA_H
 
 #include "common.h"
 #include "nuclide.h"
@@ -25,8 +25,6 @@ void calc_therm_Gfun(acedata_t *obj);
 
 void doppler_broaden();
 
-double erf2_function(double a);
-
 void get_nuc_tot_fis_cs(acedata_t *obj, nuclide_t *nuc, nuclide_t *sab_nuc, double erg, double cell_tmp);
 
 void get_nuc_abs_scatt_cs(acedata_t *obj, nuclide_t *nuc, double erg, int interp_pos0, double interp_frac0,
@@ -36,7 +34,7 @@ double get_nuc_mt_cs(nuclide_t *nuc, int MT, int interp_pos, double interp_frac)
 
 void interpolate_sab(nuclide_t *nuc, nuclide_t *sab_nuc, double erg);
 
-void treat_URR(nuclide_t *nuc, double erg);
+//void treat_URR(nuclide_t *nuc, double erg);
 
 void get_ce_exist_erg_mu(const nuclide_t *nuc, int MT, double incident_erg, double *exit_erg_lab, double *exit_mu_lab);
 
@@ -45,9 +43,6 @@ double get_scatt_cosine(const nuclide_t *nuc, int MT, double incident_erg);
 int get_law_type(const nuclide_t *nuc, int MT, double incident_erg, int *LDAT);
 
 void react_by_laws(const nuclide_t *nuc, int MT, int law_type, int LDAT, double incident_erg, double *exit_erg_cm, double *mu_cm);
-
-void transform_cm_to_lab(const nuclide_t *nuc, int MT, double incident_erg, double exit_erg_cm, double exit_mu_cm,
-                         double *exit_erg_lab, double *exit_mu_lab);
 
 void treat_sab_colli_type(const nuclide_t *sab_nuc, double SIG_sab_el, double SIG_sab_inel, double incident_erg,
                           double *incident_dir, double *exit_erg_lab, double *exit_dir);
@@ -61,15 +56,8 @@ void interpolate_xss_table(const nuclide_t *nuc, double incident_erg, int LDAT, 
 
 double get_erg_func_value(const nuclide_t *nuc, int LDAT, double erg);
 
-/* functions for Doppler Broaden */
-void dppler_brdn_nuc_tot_cs(acedata_t *obj, nuclide_t *nuc, double cell_tmp, double erg);
-
-void dppler_brdn_nuc_abs_scatt(acedata_t *obj, nuclide_t *nuc, double erg);
-
-int dppler_brdn_nuc_tmp(acedata_t *obj, nuclide_t *nuc, double tmp);
-
 #ifdef __cplusplus
 }
 #endif
 
-#endif //TTYW_ACEDATA_H
+#endif //CRITI_ACEDATA_H

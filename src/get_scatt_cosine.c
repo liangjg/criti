@@ -5,13 +5,13 @@
 #include "acedata.h"
 #include "RNG.h"
 
+
 /// 抽样得到出射角余弦
 ///
 /// @param[in] nNuc 碰撞核素Index
 /// @param[in] MT 反应mt号
 /// @param[in] incident_erg 入射能量
 /// return 出射角余弦
-
 double get_scatt_cosine(const nuclide_t *nuc, int MT, double incident_erg){
     double exit_mu_cm = 0;
 

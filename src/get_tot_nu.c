@@ -4,33 +4,25 @@
 
 #include "acedata.h"
 
+
 double get_total_nu(nuclide_t *nuc, double erg){
-    int nKNU = Get_loc_of_NU(nuc);
-    if(nKNU == 0)   // no neutron yield
+    int KNU = Get_loc_of_NU(nuc);
+    if(KNU == 0)   // no neutron yield
         return ZERO;
 
-    int nKNU_judge = (int) (nuc->XSS[nKNU]);
+    int KNU_judge = (int) (nuc->XSS[KNU]);
 
-    if(nKNU_judge < 0)  /// both prompt and total NU are given
-        nKNU = nKNU - nKNU_judge + 1;
+    if(KNU_judge < 0)  /// both prompt and total NU are given
+        KNU = KNU - KNU_judge + 1;
 
-    int LNU = (int) (nuc->XSS[nKNU]);
+    int LNU = (int) (nuc->XSS[KNU]);
     ///// calculate NuTemp by evaluating a polynomial in energy /////
     if(LNU == 1){
-        int NC = (int) (nuc->XSS[nKNU + 1]) - 1;
-        double dNuTemp = nuc->XSS[nKNU + NC + 2];
+        int NC = (int) (nuc->XSS[KNU + 1]) - 1;
+        double nu = nuc->XSS[KNU + NC + 2];
         for(int i = 1; i <= NC; i++)
-            dNuTemp = dNuTemp * erg + nuc->XSS[nKNU + NC + 2 - i];
-        return dNuTemp;
+            nu = nu * erg + nuc->XSS[KNU + NC + 2 - i];
+        return nu;
     }
-    return get_erg_func_value(nuc, nKNU + 1, erg);
-}
-
-
-double get_delayed_nu(nuclide_t *nuc, double erg){
-    int nKNU = Get_loc_of_DNU(nuc);
-    if(nKNU == 0)
-        return 0;
-
-    return get_erg_func_value(nuc, nKNU + 1, erg);
+    return get_erg_func_value(nuc, KNU + 1, erg);
 }

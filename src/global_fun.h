@@ -2,8 +2,8 @@
 // Created by xaq on 9/2/17.
 //
 
-#ifndef TTYW_GLOBAL_FUN_H
-#define TTYW_GLOBAL_FUN_H
+#ifndef CRITI_GLOBAL_FUN_H
+#define CRITI_GLOBAL_FUN_H
 
 #include "common.h"
 
@@ -22,4 +22,4 @@ int get_intplt_pos_fr(const double *vec, double key, int low, int high, double *
 }
 #endif
 
-#endif //TTYW_GLOBAL_FUN_H
+#endif //CRITI_GLOBAL_FUN_H

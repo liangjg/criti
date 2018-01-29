@@ -3,8 +3,6 @@
 //
 
 #include "geometry.h"
-#include "vector.h"
-#include "universe.h"
 
 
 extern map *base_cells;
@@ -19,8 +17,8 @@ void build_neighbor_list(){
     register universe_t *univ;
     cell_t *cell1, *cell2;
     map_entry *entry;
-    size_t contained_cells;
-    size_t contained_surfs1, contained_surfs2;
+    int contained_cells;
+    int contained_surfs1, contained_surfs2;
     map_type *type1, *type2;
     int cell1_index, cell2_index;
     int surf_index1, surf_index2;

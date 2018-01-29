@@ -2,8 +2,8 @@
 // Created by xaq on 9/2/17.
 //
 
-#ifndef TTYW_MATERIAL_H
-#define TTYW_MATERIAL_H
+#ifndef CRITI_MATERIAL_H
+#define CRITI_MATERIAL_H
 
 #include "common.h"
 
@@ -29,11 +29,13 @@ extern "C" {
 #endif
 
 mat_t *mat_init();
+
 void mat_free(mat_t *obj);
+
 void convert_mat_nuc_den();
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif //TTYW_MATERIAL_H
+#endif //CRITI_MATERIAL_H

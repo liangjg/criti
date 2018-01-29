@@ -1,8 +1,5 @@
 //
-//  locate_particle.c
-//  ttyw
-//
-//  Created by 叶鑫 on 2017/10/27.
+//  Created by xaq on 10/27/17.
 //
 
 #include "geometry.h"

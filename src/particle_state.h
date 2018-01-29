@@ -5,8 +5,8 @@
 #include "common.h"
 #include "vector.h"
 
-#ifndef TTYW_PARTICLE_STATE_H
-#define TTYW_PARTICLE_STATE_H
+#ifndef CRITI_PARTICLE_STATE_H
+#define CRITI_PARTICLE_STATE_H
 
 typedef struct{
     /* basic state */
@@ -76,4 +76,4 @@ extern "C"{
 }
 #endif
 
-#endif //TTYW_PARTICLE_STATE_H
+#endif //CRITI_PARTICLE_STATE_H

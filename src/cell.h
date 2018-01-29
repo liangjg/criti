@@ -2,8 +2,8 @@
 // Created by xaq on 9/8/17.
 //
 
-#ifndef TTYW_CELL_H
-#define TTYW_CELL_H
+#ifndef CRITI_CELL_H
+#define CRITI_CELL_H
 
 #include "common.h"
 
@@ -41,11 +41,13 @@ extern "C" {
 #endif
 
 cell_t *cell_init();
+
 bool particle_is_in_cell(const cell_t *obj, const double pos[3], const double dir[3]);
+
 void cell_free(cell_t *obj);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif //TTYW_CELL_H
+#endif //CRITI_CELL_H

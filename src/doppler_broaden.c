@@ -15,6 +15,8 @@ extern map *base_mats;
 extern IOfp_t base_IOfp;
 extern acedata_t base_acedata;
 
+int _dppler_brdn_nuc_tmp(acedata_t *obj, nuclide_t *nuc, double tmp);
+
 /***************************************************************************************************
  * 对所有nuclide进行多普勒展宽预处理
  * 如果所有cell都是相同的温度，那么一次将所有nuclide都展宽到该温度；
@@ -58,7 +60,7 @@ void doppler_broaden(){
             }
         }
 END:
-        cnt += dppler_brdn_nuc_tmp(&base_acedata, nuc, broaden_tmp);
+        cnt += _dppler_brdn_nuc_tmp(&base_acedata, nuc, broaden_tmp);
         map_release_iter(cell_iter);
     }
 
@@ -67,4 +69,48 @@ END:
     fputs("===================== Cross-section doppler broaden ====================\n", base_IOfp.mat_fp);
     fprintf(base_IOfp.mat_fp, "Doppler broaden applied to %d nuclide.\n", cnt);
     fputs("========================================================================\n", base_IOfp.mat_fp);
+}
+
+int _dppler_brdn_nuc_tmp(acedata_t *obj, nuclide_t *nuc, double tmp){
+    int i;
+    double a, b, f1, f2;
+
+    calc_therm_Gfun(obj);
+
+    //// adjust elastic and total cross-section
+    if(fabs(nuc->tmp - tmp) <= 0.01 * tmp)
+        return 0;   // no adjustment
+    b = 500.0 * fabs(tmp - nuc->tmp) / nuc->atom_wgt;
+    for(int j = 1; j <= Get_erg_grid_num(nuc); j++){
+        if(nuc->XSS[j] > b)
+            break;
+        ///////////////calculate f1 //////////////
+        f1 = ONE;
+        if(!EQ_ZERO(nuc->tmp)){
+            a = sqrt(nuc->atom_wgt * nuc->XSS[j] / nuc->tmp);
+            if(a >= TWO)
+                f1 = ONE + HALF / (a * a);
+            i = (int) (a / 0.04);
+            if(a < TWO)
+                f1 = (obj->therm_func[i] + (a / 0.04 - i) * (obj->therm_func[i + 1] - obj->therm_func[i])) / a;
+        }
+        ///////////////calculate f2 //////////////
+        f2 = ONE;
+        if(!EQ_ZERO(tmp)){
+            a = sqrt(nuc->atom_wgt * nuc->XSS[j] / tmp);
+            if(a >= TWO)
+                f2 = ONE + HALF / (a * a);
+            i = (int) (a / .04);
+            if(a < TWO)
+                f2 = (obj->therm_func[i] + (a / 0.04 - i) * (obj->therm_func[i + 1] - obj->therm_func[i])) / a;
+        }
+        ///////////////calculate a //////////////
+        a = nuc->XSS[j + 3 * Get_erg_grid_num(nuc)] * (f2 - f1) / f1;
+
+        ///////////////calculate xs //////////////
+        nuc->XSS[j + Get_erg_grid_num(nuc)] = nuc->XSS[j + Get_erg_grid_num(nuc)] + a;
+        nuc->XSS[j + 3 * Get_erg_grid_num(nuc)] = nuc->XSS[j + 3 * Get_erg_grid_num(nuc)] + a;
+    }
+    nuc->broaden_tmp = tmp;
+    return 1;
 }

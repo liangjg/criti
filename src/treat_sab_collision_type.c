@@ -7,6 +7,7 @@
 #include "RNG.h"
 #include "neutron_transport.h"
 
+
 void treat_sab_colli_type(const nuclide_t *sab_nuc, double SIG_sab_el, double SIG_sab_inel, double incident_erg,
                           double *incident_dir, double *exit_erg_lab, double *exit_dir){
     int sab_n_el, sab_n_inel;

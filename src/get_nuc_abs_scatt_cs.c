@@ -5,6 +5,7 @@
 #include "acedata.h"
 #include "global_fun.h"
 
+
 void get_nuc_abs_scatt_cs(acedata_t *obj, nuclide_t *nuc, double erg, int interp_pos0, double interp_frac0,
                           int interp_pos, double interp_frac){
     /* URR case: NucInterpCs[CurrentNUCLIDE][0,1,2,3,4] have been calculated in subroutine "TreatURR" */
@@ -17,10 +18,7 @@ void get_nuc_abs_scatt_cs(acedata_t *obj, nuclide_t *nuc, double erg, int interp
     nuc->el = intplt_by_pos_fr(nuc->XSS, interp_pos + 3 * NE, interp_frac); // elastic, Er
     nuc->inel = intplt_by_pos_fr(nuc->inel_XSS, interp_pos, interp_frac);    // inelastic, Er
 
-    dppler_brdn_nuc_abs_scatt(obj, nuc, erg);
-}
-
-void dppler_brdn_nuc_abs_scatt(acedata_t *obj, nuclide_t *nuc, double erg){
+    /* 多普勒展宽吸收截面和散射截面 */
     if(nuc->atom_wgt * erg <= 500.0 * nuc->broaden_tmp){ // thermal adjustment
         double a2, a, b;
         int bi;

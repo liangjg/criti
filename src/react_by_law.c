@@ -6,6 +6,7 @@
 #include "RNG.h"
 #include "sample_method.h"
 
+
 /// 根据能角不耦合的Law确定质心系下出射能量和出射角余弦
 void react_by_laws(const nuclide_t *nuc, int MT, int law_type, int LDAT, double incident_erg,
                    double *exit_erg_cm, double *exit_mu_cm){

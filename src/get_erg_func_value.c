@@ -5,6 +5,7 @@
 #include "acedata.h"
 #include "global_fun.h"
 
+
 double get_erg_func_value(const nuclide_t *nuc, int LDAT, double erg){
     double Ti = ZERO;
     double erg_1, erg_2, func_val_1, func_val_2;

@@ -2,8 +2,8 @@
 // Created by xaq on 9/2/17.
 //
 
-#ifndef TTYW_IO_RELEATED_H
-#define TTYW_IO_RELEATED_H
+#ifndef CRITI_IO_RELEATED_H
+#define CRITI_IO_RELEATED_H
 
 #include "common.h"
 #include "universe.h"
@@ -50,4 +50,4 @@ void output_ending();
 }
 #endif
 
-#endif //TTYW_IO_RELEATED_H
+#endif //CRITI_IO_RELEATED_H

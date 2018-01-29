@@ -2,8 +2,8 @@
 // Created by xaq on 10/27/17.
 //
 
-#ifndef TTYW_SAMPLE_METHOD_H
-#define TTYW_SAMPLE_METHOD_H
+#ifndef CRITI_SAMPLE_METHOD_H
+#define CRITI_SAMPLE_METHOD_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -17,4 +17,4 @@ double sample_watt(double a, double b);
 }
 #endif
 
-#endif //TTYW_SAMPLE_METHOD_H
+#endif //CRITI_SAMPLE_METHOD_H

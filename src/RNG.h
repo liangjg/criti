@@ -2,8 +2,8 @@
 // Created by xaq on 10/22/17.
 //
 
-#ifndef TTYW_RNG_H
-#define TTYW_RNG_H
+#ifndef CRITI_RNG_H
+#define CRITI_RNG_H
 
 /* linear congruential RNGs
  * r(k) = S(k)/p
@@ -40,4 +40,4 @@ void get_rand_seed();
 }
 #endif
 
-#endif //TTYW_RNG_H
+#endif //CRITI_RNG_H

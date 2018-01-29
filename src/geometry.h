@@ -7,8 +7,8 @@
 #include "surface.h"
 #include "particle_state.h"
 
-#ifndef TTYW_GEOMETRY_H
-#define TTYW_GEOMETRY_H
+#ifndef CRITI_GEOMETRY_H
+#define CRITI_GEOMETRY_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -28,4 +28,4 @@ void build_neighbor_list();
 }
 #endif
 
-#endif //TTYW_GEOMETRY_H
+#endif //CRITI_GEOMETRY_H

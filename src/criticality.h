@@ -7,8 +7,8 @@
 #include "particle_state.h"
 
 
-#ifndef TTYW_CRITICALITY_H
-#define TTYW_CRITICALITY_H
+#ifndef CRITI_CRITICALITY_H
+#define CRITI_CRITICALITY_H
 
 typedef enum{
     POINT,
@@ -32,7 +32,6 @@ typedef struct{
     /* 初始源参数 */
     KSRC_T ksrc_type;
     double ksrc_para[6];
-//    int ksrc_para_sz;
 
     int cycle_neutron_num;    /* 当前代要模拟的中子数目 */
     int current_cycle;
@@ -93,4 +92,4 @@ void process_cycle_end();
 }
 #endif
 
-#endif //TTYW_CRITICALITY_H
+#endif //CRITI_CRITICALITY_H

@@ -4,60 +4,19 @@
 
 #include "acedata.h"
 
-int dppler_brdn_nuc_tmp(acedata_t *obj, nuclide_t *nuc, double tmp){
-    int i;
-    double a, b, f1, f2;
 
-    calc_therm_Gfun(obj);
-
-    //// adjust elastic and total cross-section
-    if(fabs(nuc->tmp - tmp) <= 0.01 * tmp)
-        return 0;   // no adjustment
-    b = 500.0 * fabs(tmp - nuc->tmp) / nuc->atom_wgt;
-    for(int j = 1; j <= Get_erg_grid_num(nuc); j++){
-        if(nuc->XSS[j] > b)
-            break;
-        ///////////////calculate f1 //////////////
-        f1 = ONE;
-        if(!EQ_ZERO(nuc->tmp)){
-            a = sqrt(nuc->atom_wgt * nuc->XSS[j] / nuc->tmp);
-            if(a >= TWO)
-                f1 = ONE + HALF / (a * a);
-            i = (int) (a / 0.04);
-            if(a < TWO)
-                f1 = (obj->therm_func[i] + (a / 0.04 - i) * (obj->therm_func[i + 1] - obj->therm_func[i])) / a;
-        }
-        ///////////////calculate f2 //////////////
-        f2 = ONE;
-        if(!EQ_ZERO(tmp)){
-            a = sqrt(nuc->atom_wgt * nuc->XSS[j] / tmp);
-            if(a >= TWO)
-                f2 = ONE + HALF / (a * a);
-            i = (int) (a / .04);
-            if(a < TWO)
-                f2 = (obj->therm_func[i] + (a / 0.04 - i) * (obj->therm_func[i + 1] - obj->therm_func[i])) / a;
-        }
-        ///////////////calculate a //////////////
-        a = nuc->XSS[j + 3 * Get_erg_grid_num(nuc)] * (f2 - f1) / f1;
-
-        ///////////////calculate xs //////////////
-        nuc->XSS[j + Get_erg_grid_num(nuc)] = nuc->XSS[j + Get_erg_grid_num(nuc)] + a;
-        nuc->XSS[j + 3 * Get_erg_grid_num(nuc)] = nuc->XSS[j + 3 * Get_erg_grid_num(nuc)] + a;
-    }
-    nuc->broaden_tmp = tmp;
-    return 1;
-}
+static double _erf2_function(double a);
 
 void calc_therm_Gfun(acedata_t *obj){
     double b = ONE / sqrt(PI);
     obj->therm_func[0] = TWO * b;
     for(int i = 1; i <= 50; i++){
         double a = i * 0.04;
-        obj->therm_func[i] = (a + HALF / a) * erf2_function(a) + b * exp(-a * a);
+        obj->therm_func[i] = (a + HALF / a) * _erf2_function(a) + b * exp(-a * a);
     }
 }
 
-double erf2_function(double a){
+double _erf2_function(double a){
     // return the value of the error function of a.
     const double WF = 1.1283791670955;
 

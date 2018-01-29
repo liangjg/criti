@@ -27,6 +27,4 @@ void calc_criticality(){
         process_cycle_end();
     }
     output_summary();
-
-
 }

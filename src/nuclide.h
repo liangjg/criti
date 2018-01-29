@@ -2,8 +2,8 @@
 // Created by xaq on 9/2/17.
 //
 
-#ifndef TTYW_NUCLIDE_H
-#define TTYW_NUCLIDE_H
+#ifndef CRITI_NUCLIDE_H
+#define CRITI_NUCLIDE_H
 
 #include "common.h"
 
@@ -102,4 +102,4 @@ void nuc_free(nuclide_t *obj);
 }
 #endif
 
-#endif //TTYW_NUCLIDE_H
+#endif //CRITI_NUCLIDE_H

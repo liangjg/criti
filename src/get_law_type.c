@@ -5,6 +5,7 @@
 #include "acedata.h"
 #include "RNG.h"
 
+
 /// 抽样得到非弹性散射的Law
 ///
 /// @param[in] nNuc 碰撞核素Index

@@ -2,8 +2,8 @@
 // Created by xaq on 10/7/17.
 //
 
-#ifndef TTYW_UNIVERSE_H
-#define TTYW_UNIVERSE_H
+#ifndef CRITI_UNIVERSE_H
+#define CRITI_UNIVERSE_H
 
 #include "common.h"
 #include "map.h"
@@ -67,16 +67,23 @@ extern "C" {
 #endif
 
 universe_t *univ_init();
+
 void trans_univ_coord(universe_t *obj, double pos[3], double dir[3]);
+
 void trans_univ_dir(universe_t *obj, double dir[3]);
+
 int find_lat_index(universe_t *obj, const double pos[3], const double dir[3]);
+
 void move_to_origin_lat(universe_t *obj, int lat_index, double pos[3]);
+
 double calc_dist_to_lat(universe_t *obj, const double pos[3], const double dir[3], int *which_surf);
+
 int offset_neighbor_lat(universe_t *obj, int lat_index, int lat_bound_surf, double pos[3]);
+
 void univ_free(universe_t *obj);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif //TTYW_UNIVERSE_H
+#endif //CRITI_UNIVERSE_H

@@ -5,6 +5,7 @@
 #include "acedata.h"
 #include "global_fun.h"
 
+
 void interpolate_sab(nuclide_t *nuc, nuclide_t *sab_nuc, double erg){
     int min, max;
     int NE_el, NE_inel;

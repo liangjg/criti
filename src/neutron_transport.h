@@ -5,8 +5,8 @@
 #include "common.h"
 #include "particle_state.h"
 
-#ifndef TTYW_NEUTRON_TRANSPORT_H
-#define TTYW_NEUTRON_TRANSPORT_H
+#ifndef CRITI_NEUTRON_TRANSPORT_H
+#define CRITI_NEUTRON_TRANSPORT_H
 
 #ifdef __cplusplus
 extern "C"{
@@ -38,4 +38,4 @@ void get_ce_exit_state(particle_state_t *par_state, int MT, bool is_free_gas_col
 }
 #endif
 
-#endif //TTYW_NEUTRON_TRANSPORT_H
+#endif //CRITI_NEUTRON_TRANSPORT_H
