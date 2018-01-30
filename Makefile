@@ -1,582 +1,456 @@
-TARGET = criti
+#=============================================================================
+# Set environment variables for the build.
 
-CC_SLAVE = sw5cc -slave
+# Set the target
+TARGET = bin/criti
+
+# Set the C host compiler
 CC_HOST = sw5cc -host
+
+# Set the C slave compiler
+CC_SLAVE = sw5cc -slave
+
+# Set the CXX host compiler
 CXX_HOST = sw5CC -host
-LINK = sw5CC -hybrid
-
-C_FLAGS = -Wall -Wextra -pedantic -Wno-pointer-arith -O0
-
-C_DEFINES = -DGIT_SHA1=\"0b242604d21dcc9a2f4425d97533b7249a4a27ab\" -DUNIX
-
-C_INCLUDES =
-
-CXX_FLAGS = -Wall -Wextra -pedantic -Wno-pointer-arith -O0
-
-CXX_DEFINES = -DGIT_SHA1=\"0b242604d21dcc9a2f4425d97533b7249a4a27ab\" -DUNIX
-
-CXX_INCLUDES =
-
-C_SRC = $(shell ls src/*.c)
-CPP_SRC = $(shell ls src/*.cpp)
-BASE = $(basename $(C_SRC) $(CPP_SRC))
-OBJS = $(addsuffix .o, $(BASE))
-
-$(TARGET): $(OBJS)
-	$(LINK) $(OBJS) -o $(TARGET)
-
-src/RNG.o: src/RNG.h
-src/RNG.o: src/RNG.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/RNG.o -c src/RNG.c
-
-src/acedata.o: src/acedata.h
-src/acedata.o: src/common.h
-src/acedata.o: src/nuclide.h
-src/acedata.o: src/acedata.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o acedata.o -c src/acedata.c
-
-src/build_neighbor_list.o: src/cell.h
-src/build_neighbor_list.o: src/common.h
-src/build_neighbor_list.o: src/geometry.h
-src/build_neighbor_list.o: src/map.h
-src/build_neighbor_list.o: src/particle_state.h
-src/build_neighbor_list.o: src/surface.h
-src/build_neighbor_list.o: src/universe.h
-src/build_neighbor_list.o: src/vector.h
-src/build_neighbor_list.o: src/build_neighbor_list.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/build_neighbor_list.o -c src/build_neighbor_list.c
-
-src/calc_col_nuc_cs.o: src/acedata.h
-src/calc_col_nuc_cs.o: src/common.h
-src/calc_col_nuc_cs.o: src/global_fun.h
-src/calc_col_nuc_cs.o: src/map.h
-src/calc_col_nuc_cs.o: src/material.h
-src/calc_col_nuc_cs.o: src/neutron_transport.h
-src/calc_col_nuc_cs.o: src/nuclide.h
-src/calc_col_nuc_cs.o: src/particle_state.h
-src/calc_col_nuc_cs.o: src/vector.h
-src/calc_col_nuc_cs.o: src/calc_col_nuc_cs.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/calc_col_nuc_cs.o -c src/calc_col_nuc_cs.c
-
-src/calc_criticality.o: src/IO_releated.h
-src/calc_criticality.o: src/RNG.h
-src/calc_criticality.o: src/common.h
-src/calc_criticality.o: src/criticality.h
-src/calc_criticality.o: src/map.h
-src/calc_criticality.o: src/particle_state.h
-src/calc_criticality.o: src/universe.h
-src/calc_criticality.o: src/vector.h
-src/calc_criticality.o: src/calc_criticality.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/calc_criticality.o -c src/calc_criticality.c
-
-src/calc_dist_to_bound.o: src/cell.h
-src/calc_dist_to_bound.o: src/common.h
-src/calc_dist_to_bound.o: src/geometry.h
-src/calc_dist_to_bound.o: src/map.h
-src/calc_dist_to_bound.o: src/particle_state.h
-src/calc_dist_to_bound.o: src/surface.h
-src/calc_dist_to_bound.o: src/universe.h
-src/calc_dist_to_bound.o: src/vector.h
-src/calc_dist_to_bound.o: src/calc_dist_to_bound.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/calc_dist_to_bound.o -c src/calc_dist_to_bound.c
-
-src/cell.o: src/cell.h
-src/cell.o: src/common.h
-src/cell.o: src/map.h
-src/cell.o: src/surface.h
-src/cell.o: src/vector.h
-src/cell.o: src/cell.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/cell.o -c src/cell.c
-
-src/check_IO_file.o: src/IO_releated.h
-src/check_IO_file.o: src/common.h
-src/check_IO_file.o: src/map.h
-src/check_IO_file.o: src/universe.h
-src/check_IO_file.o: src/check_IO_file.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/check_IO_file.o -c src/check_IO_file.c
-
-src/check_ce_ace_block.o: src/acedata.h
-src/check_ce_ace_block.o: src/common.h
-src/check_ce_ace_block.o: src/map.h
-src/check_ce_ace_block.o: src/material.h
-src/check_ce_ace_block.o: src/nuclide.h
-src/check_ce_ace_block.o: src/check_ce_ace_block.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/check_ce_ace_block.o -c src/check_ce_ace_block.c
-
-src/convert_mat_nuc_den.o: src/common.h
-src/convert_mat_nuc_den.o: src/map.h
-src/convert_mat_nuc_den.o: src/material.h
-src/convert_mat_nuc_den.o: src/nuclide.h
-src/convert_mat_nuc_den.o: src/convert_mat_nuc_den.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/convert_mat_nuc_den.o -c src/convert_mat_nuc_den.c
-
-src/doppler_broaden.o: src/IO_releated.h
-src/doppler_broaden.o: src/acedata.h
-src/doppler_broaden.o: src/cell.h
-src/doppler_broaden.o: src/common.h
-src/doppler_broaden.o: src/map.h
-src/doppler_broaden.o: src/material.h
-src/doppler_broaden.o: src/nuclide.h
-src/doppler_broaden.o: src/universe.h
-src/doppler_broaden.o: src/doppler_broaden.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/doppler_broaden.o -c src/doppler_broaden.c
-
-src/find_neighbor_cell.o: src/cell.h
-src/find_neighbor_cell.o: src/common.h
-src/find_neighbor_cell.o: src/geometry.h
-src/find_neighbor_cell.o: src/map.h
-src/find_neighbor_cell.o: src/particle_state.h
-src/find_neighbor_cell.o: src/surface.h
-src/find_neighbor_cell.o: src/universe.h
-src/find_neighbor_cell.o: src/vector.h
-src/find_neighbor_cell.o: src/find_neighbor_cell.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/find_neighbor_cell.o -c src/find_neighbor_cell.c
-
-src/find_next_cell.o: src/cell.h
-src/find_next_cell.o: src/common.h
-src/find_next_cell.o: src/geometry.h
-src/find_next_cell.o: src/map.h
-src/find_next_cell.o: src/particle_state.h
-src/find_next_cell.o: src/surface.h
-src/find_next_cell.o: src/universe.h
-src/find_next_cell.o: src/vector.h
-src/find_next_cell.o: src/find_next_cell.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/find_next_cell.o -c src/find_next_cell.c
-
-src/geometry_tracking.o: src/cell.h
-src/geometry_tracking.o: src/common.h
-src/geometry_tracking.o: src/criticality.h
-src/geometry_tracking.o: src/geometry.h
-src/geometry_tracking.o: src/map.h
-src/geometry_tracking.o: src/neutron_transport.h
-src/geometry_tracking.o: src/particle_state.h
-src/geometry_tracking.o: src/surface.h
-src/geometry_tracking.o: src/universe.h
-src/geometry_tracking.o: src/vector.h
-src/geometry_tracking.o: src/geometry_tracking.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/geometry_tracking.o -c src/geometry_tracking.c
-
-src/get_ce_exist_erg_mu.o: src/RNG.h
-src/get_ce_exist_erg_mu.o: src/acedata.h
-src/get_ce_exist_erg_mu.o: src/common.h
-src/get_ce_exist_erg_mu.o: src/nuclide.h
-src/get_ce_exist_erg_mu.o: src/get_ce_exist_erg_mu.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/get_ce_exist_erg_mu.o -c src/get_ce_exist_erg_mu.c
-
-src/get_ce_exit_state.o: src/acedata.h
-src/get_ce_exit_state.o: src/common.h
-src/get_ce_exit_state.o: src/map.h
-src/get_ce_exit_state.o: src/material.h
-src/get_ce_exit_state.o: src/neutron_transport.h
-src/get_ce_exit_state.o: src/nuclide.h
-src/get_ce_exit_state.o: src/particle_state.h
-src/get_ce_exit_state.o: src/vector.h
-src/get_ce_exit_state.o: src/get_ce_exit_state.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/get_ce_exit_state.o -c src/get_ce_exit_state.c
-
-src/get_erg_func_value.o: src/acedata.h
-src/get_erg_func_value.o: src/common.h
-src/get_erg_func_value.o: src/global_fun.h
-src/get_erg_func_value.o: src/nuclide.h
-src/get_erg_func_value.o: src/get_erg_func_value.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/get_erg_func_value.o -c src/get_erg_func_value.c
-
-src/get_exit_state.o: src/RNG.h
-src/get_exit_state.o: src/acedata.h
-src/get_exit_state.o: src/common.h
-src/get_exit_state.o: src/map.h
-src/get_exit_state.o: src/material.h
-src/get_exit_state.o: src/neutron_transport.h
-src/get_exit_state.o: src/nuclide.h
-src/get_exit_state.o: src/particle_state.h
-src/get_exit_state.o: src/vector.h
-src/get_exit_state.o: src/get_exit_state.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/get_exit_state.o -c src/get_exit_state.c
-
-src/get_fis_neu_state.o: src/RNG.h
-src/get_fis_neu_state.o: src/acedata.h
-src/get_fis_neu_state.o: src/common.h
-src/get_fis_neu_state.o: src/criticality.h
-src/get_fis_neu_state.o: src/map.h
-src/get_fis_neu_state.o: src/material.h
-src/get_fis_neu_state.o: src/neutron_transport.h
-src/get_fis_neu_state.o: src/nuclide.h
-src/get_fis_neu_state.o: src/particle_state.h
-src/get_fis_neu_state.o: src/vector.h
-src/get_fis_neu_state.o: src/get_fis_neu_state.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/get_fis_neu_state.o -c src/get_fis_neu_state.c
-
-src/get_law_type.o: src/RNG.h
-src/get_law_type.o: src/acedata.h
-src/get_law_type.o: src/common.h
-src/get_law_type.o: src/nuclide.h
-src/get_law_type.o: src/get_law_type.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/get_law_type.o -c src/get_law_type.c
-
-src/get_nuc_abs_scatt_cs.o: src/acedata.h
-src/get_nuc_abs_scatt_cs.o: src/common.h
-src/get_nuc_abs_scatt_cs.o: src/global_fun.h
-src/get_nuc_abs_scatt_cs.o: src/nuclide.h
-src/get_nuc_abs_scatt_cs.o: src/get_nuc_abs_scatt_cs.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/get_nuc_abs_scatt_cs.o -c src/get_nuc_abs_scatt_cs.c
-
-src/get_nuc_mt_cs.o: src/acedata.h
-src/get_nuc_mt_cs.o: src/common.h
-src/get_nuc_mt_cs.o: src/global_fun.h
-src/get_nuc_mt_cs.o: src/nuclide.h
-src/get_nuc_mt_cs.o: src/get_nuc_mt_cs.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/get_nuc_mt_cs.o -c src/get_nuc_mt_cs.c
-
-src/get_nuc_tot_fis_cs.o: src/acedata.h
-src/get_nuc_tot_fis_cs.o: src/common.h
-src/get_nuc_tot_fis_cs.o: src/global_fun.h
-src/get_nuc_tot_fis_cs.o: src/nuclide.h
-src/get_nuc_tot_fis_cs.o: src/get_nuc_tot_fis_cs.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/get_nuc_tot_fis_cs.o -c src/get_nuc_tot_fis_cs.c
-
-src/get_scatt_cosine.o: src/RNG.h
-src/get_scatt_cosine.o: src/acedata.h
-src/get_scatt_cosine.o: src/common.h
-src/get_scatt_cosine.o: src/nuclide.h
-src/get_scatt_cosine.o: src/get_scatt_cosine.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/get_scatt_cosine.o -c src/get_scatt_cosine.c
-
-src/get_tot_nu.o: src/acedata.h
-src/get_tot_nu.o: src/common.h
-src/get_tot_nu.o: src/nuclide.h
-src/get_tot_nu.o: src/get_tot_nu.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/get_tot_nu.o -c src/get_tot_nu.c
-
-src/global_fun.o: src/common.h
-src/global_fun.o: src/global_fun.h
-src/global_fun.o: src/global_fun.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/global_fun.o -c src/global_fun.c
-
-src/init_fission_source.o: src/RNG.h
-src/init_fission_source.o: src/common.h
-src/init_fission_source.o: src/criticality.h
-src/init_fission_source.o: src/particle_state.h
-src/init_fission_source.o: src/sample_method.h
-src/init_fission_source.o: src/vector.h
-src/init_fission_source.o: src/init_fission_source.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/init_fission_source.o src/init_fission_source.c
-
-src/interpolate_sab.o: src/acedata.h
-src/interpolate_sab.o: src/common.h
-src/interpolate_sab.o: src/global_fun.h
-src/interpolate_sab.o: src/nuclide.h
-src/interpolate_sab.o: src/interpolate_sab.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/interpolate_sab.o -c src/interpolate_sab.c
-
-src/interpolate_xss_table.o: src/acedata.h
-src/interpolate_xss_table.o: src/common.h
-src/interpolate_xss_table.o: src/global_fun.h
-src/interpolate_xss_table.o: src/nuclide.h
-src/interpolate_xss_table.o: src/interpolate_xss_table.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/interpolate_xss_table.o -c src/interpolate_xss_table.c
-
-src/locate_particle.o: src/cell.h
-src/locate_particle.o: src/common.h
-src/locate_particle.o: src/geometry.h
-src/locate_particle.o: src/map.h
-src/locate_particle.o: src/particle_state.h
-src/locate_particle.o: src/surface.h
-src/locate_particle.o: src/universe.h
-src/locate_particle.o: src/vector.h
-src/locate_particle.o: src/locate_particle.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/locate_particle.o -c src/locate_particle.c
-
-src/main.o: src/IO_releated.h
-src/main.o: src/RNG.h
-src/main.o: src/acedata.h
-src/main.o: src/calculation.h
-src/main.o: src/cell.h
-src/main.o: src/common.h
-src/main.o: src/criticality.h
-src/main.o: src/geometry.h
-src/main.o: src/map.h
-src/main.o: src/material.h
-src/main.o: src/nuclide.h
-src/main.o: src/particle_state.h
-src/main.o: src/surface.h
-src/main.o: src/universe.h
-src/main.o: src/vector.h
-src/main.o: src/main.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/main.o -c sr/main.c
-
-src/map.o: src/map.h
-src/map.o: src/map.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/map.o -c src/map.c
-
-src/material.o: src/common.h
-src/material.o: src/material.h
-src/material.o: src/material.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/material.o -c src/material.c
-
-src/nuclide.o: src/common.h
-src/nuclide.o: src/nuclide.h
-src/nuclide.o: src/nuclide.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/nuclide.o -c src/nuclide.c
-
-src/output_ending.o: src/IO_releated.h
-src/output_ending.o: src/common.h
-src/output_ending.o: src/map.h
-src/output_ending.o: src/universe.h
-src/output_ending.o: src/output_ending.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/output_ending.o -c src/output_ending.c
-
-src/output_heading.o: src/IO_releated.h
-src/output_heading.o: src/common.h
-src/output_heading.o: src/map.h
-src/output_heading.o: src/universe.h
-src/output_heading.o: src/output_heading.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/output_heading.o -c src/output_heading.c
-
-src/output_mat_file.o: src/IO_releated.h
-src/output_mat_file.o: src/common.h
-src/output_mat_file.o: src/map.h
-src/output_mat_file.o: src/material.h
-src/output_mat_file.o: src/nuclide.h
-src/output_mat_file.o: src/universe.h
-src/output_mat_file.o: src/output_mat_file.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/output_mat_file.o -c src/output_mat_file.c
-
-src/output_summary.o: src/IO_releated.h
-src/output_summary.o: src/common.h
-src/output_summary.o: src/criticality.h
-src/output_summary.o: src/map.h
-src/output_summary.o: src/particle_state.h
-src/output_summary.o: src/universe.h
-src/output_summary.o: src/vector.h
-src/output_summary.o: src/output_summary.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/output_summary.o -c src/output_summary.c
-
-src/process_cycle_end.o: src/IO_releated.h
-src/process_cycle_end.o: src/common.h
-src/process_cycle_end.o: src/criticality.h
-src/process_cycle_end.o: src/map.h
-src/process_cycle_end.o: src/particle_state.h
-src/process_cycle_end.o: src/universe.h
-src/process_cycle_end.o: src/vector.h
-src/process_cycle_end.o: src/process_cycle_end.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/process_cycle_end.o -c src/process_cycle_end.c
-
-src/react_by_law.o: src/RNG.h
-src/react_by_law.o: src/acedata.h
-src/react_by_law.o: src/common.h
-src/react_by_law.o: src/nuclide.h
-src/react_by_law.o: src/sample_method.h
-src/react_by_law.o: src/react_by_law.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/react_by_law.o -c src/react_by_law.c
-
-src/read_ace_data.o: src/IO_releated.h
-src/read_ace_data.o: src/common.h
-src/read_ace_data.o: src/map.h
-src/read_ace_data.o: src/nuclide.h
-src/read_ace_data.o: src/universe.h
-src/read_ace_data.o: src/read_ace_data.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/read_ace_data.o -c src/read_ace_data.c
-
-src/read_criticality_block.o: src/IO_releated.h
-src/read_criticality_block.o: src/RNG.h
-src/read_criticality_block.o: src/common.h
-src/read_criticality_block.o: src/criticality.h
-src/read_criticality_block.o: src/map.h
-src/read_criticality_block.o: src/particle_state.h
-src/read_criticality_block.o: src/universe.h
-src/read_criticality_block.o: src/vector.h
-src/read_criticality_block.o: src/read_criticality_block.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/read_criticality_block.o -c src/read_criticality_block.c
-
-src/read_input_blocks.o: src/IO_releated.h
-src/read_input_blocks.o: src/common.h
-src/read_input_blocks.o: src/map.h
-src/read_input_blocks.o: src/universe.h
-src/read_input_blocks.o: src/read_input_blocks.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/read_input_blocks.o -c src/read_input_blocks.c
-
-src/read_surf_block.o: src/IO_releated.h
-src/read_surf_block.o: src/common.h
-src/read_surf_block.o: src/map.h
-src/read_surf_block.o: src/surface.h
-src/read_surf_block.o: src/universe.h
-src/read_surf_block.o: src/read_surf_block.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/read_surf_block.o -c src/read_surf_block.c
-
-src/read_universe_block.o: src/IO_releated.h
-src/read_universe_block.o: src/common.h
-src/read_universe_block.o: src/map.h
-src/read_universe_block.o: src/universe.h
-src/read_universe_block.o: src/read_universe_block.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/read_universe_block.o -c src/read_universe_block.c
-
-src/release_resource.o: src/IO_releated.h
-src/release_resource.o: src/common.h
-src/release_resource.o: src/criticality.h
-src/release_resource.o: src/map.h
-src/release_resource.o: src/particle_state.h
-src/release_resource.o: src/universe.h
-src/release_resource.o: src/vector.h
-src/release_resource.o: src/release_resource.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/release_resource.o -c src/release_resource.c
-
-src/rotate_dir.o: src/RNG.h
-src/rotate_dir.o: src/common.h
-src/rotate_dir.o: src/neutron_transport.h
-src/rotate_dir.o: src/particle_state.h
-src/rotate_dir.o: src/vector.h
-src/rotate_dir.o: src/rotate_dir.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/rotate_dir.o -c src/rotate_dir.c
-
-src/sample_col_nuclide.o: src/RNG.h
-src/sample_col_nuclide.o: src/common.h
-src/sample_col_nuclide.o: src/map.h
-src/sample_col_nuclide.o: src/material.h
-src/sample_col_nuclide.o: src/neutron_transport.h
-src/sample_col_nuclide.o: src/nuclide.h
-src/sample_col_nuclide.o: src/particle_state.h
-src/sample_col_nuclide.o: src/vector.h
-src/sample_col_nuclide.o: src/sample_col_nuclide.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/sample_col_nuclide.o -c src/sample_col_nuclide.c
-
-src/sample_col_type.o: src/RNG.h
-src/sample_col_type.o: src/acedata.h
-src/sample_col_type.o: src/common.h
-src/sample_col_type.o: src/map.h
-src/sample_col_type.o: src/material.h
-src/sample_col_type.o: src/neutron_transport.h
-src/sample_col_type.o: src/nuclide.h
-src/sample_col_type.o: src/particle_state.h
-src/sample_col_type.o: src/vector.h
-src/sample_col_type.o: src/sample_col_type.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/sample_col_type.o -c src/sample_col_type.c
-
-src/sample_fission_source.o: src/cell.h
-src/sample_fission_source.o: src/common.h
-src/sample_fission_source.o: src/criticality.h
-src/sample_fission_source.o: src/geometry.h
-src/sample_fission_source.o: src/map.h
-src/sample_fission_source.o: src/particle_state.h
-src/sample_fission_source.o: src/surface.h
-src/sample_fission_source.o: src/universe.h
-src/sample_fission_source.o: src/vector.h
-src/sample_fission_source.o: src/sample_fission_source.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/sample_fission_source.o -c src/sample_fission_source.c
-
-src/sample_free_fly_dis.o: src/RNG.h
-src/sample_free_fly_dis.o: src/acedata.h
-src/sample_free_fly_dis.o: src/common.h
-src/sample_free_fly_dis.o: src/map.h
-src/sample_free_fly_dis.o: src/material.h
-src/sample_free_fly_dis.o: src/neutron_transport.h
-src/sample_free_fly_dis.o: src/nuclide.h
-src/sample_free_fly_dis.o: src/particle_state.h
-src/sample_free_fly_dis.o: src/vector.h
-src/sample_free_fly_dis.o: src/sample_free_fly_dis.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/sample_free_fly_dis.o -c src/sample_free_fly_dis.c
-
-src/sample_method.o: src/RNG.h
-src/sample_method.o: src/common.h
-src/sample_method.o: src/sample_method.h
-src/sample_method.o: src/sample_method.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/sample_method.o -c src/sample_method.c
-
-src/surface.o: src/common.h
-src/surface.o: src/surface.h
-src/surface.o: src/surface.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/surface.o -c src/surface.c
-
-src/track_history.o: src/common.h
-src/track_history.o: src/criticality.h
-src/track_history.o: src/neutron_transport.h
-src/track_history.o: src/particle_state.h
-src/track_history.o: src/vector.h
-src/track_history.o: src/track_history.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/track_history.o -c src/track_history.c
-
-src/transform_cm_to_lab.o: src/acedata.h
-src/transform_cm_to_lab.o: src/common.h
-src/transform_cm_to_lab.o: src/nuclide.h
-src/transform_cm_to_lab.o: src/transform_cm_to_lab.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/transform_cm_to_lab.o -c src/transform_cm_to_lab.c
-
-src/treat_URR.o: src/RNG.h
-src/treat_URR.o: src/acedata.h
-src/treat_URR.o: src/common.h
-src/treat_URR.o: src/global_fun.h
-src/treat_URR.o: src/nuclide.h
-src/treat_URR.o: src/treat_URR.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/treat_URR.o -c src/treat_URR.c
-
-src/treat_fission.o: src/acedata.h
-src/treat_fission.o: src/common.h
-src/treat_fission.o: src/criticality.h
-src/treat_fission.o: src/map.h
-src/treat_fission.o: src/material.h
-src/treat_fission.o: src/neutron_transport.h
-src/treat_fission.o: src/nuclide.h
-src/treat_fission.o: src/particle_state.h
-src/treat_fission.o: src/vector.h
-src/treat_fission.o: src/treat_fission.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/treat_fission.o -c src/treat_fission.c
-
-src/treat_free_gas_model.o: src/RNG.h
-src/treat_free_gas_model.o: src/common.h
-src/treat_free_gas_model.o: src/neutron_transport.h
-src/treat_free_gas_model.o: src/particle_state.h
-src/treat_free_gas_model.o: src/vector.h
-src/treat_free_gas_model.o: src/treat_free_gas_model.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/treat_free_gas_model.o -c src/treat_free_gas_model.c
-
-src/treat_implicit_capure.o: src/RNG.h
-src/treat_implicit_capure.o: src/common.h
-src/treat_implicit_capure.o: src/map.h
-src/treat_implicit_capure.o: src/material.h
-src/treat_implicit_capure.o: src/neutron_transport.h
-src/treat_implicit_capure.o: src/nuclide.h
-src/treat_implicit_capure.o: src/particle_state.h
-src/treat_implicit_capure.o: src/vector.h
-src/treat_implicit_capure.o: src/treat_implicit_capure.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/treat_implicit_capure.o -c src/treat_implicit_capure.c
-
-src/treat_sab_collision_type.o: src/RNG.h
-src/treat_sab_collision_type.o: src/acedata.h
-src/treat_sab_collision_type.o: src/common.h
-src/treat_sab_collision_type.o: src/global_fun.h
-src/treat_sab_collision_type.o: src/neutron_transport.h
-src/treat_sab_collision_type.o: src/nuclide.h
-src/treat_sab_collision_type.o: src/particle_state.h
-src/treat_sab_collision_type.o: src/vector.h
-src/treat_sab_collision_type.o: src/treat_sab_collision_type.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/treat_sab_collision_type.o -c src/treat_sab_collision_type.c
-
-src/universe.o: src/common.h
-src/universe.o: src/map.h
-src/universe.o: src/universe.h
-src/universe.o: src/universe.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/universe.o -c src/universe.c
-
-src/vector.o: src/vector.h
-src/vector.o: src/vector.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o src/vector.o -c src/vector.c
-
-src/read_cell_card.cpp.o: src/IO_releated.h
-src/read_cell_card.cpp.o: src/cell.h
-src/read_cell_card.cpp.o: src/common.h
-src/read_cell_card.cpp.o: src/map.h
-src/read_cell_card.cpp.o: src/universe.h
-src/read_cell_card.cpp.o: src/read_cell_card.cpp
-	$(CXX_HOST) $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o src/read_cell_card.o -c src/read_cell_card.cpp
-
-src/read_material_block.cpp.o: src/IO_releated.h
-src/read_material_block.cpp.o: src/common.h
-src/read_material_block.cpp.o: src/map.h
-src/read_material_block.cpp.o: src/material.h
-src/read_material_block.cpp.o: src/nuclide.h
-src/read_material_block.cpp.o: src/universe.h
-src/read_material_block.cpp.o: src/read_material_block.cpp
-	$(CXX_HOST) $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o src/read_material_block.o -c src/read_material_block.cpp
-
-.PHONY: clean
+
+# Set the Linker
+LINKER = sw5CC -hybrid
+
+# Set the C compiler flags
+C_FLAGS = -Wall -Wextra -pedantic -Wno-pointer-arith -O0 -g
+
+# Set the C defines
+C_DEFINES = -DGIT_SHA1=\"8246369b203113383acf5dbb43a49ae11efcd794\" -DUNIX
+
+# Set the C header files search path
+C_INCLUDES = 
+
+# Set the CXX compiler flags
+CXX_FLAGS = -Wall -Wextra -pedantic -Wno-pointer-arith -O0 -g
+
+# Set the CXX defines
+CXX_DEFINES = -DGIT_SHA1=\"8246369b203113383acf5dbb43a49ae11efcd794\" -DUNIX
+
+# Set the CXX header files search path
+CXX_INCLUDES = 
+
+# Object files for target criti
+criti_OBJECTS = \
+build/objs/RNG.c.host.o \
+build/objs/RNG.c.slave.o \
+build/objs/build_neighbor_list.c.o \
+build/objs/calc_col_nuc_cs.c.o \
+build/objs/calc_criticality.c.o \
+build/objs/calc_dist_to_bound.c.o \
+build/objs/calc_dist_to_lat.c.o \
+build/objs/calc_dist_to_surf.c.o \
+build/objs/calc_surf_sense.c.o \
+build/objs/calc_therm_Gfun.c.o \
+build/objs/cell.c.o \
+build/objs/check_IO_file.c.o \
+build/objs/check_ce_ace_block.c.o \
+build/objs/convert_mat_nuc_den.c.o \
+build/objs/do_calc.c.o \
+build/objs/doppler_broaden.c.o \
+build/objs/find_lat_index.c.o \
+build/objs/find_neighbor_cell.c.o \
+build/objs/find_next_cell.c.o \
+build/objs/geometry_tracking.c.o \
+build/objs/get_ce_exist_erg_mu.c.o \
+build/objs/get_ce_exit_state.c.o \
+build/objs/get_delayed_nu.c.o \
+build/objs/get_erg_func_value.c.o \
+build/objs/get_exit_state.c.o \
+build/objs/get_fis_neu_state.c.o \
+build/objs/get_law_type.c.o \
+build/objs/get_nuc_abs_scatt_cs.c.o \
+build/objs/get_nuc_mt_cs.c.o \
+build/objs/get_nuc_tot_fis_cs.c.o \
+build/objs/get_scatt_cosine.c.o \
+build/objs/get_surf_norm_vec.c.o \
+build/objs/get_tot_nu.c.o \
+build/objs/global_fun.c.o \
+build/objs/init_fission_source.c.o \
+build/objs/interpolate_sab.c.o \
+build/objs/interpolate_xss_table.c.o \
+build/objs/locate_particle.c.o \
+build/objs/main.c.o \
+build/objs/map.c.host.o \
+build/objs/map.c.slave.o \
+build/objs/material.c.o \
+build/objs/move_to_origin_lat.c.o \
+build/objs/nuclide.c.o \
+build/objs/offset_neighbor_lat.c.o \
+build/objs/output_ending.c.o \
+build/objs/output_heading.c.o \
+build/objs/output_mat_file.c.o \
+build/objs/output_summary.c.o \
+build/objs/particle_is_in_cell.c.o \
+build/objs/prepare_RNG.c.o \
+build/objs/process_cycle_end.c.o \
+build/objs/react_by_law.c.o \
+build/objs/read_ace_data.c.o \
+build/objs/read_criticality_block.c.o \
+build/objs/read_input_blocks.c.o \
+build/objs/read_surf_block.c.o \
+build/objs/read_universe_block.c.o \
+build/objs/reflect_par.c.o \
+build/objs/release_resource.c.o \
+build/objs/rotate_dir.c.o \
+build/objs/sample_col_nuclide.c.o \
+build/objs/sample_col_type.c.o \
+build/objs/sample_fission_source.c.o \
+build/objs/sample_free_fly_dis.c.o \
+build/objs/sample_maxwell.c.host.o \
+build/objs/sample_maxwell.c.slave.o \
+build/objs/sample_watt.c.o \
+build/objs/surface.c.o \
+build/objs/track_history.c.o \
+build/objs/trans_univ_coord.c.o \
+build/objs/trans_univ_dir.c.o \
+build/objs/treat_URR.c.o \
+build/objs/treat_fission.c.o \
+build/objs/treat_free_gas_model.c.o \
+build/objs/treat_implicit_capure.c.o \
+build/objs/treat_sab_collision_type.c.o \
+build/objs/universe.c.o \
+build/objs/vector.c.o \
+build/objs/read_cell_card.cpp.o \
+build/objs/read_material_block.cpp.o
+
+# External object files for target criti
+criti_EXTERNAL_OBJECTS =
+
+
+$(TARGET): $(criti_OBJECTS)
+	$(LINKER) $(criti_OBJECTS) -o $(TARGET)
+
+
+build/objs/RNG.c.host.o: src/RNG.c
+	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/RNG.c.host.o   -c src/RNG.c
+
+
+build/objs/RNG.c.slave.o: src/RNG.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/RNG.c.slave.o   -c src/RNG.c
+
+
+build/objs/build_neighbor_list.c.o: src/build_neighbor_list.c
+	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/build_neighbor_list.c.o   -c src/build_neighbor_list.c
+
+
+build/objs/calc_col_nuc_cs.c.o: src/calc_col_nuc_cs.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/calc_col_nuc_cs.c.o   -c src/calc_col_nuc_cs.c
+
+
+build/objs/calc_criticality.c.o: src/calc_criticality.c
+	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/calc_criticality.c.o   -c src/calc_criticality.c
+
+
+build/objs/calc_dist_to_bound.c.o: src/calc_dist_to_bound.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/calc_dist_to_bound.c.o   -c src/calc_dist_to_bound.c
+
+
+build/objs/calc_dist_to_lat.c.o: src/calc_dist_to_lat.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/calc_dist_to_lat.c.o   -c src/calc_dist_to_lat.c
+
+
+build/objs/calc_dist_to_surf.c.o: src/calc_dist_to_surf.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/calc_dist_to_surf.c.o   -c src/calc_dist_to_surf.c
+
+
+build/objs/calc_surf_sense.c.o: src/calc_surf_sense.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/calc_surf_sense.c.o   -c src/calc_surf_sense.c
+
+
+build/objs/calc_therm_Gfun.c.o: src/calc_therm_Gfun.c
+	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/calc_therm_Gfun.c.o   -c src/calc_therm_Gfun.c
+
+
+build/objs/cell.c.o: src/cell.c
+	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/cell.c.o   -c src/cell.c
+
+
+build/objs/check_IO_file.c.o: src/check_IO_file.c
+	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/check_IO_file.c.o   -c src/check_IO_file.c
+
+
+build/objs/check_ce_ace_block.c.o: src/check_ce_ace_block.c
+	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/check_ce_ace_block.c.o   -c src/check_ce_ace_block.c
+
+
+build/objs/convert_mat_nuc_den.c.o: src/convert_mat_nuc_den.c
+	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/convert_mat_nuc_den.c.o   -c src/convert_mat_nuc_den.c
+
+
+build/objs/do_calc.c.o: src/do_calc.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/do_calc.c.o   -c src/do_calc.c
+
+
+build/objs/doppler_broaden.c.o: src/doppler_broaden.c
+	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/doppler_broaden.c.o   -c src/doppler_broaden.c
+
+
+build/objs/find_lat_index.c.o: src/find_lat_index.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/find_lat_index.c.o   -c src/find_lat_index.c
+
+
+build/objs/find_neighbor_cell.c.o: src/find_neighbor_cell.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/find_neighbor_cell.c.o   -c src/find_neighbor_cell.c
+
+
+build/objs/find_next_cell.c.o: src/find_next_cell.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/find_next_cell.c.o   -c src/find_next_cell.c
+
+
+build/objs/geometry_tracking.c.o: src/geometry_tracking.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/geometry_tracking.c.o   -c src/geometry_tracking.c
+
+
+build/objs/get_ce_exist_erg_mu.c.o: src/get_ce_exist_erg_mu.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/get_ce_exist_erg_mu.c.o   -c src/get_ce_exist_erg_mu.c
+
+
+build/objs/get_ce_exit_state.c.o: src/get_ce_exit_state.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/get_ce_exit_state.c.o   -c src/get_ce_exit_state.c
+
+
+build/objs/get_delayed_nu.c.o: src/get_delayed_nu.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/get_delayed_nu.c.o   -c src/get_delayed_nu.c
+
+
+build/objs/get_erg_func_value.c.o: src/get_erg_func_value.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/get_erg_func_value.c.o   -c src/get_erg_func_value.c
+
+
+build/objs/get_exit_state.c.o: src/get_exit_state.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/get_exit_state.c.o   -c src/get_exit_state.c
+
+
+build/objs/get_fis_neu_state.c.o: src/get_fis_neu_state.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/get_fis_neu_state.c.o   -c src/get_fis_neu_state.c
+
+
+build/objs/get_law_type.c.o: src/get_law_type.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/get_law_type.c.o   -c src/get_law_type.c
+
+
+build/objs/get_nuc_abs_scatt_cs.c.o: src/get_nuc_abs_scatt_cs.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/get_nuc_abs_scatt_cs.c.o   -c src/get_nuc_abs_scatt_cs.c
+
+
+build/objs/get_nuc_mt_cs.c.o: src/get_nuc_mt_cs.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/get_nuc_mt_cs.c.o   -c src/get_nuc_mt_cs.c
+
+
+build/objs/get_nuc_tot_fis_cs.c.o: src/get_nuc_tot_fis_cs.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/get_nuc_tot_fis_cs.c.o   -c src/get_nuc_tot_fis_cs.c
+
+
+build/objs/get_scatt_cosine.c.o: src/get_scatt_cosine.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/get_scatt_cosine.c.o   -c src/get_scatt_cosine.c
+
+
+build/objs/get_surf_norm_vec.c.o: src/get_surf_norm_vec.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/get_surf_norm_vec.c.o   -c src/get_surf_norm_vec.c
+
+
+build/objs/get_tot_nu.c.o: src/get_tot_nu.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/get_tot_nu.c.o   -c src/get_tot_nu.c
+
+
+build/objs/global_fun.c.o: src/global_fun.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/global_fun.c.o   -c src/global_fun.c
+
+
+build/objs/init_fission_source.c.o: src/init_fission_source.c
+	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/init_fission_source.c.o   -c src/init_fission_source.c
+
+
+build/objs/interpolate_sab.c.o: src/interpolate_sab.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/interpolate_sab.c.o   -c src/interpolate_sab.c
+
+
+build/objs/interpolate_xss_table.c.o: src/interpolate_xss_table.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/interpolate_xss_table.c.o   -c src/interpolate_xss_table.c
+
+
+build/objs/locate_particle.c.o: src/locate_particle.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/locate_particle.c.o   -c src/locate_particle.c
+
+
+build/objs/main.c.o: src/main.c
+	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/main.c.o   -c src/main.c
+
+
+build/objs/map.c.host.o: src/map.c
+	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/map.c.o   -c src/map.c
+
+
+build/objs/map.c.slave.o: src/map.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/map.c.o   -c src/map.c
+
+
+build/objs/material.c.o: src/material.c
+	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/material.c.o   -c src/material.c
+
+
+build/objs/move_to_origin_lat.c.o: src/move_to_origin_lat.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/move_to_origin_lat.c.o   -c src/move_to_origin_lat.c
+
+
+build/objs/nuclide.c.o: src/nuclide.c
+	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/nuclide.c.o   -c src/nuclide.c
+
+
+build/objs/offset_neighbor_lat.c.o: src/offset_neighbor_lat.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/offset_neighbor_lat.c.o   -c src/offset_neighbor_lat.c
+
+
+build/objs/output_ending.c.o: src/output_ending.c
+	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/output_ending.c.o   -c src/output_ending.c
+
+
+build/objs/output_heading.c.o: src/output_heading.c
+	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/output_heading.c.o   -c src/output_heading.c
+
+
+build/objs/output_mat_file.c.o: src/output_mat_file.c
+	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/output_mat_file.c.o   -c src/output_mat_file.c
+
+
+build/objs/output_summary.c.o: src/output_summary.c
+	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/output_summary.c.o   -c src/output_summary.c
+
+
+build/objs/particle_is_in_cell.c.o: src/particle_is_in_cell.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/particle_is_in_cell.c.o   -c src/particle_is_in_cell.c
+
+
+build/objs/prepare_RNG.c.o: src/prepare_RNG.c
+	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/prepare_RNG.c.o   -c src/prepare_RNG.c
+
+
+build/objs/process_cycle_end.c.o: src/process_cycle_end.c
+	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/process_cycle_end.c.o   -c src/process_cycle_end.c
+
+
+build/objs/react_by_law.c.o: src/react_by_law.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/react_by_law.c.o   -c src/react_by_law.c
+
+
+build/objs/read_ace_data.c.o: src/read_ace_data.c
+	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/read_ace_data.c.o   -c src/read_ace_data.c
+
+
+build/objs/read_criticality_block.c.o: src/read_criticality_block.c
+	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/read_criticality_block.c.o   -c src/read_criticality_block.c
+
+
+build/objs/read_input_blocks.c.o: src/read_input_blocks.c
+	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/read_input_blocks.c.o   -c src/read_input_blocks.c
+
+
+build/objs/read_surf_block.c.o: src/read_surf_block.c
+	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/read_surf_block.c.o   -c src/read_surf_block.c
+
+
+build/objs/read_universe_block.c.o: src/read_universe_block.c
+	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/read_universe_block.c.o   -c src/read_universe_block.c
+
+
+build/objs/reflect_par.c.o: src/reflect_par.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/reflect_par.c.o   -c src/reflect_par.c
+
+
+build/objs/release_resource.c.o: src/release_resource.c
+	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/release_resource.c.o   -c src/release_resource.c
+
+
+build/objs/rotate_dir.c.o: src/rotate_dir.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/rotate_dir.c.o   -c src/rotate_dir.c
+
+
+build/objs/sample_col_nuclide.c.o: src/sample_col_nuclide.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/sample_col_nuclide.c.o   -c src/sample_col_nuclide.c
+
+
+build/objs/sample_col_type.c.o: src/sample_col_type.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/sample_col_type.c.o   -c src/sample_col_type.c
+
+
+build/objs/sample_fission_source.c.o: src/sample_fission_source.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/sample_fission_source.c.o   -c src/sample_fission_source.c
+
+
+build/objs/sample_free_fly_dis.c.o: src/sample_free_fly_dis.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/sample_free_fly_dis.c.o   -c src/sample_free_fly_dis.c
+
+
+build/objs/sample_maxwell.c.host.o: src/sample_maxwell.c
+	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/sample_maxwell.c.o   -c src/sample_maxwell.c
+
+
+build/objs/sample_maxwell.c.slave.o: src/sample_maxwell.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/sample_maxwell.c.o   -c src/sample_maxwell.c
+
+
+build/objs/sample_watt.c.o: src/sample_watt.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/sample_watt.c.o   -c src/sample_watt.c
+
+
+build/objs/surface.c.o: src/surface.c
+	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/surface.c.o   -c src/surface.c
+
+
+build/objs/track_history.c.o: src/track_history.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/track_history.c.o   -c src/track_history.c
+
+
+build/objs/trans_univ_coord.c.o: src/trans_univ_coord.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/trans_univ_coord.c.o   -c src/trans_univ_coord.c
+
+
+build/objs/trans_univ_dir.c.o: src/trans_univ_dir.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/trans_univ_dir.c.o   -c src/trans_univ_dir.c
+
+
+build/objs/treat_URR.c.o: src/treat_URR.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/treat_URR.c.o   -c src/treat_URR.c
+
+
+build/objs/treat_fission.c.o: src/treat_fission.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/treat_fission.c.o   -c src/treat_fission.c
+
+
+build/objs/treat_free_gas_model.c.o: src/treat_free_gas_model.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/treat_free_gas_model.c.o   -c src/treat_free_gas_model.c
+
+
+build/objs/treat_implicit_capure.c.o: src/treat_implicit_capure.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/treat_implicit_capure.c.o   -c src/treat_implicit_capure.c
+
+
+build/objs/treat_sab_collision_type.c.o: src/treat_sab_collision_type.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/treat_sab_collision_type.c.o   -c src/treat_sab_collision_type.c
+
+
+build/objs/universe.c.o: src/universe.c
+	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/universe.c.o   -c src/universe.c
+
+
+build/objs/vector.c.o: src/vector.c
+	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/vector.c.o   -c src/vector.c
+
+
+build/objs/read_cell_card.cpp.o: src/read_cell_card.cpp
+	$(CXX_HOST)  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o build/objs/read_cell_card.cpp.o -c src/read_cell_card.cpp
+
+
+build/objs/read_material_block.cpp.o: src/read_material_block.cpp
+	$(CXX_HOST)  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o build/objs/read_material_block.cpp.o -c src/read_material_block.cpp
+
+
 clean:
-	-rm -rf $(TARGET) $(OBJS)
+	-rm -rf $(TARGET) $(criti_OBJECTS)
+.PHONY : clean
+
