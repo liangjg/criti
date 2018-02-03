@@ -40,7 +40,7 @@ cell_t *locate_particle(particle_state_t *par_state, universe_t *start_univ, con
         if(univ->lattice_type){    /* current universe has lattice structure */
             int lat_index = find_lat_index(univ, local_pos_temp, local_dir_temp);
             if(lat_index < 0){
-                printf("failed to locate particle, pos = %lf %lf %lf, dir = %lf %lf %lf", pos[0], pos[1], pos[2],
+                printf("failed to locate particle, pos = %lf %lf %lf, dir = %lf %lf %lf\n", pos[0], pos[1], pos[2],
                        dir[0], dir[1], dir[2]);
                 break;
             }

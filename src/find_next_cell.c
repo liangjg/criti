@@ -5,8 +5,6 @@
 #include "geometry.h"
 
 
-extern map *base_surfs;
-
 #define REFLECTIVE    1
 #define CROSSING      0
 
@@ -16,16 +14,17 @@ void find_next_cell(particle_state_t *par_state){
     surface_t *surf;
     int prev_mat;
     double prev_cell_tmp;
+    int level = par_state->bound_level;
 
-    univ = par_state->loc_univs[par_state->bound_level];
+    univ = par_state->loc_univs[level];
     prev_mat = par_state->mat;
     prev_cell_tmp = par_state->cell_tmp;
 
     if(univ->lattice_type)
         find_neighbor_cell(par_state);
     else{
-        int surf_index = abs(par_state->surf);
-        surf = (surface_t *) map_get(base_surfs, surf_index);
+        cell = univ->cells[par_state->loc_cells[level]];
+        surf = cell->surfs_addr[par_state->bound_index];
 
         switch(surf->bc){
             case CROSSING:

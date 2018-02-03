@@ -111,3 +111,68 @@ bool _complex_par_in_cell(const cell_t *obj, const double *pos, const double *di
 
     return in_cell;
 }
+
+//bool _complex_par_in_cell(const cell_t *obj, const double pos[3], const double dir[3]){
+//    bool st[16];
+//    char symbols[16];
+//    int i_stack, surfs_ptr, symbols_ptr;
+//    surface_t *surf;
+//    int *surfs_sense, *surfs_index;
+//    int surfs_sz;
+//    int symbol_cnt;
+//    char *c;
+//
+//    surfs_sz = obj->surfs_sz;
+//    surfs_sense = (int *) malloc(surfs_sz * sizeof(int));
+//    surfs_index = obj->surfs;
+//
+//    for(int i = 0; i < surfs_sz; i++){
+//        surf = obj->surfs_addr[i];
+//        surfs_sense[i] = calc_surf_sense(surf, pos, dir);
+//    }
+//
+//    c = obj->rpn;
+//    symbol_cnt = 0;
+//
+//    while(*c != '\0'){
+//        if(*c == '&' || *c == ':' || *c == '!')
+//            symbols[symbol_cnt++] = *c;
+//        c++;
+//    }
+//
+//    i_stack = -1;
+//    surfs_ptr = 0;
+//    symbols_ptr = 0;
+//
+//    while(surfs_ptr < surfs_sz || symbols_ptr < symbol_cnt){
+//        switch(symbols[symbols_ptr++]){
+//            case '&':
+//                if(surfs_ptr < surfs_sz){
+//                    i_stack++;
+//                    st[i_stack++] = _has_same_sign(surfs_sense[surfs_ptr], surfs_index[surfs_ptr]);
+//                    surfs_ptr++;
+//                    st[i_stack] = _has_same_sign(surfs_sense[surfs_ptr], surfs_index[surfs_ptr]);
+//                    surfs_ptr++;
+//                }
+//                st[i_stack - 1] = st[i_stack] && st[i_stack - 1];
+//                i_stack--;
+//                break;
+//            case ':':
+//                if(surfs_ptr < surfs_sz){
+//                    i_stack++;
+//                    st[i_stack++] = _has_same_sign(surfs_sense[surfs_ptr], surfs_index[surfs_ptr]);
+//                    surfs_ptr++;
+//                    st[i_stack] = _has_same_sign(surfs_sense[surfs_ptr], surfs_index[surfs_ptr]);
+//                    surfs_ptr++;
+//                }
+//                st[i_stack - 1] = st[i_stack] || st[i_stack - 1];
+//                i_stack--;
+//                break;
+//            default:
+//                st[i_stack] = !st[i_stack];
+//                break;
+//        }
+//    }
+//    free(surfs_sense);
+//    return st[i_stack];
+//}
