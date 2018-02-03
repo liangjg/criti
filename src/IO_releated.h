@@ -19,10 +19,7 @@ typedef struct {
     char opt_file_name[MAX_FILENAME_LENGTH];
 } IOfp_t;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
+BEGIN_DECL
 void check_IO_file(int, char **);
 void read_input_blocks(CALC_MODE_T *calc_mode);
 void read_universe_block(char *);
@@ -45,9 +42,6 @@ void output_summary();
 
 void output_heading();
 void output_ending();
-
-#ifdef __cplusplus
-}
-#endif
+END_DECL
 
 #endif //CRITI_IO_RELEATED_H

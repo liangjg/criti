@@ -10,11 +10,8 @@
 #ifndef CRITI_GEOMETRY_H
 #define CRITI_GEOMETRY_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-int locate_particle(particle_state_t *par_state, int start_univ, const double pos[3], const double dir[3]);
+BEGIN_DECL
+cell_t *locate_particle(particle_state_t *par_state, universe_t *start_univ, const double *pos, const double *dir);
 
 void find_next_cell(particle_state_t *par_state);
 
@@ -24,8 +21,8 @@ void find_neighbor_cell(particle_state_t *par_state);
 
 void build_neighbor_list();
 
-#ifdef __cplusplus
-}
-#endif
+/* 对几何信息进行预处理 */
+int preprocess_geometry();
+END_DECL
 
 #endif //CRITI_GEOMETRY_H

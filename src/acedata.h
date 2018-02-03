@@ -15,10 +15,7 @@ typedef struct{
 } acedata_t;
 
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
+BEGIN_DECL
 void check_ce_ace_block();
 
 void calc_therm_Gfun(acedata_t *obj);
@@ -55,9 +52,6 @@ void interpolate_xss_table(const nuclide_t *nuc, double incident_erg, int LDAT, 
                            int *num_of_interp_region, int *num_of_erg_grid);
 
 double get_erg_func_value(const nuclide_t *nuc, int LDAT, double erg);
-
-#ifdef __cplusplus
-}
-#endif
+END_DECL
 
 #endif //CRITI_ACEDATA_H

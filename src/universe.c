@@ -6,8 +6,8 @@
 
 
 /* ----------------------------- API implementation ------------------------- */
-universe_t *univ_init() {
-    universe_t *_new_univ = (universe_t *)malloc(sizeof(universe_t));
+universe_t *univ_init(){
+    universe_t *_new_univ = (universe_t *) malloc(sizeof(universe_t));
     memset(_new_univ, 0x0, sizeof(universe_t));
     return _new_univ;
 }

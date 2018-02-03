@@ -4,7 +4,6 @@
 
 #include "IO_releated.h"
 #include "cell.h"
-#include "universe.h"
 #include <stack>
 #include <string>
 #include <vector>
@@ -28,7 +27,7 @@ void _transform(std::string &s);
 
 /* ----------------------------- API implementation ------------------------- */
 void read_cell_card(universe_t *univ){
-    std::vector<int> cells;
+    std::vector<void *> cells;    /* 存储每个cell实例的地址 */
     char buf[256];
     char *ret = nullptr;
     bool is_simple = true;
@@ -47,8 +46,9 @@ void read_cell_card(universe_t *univ){
 
         cell_t *cell = cell_init();
         cell->id = index;
+        cell->parent = univ;
         map_put(base_cells, index, cell);
-        cells.push_back(index);
+        cells.push_back(cell);
 
         char *rpn_start = ret;
         while(!ISALPHA(*ret)) ret++;
@@ -68,7 +68,7 @@ void read_cell_card(universe_t *univ){
             switch(_identify_cell_kw(kw_start)){
                 case 0:    /* fill argument */
                     while(!ISNUMBER(*ret)) ret++;
-                    cell->fill = strtol(ret, &end, 10);
+                    cell->fill = (void *) strtol(ret, &end, 10);    /* 在preprocess_geometry()中转换为实际的地址 */
                     ret = end;
                     break;
                 case 1:    /* mat argument */
@@ -110,7 +110,7 @@ void read_cell_card(universe_t *univ){
         }
     }
     univ->cells_sz = cells.size();
-    univ->cells = (int *) malloc(univ->cells_sz * sizeof(int));
+    univ->cells = (void **) malloc(univ->cells_sz * sizeof(void *));
     for(int i = 0; i < univ->cells_sz; i++)
         univ->cells[i] = cells[i];
 }

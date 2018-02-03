@@ -22,6 +22,7 @@ void read_universe_block(char *buf){
         } while(ISNUMBER(*buf));
 
     universe_t *univ = univ_init();
+    univ->id = index;
 
     map_put(base_univs, index, univ);
 
@@ -61,7 +62,11 @@ void read_universe_block(char *buf){
             case 2:{    /* LAT */
                 while(!ISNUMBER(*buf)) buf++;
                 univ->lattice_type = *buf - '0';
-                univ->is_lattice = true;
+                if(univ->lattice_type != 1 && univ->lattice_type != 2){
+                    printf("Wrong universe lattice type in UNIVERSE: %d.\n", univ->id);
+                    release_resource();
+                    exit(0);
+                }
                 buf++;
                 break;
             }
@@ -88,11 +93,14 @@ void read_universe_block(char *buf){
                 break;
             }
             case 6:{    /* FILL */
-                univ->filled_lat_univs_sz = univ->scope[0] * univ->scope[1];
-                if(univ->lattice_type == 1) univ->filled_lat_univs_sz *= univ->scope[2];
-                univ->filled_lat_univs = (int *) malloc(univ->filled_lat_univs_sz * sizeof(int));
-                for(int i = 0; i < univ->filled_lat_univs_sz; i++)
-                    fscanf(base_IOfp.inp_fp, "%d", univ->filled_lat_univs + i);
+                int filled_lat_univs_sz = univ->scope[0] * univ->scope[1];
+                if(univ->lattice_type == 1) filled_lat_univs_sz *= univ->scope[2];
+                univ->filled_lat_univs = (void **) malloc(filled_lat_univs_sz * sizeof(void *));
+                for(int i = 0; i < filled_lat_univs_sz; i++){
+                    int lat_index;
+                    fscanf(base_IOfp.inp_fp, "%d", &lat_index);
+                    univ->filled_lat_univs[i] = (void *) (lat_index);
+                }
                 return;
             }
             default:

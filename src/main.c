@@ -8,10 +8,8 @@
 
 #include "IO_releated.h"
 #include "RNG.h"
-#include "map.h"
 #include "criticality.h"
 #include "calculation.h"
-#include "particle_state.h"
 #include "acedata.h"
 #include "material.h"
 #include "geometry.h"
@@ -127,8 +125,8 @@ int main(int argc, char *argv[]){
     /* 多普勒展宽 */
     doppler_broaden();
 
-    /* 构建邻居栅元加速几何查找 */
-    build_neighbor_list();
+    /* 进行几何预处理，包括构建邻居栅元等等 */
+    preprocess_geometry();
 
     /* run calculation */
     switch(calc_mode){

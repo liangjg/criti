@@ -12,13 +12,20 @@ static int _offset_neighbor_lat_hex(universe_t *obj, int lat_index, int lat_boun
 
 /* ----------------------------- API implementation ------------------------- */
 int offset_neighbor_lat(universe_t *obj, int lat_index, int lat_bound_surf, double pos[3]){
-    int new_lat_index;
-    if(obj->lattice_type == 1)
-        new_lat_index = _offset_neighbor_lat_rect(obj, lat_index, lat_bound_surf, pos);
-    else
-        new_lat_index = _offset_neighbor_lat_hex(obj, lat_index, lat_bound_surf, pos);
+    int new_lat_index = 0;
+    int filled_lat_univs_sz = obj->scope[0] * obj->scope[1];
 
-    if(new_lat_index < 1 || new_lat_index > obj->filled_lat_univs_sz){
+    switch(obj->lattice_type){
+        case 1:
+            filled_lat_univs_sz *= obj->scope[2];
+            new_lat_index = _offset_neighbor_lat_rect(obj, lat_index, lat_bound_surf, pos);
+            break;
+        case 2:
+            new_lat_index = _offset_neighbor_lat_hex(obj, lat_index, lat_bound_surf, pos);
+            break;
+    }
+
+    if(new_lat_index < 1 || new_lat_index > filled_lat_univs_sz){
         puts("offset lattice index out of range.");
         new_lat_index = -1;
     }

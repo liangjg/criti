@@ -3,7 +3,7 @@
 //
 
 #include "common.h"
-#include "vector.h"
+
 
 #ifndef CRITI_PARTICLE_STATE_H
 #define CRITI_PARTICLE_STATE_H
@@ -21,14 +21,13 @@ typedef struct{
     double loc_dir[3];          /* 粒子在当前universe中的方向 */
 
     /* geometry state */
-    int loc_univs[8];           /* 粒子在定位到当前cell的过程中，进入的每一层universe */
+    void *loc_univs[8];         /* 粒子在定位到当前cell的过程中，进入的每一层universe */
     int loc_cells[8];           /* 定位到的cell是在loc_univs[i]中的第几个cell；注意，这里是第几个，而不是直接存储的相应cell，存储的是univ->cells这个vector的下标 */
-    int loc_univs_sz;           /* loc_univs的size */
-    int loc_cells_sz;           /* loc_cells的size */
-    int cell;                   /* 最终定位到的粒子所在的底层cell */
+    int loc_sz;                 /* 以上两个loc的实际size */
+    void *cell;                 /* 最终定位到的粒子所在的底层cell */
     int surf;                   /* 粒子如果要穿面的话，穿出的面的序号；注意，这里是带符号的，有正负的 */
     int bound_index;            /* 当前要穿出的面在cell->surfs这个vector中的下标 */
-    int bound_level;            /* 穿出的这个面是在第几层universe中 */
+    int bound_level;            /* 到当前粒子距离最短的面是在第几层universe中(loc_univs中的下标) */
     int lat_bound_surf;         /* 1:-x ;  2:+x ;  3:-y;  4:+y */
 
     /* collision state */
@@ -57,10 +56,8 @@ typedef struct{
     double vel_tgt[3];          /* Target velocity in free gas model   */
 } particle_state_t;
 
-#ifdef __cplusplus
-extern "C"{
-#endif
 
+BEGIN_DECL
 //void Fly_by_length(double length);
 #define Fly_by_length(_length)    \
     do{    \
@@ -71,9 +68,6 @@ extern "C"{
         par_state->loc_pos[1] += par_state->loc_dir[1] * (_length);  \
         par_state->loc_pos[2] += par_state->loc_dir[2] * (_length);  \
 } while(0)
-
-#ifdef __cplusplus
-}
-#endif
+END_DECL
 
 #endif //CRITI_PARTICLE_STATE_H

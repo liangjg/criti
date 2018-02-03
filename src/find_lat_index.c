@@ -13,13 +13,19 @@ static int _find_lat_index_hex(universe_t *obj, const double pos[3], const doubl
 /* ----------------------------- API implementation ------------------------- */
 int find_lat_index(universe_t *obj, const double pos[3], const double dir[3]) {
     int lat_index = -1;
-    if(obj->lattice_type == 1)
-        lat_index = _find_lat_index_rect(obj, pos, dir);
-    else if(obj->lattice_type == 2)
-        lat_index = _find_lat_index_hex(obj, pos, dir);
-    else puts("unknown lattice type.");
+    int filled_lat_univs_sz = obj->scope[0] * obj->scope[1];
 
-    if(lat_index <= 0 || lat_index > obj->filled_lat_univs_sz){
+    switch(obj->lattice_type){
+        case 1:
+            lat_index = _find_lat_index_rect(obj, pos, dir);
+            filled_lat_univs_sz *= obj->scope[2];
+            break;
+        case 2:
+            lat_index = _find_lat_index_hex(obj, pos, dir);
+            break;
+    }
+
+    if(lat_index <= 0 || lat_index > filled_lat_univs_sz){
         puts("failed to locate lattice index.");
         lat_index = -1;
         base_warnings++;

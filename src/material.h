@@ -24,18 +24,12 @@ typedef struct {
     double *nuc_atom_den;
 } mat_t;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
+BEGIN_DECL
 mat_t *mat_init();
 
 void mat_free(mat_t *obj);
 
 void convert_mat_nuc_den();
-
-#ifdef __cplusplus
-}
-#endif
+END_DECL
 
 #endif //CRITI_MATERIAL_H

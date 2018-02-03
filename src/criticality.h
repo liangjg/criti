@@ -59,10 +59,7 @@ typedef struct{
 } criti_t;
 
 
-#ifdef __cplusplus
-extern "C"{
-#endif
-
+BEGIN_DECL
 void init_fission_source();
 
 void sample_fission_source(particle_state_t *par_state);
@@ -87,9 +84,6 @@ void process_cycle_end();
     do{  \
         base_criti.keff_wgt_sum[2] += (wgt) * (tl) * (macro_mu_fis_xs);  \
     } while(0)
-
-#ifdef __cplusplus
-}
-#endif
+END_DECL
 
 #endif //CRITI_CRITICALITY_H

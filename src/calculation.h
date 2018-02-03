@@ -6,10 +6,7 @@
 #ifndef CRITI_CALCULATION_H
 #define CRITI_CALCULATION_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
+BEGIN_DECL
 void calc_criticality();
 
 void calc_fixed_source();
@@ -17,9 +14,6 @@ void calc_fixed_source();
 void calc_burnup();
 
 void calc_point_burn();
-
-#ifdef __cplusplus
-}
-#endif
+END_DECL
 
 #endif //CRITI_CALCULATION_H

@@ -5,8 +5,6 @@
 #include "geometry.h"
 
 
-extern map *base_univs;
-extern map *base_cells;
 extern map *base_surfs;
 
 #define REFLECTIVE    1
@@ -19,12 +17,11 @@ void find_next_cell(particle_state_t *par_state){
     int prev_mat;
     double prev_cell_tmp;
 
-    int univ_index = par_state->loc_univs[par_state->bound_level];
-    univ = (universe_t *) map_get(base_univs, univ_index);
+    univ = par_state->loc_univs[par_state->bound_level];
     prev_mat = par_state->mat;
     prev_cell_tmp = par_state->cell_tmp;
 
-    if(univ->is_lattice)
+    if(univ->lattice_type)
         find_neighbor_cell(par_state);
     else{
         int surf_index = abs(par_state->surf);
@@ -39,16 +36,15 @@ void find_next_cell(particle_state_t *par_state){
                 reflect_par(surf, par_state->pos, par_state->dir, par_state->loc_dir);
                 break;
             }
-            default:
-                puts("wrong boundary condition");
         }
     }
-    if(par_state->cell == -1){
+
+    if(!par_state->cell){
         par_state->is_killed = true;
         return;
     }
 
-    cell = (cell_t *)map_get(base_cells, par_state->cell);
+    cell = par_state->cell;
     if(cell->imp == 0)
         par_state->is_killed = true;
     par_state->mat = cell->mat;

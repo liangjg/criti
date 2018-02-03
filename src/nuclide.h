@@ -51,10 +51,7 @@ typedef struct {
 //    int prob_table_flag;
 } nuclide_t;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
+BEGIN_DECL
 /*ce ace data */
 #define Get_XSS_length(nuclide)             ((nuclide)->NXS[1])
 #define Get_nuclide_za(nuclide)             ((nuclide)->NXS[2])
@@ -97,9 +94,6 @@ extern "C" {
 #define Get_loc_of_sab_el_mu(nuclide)        ((nuclide)->JXS[6])
 
 void nuc_free(nuclide_t *obj);
-
-#ifdef __cplusplus
-}
-#endif
+END_DECL
 
 #endif //CRITI_NUCLIDE_H

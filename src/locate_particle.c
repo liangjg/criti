@@ -3,19 +3,14 @@
 //
 
 #include "geometry.h"
-#include "universe.h"
 
 
-extern map *base_univs;
-extern map *base_cells;
-extern map *base_surfs;
+extern universe_t *root_universe;
 
-int locate_particle(particle_state_t *par_state, int start_univ, const double pos[3], const double dir[3]){
-    universe_t *univ;
-    cell_t *cell;
-    int level, univ_index, cell_index, found_cell;
-    int filled_univ, lat_univ;
-    size_t v_sz;
+cell_t *locate_particle(particle_state_t *par_state, universe_t *start_univ, const double *pos, const double *dir){
+    universe_t *univ, *lat_univ;
+    cell_t *cell, *found_cell;
+    int level, univ_sz, cell_sz;
     double local_pos_temp[3];
     double local_dir_temp[3];
 
@@ -24,30 +19,25 @@ int locate_particle(particle_state_t *par_state, int start_univ, const double po
         local_dir_temp[i] = dir[i];
     }
 
-    univ_index = start_univ;
-    found_cell = -1;
+    univ = start_univ;
+    found_cell = NULL;
     level = 0;
 
     /* 清空当前univs和cells，全部重新定位 */
-    if(start_univ == 0){
-        for(int i = 0; i < 8; i++){
-            par_state->loc_univs[i] = 0;
-            par_state->loc_cells[i] = 0;
-            par_state->loc_univs_sz = 0;
-            par_state->loc_cells_sz = 0;
-        }
-    }
+    if(univ == root_universe)
+        par_state->loc_sz = 0;
+    univ_sz = par_state->loc_sz;
+    cell_sz = par_state->loc_sz;
 
     while(1){
         if(++level > 99){
             puts("terminate locating particle because of too many levels (>99).");
-            return -1;
+            return NULL;
         }
 
-        univ = (universe_t *) map_get(base_univs, univ_index);
-        par_state->loc_univs[par_state->loc_univs_sz++] = univ_index;
+        par_state->loc_univs[univ_sz++] = univ;
 
-        if(univ->is_lattice){    /* current universe has lattice structure */
+        if(univ->lattice_type){    /* current universe has lattice structure */
             int lat_index = find_lat_index(univ, local_pos_temp, local_dir_temp);
             if(lat_index < 0){
                 printf("failed to locate particle, pos = %lf %lf %lf, dir = %lf %lf %lf", pos[0], pos[1], pos[2],
@@ -55,31 +45,27 @@ int locate_particle(particle_state_t *par_state, int start_univ, const double po
                 break;
             }
 
-            par_state->loc_cells[par_state->loc_cells_sz++] = lat_index;
+            par_state->loc_cells[cell_sz++] = lat_index;
             lat_univ = univ->filled_lat_univs[lat_index - 1];
             move_to_origin_lat(univ, lat_index, local_pos_temp);
-            trans_univ_coord(map_get(base_univs, lat_univ), local_pos_temp, local_dir_temp);
-            univ_index = lat_univ;
-
+            trans_univ_coord(lat_univ, local_pos_temp, local_dir_temp);
+            univ = lat_univ;
         } else{    /* current universe has some cells and has no lattice */
-            for(size_t i = 0; i < univ->cells_sz; i++){
-                cell_index = univ->cells[i];
-                cell = map_get(base_cells, cell_index);
-
+            for(int i = 0; i < univ->cells_sz; i++){
+                cell = univ->cells[i];
                 if(particle_is_in_cell(cell, local_pos_temp, local_dir_temp)){
-                    par_state->loc_cells[par_state->loc_cells_sz++] = i;
-                    if(cell->fill < 0){    /* current cell is a simple cell which has no fills */
+                    par_state->loc_cells[cell_sz++] = i;
+                    if(cell->fill){    /* current cell has a universe filled in */
+                        trans_univ_coord(cell->fill, local_pos_temp, local_dir_temp);
+                        univ = cell->fill;
+                        break;
+                    } else{    /* current cell is a simple cell which has no fills */
                         for(int j = 0; j < 3; j++){
                             par_state->loc_pos[j] = local_pos_temp[j];
                             par_state->loc_dir[j] = local_dir_temp[j];
                         }
-                        found_cell = cell_index;
+                        found_cell = cell;
                         goto END;
-                    } else{    /* current cell has a universe filled in */
-                        filled_univ = cell->fill;
-                        trans_univ_coord(map_get(base_univs, filled_univ), local_pos_temp, local_dir_temp);
-                        univ_index = filled_univ;
-                        break;
                     }
                 }
             }
@@ -87,15 +73,9 @@ int locate_particle(particle_state_t *par_state, int start_univ, const double po
     }
 
 END:
-    if(found_cell == -1)
+    if(!found_cell)
         puts("failed to locate particle.");
 
-#ifdef _Debug
-    if(par_state->loc_cells_sz != par_state->loc_univs_sz){
-        puts("Error: loc_univs.size != loc_cells.size");
-        release_resource();
-    }
-#endif
-
+    par_state->loc_sz = univ_sz;
     return found_cell;
 }

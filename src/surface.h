@@ -33,10 +33,7 @@ typedef struct {
 } surface_t;
 
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
+BEGIN_DECL
 #define LENGTH_VECTOR(vec)    (sqrt(SQUARE((vec)[0]) + SQUARE((vec)[1]) + SQUARE((vec)[2])))
 
 surface_t *surf_init();
@@ -50,9 +47,6 @@ double calc_dist_to_surf(surface_t *obj, const double pos[3], const double dir[3
 void reflect_par(surface_t *obj, const double pos[3], double *dir, double *loc_dir);
 
 void surf_free(surface_t *obj);
-
-#ifdef __cplusplus
-}
-#endif
+END_DECL
 
 #endif //CRITI_SURFACE_H

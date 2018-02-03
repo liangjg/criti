@@ -35,6 +35,14 @@
     #define OS_MAC
 #endif
 
+#if defined(__cplusplus)
+    #define BEGIN_DECL    extern "C" {
+    #define END_DECL      }
+#else
+    #define BEGIN_DECL
+    #define END_DECL
+#endif
+
 #define MAX(_x, _y)     ((_x) < (_y) ? (_y) : (_x))
 #define MIN(_x, _y)     ((_x) < (_y) ? (_x) : (_y))
 #define SQUARE(_x)      ((_x) * (_x))
