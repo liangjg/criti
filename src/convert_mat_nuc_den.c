@@ -17,7 +17,6 @@ void convert_mat_nuc_den(){
     nuclide_t *nuc;
     int tot_nuc_num;
     double sum_atom_den, sum_gram_den, atom_wgt;
-    char *nuc_id;
     map_iterator *mat_iter = map_get_iter(base_mats);
 
     while((entry = map_iter_next(mat_iter))){
@@ -28,8 +27,7 @@ void convert_mat_nuc_den(){
         sum_atom_den = ZERO;
         sum_gram_den = ZERO;
         for(int j = 0; j < tot_nuc_num; j++){
-            nuc_id = mat->nuc_id[j];
-            nuc = (nuclide_t *) map_get(base_nucs, (uint64_t) nuc_id);
+            nuc = mat->nucs[j];
             atom_wgt = nuc->atom_wgt;
             if(LT_ZERO(mat->nuc_user_den[j])){    /* Convert mass fractions to atom fractions */
                 mat->nuc_atom_den[j] = -mat->nuc_user_den[j] / atom_wgt;

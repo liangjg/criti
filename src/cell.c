@@ -7,7 +7,6 @@
 
 cell_t *cell_init(){
     cell_t *_new_cell = (cell_t *)malloc(sizeof(cell_t));
-    _new_cell->mat = 0;
     _new_cell->imp = 1;
     _new_cell->tmp = 2.53E-08;
     _new_cell->vol = 1.0;
@@ -19,6 +18,7 @@ cell_t *cell_init(){
 
     _new_cell->fill = NULL;
     _new_cell->parent = NULL;
+    _new_cell->mat = NULL;
 
     return _new_cell;
 }

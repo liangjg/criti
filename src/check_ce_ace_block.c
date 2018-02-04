@@ -143,9 +143,11 @@ void check_ce_ace_block(){
     while((entry = map_iter_next(mat_iter))){
         mat = entry->v.val;
         if(mat->tot_sab_nuc_num){
-            sab_nuc = (nuclide_t *) map_get(base_nucs, (uint64_t) mat->sab_nuc_id);
+            sab_nuc = mat->sab_nuc;
+            if(!sab_nuc)
+                continue;
             for(int j = 0; j < mat->tot_nuc_num; j++){
-                nuc = (nuclide_t *) map_get(base_nucs, (uint64_t) mat->nuc_id[j]);
+                nuc = mat->nucs[j];
                 if(nuc->zaid == sab_nuc->zaid){
                     location = Get_loc_of_sab_inel_erg(sab_nuc);
                     esa1 = sab_nuc->XSS[location + (int) (sab_nuc->XSS[location])];

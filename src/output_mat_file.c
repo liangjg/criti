@@ -28,7 +28,7 @@ void output_mat_file(){
         fprintf(base_IOfp.mat_fp, "%-4ld          Sum         %.5E      %.5E      %.5E\n", entry->key,
                 mat->gram_den, mat->atom_den, mat->user_den);
         for(int j = 0; j < tot_nuc_num; j++)
-            fprintf(base_IOfp.mat_fp, "           %-10s     %.5E      %.5E      %.5E\n", mat->nuc_id[j],
+            fprintf(base_IOfp.mat_fp, "           %-10s     %.5E      %.5E      %.5E\n", ((nuclide_t *)mat->nucs[j])->id,
                     mat->nuc_gram_den[j], mat->nuc_atom_den[j], mat->nuc_user_den[j]);
     }
 

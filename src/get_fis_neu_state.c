@@ -3,20 +3,15 @@
 //
 
 #include "criticality.h"
-#include "material.h"
-#include "map.h"
 #include "RNG.h"
 #include "acedata.h"
 #include "neutron_transport.h"
 
 
-extern map *base_nucs;
-extern map *base_mats;
 extern criti_t base_criti;
 
 void get_fis_neu_state(particle_state_t *par_state, int fis_MT, double fis_wgt){
-    mat_t *mat = (mat_t *) map_get(base_mats, par_state->mat);
-    nuclide_t *nuc = (nuclide_t *) map_get(base_nucs, (uint64_t) mat->nuc_id[par_state->nuc]);
+    nuclide_t *nuc = par_state->nuc;
     double erg = par_state->erg;
     int fis_neu_num = (int) (fis_wgt + get_rand());
     double nu_delayed = get_delayed_nu(nuc, erg);

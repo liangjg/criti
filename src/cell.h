@@ -10,20 +10,20 @@
 
 typedef struct {
     int id;               /* cell id */
-    int mat;              /* mat 关键字 */
-    int imp;              /* imp 关键字 */
-    double tmp;           /* tmp 关键字 */
-    double vol;           /* vol 关键字 */
-    bool is_inner_cell;   /* inner 关键字 */
-    char *rpn;            /* 面布尔表达式转换而来的RPN表达式 */
+    int imp;              /* imp关键字 */
+    int surfs_sz;         /* 布尔表达式所包含的面的数目 */
+    bool is_inner_cell;   /* inner关键字 */
     bool simple;          /* 是否是只含有集合交运算的简单cell */
+    double tmp;           /* tmp关键字 */
+    double vol;           /* vol关键字 */
 
     int *surfs;           /* 当前cell的全部边界面编号，包含符号在内 */
     void **surfs_addr;    /* 对应于每个边界面的surface实例的地址 */
-    int surfs_sz;
+    char *rpn;            /* 面布尔表达式转换而来的RPN表达式 */
 
-    void *fill;           /* fill 关键字 */
+    void *fill;           /* fill关键字，指向当前cell所包含的universe实例的地址 */
     void *parent;         /* 指向包含当前cell的上级universe结构 */
+    void *mat;            /* mat关键字，指向当前cell的material实例的地址 */
 } cell_t;
 
 #define CELL_KW_NUMBER        7

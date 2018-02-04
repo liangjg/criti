@@ -12,7 +12,7 @@ void find_next_cell(particle_state_t *par_state){
     universe_t *univ;
     cell_t *cell;
     surface_t *surf;
-    int prev_mat;
+    void *prev_mat;
     double prev_cell_tmp;
     int level = par_state->bound_level;
 

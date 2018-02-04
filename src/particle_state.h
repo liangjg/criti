@@ -31,10 +31,9 @@ typedef struct{
     int lat_bound_surf;         /* 1:-x ;  2:+x ;  3:-y;  4:+y */
 
     /* collision state */
-    int mat;                    /* 当前cell的材料 */
-    /* TODO: 将nuc和sab_nuc改为字符数组，即char nuc[10]和char sab_nuc[10] */
-    int nuc;                    /* 当前发生碰撞的核素，在相应的mat->nuc_id中的下标 */
-    int sab_nuc;                /* 和当前碰撞核素相应的热化核素 */
+    void *mat;                  /* 当前cell的材料 */
+    void *nuc;                  /* 当前发生碰撞的核素，在相应的mat->nuc_id中的下标 */
+    void *sab_nuc;              /* 和当前碰撞核素相应的热化核素 */
     int collision_type;         /* 当前反应的MT号 */
     double cell_tmp;            /* 当前cell的温度 */
     bool cell_tmp_changed;      /* 粒子穿面之后，所处的材料有没有发生变化 */
@@ -48,8 +47,7 @@ typedef struct{
     double macro_tot_cs;
     double macro_nu_fis_cs;
 
-    /* free-gas/sab state */
-    bool is_sab_col;            /* sab collision                       */
+    /* free-gas state */
     bool is_free_gas_col;       /* free gas collision                  */
     double erg_rel;             /* relative energy in free gas model   */
     double dir_vel[3];          /* relative velocity in free gas model */

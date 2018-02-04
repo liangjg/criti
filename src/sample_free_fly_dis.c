@@ -28,7 +28,7 @@ double sample_free_fly_dis(particle_state_t *par_state, bool erg_changed){
         goto END;
 
     /* vacuum material */
-    if(par_state->mat == 0){
+    if(par_state->mat == NULL){
         par_state->macro_tot_cs = ZERO_ERG;
         par_state->macro_nu_fis_cs = ZERO;
         goto END;
@@ -37,7 +37,7 @@ double sample_free_fly_dis(particle_state_t *par_state, bool erg_changed){
     par_state->macro_tot_cs = ZERO;
     par_state->macro_nu_fis_cs = ZERO;
 
-    mat = (mat_t *) map_get(base_mats, par_state->mat);
+    mat = par_state->mat;
 
     /*************************************************
      * calculate total cross section of each nuclide,
@@ -58,14 +58,14 @@ double sample_free_fly_dis(particle_state_t *par_state, bool erg_changed){
     }
 
     for(int i = 0; i < mat->tot_nuc_num; i++){
-        nuc = (nuclide_t *) map_get(base_nucs, (uint64_t) mat->nuc_id[i]);
-        sab_nuc = (nuclide_t *) map_get(base_nucs, (uint64_t) mat->sab_nuc_id);
+        nuc = mat->nucs[i];
+        sab_nuc = mat->sab_nuc;
 
         if(nuc->inter_pos > 0)
             if(sab_nuc == NULL && !par_state->cell_tmp_changed)
                 goto SUM_UP;
 
-        if(par_state->erg >= mat->sab_nuc_esa || nuc->zaid != sab_nuc->zaid)
+        if(par_state->erg >= mat->sab_nuc_esa || (sab_nuc && nuc->zaid != sab_nuc->zaid))
             sab_nuc = NULL;
         get_nuc_tot_fis_cs(&base_acedata, nuc, sab_nuc, par_state->erg, par_state->cell_tmp);
 

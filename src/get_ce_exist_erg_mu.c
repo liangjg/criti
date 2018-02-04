@@ -38,7 +38,6 @@ void get_ce_exist_erg_mu(const nuclide_t *nuc, int MT, double incident_erg, doub
         ///   根据Law确定质心系出射角余弦和出射能量
         react_by_laws(nuc, MT, LawType, LDAT, incident_erg, &exit_erg_cm, &exit_mu_cm);
         ///   将质心系出射角余弦和出射能量转化为实验室系出射角余弦和出射能量
-//        transform_cm_to_lab(nuc, MT, incident_erg, exit_erg_cm, exit_mu_cm, exit_erg_lab, exit_mu_lab);
         if(Get_emiss_neu_num(nuc, MT) < 0){
             double aw = nuc->atom_wgt;
             *exit_erg_lab = exit_erg_cm + (incident_erg + 2 * exit_mu_cm * (aw + 1) * sqrt(incident_erg * exit_erg_cm)) /

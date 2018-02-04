@@ -4,19 +4,13 @@
 
 #include "neutron_transport.h"
 #include "RNG.h"
-#include "material.h"
-#include "map.h"
 #include "acedata.h"
 
 
-extern map *base_nucs;
-extern map *base_mats;
-
 int sample_col_type(particle_state_t *par_state){
-    if(par_state->is_sab_col) return 0;
+    if(par_state->sab_nuc) return 0;
 
-    mat_t *mat = (mat_t *) map_get(base_mats, par_state->mat);
-    nuclide_t *nuc = (nuclide_t *) map_get(base_nucs, (uint64_t) mat->nuc_id[par_state->nuc]);
+    nuclide_t *nuc = par_state->nuc;
     while(1){
         if(get_rand() * (nuc->el + nuc->inel) - nuc->el <= ZERO)
             return 2;

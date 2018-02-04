@@ -22,7 +22,7 @@ void read_material_block(){
     char *ret, *end;
     map_entry *nuc_entry;
     nuclide_t *nuc;
-    mat_t *mat = nullptr;
+    mat_t *mat = NULL;
     int index;
     std::vector<std::pair<std::string, double>> nucs;
 
@@ -52,6 +52,7 @@ void read_material_block(){
                 /* 这里才真正更新了mat，指向新的材料，之前一直都是上一个材料 */
                 mat = mat_init();
                 map_put(base_mats, index, mat);
+                mat->id = index;
                 while(!ISNUMBER(*ret) && *ret != '-') ret++;
                 mat->user_den = strtod(ret, &end);
             } else if(strcmp(kw_start, "SAB") == 0){
@@ -71,6 +72,7 @@ void read_material_block(){
                         memset(nuc, 0x0, sizeof(nuclide_t));
                         strcpy(nuc->id, mat->sab_nuc_id);
                         map_put(base_nucs, (uint64_t) mat->sab_nuc_id, nuc);
+                        mat->sab_nuc = nuc;
                     }
                 } else{
                     puts("error SAB index.");
@@ -109,19 +111,19 @@ void _extract_nucs(mat_t *mat, std::vector<std::pair<std::string, double>> &nucs
     nuclide_t *nuc;
 
     mat->tot_nuc_num = nucs.size();
-    mat->nuc_id = (char **) malloc(mat->tot_nuc_num * sizeof(char *));
+    mat->nucs = (void **) malloc(mat->tot_nuc_num * sizeof(void *));
     mat->nuc_user_den = (double *) malloc(mat->tot_nuc_num * sizeof(double));
     for(int i = 0; i < mat->tot_nuc_num; i++){
-        mat->nuc_id[i] = (char *) malloc(12 * sizeof(char));
-        strcpy(mat->nuc_id[i], nucs[i].first.c_str());
         mat->nuc_user_den[i] = nucs[i].second;
-        nuc_entry = map_find(base_nucs, (uint64_t) mat->nuc_id[i]);
+        nuc_entry = map_find(base_nucs, (uint64_t) nucs[i].first.c_str());
         if(!nuc_entry){
             nuc = (nuclide_t *) malloc(sizeof(nuclide_t));
             memset(nuc, 0x0, sizeof(nuclide_t));
-            strcpy(nuc->id, mat->nuc_id[i]);
-            map_put(base_nucs, (uint64_t) mat->nuc_id[i], nuc);
+            strcpy(nuc->id, nucs[i].first.c_str());
+            map_put(base_nucs, (uint64_t) nuc->id, nuc);
+            mat->nucs[i] = nuc;
         }
+        else mat->nucs[i] = nuc_entry->v.val;
     }
     if(EQ_ZERO(mat->user_den))
         for(int i = 0; i < mat->tot_nuc_num; i++)

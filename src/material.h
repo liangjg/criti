@@ -8,15 +8,17 @@
 #include "common.h"
 
 typedef struct {
+    int id;
+    int tot_nuc_num;        /* 不包括热化核素在内的，该材料的所有核素数目 */
+    int tot_sab_nuc_num;
+
     double user_den;
     double atom_den;
     double gram_den;
 
-    int tot_nuc_num;        /* 不包括热化核素在内的，该材料的所有核素数目 */
-    int tot_sab_nuc_num;
-
-    char **nuc_id;
-    char sab_nuc_id[12];    /* 只考虑了只包含一个热化核素的情况 */
+    void **nucs;            /* 该material所包含的全部nuclide实例的地址 */
+    void *sab_nuc;          /* 该material所含有的sab_nuclide实例的地址 */
+    char sab_nuc_id[12];
 
     double sab_nuc_esa;
     double *nuc_user_den;

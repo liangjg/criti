@@ -8,6 +8,7 @@
 extern map *base_univs;
 extern map *base_cells;
 extern map *base_surfs;
+extern map *base_mats;
 universe_t *root_universe;
 
 int preprocess_geometry(){
@@ -17,7 +18,7 @@ int preprocess_geometry(){
     map_iterator *cell_iter, *univ_iter;
     int filled_univ_index;
     int surfs_sz, filled_lat_univs_sz;
-    int surf_index;
+    int surf_index, mat_index;
 
     cell_iter = map_get_iter(base_cells);
     while((entry = map_iter_next(cell_iter))){
@@ -37,6 +38,10 @@ int preprocess_geometry(){
             surf_index = abs(cell->surfs[i]);
             cell->surfs_addr[i] = map_get(base_surfs, surf_index);
         }
+
+        /* 调整cell->mat指针 */
+        mat_index = (int) cell->mat;
+        cell->mat = map_get(base_mats, mat_index);
     }
 
     univ_iter = map_get_iter(base_univs);

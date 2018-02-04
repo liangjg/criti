@@ -44,11 +44,11 @@ void doppler_broaden(){
         cell_iter = map_get_iter(base_cells);
         while((cell_entry = map_iter_next(cell_iter))){
             cell = cell_entry->v.val;
-            mat = map_get(base_mats, cell->mat);
+            mat = cell->mat;
             if(!mat)
                 continue;
             for(int k = 0; k < mat->tot_nuc_num; k++){
-                if(strcmp(nuc->id, mat->nuc_id[k]) == 0){
+                if(strcmp(nuc->id, ((nuclide_t *) mat->nucs[k])->id) == 0){
                     if(first_time){
                         broaden_tmp = cell->tmp;
                         first_time = false;

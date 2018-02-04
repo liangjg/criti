@@ -122,11 +122,11 @@ int main(int argc, char *argv[]){
     /* 输出material文件 */
     output_mat_file();
 
-    /* 多普勒展宽 */
-    doppler_broaden();
-
     /* 进行几何预处理，包括构建邻居栅元等等 */
     preprocess_geometry();
+
+    /* 多普勒展宽 */
+    doppler_broaden();
 
     /* run calculation */
     switch(calc_mode){

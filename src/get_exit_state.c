@@ -3,21 +3,14 @@
 //
 
 #include "neutron_transport.h"
-#include "material.h"
-#include "RNG.h"
-#include "map.h"
 #include "acedata.h"
 
 
-extern map *base_mats;
-extern map *base_nucs;
-
 void get_exit_state(particle_state_t *par_state){
-    mat_t *mat = (mat_t *) map_get(base_mats, par_state->mat);
-    nuclide_t *nuc = (nuclide_t *) map_get(base_nucs, (uint64_t) mat->nuc_id[par_state->nuc]);
-    nuclide_t *sab_nuc = (nuclide_t *) map_get(base_nucs, (uint64_t) mat->sab_nuc_id);
+    nuclide_t *nuc = par_state->nuc;
+    nuclide_t *sab_nuc = par_state->sab_nuc;
 
-    if(par_state->is_sab_col){
+    if(sab_nuc){
         treat_sab_colli_type(sab_nuc, nuc->el, nuc->inel, par_state->erg, par_state->dir, &par_state->exit_erg,
                              par_state->exit_dir);
         /* 这里似乎应该是出射能量而不是原本的能量 */
