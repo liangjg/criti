@@ -13,6 +13,8 @@
 #include "acedata.h"
 #include "material.h"
 #include "geometry.h"
+#include "map.h"
+
 
 /* 全局变量初始化 */
 unsigned base_warnings = 0;

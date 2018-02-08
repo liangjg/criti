@@ -3,6 +3,7 @@
 //
 
 #include "geometry.h"
+#include "map.h"
 
 
 extern map *base_univs;

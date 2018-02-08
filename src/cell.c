@@ -19,6 +19,8 @@ cell_t *cell_init(){
     _new_cell->fill = NULL;
     _new_cell->parent = NULL;
     _new_cell->mat = NULL;
+    _new_cell->neighbor_lists = NULL;
+    _new_cell->neighbor_lists_sz = NULL;
 
     return _new_cell;
 }
@@ -27,5 +29,9 @@ void cell_free(cell_t *obj){
     free(obj->rpn);
     free(obj->surfs);
     free(obj->surfs_addr);
+    for(int i = 0; i < obj->surfs_sz; i++)
+        free(obj->neighbor_lists[i]);
+    free(obj->neighbor_lists);
+    free(obj->neighbor_lists_sz);
     free(obj);
 }

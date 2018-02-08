@@ -4,6 +4,7 @@
 
 #include "IO_releated.h"
 #include "cell.h"
+#include "map.h"
 #include <stack>
 #include <string>
 #include <vector>

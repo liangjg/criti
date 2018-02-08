@@ -3,17 +3,13 @@
 //
 
 #include "geometry.h"
-#include "vector.h"
 
 
 void find_neighbor_cell(particle_state_t *par_state){
     double loc_pos[3], loc_dir[3];
-    int lat_index, cell_index;
-    size_t v_sz;
+    int lat_index;
     bool found = false;
-
     int level = par_state->bound_level;
-    int bound_surf = par_state->surf;
     cell_t *found_cell = NULL;
     universe_t *univ = par_state->loc_univs[level];
     universe_t *filled_univ = NULL;
@@ -36,13 +32,13 @@ void find_neighbor_cell(particle_state_t *par_state){
         }
     }
     else{
-        cell_index = ((cell_t *) univ->cells[par_state->loc_cells[level]])->id;
-        map *val = map_get(univ->neighbor_lists, cell_index);
-        vector *neighbor_cells = map_get(val, bound_surf);
-        cell_t *neighbor_cell = NULL;
-        v_sz = vector_size(neighbor_cells);
-        for(size_t i = 0; i < v_sz; i++){
-            neighbor_cell = *(cell_t **) vector_at(neighbor_cells, i);
+        cell_t *cell, *neighbor_cell;
+        int bound_index = par_state->bound_index;
+        cell = univ->cells[par_state->loc_cells[level]];
+        neighbor_cell = NULL;
+        int neighbor_sz = cell->neighbor_lists_sz[bound_index];
+        for(int i = 0; i < neighbor_sz; i++){
+            neighbor_cell = cell->neighbor_lists[bound_index][i];
             if(particle_is_in_cell(neighbor_cell, loc_pos, loc_dir)){
                 found = true;
                 break;
@@ -52,7 +48,7 @@ void find_neighbor_cell(particle_state_t *par_state){
         if(found){
             /* 不得已而为之，因为loc_cells存储的是当前universe中的第几个，而不是直接存储的cell_index */
             for(int i = 0; i < univ->cells_sz; i++)
-                if(neighbor_cell == (cell_t *) univ->cells[i]){
+                if(neighbor_cell == univ->cells[i]){
                     par_state->loc_cells[level] = i;
                     break;
                 }

@@ -5,6 +5,7 @@
 #include "IO_releated.h"
 #include "material.h"
 #include "nuclide.h"
+#include "map.h"
 #include <vector>
 #include <string>
 

@@ -26,7 +26,7 @@ double calc_dist_to_bound(particle_state_t *par_state){
     if(cell->is_inner_cell){
         for(int i = 0; i < 3; i++)
             loc_dir[i] = par_state->dir[i];
-        for(size_t i = 0; i < par_state->loc_sz; i++){
+        for(int i = 0; i < par_state->loc_sz; i++){
             univ = par_state->loc_univs[i];
             trans_univ_dir(univ, loc_dir);
         }

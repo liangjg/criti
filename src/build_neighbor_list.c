@@ -4,83 +4,47 @@
 
 #include "geometry.h"
 #include "vector.h"
+#include "map.h"
 
 
-extern map *base_univs;
-
-/* hash function prototype */
-static void _val_free(void *val);
-static uint64_t _int_hash_func(const void *key);
-static void _vector_free(void *val);
+extern map *base_cells;
 
 void build_neighbor_list(){
-    register universe_t *univ;
-    cell_t *cell1, *cell2;
+    cell_t *cell, *neighbor_cell;
+    universe_t *univ;
+    map_iterator *cell_iter;
     map_entry *entry;
-    int contained_cells;
-    int contained_surfs1, contained_surfs2;
-    map_type *type1, *type2;
-    int surf_index1, surf_index2;
+    int surf_index, surfs_sz, surfs_sz2, cells_sz, neighbor_sz;
+    vector *vec;
 
-    type1 = (map_type *)malloc(sizeof(map_type));
-    type2 = (map_type *)malloc(sizeof(map_type));
-
-    type1->hash_func = _int_hash_func;
-    type1->key_compare = NULL;
-    type1->value_dup = NULL;
-    type1->value_free = _val_free;
-
-    type2->hash_func = _int_hash_func;
-    type2->key_compare = NULL;
-    type2->value_dup = NULL;
-    type2->value_free = _vector_free;
-
-    map_iterator *univ_iter = map_get_iter(base_univs);
-
-    while((entry = map_iter_next(univ_iter))){
-        univ = entry->v.val;
-        if(univ->lattice_type)
-            continue;
-        univ->neighbor_lists = map_create(type1);
-        contained_cells = univ->cells_sz;
-        for(size_t j = 0; j < contained_cells; j++){
-            cell1 = univ->cells[j];
-            contained_surfs1 = cell1->surfs_sz;
-            map *val = map_create(type2);
-            map_put(univ->neighbor_lists, cell1->id, val);
-            for(size_t k = 0; k < contained_surfs1; k++){
-                vector *neighbor_cells = vector_init(4, sizeof(cell_t *));
-                surf_index1 = cell1->surfs[k];
-                for(size_t m = 0; m < contained_cells; m++){
-                    if(j == m) continue;
-                    cell2 = univ->cells[m];
-                    contained_surfs2 = cell2->surfs_sz;
-                    for(size_t n = 0; n < contained_surfs2; n++){
-                        surf_index2 = cell2->surfs[n];
-                        if(surf_index1 + surf_index2 == 0){
-                            vector_push_back(neighbor_cells, &cell2);
-                            break;
-                        }
-                    }
+    vec = vector_init(8, sizeof(void *));
+    cell_iter = map_get_iter(base_cells);
+    while((entry = map_iter_next(cell_iter))){
+        cell = entry->v.val;
+        univ = cell->parent;
+        cells_sz = univ->cells_sz;
+        surfs_sz = cell->surfs_sz;
+        cell->neighbor_lists = (void ***) malloc(surfs_sz * sizeof(void **));
+        cell->neighbor_lists_sz = (int *) malloc(surfs_sz * sizeof(int));
+        for(int i = 0; i < surfs_sz; i++){
+            surf_index = cell->surfs[i];
+            for(int j = 0; j < cells_sz; j++){
+                neighbor_cell = univ->cells[j];
+                surfs_sz2 = neighbor_cell->surfs_sz;
+                for(int k = 0; k < surfs_sz2; k++){
+                    if(surf_index + neighbor_cell->surfs[k] == 0)
+                        vector_push_back(vec, &neighbor_cell);
                 }
-                map_put(val, surf_index1, neighbor_cells);
             }
+
+            neighbor_sz = vector_size(vec);
+            cell->neighbor_lists_sz[i] = neighbor_sz;
+            cell->neighbor_lists[i] = (void **) malloc(neighbor_sz * sizeof(void *));
+            memcpy(cell->neighbor_lists[i], vec->start, sizeof(void *) * neighbor_sz);
+            vector_clear(vec);
         }
     }
 
-    map_release_iter(univ_iter);
-}
-
-static void _val_free(void *val){
-    map_free((map *) val);
-    free(val);
-}
-
-static uint64_t _int_hash_func(const void *key){
-    return _default_int_hash_func(*(uint32_t *) key);
-}
-
-static void _vector_free(void *val){
-    vector_free((vector *) val);
-    free(val);
+    map_release_iter(cell_iter);
+    vector_free(vec);
 }

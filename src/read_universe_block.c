@@ -3,6 +3,7 @@
 //
 
 #include "IO_releated.h"
+#include "map.h"
 
 
 extern map *base_univs;

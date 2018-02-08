@@ -15,9 +15,5 @@ universe_t *univ_init(){
 void univ_free(universe_t *obj){
     free(obj->cells);
     free(obj->filled_lat_univs);
-    if(obj->neighbor_lists){
-        map_free(obj->neighbor_lists);
-        free(obj->neighbor_lists);
-    }
     free(obj);
 }
