@@ -19,7 +19,7 @@ void treat_implicit_capture(particle_state_t *par_state){
 
     mat = (mat_t *) map_get(base_mats, par_state->mat);
     nuc = (nuclide_t *) map_get(base_nucs, (uint64_t) mat->nuc_id[par_state->nuc]);
-    par_state->wgt *= (1 - (nuc->abs + nuc->fis) / nuc->tot);
+    par_state->wgt *= (1 - nuc->abs / nuc->tot);
 
     if(par_state->wgt > WGT_CUTOFF) return;
 

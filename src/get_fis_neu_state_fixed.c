@@ -60,9 +60,9 @@ void get_fis_neu_state_fixed(particle_state_t *par_state){
                                                         base_fixed_src.fixed_src_bank_cnt);
         for(int j = 0; j < 3; j++){
             fixed_src_bank->pos[j] = par_state->pos[j];
-            fixed_src_bank->dir[j] = par_state->dir[j];
+            fixed_src_bank->dir[j] = par_state->exit_dir[j];
         }
-        fixed_src_bank->erg = par_state->erg;
+        fixed_src_bank->erg = par_state->exit_erg;
         fixed_src_bank->wgt = par_state->wgt;
 
         base_fixed_src.fixed_src_bank_cnt++;
