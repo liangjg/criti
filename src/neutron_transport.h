@@ -24,9 +24,15 @@ void treat_fission(particle_state_t *par_state);
 
 void treat_implicit_capture(particle_state_t *par_state);
 
+void treat_implicit_capture_fixed(particle_state_t *par_state);
+
 int sample_col_type(particle_state_t *par_state);
 
+int sample_col_type_fixed(particle_state_t *par_state);
+
 void get_exit_state(particle_state_t *par_state);
+
+void get_exit_state_fixed(particle_state_t *par_state);
 
 void rotate_dir(double mu, const double *old_dir, double *new_dir);
 

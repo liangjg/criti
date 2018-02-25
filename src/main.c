@@ -9,6 +9,7 @@
 #include "IO_releated.h"
 #include "RNG.h"
 #include "criticality.h"
+#include "fixed_source.h"
 #include "calculation.h"
 #include "acedata.h"
 #include "material.h"
@@ -20,6 +21,7 @@
 unsigned base_warnings = 0;
 double base_start_wgt = ZERO;
 criti_t base_criti;
+fixed_src_t base_fixed_src;
 IOfp_t base_IOfp;
 RNG_t base_RNG;
 acedata_t base_acedata;
@@ -138,7 +140,7 @@ int main(int argc, char *argv[]){
             break;
         case FIXEDSOURCE:
             puts("\n******** Calculation mode: fixed-source ********\n");
-            //            calc_fixed_source();
+            calc_fixed_source();
             break;
         case BURNUP:
             puts("\n******** Calculation mode: burnup ********\n");

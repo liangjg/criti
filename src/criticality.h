@@ -3,18 +3,11 @@
 //
 
 #include "common.h"
-#include "vector.h"
 #include "particle_state.h"
 
 
 #ifndef CRITI_CRITICALITY_H
 #define CRITI_CRITICALITY_H
-
-typedef enum{
-    POINT,
-    SLAB,
-    SPHERE
-} KSRC_T;
 
 typedef struct{
     double pos[3];
@@ -30,7 +23,7 @@ typedef struct{
     int active_cycle_num;
 
     /* 初始源参数 */
-    KSRC_T ksrc_type;
+    SRC_TYPE_T ksrc_type;
     double ksrc_para[6];
 
     int cycle_neutron_num;    /* 当前代要模拟的中子数目 */
@@ -56,8 +49,6 @@ typedef struct{
 
     fission_bank_t *fission_src;      /* 当前代要模拟的中子源，每个中子都从其中抽样产生 */
     fission_bank_t *fission_bank;     /* 存储每一代裂变产生的中子，供下一代模拟用；一般来说，src_sz = bank_sz*/
-//    vector fission_src;
-//    vector fission_bank;
 } criti_t;
 
 

@@ -6,6 +6,8 @@
 #include "map.h"
 #include "criticality.h"
 #include "IO_releated.h"
+#include "fixed_source.h"
+
 
 extern map *base_univs;
 extern map *base_cells;
@@ -13,6 +15,7 @@ extern map *base_surfs;
 extern map *base_mats;
 extern map *base_nucs;
 extern criti_t base_criti;
+extern fixed_src_t base_fixed_src;
 extern IOfp_t base_IOfp;
 
 void release_resource(){
@@ -27,10 +30,10 @@ void release_resource(){
     map_free(base_nucs);
     free(base_nucs);
 
-//    vector_free(&base_criti.fission_src);
-//    vector_free(&base_criti.fission_bank);
     free(base_criti.fission_src);
     free(base_criti.fission_bank);
+    vector_free(&base_fixed_src.fixed_src);
+    vector_free(&base_fixed_src.fixed_src_bank);
 
     /* close all FILE structure if opened */
     if(base_IOfp.opt_fp) fclose(base_IOfp.opt_fp);

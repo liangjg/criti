@@ -39,6 +39,7 @@ void read_ace_data();
 
 void output_mat_file();
 void output_summary();
+void output_summary_fixed();
 
 void output_heading();
 void output_ending();
