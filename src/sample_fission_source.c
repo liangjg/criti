@@ -13,7 +13,7 @@ extern universe_t *root_universe;
 void sample_fission_source(particle_state_t *par_state){
     memset(par_state, 0x0, sizeof(particle_state_t));
 
-    fission_bank_t *fission_src = (fission_bank_t *) vector_at(&base_criti.fission_src, base_criti.fission_src_cnt);
+    fission_bank_t *fission_src = &base_criti.fission_src[base_criti.fission_src_cnt++];
 
     for(int i = 0; i < 3; i++){
         par_state->pos[i] = fission_src->pos[i];
@@ -22,8 +22,6 @@ void sample_fission_source(particle_state_t *par_state){
 
     par_state->erg = fission_src->erg;
     par_state->wgt = base_start_wgt;
-    base_criti.fission_src_cnt++;
-
     par_state->cell = locate_particle(par_state, root_universe, par_state->pos, par_state->dir);
 
     if(!par_state->cell){

@@ -50,12 +50,14 @@ typedef struct{
     unsigned long long tot_col_cnt;
     unsigned long long col_cnt;
 
-    int fission_bank_cnt;
-    int tot_fission_bank_cnt;
-    int fission_src_cnt;
+    int fission_bank_cnt;             /* 指向fission_bank的栈顶，也就是新粒子应该存储的下标 */
+    int tot_fission_bank_cnt;         /* 在MPI中使用，用来统计所有核心产生的粒子之和 */
+    int fission_src_cnt;              /* 指向fission_src的栈顶，也就是新粒子应该抽样的下标 */
 
-    vector fission_src;     /* 当前代要模拟的中子源，每个中子都从其中抽样产生 */
-    vector fission_bank;    /* 存储每一代裂变产生的中子，供下一代模拟用；一般来说，src_sz = bank_sz*/
+    fission_bank_t *fission_src;      /* 当前代要模拟的中子源，每个中子都从其中抽样产生 */
+    fission_bank_t *fission_bank;     /* 存储每一代裂变产生的中子，供下一代模拟用；一般来说，src_sz = bank_sz*/
+//    vector fission_src;
+//    vector fission_bank;
 } criti_t;
 
 

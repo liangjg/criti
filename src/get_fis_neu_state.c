@@ -50,13 +50,11 @@ void get_fis_neu_state(particle_state_t *par_state, int fis_MT, double fis_wgt){
         } else
             get_ce_exit_state(par_state, fis_MT, false);
 
-        fission_bank_t fission_bank;
+        fission_bank_t *fission_bank = &base_criti.fission_bank[base_criti.fission_bank_cnt++];
         for(int j = 0; j < 3; j++){
-            fission_bank.pos[j] = par_state->pos[j];
-            fission_bank.dir[j] = par_state->exit_dir[j];
+            fission_bank->pos[j] = par_state->pos[j];
+            fission_bank->dir[j] = par_state->exit_dir[j];
         }
-        fission_bank.erg = par_state->exit_erg;
-        vector_push_back(&base_criti.fission_bank, &fission_bank);
-        base_criti.fission_bank_cnt++;
+        fission_bank->erg = par_state->exit_erg;
     }
 }

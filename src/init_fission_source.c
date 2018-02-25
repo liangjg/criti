@@ -17,22 +17,11 @@ void init_fission_source(){
     base_criti.cycle_neutron_num = base_criti.neu_num_per_cycle;
     base_criti.tot_start_wgt = 1.0 * base_criti.cycle_neutron_num;
 
-    size_t general_bank_sz = (size_t)(1.2 * base_criti.neu_num_per_cycle);
+    size_t general_bank_sz = (size_t)(1.5 * base_criti.neu_num_per_cycle);
+    if(general_bank_sz < 100) general_bank_sz = 100;    /* 如果要模拟的粒子数目太少了的话会导致fission_bank空间过小，有越界的可能 */
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpointer-arith"
-    base_criti.fission_bank.ele_size = sizeof(fission_bank_t);
-    base_criti.fission_bank.start = malloc(general_bank_sz * sizeof(fission_bank_t));
-    base_criti.fission_bank.value_free = NULL;
-    base_criti.fission_bank.end_of_storage = base_criti.fission_bank.start + general_bank_sz * sizeof(fission_bank_t);
-    base_criti.fission_bank.finish = base_criti.fission_bank.start;
-
-    base_criti.fission_src.ele_size = sizeof(fission_bank_t);
-    base_criti.fission_src.start = malloc(general_bank_sz * sizeof(fission_bank_t));
-    base_criti.fission_src.value_free = NULL;
-    base_criti.fission_src.end_of_storage = base_criti.fission_src.start + general_bank_sz * sizeof(fission_bank_t);
-    base_criti.fission_src.finish = base_criti.fission_src.start;
-#pragma GCC diagnostic pop
+    base_criti.fission_bank = malloc(general_bank_sz * sizeof(fission_bank_t));
+    base_criti.fission_src = malloc(general_bank_sz * sizeof(fission_bank_t));
 
     double ksi1, ksi2, ksi3;
     fission_bank_t *fission_src;
@@ -41,7 +30,7 @@ void init_fission_source(){
         case POINT:{
             for(int i = 0; i < source_cnt; i++){
                 get_rand_seed();
-                fission_src = (fission_bank_t *)vector_at(&base_criti.fission_src, i);
+                fission_src = &base_criti.fission_src[i];
                 fission_src->pos[0] = base_criti.ksrc_para[0];
                 fission_src->pos[1] = base_criti.ksrc_para[1];
                 fission_src->pos[2] = base_criti.ksrc_para[2];
@@ -55,7 +44,7 @@ void init_fission_source(){
 
             for(int i = 0; i < source_cnt; i++){
                 get_rand_seed();
-                fission_src = (fission_bank_t *)vector_at(&base_criti.fission_src, i);
+                fission_src = &base_criti.fission_src[i];
                 fission_src->pos[0] = base_criti.ksrc_para[0] + get_rand() * len_x;
                 fission_src->pos[1] = base_criti.ksrc_para[1] + get_rand() * len_y;
                 fission_src->pos[2] = base_criti.ksrc_para[2] + get_rand() * len_z;
@@ -65,7 +54,7 @@ void init_fission_source(){
         case SPHERE:{
             for(int i = 0; i < source_cnt; i++){
                 get_rand_seed();
-                fission_src = (fission_bank_t *)vector_at(&base_criti.fission_src, i);
+                fission_src = &base_criti.fission_src[i];
                 do{
                     ksi1 = TWO * get_rand() - ONE;
                     ksi2 = TWO * get_rand() - ONE;
@@ -90,7 +79,7 @@ void init_fission_source(){
 
         ksi1 = get_rand();
         ksi2 = get_rand();
-        fission_src = (fission_bank_t *)vector_at(&base_criti.fission_src, i);
+        fission_src = &base_criti.fission_src[i];
         fission_src->dir[0] = TWO * ksi2 - ONE;
         fission_src->dir[1] = sqrt(ONE - SQUARE(fission_src->dir[0])) * cos(TWO * PI * ksi1);
         fission_src->dir[2] = sqrt(ONE - SQUARE(fission_src->dir[0])) * sin(TWO * PI * ksi1);

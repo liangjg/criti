@@ -5,6 +5,7 @@
 #include "criticality.h"
 #include "IO_releated.h"
 
+
 extern criti_t base_criti;
 extern double base_start_wgt;
 extern IOfp_t base_IOfp;
@@ -42,12 +43,13 @@ void process_cycle_end(){
      * 但是这样逐个复制的开销较大。因此这里直接交换两个数组的指针，同时交换bank_sz和src_sz，
      * 用O(1)时间完成交换
      */
-    SWAP(base_criti.fission_src.start, base_criti.fission_bank.start);
-    SWAP(base_criti.fission_src.finish, base_criti.fission_bank.finish);
-    SWAP(base_criti.fission_src.end_of_storage, base_criti.fission_bank.end_of_storage);
+//    SWAP(base_criti.fission_src.start, base_criti.fission_bank.start);
+//    SWAP(base_criti.fission_src.finish, base_criti.fission_bank.finish);
+//    SWAP(base_criti.fission_src.end_of_storage, base_criti.fission_bank.end_of_storage);
+    SWAP(base_criti.fission_src, base_criti.fission_bank);
 
-    /* 将fission_bank清空，以便之后使用vector_push_back函数追加裂变产生的粒子 */
-    base_criti.fission_bank.finish = base_criti.fission_bank.start;
+//    /* 将fission_bank清空，以便之后使用vector_push_back函数追加裂变产生的粒子 */
+//    base_criti.fission_bank.finish = base_criti.fission_bank.start;
 
     base_criti.cycle_neutron_num = base_criti.fission_bank_cnt;
     base_start_wgt = ONE * base_criti.tot_start_wgt / base_criti.tot_fission_bank_cnt;

@@ -47,4 +47,5 @@ void build_neighbor_list(){
 
     map_release_iter(cell_iter);
     vector_free(vec);
+    free(vec);
 }
