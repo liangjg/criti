@@ -9,7 +9,7 @@
 BEGIN_DECL
 void calc_criticality();
 
-void calc_fixed_source();
+void calc_fixed_src();
 
 void calc_burnup();
 

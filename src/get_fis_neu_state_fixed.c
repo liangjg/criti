@@ -51,15 +51,13 @@ void get_fis_neu_state_fixed(particle_state_t *par_state){
             get_ce_exit_state(par_state, fis_MT, false);
 
         fixed_src_bank_t *fixed_src_bank;
-        fixed_src_bank = (fixed_src_bank_t *) vector_at(&base_fixed_src.fixed_src_bank,
-                                                        base_fixed_src.fixed_src_bank_cnt);
+        fixed_src_bank = &base_fixed_src.fixed_bank[base_fixed_src.fixed_bank_cnt++];
+
         for(int j = 0; j < 3; j++){
             fixed_src_bank->pos[j] = par_state->pos[j];
             fixed_src_bank->dir[j] = par_state->exit_dir[j];
         }
         fixed_src_bank->erg = par_state->exit_erg;
         fixed_src_bank->wgt = par_state->wgt;
-
-        base_fixed_src.fixed_src_bank_cnt++;
     }
 }

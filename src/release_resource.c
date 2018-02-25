@@ -32,8 +32,8 @@ void release_resource(){
 
     free(base_criti.fission_src);
     free(base_criti.fission_bank);
-    vector_free(&base_fixed_src.fixed_src);
-    vector_free(&base_fixed_src.fixed_src_bank);
+    free(base_fixed_src.fixed_src);
+    free(base_fixed_src.fixed_bank);
 
     /* close all FILE structure if opened */
     if(base_IOfp.opt_fp) fclose(base_IOfp.opt_fp);

@@ -53,9 +53,9 @@ typedef struct{
 
 
 BEGIN_DECL
-void init_fission_source();
+void init_fission_src();
 
-void sample_fission_source(particle_state_t *par_state);
+void sample_fission_src(particle_state_t *par_state);
 
 void track_history(particle_state_t *par_state);
 

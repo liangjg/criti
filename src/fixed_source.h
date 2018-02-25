@@ -29,10 +29,10 @@ typedef struct
     double tot_start_wgt;                 /* 粒子初始权重 */
 
     /* 固定源计算模式下fission_src和fission_bank */
-    vector fixed_src;
-    vector fixed_src_bank;
+    fixed_src_bank_t *fixed_src;     /* 初始粒子源 */
+    fixed_src_bank_t *fixed_bank;    /* 存储在模拟粒子过程中裂变产生的新粒子 */
     int fixed_src_cnt;
-    int fixed_src_bank_cnt;
+    int fixed_bank_cnt;
     int fixed_src_tot_bank_cnt;
 
     /* 每个粒子的碰撞次数以及总碰撞次数 */
@@ -40,24 +40,18 @@ typedef struct
     unsigned long long tot_col_cnt;
 } fixed_src_t;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+BEGIN_DECL
+void init_external_src();
 
-void init_external_source();
+void sample_fixed_src(particle_state_t *par_state);
 
-void sample_fixed_source(particle_state_t *par_state);
-
-void sample_fission_source_fixed(particle_state_t *par_state);
+void sample_fission_src_fixed(particle_state_t *par_state);
 
 void track_history_fixed(particle_state_t *par_state);
 
 void geometry_tracking_fixed(particle_state_t *par_state);
 
 void get_fis_neu_state_fixed(particle_state_t *par_state);
-
-#ifdef __cplusplus
-}
-#endif
+END_DECL
 
 #endif //CRITI_FIXED_SOURCE_H

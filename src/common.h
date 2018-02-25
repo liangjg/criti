@@ -54,7 +54,7 @@
 #define KW_NUMBER       10
 #define MAX_KW_LENGTH   15
 
-#define CODE_VERSION  "Beta 0.3.0"
+#define CODE_VERSION  "Beta 0.3.1"
 
 #define WGT_CUTOFF    0.25
 #define EG0_CUTOFF    1.0E-20
@@ -131,9 +131,7 @@ extern time_t finish_time;
 extern unsigned base_warnings;
 
 BEGIN_DECL
-
 void release_resource();
-
 END_DECL
 
 #endif //CRITI_COMMON_H
