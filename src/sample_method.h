@@ -9,7 +9,9 @@
 extern "C" {
 #endif
 
-double sample_maxwell(double T);
+double sample_maxwell_slave(double T);
+
+double sample_maxwell_host(double T);
 
 double sample_watt(double a, double b);
 

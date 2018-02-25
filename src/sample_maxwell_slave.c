@@ -1,12 +1,13 @@
 //
-// Created by xaq on 10/27/17.
+// Created by x1314aq on 18-2-25.
 //
 
 #include "sample_method.h"
 #include "RNG.h"
 #include "common.h"
 
-double sample_maxwell(double T){
+
+double sample_maxwell_slave(double T){
     //===============================================================================
     // MAXWELL_SPECTRUM samples an energy from the Maxwell fission distribution based
     // on a direct sampling scheme. The probability distribution function for a

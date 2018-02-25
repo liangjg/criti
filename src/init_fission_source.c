@@ -85,7 +85,7 @@ void init_fission_source(){
         fission_src->dir[2] = sqrt(ONE - SQUARE(fission_src->dir[0])) * sin(TWO * PI * ksi1);
 
         double T = 4.0 / 3.0;
-        fission_src->erg = sample_maxwell(T);
+        fission_src->erg = sample_maxwell_host(T);
     }
 
     base_start_wgt = ONE;

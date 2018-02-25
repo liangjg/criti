@@ -22,7 +22,7 @@ void sample_fission_source(particle_state_t *par_state){
 
     par_state->erg = fission_src->erg;
     par_state->wgt = base_start_wgt;
-    par_state->cell = locate_particle(par_state, root_universe, par_state->pos, par_state->dir);
+    par_state->cell = locate_particle_slave(par_state, root_universe, par_state->pos, par_state->dir);
 
     if(!par_state->cell){
         par_state->is_killed = true;

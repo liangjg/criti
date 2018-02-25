@@ -16,7 +16,7 @@ double sample_watt(double a, double b){
     // original Watt spectrum derivation (See F. Brown's MC lectures).
     //===============================================================================
 
-    double w = sample_maxwell(a);
+    double w = sample_maxwell_slave(a);
     double ksi = get_rand();
     return w + a * a * b / 4. + (TWO * ksi - ONE) * sqrt(a * a * b * w);
 }

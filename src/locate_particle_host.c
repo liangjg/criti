@@ -1,5 +1,5 @@
 //
-//  Created by xaq on 10/27/17.
+// Created by x1314aq on 18-2-25.
 //
 
 #include "geometry.h"
@@ -7,7 +7,7 @@
 
 extern universe_t *root_universe;
 
-cell_t *locate_particle(particle_state_t *par_state, universe_t *start_univ, const double *pos, const double *dir){
+cell_t *locate_particle_host(particle_state_t *par_state, universe_t *start_univ, const double *pos, const double *dir){
     universe_t *univ, *lat_univ;
     cell_t *cell, *found_cell;
     int level, univ_sz, cell_sz;

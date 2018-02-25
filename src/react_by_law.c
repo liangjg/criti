@@ -70,7 +70,7 @@ void react_by_laws(const nuclide_t *nuc, int MT, int law_type, int LDAT, double 
         if(CalTemp > 0){
             iter_cnt = 0;
             for(;;){
-                *exit_erg_cm = sample_maxwell(T);
+                *exit_erg_cm = sample_maxwell_slave(T);
                 if(*exit_erg_cm <= CalTemp)
                     break;
                 if((iter_cnt++) >= MAX_ITER){
@@ -339,11 +339,11 @@ void react_by_laws(const nuclide_t *nuc, int MT, int law_type, int LDAT, double 
                                  MT); //Nuclides[nuc].XSS[GetLocOfLQR(nuc) + Nuclides[nuc].MTRIndex[mt]-1]; // Q-value
         double E_max = ((Ap - 1) / Ap) * (incident_erg * aw / (aw + 1) + Q);
 
-        double lx = sample_maxwell(1);
+        double lx = sample_maxwell_slave(1);
         double ly;
 
         if(NPSX == 3)
-            ly = sample_maxwell(1);
+            ly = sample_maxwell_slave(1);
         else if(NPSX == 4){
             double temp = get_rand() * get_rand() * get_rand();
             ly = log(temp);
