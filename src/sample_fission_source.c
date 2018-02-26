@@ -6,23 +6,29 @@
 #include "geometry.h"
 
 
-extern criti_t base_criti;
+/* 全局变量，所有从核都相同 */
 extern double base_start_wgt;
 extern universe_t *root_universe;
+
+/* 从核LDM中的变量 */
+extern int fis_src_cnt;
+extern fission_bank_t fis_src_slave[400];
 
 void sample_fission_source(particle_state_t *par_state){
     memset(par_state, 0x0, sizeof(particle_state_t));
 
-    fission_bank_t *fission_src = &base_criti.fission_src[base_criti.fission_src_cnt++];
+    /* memset makes par_state->is_killed to ZERO which is false */
 
     for(int i = 0; i < 3; i++){
-        par_state->pos[i] = fission_src->pos[i];
-        par_state->dir[i] = fission_src->dir[i];
+        par_state->pos[i] = fis_src_slave[fis_src_cnt].pos[i];
+        par_state->dir[i] = fis_src_slave[fis_src_cnt].dir[i];
     }
 
-    par_state->erg = fission_src->erg;
+    par_state->erg = fis_src_slave[fis_src_cnt].erg;
     par_state->wgt = base_start_wgt;
-    par_state->cell = locate_particle_slave(par_state, root_universe, par_state->pos, par_state->dir);
+    fis_src_cnt++;
+
+    par_state->cell = locate_particle(par_state, root_universe, par_state->pos, par_state->dir);
 
     if(!par_state->cell){
         par_state->is_killed = true;

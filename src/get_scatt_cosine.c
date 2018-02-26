@@ -6,6 +6,7 @@
 #include "RNG.h"
 
 
+extern RNG_t RNG_slave;
 /// 抽样得到出射角余弦
 ///
 /// @param[in] nNuc 碰撞核素Index
@@ -17,7 +18,7 @@ double get_scatt_cosine(const nuclide_t *nuc, int MT, double incident_erg){
 
     /* 各向同性的情况 */
     if(nuc->LAND[MT] == 0){
-        exit_mu_cm = 2 * get_rand() - 1;
+        exit_mu_cm = 2 * get_rand_slave(&RNG_slave) - 1;
         return exit_mu_cm;
     }
 
@@ -44,20 +45,20 @@ double get_scatt_cosine(const nuclide_t *nuc, int MT, double incident_erg){
         }
         Ei = nuc->XSS[min];
         Eii = nuc->XSS[max];
-        if(get_rand() < (incident_erg - Ei) / (Eii - Ei))
+        if(get_rand_slave(&RNG_slave) < (incident_erg - Ei) / (Eii - Ei))
             min = max;
         LC = (int) (nuc->XSS[min + NE]);
     }
 
     if(LC == 0){    /* 各向同性的情况 */
-        exit_mu_cm = 2 * get_rand() - 1;
+        exit_mu_cm = 2 * get_rand_slave(&RNG_slave) - 1;
         return exit_mu_cm;
     }
 
     int LOCC2;
     LOCC2 = Get_loc_of_AND(nuc) + abs(LC) - 1;
     if(LC > 0){    /* 32等概率余弦表 */
-        Ksi = 32 * get_rand();
+        Ksi = 32 * get_rand_slave(&RNG_slave);
         Ksi_int = (int) (Ksi);
         exit_mu_cm = nuc->XSS[LOCC2 + Ksi_int] +
                      (Ksi - Ksi_int) * (nuc->XSS[LOCC2 + Ksi_int + 1] - nuc->XSS[LOCC2 + Ksi_int]);
@@ -73,7 +74,7 @@ double get_scatt_cosine(const nuclide_t *nuc, int MT, double incident_erg){
 
         min = LOCC2 + 2 * AND_NP + 2;
         max = LOCC2 + 3 * AND_NP + 1;
-        Ksi = get_rand();
+        Ksi = get_rand_slave(&RNG_slave);
         while(max - min > 1){
             mid = (min + max) / 2;
             if(Ksi >= nuc->XSS[mid])
@@ -100,7 +101,7 @@ END:
     if(!(exit_mu_cm >= -1.000001 && exit_mu_cm <= 1.000001)){
         printf("exit mu out of range. nuc=%d, MT=%d, Mu_cm=%20.16f\n", nuc->zaid, MT, exit_mu_cm);
         base_warnings++;
-        exit_mu_cm = 2 * get_rand() - 1;
+        exit_mu_cm = 2 * get_rand_slave(&RNG_slave) - 1;
     }
 
     return exit_mu_cm;

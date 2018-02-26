@@ -2,11 +2,10 @@
 // Created by xaq on 10/27/17.
 //
 
-#include "common.h"
-
-
 #ifndef CRITI_PARTICLE_STATE_H
 #define CRITI_PARTICLE_STATE_H
+
+#include "common.h"
 
 typedef struct{
     /* basic state */
@@ -56,7 +55,6 @@ typedef struct{
 
 
 BEGIN_DECL
-//void Fly_by_length(double length);
 #define Fly_by_length(_length)    \
     do{    \
         par_state->pos[0] += par_state->dir[0] * (_length);  \
@@ -65,7 +63,7 @@ BEGIN_DECL
         par_state->loc_pos[0] += par_state->loc_dir[0] * (_length);  \
         par_state->loc_pos[1] += par_state->loc_dir[1] * (_length);  \
         par_state->loc_pos[2] += par_state->loc_dir[2] * (_length);  \
-} while(0)
+    } while(0)
 END_DECL
 
 #endif //CRITI_PARTICLE_STATE_H

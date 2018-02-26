@@ -8,10 +8,13 @@
 #include "nuclide.h"
 
 
+/* 从核LDM上的全局变量 */
+extern RNG_t RNG_slave;
+
 void sample_col_nuclide(particle_state_t *par_state){
     mat_t *mat;
     nuclide_t *nuc, *sab_nuc;
-    double sample_cutoff = par_state->macro_tot_cs * get_rand();
+    double sample_cutoff = par_state->macro_tot_cs * get_rand_slave(&RNG_slave);
 
     mat = par_state->mat;
     double sigt_sum2 = ZERO;

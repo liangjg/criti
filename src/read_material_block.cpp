@@ -15,7 +15,7 @@ extern IOfp_t base_IOfp;
 extern map *base_nucs;
 
 /* -------------------------- private prototypes ---------------------------- */
-void _extract_nucs(mat_t *mat, std::vector<std::pair<std::string, double>> &nucs);
+void _extract_nucs(mat_t *mat, std::vector<std::pair<std::string, double> > &nucs);
 
 /* ----------------------------- API implementation ------------------------- */
 void read_material_block(){
@@ -25,7 +25,7 @@ void read_material_block(){
     nuclide_t *nuc;
     mat_t *mat = NULL;
     int index;
-    std::vector<std::pair<std::string, double>> nucs;
+    std::vector<std::pair<std::string, double> > nucs;
 
     while((ret = fgets(buf, MAX_LINE_LENGTH, base_IOfp.inp_fp))){
         while(ISSPACE(*ret)) ret++;
@@ -107,7 +107,7 @@ void read_material_block(){
 }
 
 /* ------------------------ private API implementation ---------------------- */
-void _extract_nucs(mat_t *mat, std::vector<std::pair<std::string, double>> &nucs){
+void _extract_nucs(mat_t *mat, std::vector<std::pair<std::string, double> > &nucs){
     map_entry *nuc_entry;
     nuclide_t *nuc;
 

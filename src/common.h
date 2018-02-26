@@ -5,23 +5,14 @@
 #ifndef CRITI_COMMON_H
 #define CRITI_COMMON_H
 
-#ifdef __cplusplus
-#include <cstdlib>
-    #include <cstdio>
-    #include <cmath>
-    #include <cstring>
-    #include <cfloat>
-    #include <ctime>
-    #include <cstdbool>
-#else
-    #include <stdlib.h>
-    #include <stdio.h>
-    #include <math.h>
-    #include <string.h>
-    #include <float.h>
-    #include <time.h>
-    #include <stdbool.h>
-#endif
+#include <stdlib.h>
+#include <stdio.h>
+#include <math.h>
+#include <string.h>
+#include <float.h>
+#include <time.h>
+#include <stdbool.h>
+
 
 #ifdef USE_MPI
     #include <mpi.h>
@@ -61,10 +52,14 @@
 #define MAX_WORLD_LENGTH     20
 #define MAX_FILENAME_LENGTH  50
 
+/* 64个从核，每个从核一次需要400个粒子的数据 */
+#define NUMBERS_PER_TRANS    25600    /* 64*400=25600 */
+#define NUMBERS_SLAVES       64
+
 #define KW_NUMBER       10
 #define MAX_KW_LENGTH   15
 
-#define CODE_VERSION  "Beta 2.5.7"
+#define CODE_VERSION  "Beta 0.2.8"
 
 #define WGT_CUTOFF    0.25
 #define EG0_CUTOFF    1.0E-20
@@ -120,7 +115,7 @@ typedef enum{
     CRITICALITY = 1,
     BURNUP,
     POINTBURN,
-    FIXEDSOURCE,
+    FIXEDSOURCE
 } CALC_MODE_T;
 
 /* time elapsed */
@@ -130,14 +125,8 @@ extern time_t finish_time;
 /* warnings found */
 extern unsigned base_warnings;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
+BEGIN_DECL
 void release_resource();
-
-#ifdef __cplusplus
-}
-#endif
+END_DECL
 
 #endif //CRITI_COMMON_H

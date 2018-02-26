@@ -7,6 +7,7 @@
 
 #include "common.h"
 
+
 typedef struct {
     char id[12];
     int zaid;

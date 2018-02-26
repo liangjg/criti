@@ -6,6 +6,7 @@
 #include "RNG.h"
 
 
+extern RNG_t RNG_slave;
 /// 计算连续能量Ace截面情形下的出射角余弦和出射能量
 ///
 /// @param[in] nuc 碰撞核素
@@ -61,6 +62,6 @@ void get_ce_exist_erg_mu(const nuclide_t *nuc, int MT, double incident_erg, doub
     if(!(*exit_mu_lab >= -1.000001 && *exit_mu_lab <= 1.000001)){
         printf("exit mu_lab out of range. nuc=%d, MT=%d, Mu=%f\n", nuc->zaid, MT, *exit_mu_lab);
         base_warnings++;
-        *exit_mu_lab = 2 * get_rand() - 1.;
+        *exit_mu_lab = 2 * get_rand_slave(&RNG_slave) - 1.;
     }
 }

@@ -6,6 +6,7 @@
 #include "RNG.h"
 
 
+extern RNG_t RNG_slave;
 /// 抽样得到非弹性散射的Law
 ///
 /// @param[in] nNuc 碰撞核素Index
@@ -51,7 +52,7 @@ int get_law_type(const nuclide_t *nuc, const int MT, const double incident_erg, 
             E1 = nuc->XSS[LOCC + 4 + 2 * NR + j];
             if(incident_erg <= E1) {
                 E0 = nuc->XSS[LOCC + 4 + 2 * NR + j - 1];
-                if(get_rand() < (incident_erg - E0) / (E1 - E0)) { //  En  or  En+1
+                if(get_rand_slave(&RNG_slave) < (incident_erg - E0) / (E1 - E0)) { //  En  or  En+1
                     which_Pi = j + 1;
                     Pi = nuc->XSS[LOCC + 4 + 2 * NR + NE + j];
                 } else {
@@ -63,7 +64,7 @@ int get_law_type(const nuclide_t *nuc, const int MT, const double incident_erg, 
         }
     }
 
-    ksi = get_rand();
+    ksi = get_rand_slave(&RNG_slave);
     while(ksi > Pi) {
         Pi = Pi + nuc->XSS[LDIS + LNW + 4 + 2 * NR + NE + which_Pi - 1];
         if(ksi <= Pi) {

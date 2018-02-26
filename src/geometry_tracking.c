@@ -7,7 +7,8 @@
 #include "geometry.h"
 
 
-extern criti_t base_criti;
+/* 从核自身LDM中的变量 */
+extern double keff_wgt_sum_slave[3];
 
 void geometry_tracking(particle_state_t *par_state){
     double FFL;    /* free fly length */
@@ -15,7 +16,7 @@ void geometry_tracking(particle_state_t *par_state){
     double distance;
     int iter_cnt = 0;
     bool par_on_surf = false;
-    par_state->surf = 0;    /* particle is not on surface at hte beginning */
+    par_state->surf = 0;    /* particle is not on surface at the beginning */
 
     do{
         if(iter_cnt++ > MAX_ITER){

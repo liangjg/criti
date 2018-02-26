@@ -27,7 +27,7 @@ void find_neighbor_cell(particle_state_t *par_state){
             par_state->loc_cells[level] = lat_index;
             filled_univ = univ->filled_lat_univs[lat_index - 1];
             trans_univ_coord(filled_univ, loc_pos, loc_dir);
-            found_cell = locate_particle_slave(par_state, filled_univ, loc_pos, loc_dir);
+            found_cell = locate_particle(par_state, filled_univ, loc_pos, loc_dir);
             if(found_cell) found = true;
         }
     }
@@ -57,13 +57,13 @@ void find_neighbor_cell(particle_state_t *par_state){
             filled_univ = neighbor_cell->fill;
             if(filled_univ){    /* neighbor_cell is a complex cell with universe filled */
                 trans_univ_coord(filled_univ, loc_pos, loc_dir);
-                found_cell = locate_particle_slave(par_state, filled_univ, loc_pos, loc_dir);
+                found_cell = locate_particle(par_state, filled_univ, loc_pos, loc_dir);
             }
         }
     }
 
     if(!found)
-        found_cell = locate_particle_slave(par_state, par_state->loc_univs[0], par_state->pos, par_state->dir);
+        found_cell = locate_particle(par_state, par_state->loc_univs[0], par_state->pos, par_state->dir);
 
     par_state->cell = found_cell;
 }

@@ -5,6 +5,9 @@
 #ifndef CRITI_RNG_H
 #define CRITI_RNG_H
 
+#include "common.h"
+
+
 /* linear congruential RNGs
  * r(k) = S(k)/p
  * S(k+1) = [ g * S(k) + c ] mod p
@@ -28,16 +31,16 @@ typedef struct RNG{
     int position_pre;
 } RNG_t;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+BEGIN_DECL
+double get_rand_slave(RNG_t *RNG);
 
-double get_rand();
-void set_RNG_paras(int type);
-void get_rand_seed();
+double get_rand_host(RNG_t *RNG);
 
-#ifdef __cplusplus
-}
-#endif
+void get_rand_seed_slave(RNG_t *RNG);
+
+void get_rand_seed_host(RNG_t *RNG);
+
+void set_RNG_paras(RNG_t *RNG, int type);
+END_DECL
 
 #endif //CRITI_RNG_H

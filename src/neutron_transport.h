@@ -2,16 +2,14 @@
 // Created by xaq on 10/27/17.
 //
 
-#include "common.h"
-#include "particle_state.h"
-
 #ifndef CRITI_NEUTRON_TRANSPORT_H
 #define CRITI_NEUTRON_TRANSPORT_H
 
-#ifdef __cplusplus
-extern "C"{
-#endif
+#include "common.h"
+#include "particle_state.h"
 
+
+BEGIN_DECL
 void geometry_tracking(particle_state_t *par_state);
 
 double sample_free_fly_dis(particle_state_t *par_state, bool erg_changed);
@@ -33,9 +31,6 @@ void rotate_dir(double mu, const double *old_dir, double *new_dir);
 void treat_free_gas_model(particle_state_t *par_state, double nuc_wgt);
 
 void get_ce_exit_state(particle_state_t *par_state, int MT, bool is_free_gas_col);
-
-#ifdef __cplusplus
-}
-#endif
+END_DECL
 
 #endif //CRITI_NEUTRON_TRANSPORT_H

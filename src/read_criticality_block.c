@@ -14,7 +14,7 @@ extern RNG_t base_RNG;
 void read_criticality_block(){
     /* set the default arguments for base_criti and base_RNG */
     base_criti.keff_final = 1.0;
-    set_RNG_paras(2);
+    set_RNG_paras(&base_RNG, 2);
 
     char buf[256];
     char *ret;
@@ -46,7 +46,7 @@ void read_criticality_block(){
                 if(strcmp(sub_kw_start, "POPULATION") == 0){
                     while(!ISNUMBER(*ret)) ret++;
                     char *end;
-                    base_criti.neu_num_per_cycle = strtol(ret, &end, 10);
+                    base_criti.cycle_neutron_num = strtol(ret, &end, 10);
                     ret = end;
                     base_criti.inactive_cycle_num = strtol(ret, &end, 10);
                     ret = end;

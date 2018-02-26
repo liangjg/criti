@@ -72,11 +72,6 @@ int calc_surf_sense(surface_t *obj, const double pos[3], const double dir[3]){
             sense = SQUARE(x) + SQUARE(y) - SQUARE(obj->paras[0]);
             break;
         }
-        default:{
-            puts("unknown surface type.");
-            release_resource();
-            exit(0);
-        }
     }
 
     if(fabs(sense) < EPSILON){
