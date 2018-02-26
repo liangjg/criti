@@ -4,9 +4,10 @@
 
 #include "RNG.h"
 #include "criticality.h"
+#include "nuclide.h"
 #include "slave.h"
 
-
+#define __thread_local
 __thread_local volatile unsigned int get_reply, put_reply;
 __thread_local int my_id;
 
@@ -21,6 +22,9 @@ __thread_local unsigned int offset_get;
 
 /* 写回主核时的offset */
 __thread_local unsigned int offset_put;
+
+/* 每个从核在输运过程中存储核素截面的结构 */
+__thread_local nuc_cs_t *nuc_cs_slave;
 
 /* ***********************************************************************
  * 每个从核LDM中都保存了1000个fission_bank_t对象，其中400个用于存储这一代需要
@@ -52,6 +56,7 @@ extern unsigned int offset_put_per_slave[NUMBERS_SLAVES];
 extern double keff_wgt_sum[NUMBERS_SLAVES][3];
 extern RNG_t RNGs[NUMBERS_SLAVES];
 extern int col_cnt[NUMBERS_SLAVES];
+extern nuc_cs_t *base_nuc_cs[NUMBERS_SLAVES];
 
 void do_calc(){
     void *start_addr;
@@ -83,6 +88,10 @@ void do_calc(){
     athread_get(PE_MODE, &RNGs[my_id], &RNG_slave, sizeof(RNG_t), &get_reply, 0, 0, 0);
     while(get_reply != 5);
 
+    /* 从主核处取得nuc_cs地址 */
+    athread_get(PE_MODE, &base_nuc_cs[my_id], &nuc_cs_slave, sizeof(nuc_cs_t), &get_reply, 0, 0, 0);
+    while(get_reply != 6);
+
     /* 从主核处取得put的位置偏移 */
     athread_get(PE_MODE, &offset_put_per_slave[my_id], &offset_put, sizeof(unsigned int), &get_reply, 0, 0, 0);
 
@@ -103,7 +112,7 @@ void do_calc(){
     }
 
     /* 等待最后一次athread_get完成 */
-    while(get_reply != 6);
+    while(get_reply != 7);
 
     /* 写回计算结果 */
     athread_put(PE_MODE, keff_wgt_sum_slave, &keff_wgt_sum[my_id], 3 * sizeof(double), &put_reply, 0, 0);

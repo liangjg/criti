@@ -8,14 +8,16 @@
 
 
 extern acedata_t base_acedata;
+extern nuc_cs_t *nuc_cs_slave;
 
 void calc_col_nuc_cs(particle_state_t *par_state){
     if(par_state->sab_nuc)
         return;
 
     nuclide_t *nuc = par_state->nuc;
-    par_state->interp_N0 = nuc->inter_pos;
-    par_state->interp_K0 = nuc->inter_frac;
+    nuc_cs_t *cur_nuc_cs = &nuc_cs_slave[nuc->cs];
+    par_state->interp_N0 = cur_nuc_cs->inter_pos;
+    par_state->interp_K0 = cur_nuc_cs->inter_frac;
 
     if(par_state->cell_tmp > 1.0E-24 &&
        (par_state->erg < 400 * par_state->cell_tmp || nuc->atom_wgt <= 1.5)){

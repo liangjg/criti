@@ -15,13 +15,15 @@ extern criti_t base_criti;
 extern fission_bank_t fis_bank_slave[600];
 extern int fis_bank_cnt;
 extern RNG_t RNG_slave;
+extern nuc_cs_t *nuc_cs_slave;
 
 void get_fis_neu_state(particle_state_t *par_state, int fis_MT, double fis_wgt){
     nuclide_t *nuc = par_state->nuc;
+    nuc_cs_t *cur_nuc_cs = &nuc_cs_slave[nuc->cs];
     double erg = par_state->erg;
     int fis_neu_num = (int) (fis_wgt + get_rand_slave(&RNG_slave));
     double nu_delayed = get_delayed_nu(nuc, erg);
-    double beta = nu_delayed / nuc->nu;
+    double beta = nu_delayed / cur_nuc_cs->nu;
     int fis_bank_cnt_local = fis_bank_cnt;
 
     for(int i = 0; i < fis_neu_num; i++){

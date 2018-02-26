@@ -40,6 +40,15 @@ typedef struct {
     int inel_XSS_sz;
 
     /* cross sections */
+    int cs;
+
+//    int prob_table_flag;
+} nuclide_t;
+
+
+typedef struct {
+    nuclide_t *nuc;
+
     double tot;
     double abs;
     double el;
@@ -49,8 +58,7 @@ typedef struct {
 
     int inter_pos;
     double inter_frac;
-//    int prob_table_flag;
-} nuclide_t;
+} nuc_cs_t;
 
 BEGIN_DECL
 /*ce ace data */

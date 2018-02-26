@@ -9,7 +9,7 @@
 
 
 typedef struct {
-    int id;                  /* universe id */
+    int id;
     double origin[3];
     double rotation[3][3];
     bool is_moved;
@@ -26,10 +26,6 @@ typedef struct {
 
     void **cells;             /* 存储的是直接的cell实例地址，而不是某个数组的下标 */
     int cells_sz;             /* 当前universe包含的cell数目 */
-
-    /* 在同一个universe内部，每个cell基于每个面的唯一的一个邻居(cell)的cell_id */
-    /* 当前neighbor_lists实现的是map嵌套map，即map<cell_index, map<surface_index, address of neighbor_cell_index>> */
-//    map *neighbor_lists;
 
     void *parent;             /* 包含当前universe的的上级结构，可能是cell，也可能是另一个universe */
 } universe_t;
@@ -48,18 +44,6 @@ static const char universe_kw[UNIV_KW_NUMBER][UNIV_MAX_KW_LENGTH] = {
         "FILL"
 };
 
-/////////////////// hexagon lattice ///////////////////////
-///             E                                       ///
-///             *               / b1 = (L1, 0)          ///
-///           *   *            /                        ///
-///      F  *       * D       /                         ///
-///         *   O   *        /------> b2=(0.5*L1, H)    ///
-///      A  *       * C                                 ///
-///           *   *                                     ///
-///             *            <FA,AB> = sita             ///
-///             B                                       ///
-///  1: FA ,  2: AB ,  3: BC ,  4: CD , 5: DE ,  6: EF  ///
-///////////////////////////////////////////////////////////
 
 BEGIN_DECL
 universe_t *univ_init();

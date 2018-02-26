@@ -6,20 +6,20 @@
 #include "global_fun.h"
 
 
-void get_nuc_tot_fis_cs(acedata_t *obj, nuclide_t *nuc, nuclide_t *sab_nuc, double erg, double cell_tmp){
-//    enum eAdjustCsByPTOrNot{NotAdjustCsByPT = 0, AdjustCsByPT = 1};
+extern nuc_cs_t *nuc_cs_slave;
 
+void get_nuc_tot_fis_cs(acedata_t *obj, nuclide_t *nuc, nuclide_t *sab_nuc, double erg, double cell_tmp){
     int NE = Get_erg_grid_num(nuc);
+    nuc_cs_t *cur_nuc_cs = &nuc_cs_slave[nuc->cs];
 
     /////////////////////// Cal NU /////////////////////////////
-    nuc->nu = get_total_nu(nuc, erg);
+    cur_nuc_cs->nu = get_total_nu(nuc, erg);
 
-    //////// binary search for Interpolation parameters /////////
     int min, max;
     min = 1;
     max = NE;
 
-    nuc->inter_pos = get_intplt_pos_fr(nuc->XSS, erg, min, max, &nuc->inter_frac);
+    cur_nuc_cs->inter_pos = get_intplt_pos_fr(nuc->XSS, erg, min, max, &cur_nuc_cs->inter_frac);
 
 //    if(use_ptable){
 //        nuc->prob_table_flag = NotAdjustCsByPT;
@@ -35,8 +35,8 @@ void get_nuc_tot_fis_cs(acedata_t *obj, nuclide_t *nuc, nuclide_t *sab_nuc, doub
 
     //tot_cs:
     if(!sab_nuc){
-        nuc->tot = intplt_by_pos_fr(nuc->XSS, nuc->inter_pos + NE, nuc->inter_frac);
-        nuc->fis = intplt_by_pos_fr(nuc->fis_XSS, nuc->inter_pos, nuc->inter_frac);
+        cur_nuc_cs->tot = intplt_by_pos_fr(nuc->XSS, cur_nuc_cs->inter_pos + NE, cur_nuc_cs->inter_frac);
+        cur_nuc_cs->fis = intplt_by_pos_fr(nuc->fis_XSS, cur_nuc_cs->inter_pos, cur_nuc_cs->inter_frac);
 
         /* 多普勒展宽总截面 */
         if(nuc->broaden_tmp == ZERO && nuc->broaden_tmp != cell_tmp){ //th_ad:  thermal adjustment
@@ -52,8 +52,8 @@ void get_nuc_tot_fis_cs(acedata_t *obj, nuclide_t *nuc, nuclide_t *sab_nuc, doub
                     bi = (int) (b);
                     f = (obj->therm_func[bi] + (b - bi) * (obj->therm_func[bi + 1] - obj->therm_func[bi])) / a - ONE;
                 }
-                j = nuc->inter_pos + 3 * Get_erg_grid_num(nuc);
-                nuc->tot += f * (nuc->XSS[j] + nuc->inter_frac * (nuc->XSS[j + 1] - nuc->XSS[j]));
+                j = cur_nuc_cs->inter_pos + 3 * Get_erg_grid_num(nuc);
+                cur_nuc_cs->tot += f * (nuc->XSS[j] + cur_nuc_cs->inter_frac * (nuc->XSS[j + 1] - nuc->XSS[j]));
             }
         }
         return;

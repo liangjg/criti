@@ -12,11 +12,13 @@ extern acedata_t base_acedata;
 
 /* 从核LDM上的全局变量 */
 extern RNG_t RNG_slave;
+extern nuc_cs_t *nuc_cs_slave;
 
 double sample_free_fly_dis(particle_state_t *par_state, bool erg_changed){
     mat_t *mat;
     nuclide_t *nuc, *sab_nuc;
     double nuc_atom_den;
+    nuc_cs_t *cur_nuc_cs;
 
     /***********************************************************************
      * 如果粒子当前的材料以及材料温度与上次相比都没有发生变化，那么直接使用上一次的计算结果
@@ -45,6 +47,7 @@ double sample_free_fly_dis(particle_state_t *par_state, bool erg_changed){
 
     for(int i = 0; i < mat->tot_nuc_num; i++){
         nuc = mat->nucs[i];
+        cur_nuc_cs = &nuc_cs_slave[nuc->cs];
         sab_nuc = mat->sab_nuc;
         nuc_atom_den = mat->nuc_atom_den[i];
 
@@ -53,9 +56,9 @@ double sample_free_fly_dis(particle_state_t *par_state, bool erg_changed){
 
         get_nuc_tot_fis_cs(&base_acedata, nuc, sab_nuc, par_state->erg, par_state->cell_tmp);
 
-        par_state->macro_tot_cs += nuc_atom_den * nuc->tot;
-        if(GT_ZERO(nuc->fis))
-            par_state->macro_nu_fis_cs += nuc_atom_den * nuc->fis * nuc->nu;
+        par_state->macro_tot_cs += nuc_atom_den * cur_nuc_cs->tot;
+        if(GT_ZERO(cur_nuc_cs->fis))
+            par_state->macro_nu_fis_cs += nuc_atom_den * cur_nuc_cs->fis * cur_nuc_cs->nu;
     }
 
     if(!GT_ZERO(par_state->macro_tot_cs)){

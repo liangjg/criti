@@ -9,13 +9,16 @@
 
 /* 从核LDM上的全局变量 */
 extern RNG_t RNG_slave;
+extern nuc_cs_t *nuc_cs_slave;
 
 void treat_implicit_capture(particle_state_t *par_state){
     nuclide_t *nuc;
     double wgt_survival;
+    nuc_cs_t *cur_nuc_cs;
 
     nuc = par_state->nuc;
-    par_state->wgt *= (1 - (nuc->abs + nuc->fis) / nuc->tot);
+    cur_nuc_cs = &nuc_cs_slave[nuc->cs];
+    par_state->wgt *= (1 - (cur_nuc_cs->abs + cur_nuc_cs->fis) / cur_nuc_cs->tot);
 
     if(par_state->wgt > WGT_CUTOFF) return;
 

@@ -23,6 +23,7 @@ criti_t base_criti;
 IOfp_t base_IOfp;
 RNG_t base_RNG;
 acedata_t base_acedata;
+nuc_cs_t *base_nuc_cs[NUMBERS_SLAVES];
 
 /* key: universe index; val: corresponding universe instance address */
 map *base_univs;

@@ -14,6 +14,7 @@ extern map *base_nucs;
 extern map *base_mats;
 extern IOfp_t base_IOfp;
 extern acedata_t base_acedata;
+extern nuc_cs_t *base_nuc_cs[NUMBERS_SLAVES];
 
 int _dppler_brdn_nuc_tmp(acedata_t *obj, nuclide_t *nuc, double tmp);
 
@@ -27,6 +28,7 @@ void doppler_broaden(){
     nuclide_t *nuc;
     cell_t *cell;
     map_entry *cell_entry, *nuc_entry;
+    int tot_nucs;
     int cnt;
     double broaden_tmp;
     bool first_time;    /* 是否所有cell都是相同的温度 */
@@ -34,8 +36,10 @@ void doppler_broaden(){
     map_iterator *cell_iter;
 
     cnt = 0;
+    tot_nucs = 0;
     while((nuc_entry = map_iter_next(nuc_iter))){
         nuc = nuc_entry->v.val;
+        nuc->cs = tot_nucs++;
         nuc->broaden_tmp = nuc->tmp;
         if(!ISNUMBER(*nuc->id))
             continue;
@@ -69,6 +73,21 @@ END:
     fputs("===================== Cross-section doppler broaden ====================\n", base_IOfp.mat_fp);
     fprintf(base_IOfp.mat_fp, "Doppler broaden applied to %d nuclide.\n", cnt);
     fputs("========================================================================\n", base_IOfp.mat_fp);
+
+    /* 设置nuc->cs和nuc_cs->nuc之间的对应关系 */
+    for(int i = 0; i < NUMBERS_SLAVES; i++)
+        base_nuc_cs[i] = malloc(tot_nucs * sizeof(nuc_cs_t));
+
+    nuc_cs_t *nuc_cs;
+    nuc_iter = map_get_iter(base_nucs);
+    while((nuc_entry = map_iter_next(nuc_iter))){
+        nuc = nuc_entry->v.val;
+        for(int i = 0; i < NUMBERS_SLAVES; i++){
+            nuc_cs = &base_nuc_cs[i][nuc->cs];
+            nuc_cs->nuc = nuc;
+        }
+    }
+    map_release_iter(nuc_iter);
 }
 
 int _dppler_brdn_nuc_tmp(acedata_t *obj, nuclide_t *nuc, double tmp){

@@ -6,12 +6,15 @@
 #include "acedata.h"
 
 
+extern nuc_cs_t *nuc_cs_slave;
+
 void get_exit_state(particle_state_t *par_state){
     nuclide_t *nuc = par_state->nuc;
     nuclide_t *sab_nuc = par_state->sab_nuc;
+    nuc_cs_t *cur_nuc_cs = &nuc_cs_slave[nuc->cs];
 
     if(sab_nuc){
-        treat_sab_colli_type(sab_nuc, nuc->el, nuc->inel, par_state->erg, par_state->dir, &par_state->exit_erg,
+        treat_sab_colli_type(sab_nuc, cur_nuc_cs->el, cur_nuc_cs->inel, par_state->erg, par_state->dir, &par_state->exit_erg,
                              par_state->exit_dir);
         /* 这里似乎应该是出射能量而不是原本的能量 */
         if(par_state->erg <= EG0_CUTOFF)

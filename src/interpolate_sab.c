@@ -6,11 +6,14 @@
 #include "global_fun.h"
 
 
+extern nuc_cs_t *nuc_cs_slave;
+
 void interpolate_sab(nuclide_t *nuc, nuclide_t *sab_nuc, double erg){
     int min, max;
     int NE_el, NE_inel;
     int sab_n_el, sab_n_inel;
     double SIG_sab_el, SIG_sab_inel, sab_k_el, sab_k_inel;
+    nuc_cs_t *cur_nuc_cs;
 
     /////////////// calculate the s(a,b) inelastic scattering cross section ///////////////
     NE_inel = (int)(sab_nuc->XSS[Get_loc_of_sab_inel_erg(sab_nuc)]);
@@ -43,13 +46,13 @@ void interpolate_sab(nuclide_t *nuc, nuclide_t *sab_nuc, double erg){
         }
     }
 
-    //if(Nuclides[nuclide_sab]->ProbTableFlag==1){printf("TreatURR conflict with sab \n");}
-    int nn = nuc->inter_pos;
-    double kk = nuc->inter_frac;
+    cur_nuc_cs = &nuc_cs_slave[nuc->cs];
+    int nn = cur_nuc_cs->inter_pos;
+    double kk = cur_nuc_cs->inter_frac;
     int NE = Get_erg_grid_num(nuc);
-    nuc->abs = nuc->XSS[nn + 2 * NE] + kk * (nuc->XSS[nn + 2 * NE + 1] - nuc->XSS[nn + 2 * NE]);
-    nuc->tot = nuc->abs + SIG_sab_el + SIG_sab_inel;
-    nuc->el = SIG_sab_el;
-    nuc->inel = SIG_sab_inel;
-    nuc->fis = 0;
+    cur_nuc_cs->abs = nuc->XSS[nn + 2 * NE] + kk * (nuc->XSS[nn + 2 * NE + 1] - nuc->XSS[nn + 2 * NE]);
+    cur_nuc_cs->tot = cur_nuc_cs->abs + SIG_sab_el + SIG_sab_inel;
+    cur_nuc_cs->el = SIG_sab_el;
+    cur_nuc_cs->inel = SIG_sab_inel;
+    cur_nuc_cs->fis = 0;
 }
