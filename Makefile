@@ -2,7 +2,7 @@
 # Set environment variables for the build.
 
 # Set the target
-TARGET = bin/criti
+TARGET = build/bin/criti
 
 # Set the C host compiler
 CC_HOST = sw5cc -host
@@ -20,7 +20,7 @@ LINKER = sw5CC -hybrid
 C_FLAGS = -Wall -Wextra -pedantic -Wno-pointer-arith -O0 -g
 
 # Set the C defines
-C_DEFINES = -DGIT_SHA1=\"8246369b203113383acf5dbb43a49ae11efcd794\" -DUNIX
+C_DEFINES = -DGIT_SHA1=\"7905542bd4146a3df5b2881f779075ff067e6867\" -DUNIX
 
 # Set the C header files search path
 C_INCLUDES = 
@@ -29,7 +29,7 @@ C_INCLUDES =
 CXX_FLAGS = -Wall -Wextra -pedantic -Wno-pointer-arith -O0 -g
 
 # Set the CXX defines
-CXX_DEFINES = -DGIT_SHA1=\"8246369b203113383acf5dbb43a49ae11efcd794\" -DUNIX
+CXX_DEFINES = -DGIT_SHA1=\"7905542bd4146a3df5b2881f779075ff067e6867\" -DUNIX
 
 # Set the CXX header files search path
 CXX_INCLUDES = 
