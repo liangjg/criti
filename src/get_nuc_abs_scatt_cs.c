@@ -10,11 +10,8 @@ extern nuc_cs_t *nuc_cs_slave;
 
 void get_nuc_abs_scatt_cs(acedata_t *obj, nuclide_t *nuc, double erg, int interp_pos0, double interp_frac0,
                           int interp_pos, double interp_frac){
-    /* URR case: NucInterpCs[CurrentNUCLIDE][0,1,2,3,4] have been calculated in subroutine "TreatURR" */
-//    if(obj->nucs[nNuc]->prob_table_flag == 1)
-//        return;
 
-    ///////// Norma case: interpolate SIG (a,el,inel) //////////
+    /* Norma case: interpolate SIG (a,el,inel) */
     int NE = Get_erg_grid_num(nuc);
     nuc_cs_t *cur_nuc_cs = &nuc_cs_slave[nuc->cs];
     cur_nuc_cs->abs = intplt_by_pos_fr(nuc->XSS, interp_pos0 + 2 * NE, interp_frac0);  // absorption, E0

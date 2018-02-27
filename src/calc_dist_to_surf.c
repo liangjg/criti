@@ -9,15 +9,15 @@ static double _do_calc_dist(double a1, double b1, bool is_at_surf);
 
 double calc_dist_to_surf(surface_t *obj, const double pos[3], const double dir[3], bool is_at_surf){
     double x, y, z, u, v, w;
+    double t1, t2, t3, a1, b1;
+    double dts = -ONE;
+
     x = pos[0];
     y = pos[1];
     z = pos[2];
     u = dir[0];
     v = dir[1];
     w = dir[2];
-    double t1, t2, t3, a1, b1;
-
-    double dts = -ONE;
 
     switch(obj->type){
         case P:{

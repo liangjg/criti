@@ -12,10 +12,14 @@ extern IOfp_t base_IOfp;
 int _identify_univ_kw(char *kw);
 
 void read_universe_block(char *buf){
+    int i, j;
+    int index;
+    char *kw_start, *end;
+
     if(*buf == 0) return;
 
     while(ISSPACE(*buf)) buf++;
-    int index = 0;
+    index = 0;
     if(ISNUMBER(*buf))
         do{
             index *= 10;
@@ -31,19 +35,18 @@ void read_universe_block(char *buf){
 
     while(!ISRETURN(*buf) && !ISCOMMENT(*buf)){
         while(ISSPACE(*buf)) buf++;
-        char *kw_start = buf;
+        kw_start = buf;
         while(ISALPHA(*buf)){
             *buf = TOUPPER(*buf);
             buf++;
         }
         *buf = 0;
 
-        char *end;
         switch(_identify_univ_kw(kw_start)){
             case 0:{    /* MOVE */
                 while(!ISNUMBER(*buf) && *buf != '-') buf++;
                 univ->is_moved = true;
-                for(int i = 0; i < 3; i++){
+                for(i = 0; i < 3; i++){
                     univ->origin[i] = strtod(buf, &end);
                     buf = end;
                 }
@@ -52,8 +55,8 @@ void read_universe_block(char *buf){
             case 1:{    /* ROTATE */
                 while(!ISNUMBER(*buf) && *buf != '-') buf++;
                 univ->is_rotated = true;
-                for(int i = 0; i < 3; i++){
-                    for(int j = 0; j < 3; j++){
+                for(i = 0; i < 3; i++){
+                    for(j = 0; j < 3; j++){
                         univ->rotation[i][j] = strtod(buf, &end);
                         buf = end;
                     }
@@ -73,7 +76,7 @@ void read_universe_block(char *buf){
             }
             case 3:{    /* PITCH */
                 while(!ISNUMBER(*buf)) buf++;
-                for(int i = 0; i < 3; i++){
+                for(i = 0; i < 3; i++){
                     univ->pitch[i] = strtod(buf, &end);
                     buf = end;
                 }
@@ -81,7 +84,7 @@ void read_universe_block(char *buf){
             }
             case 4:{    /* SCOPE */
                 while(!ISNUMBER(*buf)) buf++;
-                for(int i = 0; i < 3; i++){
+                for(i = 0; i < 3; i++){
                     univ->scope[i] = strtol(buf, &end, 10);
                     buf = end;
                 }
@@ -97,7 +100,7 @@ void read_universe_block(char *buf){
                 int filled_lat_univs_sz = univ->scope[0] * univ->scope[1];
                 if(univ->lattice_type == 1) filled_lat_univs_sz *= univ->scope[2];
                 univ->filled_lat_univs = (void **) malloc(filled_lat_univs_sz * sizeof(void *));
-                for(int i = 0; i < filled_lat_univs_sz; i++){
+                for(i = 0; i < filled_lat_univs_sz; i++){
                     int lat_index;
                     fscanf(base_IOfp.inp_fp, "%d", &lat_index);
                     univ->filled_lat_univs[i] = (void *) (lat_index);

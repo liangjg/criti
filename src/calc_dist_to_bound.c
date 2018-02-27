@@ -15,25 +15,27 @@ double calc_dist_to_bound(particle_state_t *par_state){
     double loc_pos[3];
     double loc_dir[3];
     int signed_surf_index, surf_index, lat_index, lat_bound_surf;
-    int univ_cell_index;
+    int univ_cell_index, at_surf;
     double dist_min, distance;
+    int i, j, k;
+
+    at_surf = abs(par_state->surf);
     dist_min = 1.0E+22;
-    int at_surf = abs(par_state->surf);
     par_state->surf = 0;
     par_state->lat_bound_surf = -1;
 
     cell = par_state->cell;
     if(cell->is_inner_cell){
-        for(int i = 0; i < 3; i++)
+        for(i = 0; i < 3; i++)
             loc_dir[i] = par_state->dir[i];
-        for(int i = 0; i < par_state->loc_sz; i++){
+        for(i = 0; i < par_state->loc_sz; i++){
             univ = par_state->loc_univs[i];
             trans_univ_dir(univ, loc_dir);
         }
-        for(int i = 0; i < 3; i++)
+        for(i = 0; i < 3; i++)
             par_state->loc_dir[i] = loc_dir[i];
 
-        for(int i = 0; i < cell->surfs_sz; i++){
+        for(i = 0; i < cell->surfs_sz; i++){
             signed_surf_index = cell->surfs[i];
             surf_index = abs(signed_surf_index);
             surf = cell->surfs_addr[i];
@@ -48,12 +50,12 @@ double calc_dist_to_bound(particle_state_t *par_state){
         par_state->lat_bound_surf = 0;
         par_state->bound_level = par_state->loc_sz - 1;
     } else{
-        for(int i = 0; i < 3; i++){
+        for(i = 0; i < 3; i++){
             loc_pos[i] = par_state->pos[i];
             loc_dir[i] = par_state->dir[i];
         }
 
-        for(int i = 0; i < par_state->loc_sz; i++){
+        for(i = 0; i < par_state->loc_sz; i++){
             univ = par_state->loc_univs[i];
             trans_univ_coord(univ, loc_pos, loc_dir);
 
@@ -67,7 +69,7 @@ double calc_dist_to_bound(particle_state_t *par_state){
                     par_state->bound_level = i;
                     par_state->lat_bound_surf = lat_bound_surf;
                     par_state->surf = 0;
-                    for(int j = 0; j < 3; j++){
+                    for(j = 0; j < 3; j++){
                         par_state->loc_pos[j] = loc_pos[j];
                         par_state->loc_dir[j] = loc_dir[j];
                     }
@@ -78,7 +80,7 @@ double calc_dist_to_bound(particle_state_t *par_state){
             univ_cell_index = par_state->loc_cells[i];
             cell = univ->cells[univ_cell_index];
 
-            for(int j = 0; j < cell->surfs_sz; j++){
+            for(j = 0; j < cell->surfs_sz; j++){
                 signed_surf_index = cell->surfs[j];
                 surf_index = abs(signed_surf_index);
                 surf = cell->surfs_addr[j];
@@ -90,7 +92,7 @@ double calc_dist_to_bound(particle_state_t *par_state){
                     par_state->lat_bound_surf = 0;
                     par_state->bound_level = i;
                     par_state->bound_index = j;
-                    for(int k = 0; k < 3; k++){
+                    for(k = 0; k < 3; k++){
                         par_state->loc_pos[k] = loc_pos[k];
                         par_state->loc_dir[k] = loc_dir[k];
                     }

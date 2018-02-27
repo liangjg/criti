@@ -12,6 +12,7 @@ extern double base_start_wgt;
 extern RNG_t RNGs[64];
 
 void init_fission_source(){
+    int i, j, k;
     int remainder1, remainder2;
     int quotient;
 
@@ -22,20 +23,20 @@ void init_fission_source(){
     /* 计算第一代的fission_src_cnt */
     base_criti.tot_transfer_num = base_criti.cycle_neutron_num / NUMBERS_PER_TRANS;
     remainder1 = base_criti.cycle_neutron_num - NUMBERS_PER_TRANS * base_criti.tot_transfer_num;
-    for(int i = 0; i < NUMBERS_SLAVES; i++)
+    for(i = 0; i < NUMBERS_SLAVES; i++)
         base_criti.fission_src_cnt[i] = base_criti.tot_transfer_num * 400;
     if(remainder1 > 0){
         base_criti.tot_transfer_num++;
         quotient = remainder1 / NUMBERS_SLAVES;
         remainder2 = remainder1 - quotient * NUMBERS_SLAVES;
-        for(int i = 0; i < NUMBERS_SLAVES; i++)
+        for(i = 0; i < NUMBERS_SLAVES; i++)
             base_criti.fission_src_cnt[i] += quotient;
         if(remainder2 > 0)
-            for(int i = 0; i < remainder2; i++)
+            for(i = 0; i < remainder2; i++)
                 base_criti.fission_src_cnt[i] += 1;
     }
 
-    for(int i = 0; i < NUMBERS_SLAVES; i++){
+    for(i = 0; i < NUMBERS_SLAVES; i++){
         size_t sz = (size_t) (1.5 * base_criti.fission_src_cnt[i]);
         if(sz < 100) sz = 100;
         base_criti.fission_src[i] = malloc(sz * sizeof(fission_bank_t));
@@ -47,9 +48,9 @@ void init_fission_source(){
     int fis_src_cnt = 0;
     switch(base_criti.ksrc_type){
         case POINT:{
-            for(int i = 0; i < NUMBERS_SLAVES; i++){
+            for(i = 0; i < NUMBERS_SLAVES; i++){
                 fis_src_cnt = base_criti.fission_src_cnt[i];
-                for(int j = 0; j < fis_src_cnt; j++){
+                for(j = 0; j < fis_src_cnt; j++){
                     get_rand_seed_host(&base_RNG);
                     fission_src = &base_criti.fission_src[i][j];
                     fission_src->pos[0] = base_criti.ksrc_para[0];
@@ -64,9 +65,9 @@ void init_fission_source(){
             double len_y = base_criti.ksrc_para[3] - base_criti.ksrc_para[2];
             double len_z = base_criti.ksrc_para[5] - base_criti.ksrc_para[4];
 
-            for(int i = 0; i < NUMBERS_SLAVES; i++){
+            for(i = 0; i < NUMBERS_SLAVES; i++){
                 fis_src_cnt = base_criti.fission_src_cnt[i];
-                for(int j = 0; j < fis_src_cnt; j++){
+                for(j = 0; j < fis_src_cnt; j++){
                     get_rand_seed_host(&base_RNG);
                     fission_src = &base_criti.fission_src[i][j];
                     fission_src->pos[0] = base_criti.ksrc_para[0] + get_rand_host(&base_RNG) * len_x;
@@ -77,9 +78,9 @@ void init_fission_source(){
             break;
         }
         case SPHERE:{
-            for(int i = 0; i < NUMBERS_SLAVES; i++){
+            for(i = 0; i < NUMBERS_SLAVES; i++){
                 fis_src_cnt = base_criti.fission_src_cnt[i];
-                for(int j = 0; j < fis_src_cnt; j++){
+                for(j = 0; j < fis_src_cnt; j++){
                     get_rand_seed_host(&base_RNG);
                     fission_src = &base_criti.fission_src[i][j];
                     do{
@@ -102,9 +103,9 @@ void init_fission_source(){
     base_RNG.position_pre = -1000;
     base_RNG.position = 0;
 
-    for(int i = 0; i < NUMBERS_SLAVES; i++){
+    for(i = 0; i < NUMBERS_SLAVES; i++){
         fis_src_cnt = base_criti.fission_src_cnt[i];
-        for(int j = 0; j < fis_src_cnt; j++){
+        for(j = 0; j < fis_src_cnt; j++){
             get_rand_seed_host(&base_RNG);
 
             ksi1 = get_rand_host(&base_RNG);
@@ -126,11 +127,11 @@ void init_fission_source(){
 
     /* 为所有从核准备初始的RNG */
     memcpy(&RNGs[0], &base_RNG, sizeof(RNG_t));    /* 将当前的base_RNG复制到RNGs[0]，也就是准备好了0号从核的RNG */
-    for(int i = 1; i < NUMBERS_SLAVES; i++){       /* 准备1～63号从核的RNG */
+    for(i = 1; i < NUMBERS_SLAVES; i++){       /* 准备1～63号从核的RNG */
         memcpy(&RNGs[i], &RNGs[i - 1], sizeof(RNG_t));
 
         int skip_src = base_criti.fission_src_cnt[i - 1];
-        for(int j = 1; j < skip_src; j++)
+        for(j = 1; j < skip_src; j++)
             get_rand_seed_host(&RNGs[i]);
     }
 

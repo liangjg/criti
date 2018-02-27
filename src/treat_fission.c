@@ -21,6 +21,7 @@ void treat_fission(particle_state_t *par_state){
     nuc_cs_t *cur_nuc_cs;
     double fis_sub_cs[5];
     double fis_R;
+    int i;
 
     nuc = par_state->nuc;
     cur_nuc_cs = &nuc_cs_slave[nuc->cs];
@@ -30,7 +31,7 @@ void treat_fission(particle_state_t *par_state){
     if(nuc->LSIG[18] > 0)  /* 总裂变截面MT=18存在 */
         fis_sub_cs[0] = get_nuc_mt_cs(nuc, 18, par_state->interp_N0, par_state->interp_K0);
     else
-        for(int i = 1; i < 5; i++)
+        for(i = 1; i < 5; i++)
             fis_sub_cs[i] = get_nuc_mt_cs(nuc, fis_MT[i], par_state->interp_N0, par_state->interp_K0);
 
     Estimate_keff_abs(par_state->wgt, cur_nuc_cs->nu, cur_nuc_cs->fis, cur_nuc_cs->tot);
@@ -41,7 +42,7 @@ void treat_fission(particle_state_t *par_state){
             get_fis_neu_state(par_state, fis_MT[0], fis_R);
         }
     } else{
-        for(int i = 1; i < 5; i++){
+        for(i = 1; i < 5; i++){
             if(fis_sub_cs[i] > 0){
                 fis_R = par_state->wgt * cur_nuc_cs->nu * fis_sub_cs[i] / cur_nuc_cs->tot / keff_final;
                 get_fis_neu_state(par_state, fis_MT[i], fis_R);

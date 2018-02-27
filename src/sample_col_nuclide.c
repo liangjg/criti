@@ -16,11 +16,14 @@ void sample_col_nuclide(particle_state_t *par_state){
     mat_t *mat;
     nuclide_t *nuc, *sab_nuc;
     nuc_cs_t *cur_nuc_cs;
-    double sample_cutoff = par_state->macro_tot_cs * get_rand_slave(&RNG_slave);
+    double sigt_sum2;
+    double sample_cutoff;
+    int i;
 
+    sample_cutoff = par_state->macro_tot_cs * get_rand_slave(&RNG_slave);
     mat = par_state->mat;
-    double sigt_sum2 = ZERO;
-    for(int i = 0; i < mat->tot_nuc_num; i++){
+    sigt_sum2 = ZERO;
+    for(i = 0; i < mat->tot_nuc_num; i++){
         nuc = mat->nucs[i];
         cur_nuc_cs = &nuc_cs_slave[nuc->cs];
         sigt_sum2 += cur_nuc_cs->tot * mat->nuc_atom_den[i];

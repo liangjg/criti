@@ -7,6 +7,7 @@
 
 
 void get_ce_exit_state(particle_state_t *par_state, int MT, bool is_free_gas_col){
+    int i;
     double exit_mu_lab;
     double exit_erg_lab;
     nuclide_t *nuc = par_state->nuc;
@@ -21,10 +22,10 @@ void get_ce_exit_state(particle_state_t *par_state, int MT, bool is_free_gas_col
 
         atom_tmp = nuc->atom_wgt / par_state->cell_tmp;
         temp1 = sqrt(exit_erg_lab * atom_tmp);
-        for(int i = 0; i < 3; i++)
+        for(i = 0; i < 3; i++)
             par_state->exit_dir[i] = temp1 * par_state->exit_dir[i] + par_state->vel_tgt[i];
         temp2 = SQUARE(par_state->exit_dir[0]) + SQUARE(par_state->exit_dir[1]) + SQUARE(par_state->exit_dir[2]);
-        for(int i = 0; i < 3; i++)
+        for(i = 0; i < 3; i++)
             par_state->exit_dir[i] /= sqrt(temp2);
         par_state->exit_erg = temp2 / atom_tmp;
     } else{    /* 转换出射方向 */

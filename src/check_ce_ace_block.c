@@ -17,6 +17,7 @@ void check_ce_ace_block(){
     double esa1, esa2;
     int location;
     int *old_addr, old_sz;
+    int j, k;
     map_iterator *mat_iter = map_get_iter(base_mats);
     map_iterator *nuc_iter = map_get_iter(base_nucs);
 
@@ -24,17 +25,11 @@ void check_ce_ace_block(){
     while((entry = map_iter_next(nuc_iter))){
         nuc = (nuclide_t *) entry->v.val;
         if(ISNUMBER(*nuc->id)){
-            /// NU block
-            /// MTR &  LSIG &  LAND  &  LDLW
-            /// number of reactions excluding elastic
             int NMT_4 = Get_non_el_mt_num(nuc);
-            /// NO MT array
             if(NMT_4 == 0){
-                /// maximum MT = 107 is requireed for reaction rate tally
                 nuc->MTR_index_sz = 110;
                 nuc->MTR_index = (int *) malloc(sizeof(int) * nuc->MTR_index_sz);
                 nuc->LAND_sz = 3;
-                /// elastic LAND
                 nuc->LAND = (int *) malloc(sizeof(int) * nuc->LAND_sz);
                 nuc->LAND[2] = (int) (nuc->XSS[Get_loc_of_LAND(nuc)]);
             } else{
@@ -48,17 +43,17 @@ void check_ce_ace_block(){
                 MT_max_5 = (int) (MAX(nuc->XSS[L3 + NMT_5 - 1], nuc->XSS[L3]));
                 nuc->MTR_index_sz = MAX(110, MT_max_4 + 1);
                 nuc->MTR_index = (int *) malloc(
-                        sizeof(int) * nuc->MTR_index_sz); // need MT=107 when tally reaction rate
+                        sizeof(int) * nuc->MTR_index_sz);
                 nuc->LSIG_sz = MAX(110, MT_max_4 + 1);
                 nuc->LSIG = (int *) malloc(
-                        sizeof(int) * nuc->LSIG_sz);             //  only containing NXS_5 MT actually
+                        sizeof(int) * nuc->LSIG_sz);
                 nuc->LAND_sz = MT_max_5 + 3;
                 nuc->LAND = (int *) malloc(
-                        sizeof(int) * nuc->LAND_sz);           //  only containing NXS_5 MT actually
-                nuc->LAND[2] = (int) (nuc->XSS[L8]);                              //  elastic LAND
+                        sizeof(int) * nuc->LAND_sz);
+                nuc->LAND[2] = (int) (nuc->XSS[L8]);
                 nuc->LDLW_sz = MT_max_5 + 3;
                 nuc->LDLW = (int *) malloc(sizeof(int) * nuc->LDLW_sz);
-                for(int j = 1; j <= NMT_4; j++){
+                for(j = 1; j <= NMT_4; j++){
                     int MT_temp = (int) (nuc->XSS[L3 + j - 1]);
                     if(MT_temp <= 0){
                         printf("negative MT = %d for nuclide %s", MT_temp, nuc->id);
@@ -100,11 +95,11 @@ void check_ce_ace_block(){
             nuc->inel_XSS = (double *) malloc(sizeof(double) * (NE + 1));
 
             bool MT_18_exist = false;
-            for(int j = 1; j <= Get_erg_grid_num(nuc); j++){
+            for(j = 1; j <= Get_erg_grid_num(nuc); j++){
                 nuc->fis_XSS[j] = 0;
                 nuc->inel_XSS[j] = 0;
                 int loc = Get_loc_of_MTR(nuc) - 1;
-                for(int k = 1; k <= Get_non_el_mt_num_with_neu(nuc); k++){
+                for(k = 1; k <= Get_non_el_mt_num_with_neu(nuc); k++){
                     int MT_temp = (int) (nuc->XSS[loc + k]);
 
                     if(MT_temp <= 0){
@@ -146,7 +141,7 @@ void check_ce_ace_block(){
             sab_nuc = mat->sab_nuc;
             if(!sab_nuc)
                 continue;
-            for(int j = 0; j < mat->tot_nuc_num; j++){
+            for(j = 0; j < mat->tot_nuc_num; j++){
                 nuc = mat->nucs[j];
                 if(nuc->zaid == sab_nuc->zaid){
                     location = Get_loc_of_sab_inel_erg(sab_nuc);

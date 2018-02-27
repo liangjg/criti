@@ -15,11 +15,10 @@ extern int fis_src_cnt;
 extern fission_bank_t fis_src_slave[400];
 
 void sample_fission_source(particle_state_t *par_state){
+    int i;
+
     memset(par_state, 0x0, sizeof(particle_state_t));
-
-    /* memset makes par_state->is_killed to ZERO which is false */
-
-    for(int i = 0; i < 3; i++){
+    for(i = 0; i < 3; i++){
         par_state->pos[i] = fis_src_slave[fis_src_cnt].pos[i];
         par_state->dir[i] = fis_src_slave[fis_src_cnt].dir[i];
     }

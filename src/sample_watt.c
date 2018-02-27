@@ -14,8 +14,9 @@ double sample_watt(RNG_t *RNG, double a, double b){
     // spectrum. This direct sampling scheme is an unpublished scheme based on the
     // original Watt spectrum derivation (See F. Brown's MC lectures).
     //===============================================================================
+    double w, ksi;
 
-    double w = sample_maxwell(RNG, a);
-    double ksi = get_rand_slave(RNG);
+    w = sample_maxwell_slave(RNG, a);
+    ksi = get_rand_slave(RNG);
     return w + a * a * b / 4. + (TWO * ksi - ONE) * sqrt(a * a * b * w);
 }

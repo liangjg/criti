@@ -35,9 +35,10 @@ int find_lat_index(universe_t *obj, const double pos[3], const double dir[3]) {
 
 /* ------------------------ private API implementation ---------------------- */
 int _find_lat_index_rect(universe_t *obj, const double pos[3], const double dir[3]) {
+    int i;
     int lat_index = 0;
     int xyz[3];
-    for(int i = 0; i < 3; ++i){
+    for(i = 0; i < 3; ++i){
         if(obj->scope[i] == 1)
             xyz[i] = 0;
         else {
@@ -59,26 +60,19 @@ int _find_lat_index_rect(universe_t *obj, const double pos[3], const double dir[
 }
 
 int _find_lat_index_hex(universe_t *obj, const double pos[3], const double dir[3]) {
-    //////////////////////////////// calculate lattice parameters ///////////////////////////////////
-    double pos1 = pos[0], pos2 = pos[1];             //// point position in 2D rectangular coordinates
-    double dir1 = dir[0], dir2 = dir[1];             //// point direction in 2D rectangular coordinates
-    double len1 = obj->pitch[0];                      //// dLen2 = Pitch[1];
-    double dis2 = 0.5 * len1 * obj->cos_sita + obj->height * obj->sin_sita; ////  distance between AB and DE
+    double pos1 = pos[0], pos2 = pos[1];
+    double dir1 = dir[0], dir2 = dir[1];
+    double len1 = obj->pitch[0];
+    double dis2 = 0.5 * len1 * obj->cos_sita + obj->height * obj->sin_sita;
 
 
-    ////////////////////////////////// find parallelogram index  ////////////////////////////////////
-    ////////////////// AM = k1*b1 + k2*b2, where b1=(L1,0) and b2 = (L1/2,height)  ////////////////////
     double dK2 = pos2 / obj->height;
     double dK1 = (pos1 - dK2 * 0.5 * len1) / len1;
-    int i1 = (int)(floor(dK1)); //// note: ik1,ik2 may be start from -1
+    int i1 = (int)(floor(dK1));
     int i2 = (int)(floor(dK2));
-    ///////////////////// offset r1 r2 to parallelogram of index 0 //////////////////////////
     pos1 = pos1 - (i1 * len1 + i2 * 0.5 * len1);
     pos2 = pos2 - i2 * obj->height;
 
-
-
-    ///////////////////////////////// find hexagon index ///////////////////////////////////////////
     double sense1 = pos1 - len1;
     if(fabs(sense1) < EPSILON)
         sense1 = dir1 > 0 ? 1 : -1;
@@ -116,7 +110,6 @@ int _find_lat_index_hex(universe_t *obj, const double pos[3], const double dir[3
         }
     }
 
-    /////////////////////////////// convert to single-number index //////////////////////////////////
     int nLat_index = -1;
     if(i1 >= 0 && i2 >= 0 && i1 < obj->scope[0] && i2 < obj->scope[1])
         nLat_index = 1 + i1 + obj->scope[0] * i2;

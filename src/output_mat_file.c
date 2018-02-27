@@ -16,6 +16,8 @@ void output_mat_file(){
     mat_t *mat;
     map_entry *entry;
     int tot_nuc_num;
+    int j;
+
     map_iterator *mat_iter = map_get_iter(base_mats);
 
     fprintf(base_IOfp.mat_fp, "====================== Material Information Start ======================\n");
@@ -27,7 +29,7 @@ void output_mat_file(){
         tot_nuc_num = mat->tot_nuc_num;
         fprintf(base_IOfp.mat_fp, "%-4llu          Sum         %.5E      %.5E      %.5E\n", entry->key,
                 mat->gram_den, mat->atom_den, mat->user_den);
-        for(int j = 0; j < tot_nuc_num; j++)
+        for(j = 0; j < tot_nuc_num; j++)
             fprintf(base_IOfp.mat_fp, "           %-10s     %.5E      %.5E      %.5E\n", ((nuclide_t *)mat->nucs[j])->id,
                     mat->nuc_gram_den[j], mat->nuc_atom_den[j], mat->nuc_user_den[j]);
     }

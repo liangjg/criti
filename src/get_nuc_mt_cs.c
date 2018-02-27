@@ -7,10 +7,10 @@
 
 
 double get_nuc_mt_cs(nuclide_t *nuc, int MT, int interp_pos, double interp_frac){
-    if(MT >= nuc->LSIG_sz) /// fix bug: 2013-07-13
+    if(MT >= nuc->LSIG_sz)
         return 0;
 
-    if(nuc->LSIG[MT] <= 0)    // mt number is not found
+    if(nuc->LSIG[MT] <= 0)
         return 0;
 
     int IE_LOCA = Get_loc_of_SIG(nuc) + nuc->LSIG[MT] - 1;

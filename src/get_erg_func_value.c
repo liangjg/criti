@@ -13,7 +13,6 @@ double get_erg_func_value(const nuclide_t *nuc, int LDAT, double erg){
     int E_grid_base = LDAT + 2 * num_of_interp_region + 1;
     int num_of_erg_grid = (int) (nuc->XSS[E_grid_base]);
 
-    //use the extreme value if erg is off either end of the table.
     if(erg >= nuc->XSS[E_grid_base + num_of_erg_grid]){
         Ti = nuc->XSS[E_grid_base + 2 * num_of_erg_grid];
         return Ti;
@@ -22,7 +21,6 @@ double get_erg_func_value(const nuclide_t *nuc, int LDAT, double erg){
         return Ti;
     }
 
-    //binary search for the location of erg in the table.
     int min = E_grid_base + 1;
     int max = E_grid_base + num_of_erg_grid;
 
@@ -35,19 +33,17 @@ double get_erg_func_value(const nuclide_t *nuc, int LDAT, double erg){
     func_val_1 = nuc->XSS[pos + num_of_erg_grid];
     func_val_2 = nuc->XSS[pos + 1 + num_of_erg_grid];
 
-    //find out which kind of interpolation should be used.
     if(num_of_interp_region == 0){
         Ti = func_val_1 + (func_val_2 - func_val_1) * (erg - erg_1) / (erg_2 - erg_1);
         return Ti;
     }
-    int n = 0;
+    int n;
     for(n = 1; n <= num_of_interp_region; n++){
         if(pos + 1 - E_grid_base <= (int) (nuc->XSS[LDAT + n]))
             goto Interp;
     }
     n = num_of_interp_region;
 
-    // interpolate between table entries.
 Interp:
     switch((int) (nuc->XSS[LDAT + num_of_interp_region + n])){
         case 1 :{

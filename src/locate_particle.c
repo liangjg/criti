@@ -13,8 +13,9 @@ cell_t *locate_particle(particle_state_t *par_state, universe_t *start_univ, con
     int level, univ_sz, cell_sz;
     double local_pos_temp[3];
     double local_dir_temp[3];
+    int i, j;
 
-    for(int i = 0; i < 3; i++){
+    for(i = 0; i < 3; i++){
         local_pos_temp[i] = pos[i];
         local_dir_temp[i] = dir[i];
     }
@@ -51,7 +52,7 @@ cell_t *locate_particle(particle_state_t *par_state, universe_t *start_univ, con
             trans_univ_coord(lat_univ, local_pos_temp, local_dir_temp);
             univ = lat_univ;
         } else{    /* current universe has some cells and has no lattice */
-            for(int i = 0; i < univ->cells_sz; i++){
+            for(i = 0; i < univ->cells_sz; i++){
                 cell = univ->cells[i];
                 if(particle_is_in_cell(cell, local_pos_temp, local_dir_temp)){
                     par_state->loc_cells[cell_sz++] = i;
@@ -60,7 +61,7 @@ cell_t *locate_particle(particle_state_t *par_state, universe_t *start_univ, con
                         univ = cell->fill;
                         break;
                     } else{    /* current cell is a simple cell which has no fills */
-                        for(int j = 0; j < 3; j++){
+                        for(j = 0; j < 3; j++){
                             par_state->loc_pos[j] = local_pos_temp[j];
                             par_state->loc_dir[j] = local_dir_temp[j];
                         }

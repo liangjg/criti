@@ -19,6 +19,7 @@ double sample_free_fly_dis(particle_state_t *par_state, bool erg_changed){
     nuclide_t *nuc, *sab_nuc;
     double nuc_atom_den;
     nuc_cs_t *cur_nuc_cs;
+    int i;
 
     /***********************************************************************
      * 如果粒子当前的材料以及材料温度与上次相比都没有发生变化，那么直接使用上一次的计算结果
@@ -45,7 +46,7 @@ double sample_free_fly_dis(particle_state_t *par_state, bool erg_changed){
      * and then, sum them up.
      *************************************************/
 
-    for(int i = 0; i < mat->tot_nuc_num; i++){
+    for(i = 0; i < mat->tot_nuc_num; i++){
         nuc = mat->nucs[i];
         cur_nuc_cs = &nuc_cs_slave[nuc->cs];
         sab_nuc = mat->sab_nuc;

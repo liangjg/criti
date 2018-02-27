@@ -21,25 +21,6 @@ vector *vector_init(int n, size_t ele_size){
     return _v;
 }
 
-//size_t vector_size(vector *v){
-//    return (size_t) ((v->finish - v->start) / v->ele_size);
-//}
-//
-//size_t vector_capacity(vector *v){
-//    return (size_t) ((v->end_of_storage - v->start) / v->ele_size);
-//}
-
-//void *vector_at(vector *v, size_t position){
-//#if defined(_DEBUG) || defined(DEBUG)
-//    if(position >= vector_size(v)){
-//        puts("out of range!.");
-//        printf("size: %d, position: %d", vector_size(v), position);
-//        return NULL;
-//    }
-//#endif
-//    return v->start + position * v->ele_size;
-//}
-
 void *vector_back(vector *v){
     return v->finish - v->ele_size;
 }
@@ -54,7 +35,8 @@ void vector_push_back(vector *v, void *element){
 
     register char *des = (char *)v->finish;
     register char *src = (char *)element;
-    for(size_t i = 0; i < v->ele_size; i++)
+    size_t i;
+    for(i = 0; i < v->ele_size; i++)
         *des++ = *src++;
     v->finish = des;
 }
@@ -77,7 +59,8 @@ void vector_resize(vector *v, size_t new_size){
 void vector_clear(vector *v){
     if(v->value_free){
         size_t sz = vector_size(v);
-        for(size_t i = 0; i < sz; i++)
+        size_t i;
+        for(i = 0; i < sz; i++)
             v->value_free(vector_at(v, i));
     }
     v->finish = v->start;
@@ -92,6 +75,7 @@ void vector_insert(vector *v, size_t position, void *element){
     else if(final == v->finish) vector_push_back(v, element);
     else{
         /* 整体移动后继元素 */
+        size_t i;
         register char *des = (char *)(v->finish + v->ele_size);
         register char *src = (char *)v->finish;
         void *ret = (void *)des;
@@ -102,7 +86,7 @@ void vector_insert(vector *v, size_t position, void *element){
         /* 插入新元素 */
         des = final;
         src = element;
-        for(size_t i = 0; i < v->ele_size; i++)
+        for(i = 0; i < v->ele_size; i++)
             *des++ = *src++;
 
         v->finish = ret;
@@ -119,7 +103,6 @@ void vector_erase(vector *v, size_t position){
 
     while(src != v->finish) *des++ = *src++;
     v->finish  = des;
-//    vector_erase_range(v, position, position + 1);
 }
 
 void vector_erase_range(vector *v, size_t first, size_t last){
@@ -134,16 +117,17 @@ void vector_erase_range(vector *v, size_t first, size_t last){
     while(final != v->finish){
         if(v->value_free)
             v->value_free(des);
-        for(size_t i = 0; i < v->ele_size; i++)
+        size_t i;
+        for(i = 0; i < v->ele_size; i++)
             *des++ = *src++;
     }
     v->finish = des;
 }
 
 void vector_free(vector *v){
-    void *tmp = v->start;
+    void *tmp;
     if(v->value_free)
-        for(; tmp != v->finish; tmp += v->ele_size)
+        for(tmp = v->start; tmp != v->finish; tmp += v->ele_size)
             v->value_free(tmp);
     free(v->start);
 }
@@ -151,11 +135,13 @@ void vector_free(vector *v){
 /* ------------------------ private API implementation ---------------------- */
 /* new_size必须大于当前vector_capacity，这是由调用者保证的，函数内部不做检查 */
 void _expand(vector *v, size_t new_size){
-    void *old = v->start;
+    void *start, *old;
+
+    old = v->start;
     v->start = malloc(new_size * v->ele_size);
     memcpy(v->start, old, v->finish - old);
     if(v->value_free)
-        for(void *start = old; start != v->finish; start += v->ele_size)
+        for(start = old; start != v->finish; start += v->ele_size)
             v->value_free(start);
     free(old);
     v->finish = v->start + (v->finish - old);

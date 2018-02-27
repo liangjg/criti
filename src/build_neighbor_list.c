@@ -15,6 +15,7 @@ void build_neighbor_list(){
     map_iterator *cell_iter;
     map_entry *entry;
     int surf_index, surfs_sz, surfs_sz2, cells_sz, neighbor_sz;
+    int i, j, k;
     vector *vec;
 
     vec = vector_init(8, sizeof(void *));
@@ -26,12 +27,12 @@ void build_neighbor_list(){
         surfs_sz = cell->surfs_sz;
         cell->neighbor_lists = (void ***) malloc(surfs_sz * sizeof(void **));
         cell->neighbor_lists_sz = (int *) malloc(surfs_sz * sizeof(int));
-        for(int i = 0; i < surfs_sz; i++){
+        for(i = 0; i < surfs_sz; i++){
             surf_index = cell->surfs[i];
-            for(int j = 0; j < cells_sz; j++){
+            for(j = 0; j < cells_sz; j++){
                 neighbor_cell = univ->cells[j];
                 surfs_sz2 = neighbor_cell->surfs_sz;
-                for(int k = 0; k < surfs_sz2; k++){
+                for(k = 0; k < surfs_sz2; k++){
                     if(surf_index + neighbor_cell->surfs[k] == 0)
                         vector_push_back(vec, &neighbor_cell);
                 }

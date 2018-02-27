@@ -11,6 +11,8 @@ int calc_surf_sense(surface_t *obj, const double pos[3], const double dir[3]){
     double y = pos[1];
     double z = pos[2];
 
+    sense = ZERO;
+
     switch(obj->type){
         case P:{
             sense = obj->paras[0] * x + obj->paras[1] * y + obj->paras[2] * z - obj->paras[3];
@@ -76,9 +78,10 @@ int calc_surf_sense(surface_t *obj, const double pos[3], const double dir[3]){
 
     if(fabs(sense) < EPSILON){
         double norm_vec[3];
+        int i;
         get_surf_norm_vec(obj, pos, norm_vec);
         sense = ZERO;
-        for(int i = 0; i < 3; i++)
+        for(i = 0; i < 3; i++)
             sense += dir[i] * norm_vec[i];
     }
 

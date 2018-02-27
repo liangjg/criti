@@ -7,7 +7,6 @@
 #include "nuclide.h"
 #include "slave.h"
 
-#define __thread_local
 __thread_local volatile unsigned int get_reply, put_reply;
 __thread_local int my_id;
 
@@ -60,6 +59,7 @@ extern nuc_cs_t *base_nuc_cs[NUMBERS_SLAVES];
 
 void do_calc(){
     void *start_addr;
+    int i, neu;
 
     /* 取得每个从核的id */
     my_id = athread_get_id(-1);
@@ -99,11 +99,11 @@ void do_calc(){
     fis_src_cnt = 0;
     fis_bank_cnt = 0;
     col_cnt_slave = 0;
-    for(int i = 0; i < 3; i++)
+    for(i = 0; i < 3; i++)
         keff_wgt_sum_slave[i] = ZERO;
 
     /* 模拟每个粒子 */
-    for(int neu = 1; neu <= numbers_to_get; neu++){
+    for(neu = 1; neu <= numbers_to_get; neu++){
         get_rand_seed_slave(&RNG_slave);
 
         sample_fission_source(&par_state_slave);

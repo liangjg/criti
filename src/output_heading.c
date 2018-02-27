@@ -64,7 +64,6 @@ void output_heading(){
     while(!feof(inp)){
         if(fgets(buf, 200, inp))
             fputs(buf, base_IOfp.opt_fp);
-//            fprintf(base_IOfp.opt_fp, "%s", buf);
     }
     fputs("\n---------------------- Input File End------------------------\n", base_IOfp.opt_fp);
     fclose(inp);

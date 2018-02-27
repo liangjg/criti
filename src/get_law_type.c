@@ -7,13 +7,7 @@
 
 
 extern RNG_t RNG_slave;
-/// 抽样得到非弹性散射的Law
-///
-/// @param[in] nNuc 碰撞核素Index
-/// @param[in] MT 反应mt号
-/// @param[in] incident_erg 入射能量
-/// @param[out] LDAT
-/// @return 抽样得到的Law
+
 int get_law_type(const nuclide_t *nuc, const int MT, const double incident_erg, int *LDAT)
 {
     int law_type;
@@ -48,7 +42,8 @@ int get_law_type(const nuclide_t *nuc, const int MT, const double incident_erg, 
         which_Pi = NE;
         Pi = nuc->XSS[LOCC + 4 + 2 * NR + NE + NE - 1];
     } else {
-        for(int j = 1; j <= NE - 1; j++) {
+        int j;
+        for(j = 1; j <= NE - 1; j++) {
             E1 = nuc->XSS[LOCC + 4 + 2 * NR + j];
             if(incident_erg <= E1) {
                 E0 = nuc->XSS[LOCC + 4 + 2 * NR + j - 1];

@@ -10,7 +10,7 @@
 extern RNG_t RNG_slave;
 extern nuc_cs_t *nuc_cs_slave;
 
-void treat_URR(nuclide_t *nuc, double erg)  // Treat Unresolved Resonance Range
+void treat_URR(nuclide_t *nuc, double erg)
 {
     double el_factor, fis_factor, C_factor, interp_value, smooth_total, inel_balance, abs_balance;
     int idx, idx_s, idx_e, num_e;
@@ -29,11 +29,10 @@ void treat_URR(nuclide_t *nuc, double erg)  // Treat Unresolved Resonance Range
         incident_erg_idx = incident_erg_idx + 1;
     }
 
-    //// interpolate between prob tables
     double ratio =
             (erg - nuc->XSS[incident_erg_idx - 1]) / (nuc->XSS[incident_erg_idx] - nuc->XSS[incident_erg_idx - 1]);
     int erg_idx = incident_erg_idx - loc_incident_erg;
-    int loc_prob_table = loc_incident_erg + num_prob_table_incident_erg + (erg_idx - 1) * length_table * 6; //
+    int loc_prob_table = loc_incident_erg + num_prob_table_incident_erg + (erg_idx - 1) * length_table * 6;
     int nj1 = loc_prob_table;
     int nj2 = loc_prob_table + length_table * 6;
 
@@ -54,18 +53,15 @@ void treat_URR(nuclide_t *nuc, double erg)  // Treat Unresolved Resonance Range
         return;
     }
 
-    ///Interpolation parameter between tables  =2 lin-lin; =5 log-log
     int distribution_type = (int) (nuc->XSS[loc_lunr_table + 2]);
-    if(distribution_type != 5 || ratio <= 0. || ratio >= 1.){ //// lin-lin interpolation.
+    if(distribution_type != 5 || ratio <= 0. || ratio >= 1.){
         cur_nuc_cs->abs = nuc->XSS[nj1 + length_table * 4] + ratio * (nuc->XSS[nj2 + length_table * 4] -
-                nuc->XSS[nj1 + length_table * 4]); //absorption (capture only)
+                nuc->XSS[nj1 + length_table * 4]);
         cur_nuc_cs->el = nuc->XSS[nj1 + length_table * 2] +
-                  ratio * (nuc->XSS[nj2 + length_table * 2] - nuc->XSS[nj1 + length_table * 2]); //elastic
+                  ratio * (nuc->XSS[nj2 + length_table * 2] - nuc->XSS[nj1 + length_table * 2]);
         cur_nuc_cs->fis = nuc->XSS[nj1 + length_table * 3] +
-                   ratio * (nuc->XSS[nj2 + length_table * 3] - nuc->XSS[nj1 + length_table * 3]); //fission (18 only)
-        // heating no. + length_table*5
-    } else{ // log-log interpolation.
-        //xs data maybe negative, resulting Nan(Not a Number), add check when reading
+                   ratio * (nuc->XSS[nj2 + length_table * 3] - nuc->XSS[nj1 + length_table * 3]);
+    } else{
         double g = log(erg / nuc->XSS[incident_erg_idx - 1]) /
                    log(nuc->XSS[incident_erg_idx] / nuc->XSS[incident_erg_idx - 1]);
         int i = length_table * 4;
@@ -80,10 +76,9 @@ void treat_URR(nuclide_t *nuc, double erg)  // Treat Unresolved Resonance Range
             cur_nuc_cs->fis = exp(log(nuc->XSS[nj1 + i]) + g * log(nuc->XSS[nj2 + i] / nuc->XSS[nj1 + i]));
     }
 
-    // calculate cross   sections
-    int factor_flag = (int) (nuc->XSS[loc_lunr_table + 5]); // Factors flag
-    int inel_competition_flag = (int) (nuc->XSS[loc_lunr_table + 3]); // Inelastic competition flag
-    int other_abs_flag = (int) (nuc->XSS[loc_lunr_table + 4]); // Other absorption flag
+    int factor_flag = (int) (nuc->XSS[loc_lunr_table + 5]);
+    int inel_competition_flag = (int) (nuc->XSS[loc_lunr_table + 3]);
+    int other_abs_flag = (int) (nuc->XSS[loc_lunr_table + 4]);
     if(factor_flag != 0 || inel_competition_flag == 0){
         int interp_pos = cur_nuc_cs->inter_pos;
         el_factor = nuc->XSS[interp_pos + 3 * num_erg_grid] + cur_nuc_cs->inter_frac *
@@ -102,15 +97,14 @@ void treat_URR(nuclide_t *nuc, double erg)  // Treat Unresolved Resonance Range
         }
     }
 
-    /////// get other absorption factor.
     if(factor_flag != 0 || other_abs_flag == 0.){
         C_factor = 0;
-        int i = Get_loc_of_MTR(nuc) - 1; // MTR block
+        int i = Get_loc_of_MTR(nuc) - 1;
         for(idx = 1; idx <= Get_non_el_mt_num(nuc); idx++){
             if((int) (nuc->XSS[i + idx]) == 102){
                 idx_s = Get_loc_of_SIG(nuc) +
-                        (int) (nuc->XSS[Get_loc_of_LSIG(nuc) + idx - 1]); // JXS(7)+LOCA : Location of NE
-                idx_e = (int) (nuc->XSS[idx_s - 1]);  //  int(obj->nucs[nuc]->XSS[iq-1])  :IE
+                        (int) (nuc->XSS[Get_loc_of_LSIG(nuc) + idx - 1]);
+                idx_e = (int) (nuc->XSS[idx_s - 1]);
                 num_e = (int) (nuc->XSS[idx_s]);
                 int ic = cur_nuc_cs->inter_pos + 1 - idx_e;
                 if(ic >= 1 && ic <= num_e){
@@ -126,9 +120,9 @@ void treat_URR(nuclide_t *nuc, double erg)  // Treat Unresolved Resonance Range
 
 
         if(factor_flag != 0){
-            cur_nuc_cs->el = cur_nuc_cs->el * el_factor;    // elastic
-            cur_nuc_cs->fis = cur_nuc_cs->fis * fis_factor;  // fission   (18 or 19/20/21/38)
-            cur_nuc_cs->abs = cur_nuc_cs->abs * C_factor;  // absorption  (102 only)
+            cur_nuc_cs->el = cur_nuc_cs->el * el_factor;
+            cur_nuc_cs->fis = cur_nuc_cs->fis * fis_factor;
+            cur_nuc_cs->abs = cur_nuc_cs->abs * C_factor;
         }
     }
 
@@ -143,7 +137,6 @@ void treat_URR(nuclide_t *nuc, double erg)  // Treat Unresolved Resonance Range
     }
 
     if(inel_competition_flag > 0){
-        // ILF>0.  calculate inelastic
         int i = Get_loc_of_MTR(nuc) - 1;
         for(idx = 1; idx <= Get_non_el_mt_num(nuc); ++idx){
             if((int) (nuc->XSS[i + idx]) == inel_competition_flag)
@@ -166,7 +159,6 @@ void treat_URR(nuclide_t *nuc, double erg)  // Treat Unresolved Resonance Range
                                cur_nuc_cs->inter_frac * (nuc->XSS[idx_s + idx_c + 1] - nuc->XSS[idx_s + idx_c]);
         }
     }
-        // ILF=0
     else if(inel_competition_flag == 0){
 
         int nIdx_c = cur_nuc_cs->inter_pos;
@@ -174,12 +166,8 @@ void treat_URR(nuclide_t *nuc, double erg)  // Treat Unresolved Resonance Range
                        cur_nuc_cs->inter_frac * (nuc->XSS[nIdx_c + num_erg_grid + 1] - nuc->XSS[nIdx_c + num_erg_grid]);
         inel_balance = smooth_total - el_factor - fis_factor - interp_value;
     }
-    //obj->nucs[nuc]->p_ONucCs.p_dInel=r1;  // 2010-11-04
 
-
-    // check flag for other absorption to include in abs and total.
-    // obtain other absorption by smooth (abs-102).
-    if(other_abs_flag > 0){  // jxs(23,iex)+4 contains the mt of other absorption.
+    if(other_abs_flag > 0){
         int i = Get_loc_of_MTR(nuc) - 1;
         for(idx = 1; idx <= Get_non_el_mt_num(nuc); ++idx){
             if((int) (nuc->XSS[i + idx]) == other_abs_flag)
@@ -204,15 +192,13 @@ void treat_URR(nuclide_t *nuc, double erg)  // Treat Unresolved Resonance Range
     } else if(other_abs_flag == 0)
         abs_balance = interp_value - C_factor;
 
-    // increment cross sections for inelastic and other absorption.
-    cur_nuc_cs->abs = cur_nuc_cs->abs + abs_balance;    // absorption=capture +  other absorption
+    cur_nuc_cs->abs = cur_nuc_cs->abs + abs_balance;
     if(cur_nuc_cs->abs < 0){
         int NE = Get_erg_grid_num(nuc);
-        cur_nuc_cs->abs = intplt_by_pos_fr(nuc->XSS, cur_nuc_cs->inter_pos + 2 * NE, cur_nuc_cs->inter_frac); // absorption, E0
+        cur_nuc_cs->abs = intplt_by_pos_fr(nuc->XSS, cur_nuc_cs->inter_pos + 2 * NE, cur_nuc_cs->inter_frac);
     }
 
     cur_nuc_cs->inel = inel_balance;
     cur_nuc_cs->tot = cur_nuc_cs->abs + cur_nuc_cs->el + cur_nuc_cs->inel + cur_nuc_cs->fis;
 
-    // Finally, get  total,absorption,elastic,fission
 }

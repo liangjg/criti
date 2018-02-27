@@ -12,12 +12,13 @@ extern IOfp_t base_IOfp;
 extern RNG_t base_RNG;
 
 void read_criticality_block(){
+    int i;
+    char buf[256];
+    char *ret, *kw_start, *end, *sub_kw_start;
+
     /* set the default arguments for base_criti and base_RNG */
     base_criti.keff_final = 1.0;
     set_RNG_paras(&base_RNG, 2);
-
-    char buf[256];
-    char *ret;
 
     while((ret = fgets(buf, MAX_LINE_LENGTH, base_IOfp.inp_fp))){
         while(ISSPACE(*ret)) ret++;
@@ -25,7 +26,7 @@ void read_criticality_block(){
         if(ISCOMMENT(*ret)) continue;
         if(ISRETURN(*ret)) break;
 
-        char *kw_start = ret;
+        kw_start = ret;
         while(ISALPHA(*ret)){
             *ret = TOUPPER(*ret);
             ret++;
@@ -36,7 +37,7 @@ void read_criticality_block(){
             while(!ISRETURN(*ret) && !ISCOMMENT(*ret)){
                 while(!ISALPHA(*ret)) ret++;
 
-                char *sub_kw_start = ret;
+                sub_kw_start = ret;
                 while(ISALPHA(*ret)){
                     *ret = TOUPPER(*ret);
                     ret++;
@@ -45,7 +46,6 @@ void read_criticality_block(){
 
                 if(strcmp(sub_kw_start, "POPULATION") == 0){
                     while(!ISNUMBER(*ret)) ret++;
-                    char *end;
                     base_criti.cycle_neutron_num = strtol(ret, &end, 10);
                     ret = end;
                     base_criti.inactive_cycle_num = strtol(ret, &end, 10);
@@ -55,7 +55,6 @@ void read_criticality_block(){
                 }
                 else if(strcmp(sub_kw_start, "KEFF") == 0){
                     while(!ISNUMBER(*ret)) ret++;
-                    char *end;
                     base_criti.keff_final = strtod(ret, &end);
                     ret = end;
                 }
@@ -67,7 +66,7 @@ void read_criticality_block(){
             while(!ISRETURN(*ret) && !ISCOMMENT(*ret)){
                 while(!ISALPHA(*ret)) ret++;
 
-                char *sub_kw_start = ret;
+                sub_kw_start = ret;
                 while(ISALPHA(*ret)){
                     *ret = TOUPPER(*ret);
                     ret++;
@@ -78,8 +77,7 @@ void read_criticality_block(){
                     base_criti.ksrc_type = POINT;
 
                     while(!ISNUMBER(*ret)) ret++;
-                    char *end;
-                    for(int i = 0; i < 3; i++){
+                    for(i = 0; i < 3; i++){
                         base_criti.ksrc_para[i] = strtod(ret, &end);
                         ret = end;
                     }
@@ -89,8 +87,7 @@ void read_criticality_block(){
                     base_criti.ksrc_type = SLAB;
 
                     while(!ISNUMBER(*ret)) ret++;
-                    char *end;
-                    for(int i = 0; i < 6; i++){
+                    for(i = 0; i < 6; i++){
                         base_criti.ksrc_para[i] = strtod(ret, &end);
                         ret = end;
                     }
@@ -100,8 +97,7 @@ void read_criticality_block(){
                     base_criti.ksrc_type = SLAB;
 
                     while(!ISNUMBER(*ret)) ret++;
-                    char *end;
-                    for(int i = 0; i < 4; i++){
+                    for(i = 0; i < 4; i++){
                         base_criti.ksrc_para[i] = strtod(ret, &end);
                         ret = end;
                     }

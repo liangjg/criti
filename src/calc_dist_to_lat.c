@@ -27,11 +27,12 @@ double calc_dist_to_lat(universe_t *obj, const double pos[3], const double dir[3
 
 /* ------------------------ private API implementation ---------------------- */
 double _calc_dist_to_lat_rect(universe_t *obj, const double pos[3], const double dir[3], int *which_surf) {
-    double distance = 1.0E+24;
-    double distance_temp;
     int surf_order;
+    double distance_temp;
+    double distance = 1.0E+24;
+    int i;
 
-    for(int i = 0; i < 3; i++){
+    for(i = 0; i < 3; i++){
         if(obj->scope[i] == 1 || EQ_ZERO(dir[i]))
             continue;
 
@@ -53,16 +54,13 @@ double _calc_dist_to_lat_rect(universe_t *obj, const double pos[3], const double
 }
 
 double _calc_dist_to_lat_hex(universe_t *obj, const double pos[3], const double dir[3], int *which_surf) {
-
+    int i;
+    double distance_temp[7];
     double pos1 = pos[0], pos2 = pos[1];
     double dir1 = dir[0], dir2 = dir[1];
     double L1 = obj->pitch[0];    //  L2 = Pitch[1];
     double D2 = 0.5 * L1 * obj->cos_sita + obj->height * obj->sin_sita;
 
-
-    double distance_temp[7];
-
-    ///// FA & CD
     if(dir1 > 0){
         distance_temp[1] = -1;
         distance_temp[4] = (0.5 * L1 - pos1) / dir1;
@@ -71,31 +69,28 @@ double _calc_dist_to_lat_hex(universe_t *obj, const double pos[3], const double 
         distance_temp[4] = -1;
     }
 
-    ///// AB & DE
     double t1 = dir1 * obj->cos_sita + dir2 * obj->sin_sita;
     double t2 = pos1 * obj->cos_sita + pos2 * obj->sin_sita;
-    if(t1 > 0){ //// DE
+    if(t1 > 0){
         distance_temp[2] = -1;
         distance_temp[5] = (0.5 * D2 - t2) / t1;
-    } else { //// AB
+    } else {
         distance_temp[2] = (-0.5 * D2 - t2) / t1;
         distance_temp[5] = -1;
     }
 
-    ///// BC & EF
     double t3 = dir1 * obj->cos_sita - dir2 * obj->sin_sita;
     double t4 = pos1 * obj->cos_sita - pos2 * obj->sin_sita;
-    if(t3 > 0){ //// BC
+    if(t3 > 0){
         distance_temp[3] = (0.5 * D2 - t4) / t3;
         distance_temp[6] = -1;
-    } else { //// EF
+    } else {
         distance_temp[3] = -1;
         distance_temp[6] = (-0.5 * D2 - t4) / t3;
     }
 
-    /////////////////////////////// select minimum distance to lattice boundary //////////////////////
     double distance = 1.0E+24;
-    for(int i = 1; i <= 6; ++i){
+    for(i = 1; i <= 6; ++i){
         if(distance_temp[i] > 0){
             if(distance_temp[i] < distance){
                 distance = distance_temp[i];

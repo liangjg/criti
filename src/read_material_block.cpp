@@ -20,18 +20,20 @@ void _extract_nucs(mat_t *mat, std::vector<std::pair<std::string, double> > &nuc
 /* ----------------------------- API implementation ------------------------- */
 void read_material_block(){
     char buf[256];
-    char *ret, *end;
+    char *ret, *end, *kw_start;
     map_entry *nuc_entry;
     nuclide_t *nuc;
-    mat_t *mat = NULL;
+    mat_t *mat;
     int index;
     std::vector<std::pair<std::string, double> > nucs;
+
+    mat = NULL;
 
     while((ret = fgets(buf, MAX_LINE_LENGTH, base_IOfp.inp_fp))){
         while(ISSPACE(*ret)) ret++;
 
         if(ISALPHA(*ret)){
-            char *kw_start = ret;
+            kw_start = ret;
             while(ISALPHA(*ret)){
                 *ret = TOUPPER(*ret);
                 ret++;
@@ -108,13 +110,14 @@ void read_material_block(){
 
 /* ------------------------ private API implementation ---------------------- */
 void _extract_nucs(mat_t *mat, std::vector<std::pair<std::string, double> > &nucs){
+    int i;
     map_entry *nuc_entry;
     nuclide_t *nuc;
 
     mat->tot_nuc_num = nucs.size();
     mat->nucs = (void **) malloc(mat->tot_nuc_num * sizeof(void *));
     mat->nuc_user_den = (double *) malloc(mat->tot_nuc_num * sizeof(double));
-    for(int i = 0; i < mat->tot_nuc_num; i++){
+    for(i = 0; i < mat->tot_nuc_num; i++){
         mat->nuc_user_den[i] = nucs[i].second;
         nuc_entry = map_find(base_nucs, (uint64_t) nucs[i].first.c_str());
         if(!nuc_entry){
@@ -127,7 +130,7 @@ void _extract_nucs(mat_t *mat, std::vector<std::pair<std::string, double> > &nuc
         else mat->nucs[i] = nuc_entry->v.val;
     }
     if(EQ_ZERO(mat->user_den))
-        for(int i = 0; i < mat->tot_nuc_num; i++)
+        for(i = 0; i < mat->tot_nuc_num; i++)
             mat->user_den += mat->nuc_user_den[i];
     nucs.clear();
 }

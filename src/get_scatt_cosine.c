@@ -7,12 +7,7 @@
 
 
 extern RNG_t RNG_slave;
-/// 抽样得到出射角余弦
-///
-/// @param[in] nNuc 碰撞核素Index
-/// @param[in] MT 反应mt号
-/// @param[in] incident_erg 入射能量
-/// return 出射角余弦
+
 double get_scatt_cosine(const nuclide_t *nuc, int MT, double incident_erg){
     double exit_mu_cm = 0;
 
@@ -69,7 +64,7 @@ double get_scatt_cosine(const nuclide_t *nuc, int MT, double incident_erg){
     double fa, ca, bb;
     /* 角分布表 */
     if(LC < 0){
-        AND_JJ = (int) (nuc->XSS[LOCC2]); //1=histogram  2=lin-lin
+        AND_JJ = (int) (nuc->XSS[LOCC2]);
         AND_NP = (int) (nuc->XSS[LOCC2 + 1]);
 
         min = LOCC2 + 2 * AND_NP + 2;

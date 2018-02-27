@@ -31,8 +31,6 @@ double get_nuc_mt_cs(nuclide_t *nuc, int MT, int interp_pos, double interp_frac)
 
 void interpolate_sab(nuclide_t *nuc, nuclide_t *sab_nuc, double erg);
 
-//void treat_URR(nuclide_t *nuc, double erg);
-
 void get_ce_exist_erg_mu(const nuclide_t *nuc, int MT, double incident_erg, double *exit_erg_lab, double *exit_mu_lab);
 
 double get_scatt_cosine(const nuclide_t *nuc, int MT, double incident_erg);

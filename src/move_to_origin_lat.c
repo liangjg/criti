@@ -8,11 +8,12 @@
 void move_to_origin_lat(universe_t *obj, int lat_index, double pos[3]){
     if(obj->lattice_type == 1){
         int xyz[3];
+        int i;
         xyz[2] = (lat_index - 1) / (obj->scope[0] * obj->scope[1]);
         xyz[1] = (lat_index - 1 - obj->scope[0] * obj->scope[1] * xyz[2]) / obj->scope[0];
         xyz[0] = lat_index - 1 - obj->scope[0] * obj->scope[1] * xyz[2] - obj->scope[0] * xyz[1];
 
-        for(int i = 0; i < 3; i++)
+        for(i = 0; i < 3; i++)
             if(obj->scope[i] != 1)
                 pos[i] -= obj->pitch[i] * xyz[i];
     }

@@ -18,6 +18,7 @@ extern RNG_t RNG_slave;
 extern nuc_cs_t *nuc_cs_slave;
 
 void get_fis_neu_state(particle_state_t *par_state, int fis_MT, double fis_wgt){
+    int i, j;
     nuclide_t *nuc = par_state->nuc;
     nuc_cs_t *cur_nuc_cs = &nuc_cs_slave[nuc->cs];
     double erg = par_state->erg;
@@ -26,14 +27,13 @@ void get_fis_neu_state(particle_state_t *par_state, int fis_MT, double fis_wgt){
     double beta = nu_delayed / cur_nuc_cs->nu;
     int fis_bank_cnt_local = fis_bank_cnt;
 
-    for(int i = 0; i < fis_neu_num; i++){
+    for(i = 0; i < fis_neu_num; i++){
         /* sample prompt/delayed fission neutrons */
         if(get_rand_slave(&RNG_slave) < beta){
             int NPCR = Get_NPCR(nuc);
             int Loc = Get_loc_of_BDD(nuc);
             double ksi = get_rand_slave(&RNG_slave);
             double prob_sum = ZERO;
-            int j = 1;
             for(j = 1; j < NPCR; j++){
                 int NR = (int) (nuc->XSS[Loc + 1]);
                 int NE = (int) (nuc->XSS[Loc + 2 + 2 * NR]);
@@ -59,7 +59,7 @@ void get_fis_neu_state(particle_state_t *par_state, int fis_MT, double fis_wgt){
         } else
             get_ce_exit_state(par_state, fis_MT, false);
 
-        for(int j = 0; j < 3; j++){
+        for(j = 0; j < 3; j++){
             fis_bank_slave[fis_bank_cnt_local].pos[j] = par_state->pos[j];
             fis_bank_slave[fis_bank_cnt_local].dir[j] = par_state->exit_dir[j];
         }

@@ -6,6 +6,7 @@
 
 
 void find_neighbor_cell(particle_state_t *par_state){
+    int i;
     double loc_pos[3], loc_dir[3];
     int lat_index;
     bool found = false;
@@ -16,7 +17,7 @@ void find_neighbor_cell(particle_state_t *par_state){
 
     par_state->loc_sz = level + 1;
 
-    for(int i = 0; i < 3; i++){
+    for(i = 0; i < 3; i++){
         loc_pos[i] = par_state->loc_pos[i];
         loc_dir[i] = par_state->loc_dir[i];
     }
@@ -37,7 +38,7 @@ void find_neighbor_cell(particle_state_t *par_state){
         cell = univ->cells[par_state->loc_cells[level]];
         neighbor_cell = NULL;
         int neighbor_sz = cell->neighbor_lists_sz[bound_index];
-        for(int i = 0; i < neighbor_sz; i++){
+        for(i = 0; i < neighbor_sz; i++){
             neighbor_cell = cell->neighbor_lists[bound_index][i];
             if(particle_is_in_cell(neighbor_cell, loc_pos, loc_dir)){
                 found = true;
@@ -47,7 +48,7 @@ void find_neighbor_cell(particle_state_t *par_state){
 
         if(found){
             /* 不得已而为之，因为loc_cells存储的是当前universe中的第几个，而不是直接存储的cell_index */
-            for(int i = 0; i < univ->cells_sz; i++)
+            for(i = 0; i < univ->cells_sz; i++)
                 if(neighbor_cell == univ->cells[i]){
                     par_state->loc_cells[level] = i;
                     break;

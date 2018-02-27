@@ -28,8 +28,11 @@ void _transform(std::string &s);
 
 /* ----------------------------- API implementation ------------------------- */
 void read_cell_card(universe_t *univ){
+    int i;
     std::vector<void *> cells;    /* 存储每个cell实例的地址 */
     char buf[256];
+    int index;
+    char *rpn_start;
     char *ret = NULL;
     bool is_simple = true;
 
@@ -39,7 +42,7 @@ void read_cell_card(universe_t *univ){
         if(ISRETURN(*ret)) break;      /* 当前行是空行，意味着当前UNIVERSE已经结束了 */
 
         while(!ISNUMBER(*ret)) ret++;
-        int index = 0;
+        index = 0;
         do{
             index *= 10;
             index += *ret++ - '0';
@@ -51,7 +54,7 @@ void read_cell_card(universe_t *univ){
         map_put(base_cells, index, cell);
         cells.push_back(cell);
 
-        char *rpn_start = ret;
+        rpn_start = ret;
         while(!ISALPHA(*ret)) ret++;
         *(ret - 1) = 0;
         cell->rpn = _generate_rpn(rpn_start, is_simple);
@@ -112,7 +115,7 @@ void read_cell_card(universe_t *univ){
     }
     univ->cells_sz = cells.size();
     univ->cells = (void **) malloc(univ->cells_sz * sizeof(void *));
-    for(int i = 0; i < univ->cells_sz; i++)
+    for(i = 0; i < univ->cells_sz; i++)
         univ->cells[i] = cells[i];
 }
 
@@ -127,6 +130,8 @@ int _identify_cell_kw(char *kw){
 }
 
 char *_generate_rpn(const char *exp, bool &is_simple){
+    size_t len;
+    char *rpn;
     char *simplified_exp;
     /* *************************************************************
      * 将原表达式中的'!'运算符去掉，一定程度上简化表达式；
@@ -136,8 +141,8 @@ char *_generate_rpn(const char *exp, bool &is_simple){
     _simplify(exp, &simplified_exp);
     exp = simplified_exp;
 
-    size_t len = strlen(exp);
-    char *rpn = (char *) malloc(2 * len * sizeof(char));
+    len = strlen(exp);
+    rpn = (char *) malloc(2 * len * sizeof(char));
     size_t i = 0;
     char c = '\0';
 
@@ -239,6 +244,7 @@ char _order_between(char a, char b, bool &is_simple){
 }
 
 void _extract_surfs_from_rpn(cell_t *cell){
+    int i;
     std::vector<int> surfs;
     int surf_index = 0;
     char *start = cell->rpn;
@@ -265,7 +271,7 @@ void _extract_surfs_from_rpn(cell_t *cell){
     }
     cell->surfs_sz = surfs.size();
     cell->surfs = (int *) malloc(cell->surfs_sz * sizeof(int));
-    for(int i = 0; i < cell->surfs_sz; i++)
+    for(i = 0; i < cell->surfs_sz; i++)
         cell->surfs[i] = surfs[i];
 }
 

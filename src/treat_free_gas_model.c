@@ -13,10 +13,10 @@ void treat_free_gas_model(particle_state_t *par_state, double nuc_wgt){
     double r1, z2, s, z, c, x2;
     double Ycn;
     int iter_count = 0;
+    int i;
 
-    /////// sample the velocity of the target nucleus.///////////
-    atom_tmp = nuc_wgt / par_state->cell_tmp; //?
-    Ycn = sqrt(par_state->erg * atom_tmp); //Temperature-normalized neutron velocity.
+    atom_tmp = nuc_wgt / par_state->cell_tmp;
+    Ycn = sqrt(par_state->erg * atom_tmp);
     do{
         if((iter_count++) >= MAX_ITER){
             puts("Waring: too many samples of Free gas model.");
@@ -43,13 +43,11 @@ void treat_free_gas_model(particle_state_t *par_state, double nuc_wgt){
 
     rotate_dir(c, par_state->dir, par_state->vel_tgt);
 
-    /////////// calculate functions of the target velocity.////////
-    for(int i = 0; i < 3; ++i){
+    for(i = 0; i < 3; ++i){
         par_state->vel_tgt[i] = z * par_state->vel_tgt[i];
         par_state->dir_vel[i] = Ycn * par_state->dir[i] - par_state->vel_tgt[i];
     }
 
-    //    CDGlobeFun::Normalize3Array(par_state->dir_vel);
     double length = ONE / sqrt(SQUARE(par_state->dir_vel[0]) +
                                       SQUARE(par_state->dir_vel[1]) + SQUARE(par_state->dir_vel[2]));
     par_state->dir_vel[0] *= length;

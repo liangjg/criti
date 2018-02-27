@@ -50,17 +50,17 @@ void read_input_blocks(CALC_MODE_T *calc_mode){
                     read_criticality_block();
                     break;
                 case 4:    /* TALLY */
-//                    read_tally_block();
+                    /*read_tally_block();*/
                     break;
                 case 5:    /* FIXEDSOURCE */
                     *calc_mode = FIXEDSOURCE;
-//                    read_fixed_src_block();
+                    /*read_fixed_src_block();*/
                 case 6:    /* DEPLETION */
                     *calc_mode = POINTBURN;
                     break;
                 case 7:    /* BURNUP */
                     *calc_mode = BURNUP;
-//                    read_burnup_block();
+                    /*read_burnup_block();*/
                     break;
                 default:
                     printf("unknown key word %s.\n", kw_start);
@@ -70,12 +70,12 @@ void read_input_blocks(CALC_MODE_T *calc_mode){
     }
 
     puts("Finished.");
-//    check_input_block();
 }
 
 /* ------------------------ private API implementation ---------------------- */
 int _identify_kw(char *kw){
-    for(int i = 0; i < KW_NUMBER; i++){
+    int i;
+    for(i = 0; i < KW_NUMBER; i++){
         if(strcmp(kw, keyword[i]) == 0)
             return i;
     }

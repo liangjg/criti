@@ -41,8 +41,6 @@ typedef struct {
 
     /* cross sections */
     int cs;
-
-//    int prob_table_flag;
 } nuclide_t;
 
 

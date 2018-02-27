@@ -21,19 +21,6 @@ void get_nuc_tot_fis_cs(acedata_t *obj, nuclide_t *nuc, nuclide_t *sab_nuc, doub
 
     cur_nuc_cs->inter_pos = get_intplt_pos_fr(nuc->XSS, erg, min, max, &cur_nuc_cs->inter_frac);
 
-//    if(use_ptable){
-//        nuc->prob_table_flag = NotAdjustCsByPT;
-//        int nL = GetLocOfLUNR(nuc);
-//        if(nL != 0){ // probability tables exist
-//            if(erg > nuc->XSS[nL + 6] && erg < nuc->XSS[nL + 5 + (int) (nuc->XSS[nL])]){
-//                treat_URR(nuc, erg);
-//                nuc->prob_table_flag = AdjustCsByPT;
-//                return;
-//            }
-//        }
-//    }
-
-    //tot_cs:
     if(!sab_nuc){
         cur_nuc_cs->tot = intplt_by_pos_fr(nuc->XSS, cur_nuc_cs->inter_pos + NE, cur_nuc_cs->inter_frac);
         cur_nuc_cs->fis = intplt_by_pos_fr(nuc->fis_XSS, cur_nuc_cs->inter_pos, cur_nuc_cs->inter_frac);
@@ -59,6 +46,5 @@ void get_nuc_tot_fis_cs(acedata_t *obj, nuclide_t *nuc, nuclide_t *sab_nuc, doub
         return;
     }
 
-    ////////////////  sab case ///////////////////
     interpolate_sab(nuc, sab_nuc, erg);
 }

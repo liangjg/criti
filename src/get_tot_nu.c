@@ -18,9 +18,10 @@ double get_total_nu(nuclide_t *nuc, double erg){
     int LNU = (int) (nuc->XSS[KNU]);
     ///// calculate NuTemp by evaluating a polynomial in energy /////
     if(LNU == 1){
+        int i;
         int NC = (int) (nuc->XSS[KNU + 1]) - 1;
         double nu = nuc->XSS[KNU + NC + 2];
-        for(int i = 1; i <= NC; i++)
+        for(i = 1; i <= NC; i++)
             nu = nu * erg + nuc->XSS[KNU + NC + 2 - i];
         return nu;
     }

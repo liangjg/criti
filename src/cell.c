@@ -26,10 +26,12 @@ cell_t *cell_init(){
 }
 
 void cell_free(cell_t *obj){
+    int i;
+
     free(obj->rpn);
     free(obj->surfs);
     free(obj->surfs_addr);
-    for(int i = 0; i < obj->surfs_sz; i++)
+    for(i = 0; i < obj->surfs_sz; i++)
         free(obj->neighbor_lists[i]);
     free(obj->neighbor_lists);
     free(obj->neighbor_lists_sz);

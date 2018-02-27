@@ -32,6 +32,8 @@ void doppler_broaden(){
     int cnt;
     double broaden_tmp;
     bool first_time;    /* 是否所有cell都是相同的温度 */
+    int i, k;
+
     map_iterator *nuc_iter = map_get_iter(base_nucs);
     map_iterator *cell_iter;
 
@@ -51,7 +53,7 @@ void doppler_broaden(){
             mat = cell->mat;
             if(!mat)
                 continue;
-            for(int k = 0; k < mat->tot_nuc_num; k++){
+            for(k = 0; k < mat->tot_nuc_num; k++){
                 if(strcmp(nuc->id, ((nuclide_t *) mat->nucs[k])->id) == 0){
                     if(first_time){
                         broaden_tmp = cell->tmp;
@@ -75,14 +77,14 @@ END:
     fputs("========================================================================\n", base_IOfp.mat_fp);
 
     /* 设置nuc->cs和nuc_cs->nuc之间的对应关系 */
-    for(int i = 0; i < NUMBERS_SLAVES; i++)
+    for(i = 0; i < NUMBERS_SLAVES; i++)
         base_nuc_cs[i] = malloc(tot_nucs * sizeof(nuc_cs_t));
 
     nuc_cs_t *nuc_cs;
     nuc_iter = map_get_iter(base_nucs);
     while((nuc_entry = map_iter_next(nuc_iter))){
         nuc = nuc_entry->v.val;
-        for(int i = 0; i < NUMBERS_SLAVES; i++){
+        for(i = 0; i < NUMBERS_SLAVES; i++){
             nuc_cs = &base_nuc_cs[i][nuc->cs];
             nuc_cs->nuc = nuc;
         }
@@ -91,19 +93,17 @@ END:
 }
 
 int _dppler_brdn_nuc_tmp(acedata_t *obj, nuclide_t *nuc, double tmp){
-    int i;
+    int i, j;
     double a, b, f1, f2;
 
     calc_therm_Gfun(obj);
 
-    //// adjust elastic and total cross-section
     if(fabs(nuc->tmp - tmp) <= 0.01 * tmp)
         return 0;   // no adjustment
     b = 500.0 * fabs(tmp - nuc->tmp) / nuc->atom_wgt;
-    for(int j = 1; j <= Get_erg_grid_num(nuc); j++){
+    for(j = 1; j <= Get_erg_grid_num(nuc); j++){
         if(nuc->XSS[j] > b)
             break;
-        ///////////////calculate f1 //////////////
         f1 = ONE;
         if(!EQ_ZERO(nuc->tmp)){
             a = sqrt(nuc->atom_wgt * nuc->XSS[j] / nuc->tmp);
@@ -113,7 +113,6 @@ int _dppler_brdn_nuc_tmp(acedata_t *obj, nuclide_t *nuc, double tmp){
             if(a < TWO)
                 f1 = (obj->therm_func[i] + (a / 0.04 - i) * (obj->therm_func[i + 1] - obj->therm_func[i])) / a;
         }
-        ///////////////calculate f2 //////////////
         f2 = ONE;
         if(!EQ_ZERO(tmp)){
             a = sqrt(nuc->atom_wgt * nuc->XSS[j] / tmp);
@@ -123,10 +122,8 @@ int _dppler_brdn_nuc_tmp(acedata_t *obj, nuclide_t *nuc, double tmp){
             if(a < TWO)
                 f2 = (obj->therm_func[i] + (a / 0.04 - i) * (obj->therm_func[i + 1] - obj->therm_func[i])) / a;
         }
-        ///////////////calculate a //////////////
         a = nuc->XSS[j + 3 * Get_erg_grid_num(nuc)] * (f2 - f1) / f1;
 
-        ///////////////calculate xs //////////////
         nuc->XSS[j + Get_erg_grid_num(nuc)] = nuc->XSS[j + Get_erg_grid_num(nuc)] + a;
         nuc->XSS[j + 3 * Get_erg_grid_num(nuc)] = nuc->XSS[j + 3 * Get_erg_grid_num(nuc)] + a;
     }

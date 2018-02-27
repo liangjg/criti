@@ -19,6 +19,8 @@ extern IOfp_t base_IOfp;
 extern nuc_cs_t *base_nuc_cs[NUMBERS_SLAVES];
 
 void release_resource(){
+    int i;
+
     map_free(base_univs);
     free(base_univs);
     map_free(base_cells);
@@ -30,7 +32,7 @@ void release_resource(){
     map_free(base_nucs);
     free(base_nucs);
 
-    for(int i = 0; i < NUMBERS_SLAVES; i++){
+    for(i = 0; i < NUMBERS_SLAVES; i++){
         free(base_criti.fission_src[i]);
         free(base_criti.fission_bank[i]);
         free(base_nuc_cs[i]);

@@ -20,6 +20,7 @@ int preprocess_geometry(){
     int filled_univ_index;
     int surfs_sz, filled_lat_univs_sz;
     int surf_index, mat_index;
+    int i;
 
     cell_iter = map_get_iter(base_cells);
     while((entry = map_iter_next(cell_iter))){
@@ -35,7 +36,7 @@ int preprocess_geometry(){
         /* 调整cell->surfs_addr */
         surfs_sz = cell->surfs_sz;
         cell->surfs_addr = (void **) malloc(surfs_sz * sizeof(void *));
-        for(int i = 0; i < surfs_sz; i++){
+        for(i = 0; i < surfs_sz; i++){
             surf_index = abs(cell->surfs[i]);
             cell->surfs_addr[i] = map_get(base_surfs, surf_index);
         }
@@ -52,7 +53,7 @@ int preprocess_geometry(){
         if(univ->filled_lat_univs){
             filled_lat_univs_sz = univ->scope[0] * univ->scope[1];
             if(univ->lattice_type == 1) filled_lat_univs_sz *= univ->scope[2];
-            for(int i = 0; i < filled_lat_univs_sz; i++){
+            for(i = 0; i < filled_lat_univs_sz; i++){
                 filled_univ_index = (int) univ->filled_lat_univs[i];
                 univ->filled_lat_univs[i] = map_get(base_univs, filled_univ_index);
             }

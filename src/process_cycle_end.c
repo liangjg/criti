@@ -25,6 +25,7 @@ void _output_keff();
 
 
 void process_cycle_end(){
+    int i, j;
     int remainder1, remainder2;
     int quotient;
 
@@ -35,7 +36,7 @@ void process_cycle_end(){
         exit(0);
     }
 
-    for(int i = 0; i < 3; i++)
+    for(i = 0; i < 3; i++)
         base_criti.keff_cycle[i] = base_criti.keff_wgt_sum[i] / base_criti.tot_start_wgt;
     base_criti.keff_final = base_criti.keff_cycle[0];
 
@@ -47,40 +48,40 @@ void process_cycle_end(){
      * 但是这样逐个复制的开销较大。因此这里直接交换两个数组的指针，同时交换bank_sz和src_sz，
      * 用O(1)时间完成交换
      */
-    for(int i = 0; i < NUMBERS_SLAVES; i++)
+    for(i = 0; i < NUMBERS_SLAVES; i++)
         SWAP(base_criti.fission_bank[i], base_criti.fission_src[i]);
 
     base_criti.cycle_neutron_num = base_criti.tot_fission_bank_cnt;
     base_start_wgt = ONE * base_criti.tot_start_wgt / base_criti.tot_fission_bank_cnt;
 
-    for(int i = 0; i < 3; i++)
+    for(i = 0; i < 3; i++)
         base_criti.keff_wgt_sum[i] = ZERO;
     base_criti.tot_fission_bank_cnt = 0;
 
     /* 更新tot_transfer_num和fission_src_cnt */
     base_criti.tot_transfer_num = base_criti.cycle_neutron_num / NUMBERS_PER_TRANS;
     remainder1 = base_criti.cycle_neutron_num - NUMBERS_PER_TRANS * base_criti.tot_transfer_num;
-    for(int i = 0; i < NUMBERS_SLAVES; i++)
+    for(i = 0; i < NUMBERS_SLAVES; i++)
         base_criti.fission_src_cnt[i] = base_criti.tot_transfer_num * 400;
     if(remainder1 > 0){
         base_criti.tot_transfer_num++;
         quotient = remainder1 / NUMBERS_SLAVES;
         remainder2 = remainder1 - quotient * NUMBERS_SLAVES;
-        for(int i = 0; i < NUMBERS_SLAVES; i++)
+        for(i = 0; i < NUMBERS_SLAVES; i++)
             base_criti.fission_src_cnt[i] += quotient;
         if(remainder2 > 0)
-            for(int i = 0; i < remainder2; i++)
+            for(i = 0; i < remainder2; i++)
                 base_criti.fission_src_cnt[i] += 1;
     }
 
     /* 为每个从核准备随机数发生器 */
     memcpy(&RNGs[0], &RNGs[63], sizeof(RNG_t));
 
-    for(int i = 1; i < NUMBERS_SLAVES; i++){
+    for(i = 1; i < NUMBERS_SLAVES; i++){
         memcpy(&RNGs[i], &RNGs[i - 1], sizeof(RNG_t));
 
         int fis_src_cnt = base_criti.fission_src_cnt[i - 1];
-        for(int j = 1; j < fis_src_cnt; j++)
+        for(j = 1; j < fis_src_cnt; j++)
             get_rand_seed_host(&RNGs[i]);
     }
 }
@@ -107,7 +108,6 @@ void _combine_keff(){
         base_criti.keff_covw_std[i] = ZERO;
     }
 
-    /// Calculate the individual average, std. dev., as well as the covariance ////.
     keff_covw_sum = ZERO;
     d0 = diffrence;
     d1 = sqrt(d0 / MAX(1, diffrence - 1));
@@ -122,8 +122,6 @@ void _combine_keff(){
         base_criti.keff_individual_std[i] = d1 * sqrt(fabs(keff_covw[i][i])) / diffrence;
     }
 
-    /// calculate simple/covariance-weighted combined averages and std. devs.  ///
-    /// Combined sequence 0 - 3 : (col/abs), (abs,tl), (tl,col), (col/abs/tl)  ///
     if(diffrence <= 2)
         return;
     d2 = sqrt(d0 / (d0 - TWO));
@@ -147,7 +145,6 @@ void _combine_keff(){
             keff_corr[i] = keff_covw[i][j] / sqrt(fabs(keff_covw[i][i] * keff_covw[j][j]));
     }
 
-    /// calculate the combined average (col/abs/tl), zc(4). //
     if(diffrence == 3)
         return;
     double al;
