@@ -6,16 +6,12 @@
 #include "acedata.h"
 
 
-extern nuc_cs_t *nuc_cs_slave;
-
-void get_exit_state(particle_state_t *par_state){
+void get_exit_state(particle_state_t *par_state, RNG_t *RNG_slave){
     nuclide_t *nuc = par_state->nuc;
     nuclide_t *sab_nuc = par_state->sab_nuc;
-    nuc_cs_t *cur_nuc_cs = &nuc_cs_slave[nuc->cs];
 
     if(sab_nuc){
-        treat_sab_colli_type(sab_nuc, cur_nuc_cs->el, cur_nuc_cs->inel, par_state->erg, par_state->dir, &par_state->exit_erg,
-                             par_state->exit_dir);
+        treat_sab_colli_type(sab_nuc, par_state, RNG_slave);
         /* 这里似乎应该是出射能量而不是原本的能量 */
         if(par_state->erg <= EG0_CUTOFF)
             par_state->is_killed = true;
@@ -32,7 +28,7 @@ void get_exit_state(particle_state_t *par_state){
 
     par_state->wgt *= emiss_neu_num;
 
-    get_ce_exit_state(par_state, par_state->collision_type, par_state->is_free_gas_col);
+    get_ce_exit_state(par_state, RNG_slave, par_state->collision_type, par_state->is_free_gas_col);
 
     /* 这里似乎应该是出射能量而不是原本的能量 */
     if(par_state->erg <= EG0_CUTOFF)

@@ -45,8 +45,6 @@ typedef struct {
 
 
 typedef struct {
-    nuclide_t *nuc;
-
     double tot;
     double abs;
     double el;

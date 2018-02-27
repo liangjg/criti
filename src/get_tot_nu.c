@@ -7,16 +7,15 @@
 
 double get_total_nu(nuclide_t *nuc, double erg){
     int KNU = Get_loc_of_NU(nuc);
-    if(KNU == 0)   // no neutron yield
+    if(KNU == 0)
         return ZERO;
 
     int KNU_judge = (int) (nuc->XSS[KNU]);
 
-    if(KNU_judge < 0)  /// both prompt and total NU are given
+    if(KNU_judge < 0)
         KNU = KNU - KNU_judge + 1;
 
     int LNU = (int) (nuc->XSS[KNU]);
-    ///// calculate NuTemp by evaluating a polynomial in energy /////
     if(LNU == 1){
         int i;
         int NC = (int) (nuc->XSS[KNU + 1]) - 1;

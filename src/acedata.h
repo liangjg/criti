@@ -22,14 +22,14 @@ void calc_therm_Gfun(acedata_t *obj);
 
 void doppler_broaden();
 
-void get_nuc_tot_fis_cs(acedata_t *obj, nuclide_t *nuc, nuclide_t *sab_nuc, double erg, double cell_tmp);
+void get_nuc_tot_fis_cs(acedata_t *obj, nuclide_t *nuc, nuclide_t *sab_nuc, nuc_cs_t *cur_nuc_cs, double erg,
+                        double cell_tmp);
 
-void get_nuc_abs_scatt_cs(acedata_t *obj, nuclide_t *nuc, double erg, int interp_pos0, double interp_frac0,
-                          int interp_pos, double interp_frac);
+void get_nuc_abs_scatt_cs(acedata_t *obj, nuclide_t *nuc, particle_state_t *par_state);
 
 double get_nuc_mt_cs(nuclide_t *nuc, int MT, int interp_pos, double interp_frac);
 
-void interpolate_sab(nuclide_t *nuc, nuclide_t *sab_nuc, double erg);
+void interpolate_sab(nuclide_t *nuc, nuclide_t *sab_nuc, nuc_cs_t *cur_nuc_cs, double erg);
 
 void get_ce_exist_erg_mu(const nuclide_t *nuc, int MT, double incident_erg, double *exit_erg_lab, double *exit_mu_lab);
 
@@ -39,8 +39,7 @@ int get_law_type(const nuclide_t *nuc, int MT, double incident_erg, int *LDAT);
 
 void react_by_laws(const nuclide_t *nuc, int MT, int law_type, int LDAT, double incident_erg, double *exit_erg_cm, double *mu_cm);
 
-void treat_sab_colli_type(const nuclide_t *sab_nuc, double SIG_sab_el, double SIG_sab_inel, double incident_erg,
-                          double *incident_dir, double *exit_erg_lab, double *exit_dir);
+void treat_sab_colli_type(const nuclide_t *sab_nuc, particle_state_t *par_state, RNG_t *RNG_slave);
 
 double get_total_nu(nuclide_t *nuc, double erg);
 

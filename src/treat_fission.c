@@ -4,19 +4,12 @@
 
 #include "neutron_transport.h"
 #include "acedata.h"
-#include "criticality.h"
 
-
-extern criti_t base_criti;
-
-/* 从核LDM中的变量 */
-extern double keff_final;
-extern double keff_wgt_sum_slave[3];
-extern nuc_cs_t *nuc_cs_slave;
 
 static int fis_MT[5] = {18, 19, 20, 21, 38};
 
-void treat_fission(particle_state_t *par_state){
+void treat_fission(particle_state_t *par_state, RNG_t *RNG_slave, fission_bank_t *fis_bank_slave, int *fis_bank_cnt,
+                   double *keff_wgt_sum_slave, double keff_final){
     nuclide_t *nuc;
     nuc_cs_t *cur_nuc_cs;
     double fis_sub_cs[5];
@@ -24,7 +17,7 @@ void treat_fission(particle_state_t *par_state){
     int i;
 
     nuc = par_state->nuc;
-    cur_nuc_cs = &nuc_cs_slave[nuc->cs];
+    cur_nuc_cs = par_state->nuc_cs;
 
     if(cur_nuc_cs->fis <= ZERO) return;
 
@@ -39,13 +32,13 @@ void treat_fission(particle_state_t *par_state){
     if(nuc->LSIG[18] > 0){
         if(fis_sub_cs[0] > 0){
             fis_R = par_state->wgt * cur_nuc_cs->nu * fis_sub_cs[0] / cur_nuc_cs->tot / keff_final;
-            get_fis_neu_state(par_state, fis_MT[0], fis_R);
+            get_fis_neu_state(par_state, RNG_slave, fis_bank_slave, fis_bank_cnt, fis_MT[0], fis_R);
         }
     } else{
         for(i = 1; i < 5; i++){
             if(fis_sub_cs[i] > 0){
                 fis_R = par_state->wgt * cur_nuc_cs->nu * fis_sub_cs[i] / cur_nuc_cs->tot / keff_final;
-                get_fis_neu_state(par_state, fis_MT[i], fis_R);
+                get_fis_neu_state(par_state, RNG_slave, fis_bank_slave, fis_bank_cnt, fis_MT[i], fis_R);
             }
         }
     }

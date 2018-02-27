@@ -6,16 +6,12 @@
 #include "global_fun.h"
 
 
-extern nuc_cs_t *nuc_cs_slave;
-
-void interpolate_sab(nuclide_t *nuc, nuclide_t *sab_nuc, double erg){
+void interpolate_sab(nuclide_t *nuc, nuclide_t *sab_nuc, nuc_cs_t *cur_nuc_cs, double erg){
     int min, max;
     int NE_el, NE_inel;
     int sab_n_el, sab_n_inel;
     double SIG_sab_el, SIG_sab_inel, sab_k_el, sab_k_inel;
-    nuc_cs_t *cur_nuc_cs;
 
-    /////////////// calculate the s(a,b) inelastic scattering cross section ///////////////
     NE_inel = (int)(sab_nuc->XSS[Get_loc_of_sab_inel_erg(sab_nuc)]);
     min = Get_loc_of_sab_inel_erg(sab_nuc) + 1;
     max = Get_loc_of_sab_inel_erg(sab_nuc) + NE_inel;
@@ -24,8 +20,6 @@ void interpolate_sab(nuclide_t *nuc, nuclide_t *sab_nuc, double erg){
     SIG_sab_inel = sab_nuc->XSS[NE_inel + sab_n_inel] +
                     sab_k_inel * (sab_nuc->XSS[NE_inel + sab_n_inel + 1] - sab_nuc->XSS[NE_inel + sab_n_inel]);
 
-
-    /////////////// calculate the s(a,b) elastic scattering cross section ///////////////
     if(Get_loc_of_sab_el_erg(sab_nuc) == 0)
         SIG_sab_el = 0;
     else{
@@ -46,7 +40,6 @@ void interpolate_sab(nuclide_t *nuc, nuclide_t *sab_nuc, double erg){
         }
     }
 
-    cur_nuc_cs = &nuc_cs_slave[nuc->cs];
     int nn = cur_nuc_cs->inter_pos;
     double kk = cur_nuc_cs->inter_frac;
     int NE = Get_erg_grid_num(nuc);

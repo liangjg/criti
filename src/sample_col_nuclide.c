@@ -3,16 +3,10 @@
 //
 
 #include "neutron_transport.h"
-#include "RNG.h"
 #include "material.h"
-#include "nuclide.h"
 
 
-/* 从核LDM上的全局变量 */
-extern RNG_t RNG_slave;
-extern nuc_cs_t *nuc_cs_slave;
-
-void sample_col_nuclide(particle_state_t *par_state){
+void sample_col_nuclide(particle_state_t *par_state, nuc_cs_t *nuc_cs_slave, RNG_t *RNG_slave){
     mat_t *mat;
     nuclide_t *nuc, *sab_nuc;
     nuc_cs_t *cur_nuc_cs;
@@ -20,7 +14,7 @@ void sample_col_nuclide(particle_state_t *par_state){
     double sample_cutoff;
     int i;
 
-    sample_cutoff = par_state->macro_tot_cs * get_rand_slave(&RNG_slave);
+    sample_cutoff = par_state->macro_tot_cs * get_rand_slave(RNG_slave);
     mat = par_state->mat;
     sigt_sum2 = ZERO;
     for(i = 0; i < mat->tot_nuc_num; i++){
@@ -29,6 +23,7 @@ void sample_col_nuclide(particle_state_t *par_state){
         sigt_sum2 += cur_nuc_cs->tot * mat->nuc_atom_den[i];
         if(sigt_sum2 >= sample_cutoff){
             par_state->nuc = nuc;
+            par_state->nuc_cs = cur_nuc_cs;
             break;
         }
     }

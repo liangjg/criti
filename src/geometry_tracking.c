@@ -7,16 +7,13 @@
 #include "geometry.h"
 
 
-/* 从核自身LDM中的变量 */
-extern double keff_wgt_sum_slave[3];
-
-void geometry_tracking(particle_state_t *par_state){
-    double FFL;    /* free fly length */
-    double DTB;    /* distance to boundary */
+void geometry_tracking(particle_state_t *par_state, double *keff_wgt_sum_slave, nuc_cs_t *nuc_cs_slave, RNG_t *RNG_slave){
+    double FFL;
+    double DTB;
     double distance;
     int iter_cnt = 0;
     bool par_on_surf = false;
-    par_state->surf = 0;    /* particle is not on surface at the beginning */
+    par_state->surf = 0;
 
     do{
         if(iter_cnt++ > MAX_ITER){
@@ -38,7 +35,7 @@ void geometry_tracking(particle_state_t *par_state){
             DTB = ZERO;
         }
 
-        FFL = sample_free_fly_dis(par_state, !par_on_surf);
+        FFL = sample_free_fly_dis(par_state, nuc_cs_slave, RNG_slave, !par_on_surf);
 
         if(FFL >= DTB){
             par_on_surf = true;

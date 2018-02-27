@@ -105,7 +105,6 @@ build/objs/sample_maxwell_slave.c.o \
 build/objs/sample_watt.c.o \
 build/objs/set_RNG_paras.c.o \
 build/objs/surface.c.o \
-build/objs/track_history.c.o \
 build/objs/trans_univ_coord.c.o \
 build/objs/trans_univ_dir.c.o \
 build/objs/treat_URR.c.o \
@@ -401,10 +400,6 @@ build/objs/set_RNG_paras.c.o: src/set_RNG_paras.c
 
 build/objs/surface.c.o: src/surface.c
 	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/surface.c.o   -c src/surface.c
-
-
-build/objs/track_history.c.o: src/track_history.c
-	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/track_history.c.o   -c src/track_history.c
 
 
 build/objs/trans_univ_coord.c.o: src/trans_univ_coord.c

@@ -6,7 +6,7 @@
 #include "acedata.h"
 
 
-void get_ce_exit_state(particle_state_t *par_state, int MT, bool is_free_gas_col){
+void get_ce_exit_state(particle_state_t *par_state, RNG_t *RNG_slave, int MT, bool is_free_gas_col){
     int i;
     double exit_mu_lab;
     double exit_erg_lab;
@@ -18,7 +18,7 @@ void get_ce_exit_state(particle_state_t *par_state, int MT, bool is_free_gas_col
     if(is_free_gas_col){
         double atom_tmp, temp1, temp2;
 
-        rotate_dir(exit_mu_lab, par_state->dir_vel, par_state->exit_dir);
+        rotate_dir(exit_mu_lab, par_state->dir_vel, par_state->exit_dir, RNG_slave);
 
         atom_tmp = nuc->atom_wgt / par_state->cell_tmp;
         temp1 = sqrt(exit_erg_lab * atom_tmp);
@@ -29,7 +29,7 @@ void get_ce_exit_state(particle_state_t *par_state, int MT, bool is_free_gas_col
             par_state->exit_dir[i] /= sqrt(temp2);
         par_state->exit_erg = temp2 / atom_tmp;
     } else{    /* 转换出射方向 */
-        rotate_dir(exit_mu_lab, par_state->dir, par_state->exit_dir);
+        rotate_dir(exit_mu_lab, par_state->dir, par_state->exit_dir, RNG_slave);
         par_state->exit_erg = exit_erg_lab;
     }
 

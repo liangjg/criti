@@ -3,26 +3,21 @@
 //
 
 #include "neutron_transport.h"
-#include "RNG.h"
 #include "acedata.h"
 
 
-/* 从核LDM上的全局变量 */
-extern RNG_t RNG_slave;
-extern nuc_cs_t *nuc_cs_slave;
-
-int sample_col_type(particle_state_t *par_state){
+int sample_col_type(particle_state_t *par_state, RNG_t *RNG_slave){
     if(par_state->sab_nuc) return 0;
 
     int i;
     nuclide_t *nuc = par_state->nuc;
-    nuc_cs_t *cur_nuc_cs = &nuc_cs_slave[nuc->cs];
+    nuc_cs_t *cur_nuc_cs = par_state->nuc_cs;
     while(1){
-        if(get_rand_slave(&RNG_slave) * (cur_nuc_cs->el + cur_nuc_cs->inel) - cur_nuc_cs->el <= ZERO)
+        if(get_rand_slave(RNG_slave) * (cur_nuc_cs->el + cur_nuc_cs->inel) - cur_nuc_cs->el <= ZERO)
             return 2;
 
         double sum = ZERO;
-        double ksi = get_rand_slave(&RNG_slave) * cur_nuc_cs->inel;
+        double ksi = get_rand_slave(RNG_slave) * cur_nuc_cs->inel;
         int Loc = Get_loc_of_MTR(nuc) - 1;
         int MT_num = Get_non_el_mt_num_with_neu(nuc);
         for(i = 1; i <= MT_num; i++){

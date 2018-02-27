@@ -31,7 +31,8 @@ typedef struct{
 
     /* collision state */
     void *mat;                  /* 当前cell的材料 */
-    void *nuc;                  /* 当前发生碰撞的核素，在相应的mat->nuc_id中的下标 */
+    void *nuc;                  /* 当前发生碰撞的核素 */
+    void *nuc_cs;               /* 当前发生碰撞的核素的截面 */
     void *sab_nuc;              /* 和当前碰撞核素相应的热化核素 */
     int collision_type;         /* 当前反应的MT号 */
     double cell_tmp;            /* 当前cell的温度 */

@@ -10,11 +10,7 @@
 extern double base_start_wgt;
 extern universe_t *root_universe;
 
-/* 从核LDM中的变量 */
-extern int fis_src_cnt;
-extern fission_bank_t fis_src_slave[400];
-
-void sample_fission_source(particle_state_t *par_state){
+void sample_fission_source(particle_state_t *par_state, int fis_src_cnt, fission_bank_t *fis_src_slave){
     int i;
 
     memset(par_state, 0x0, sizeof(particle_state_t));
@@ -25,8 +21,6 @@ void sample_fission_source(particle_state_t *par_state){
 
     par_state->erg = fis_src_slave[fis_src_cnt].erg;
     par_state->wgt = base_start_wgt;
-    fis_src_cnt++;
-
     par_state->cell = locate_particle(par_state, root_universe, par_state->pos, par_state->dir);
 
     if(!par_state->cell){

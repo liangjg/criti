@@ -3,18 +3,13 @@
 //
 
 #include "neutron_transport.h"
-#include "RNG.h"
 #include "material.h"
 #include "acedata.h"
 
 
 extern acedata_t base_acedata;
 
-/* 从核LDM上的全局变量 */
-extern RNG_t RNG_slave;
-extern nuc_cs_t *nuc_cs_slave;
-
-double sample_free_fly_dis(particle_state_t *par_state, bool erg_changed){
+double sample_free_fly_dis(particle_state_t *par_state, nuc_cs_t *nuc_cs_slave, RNG_t *RNG_slave, bool erg_changed){
     mat_t *mat;
     nuclide_t *nuc, *sab_nuc;
     double nuc_atom_den;
@@ -30,7 +25,7 @@ double sample_free_fly_dis(particle_state_t *par_state, bool erg_changed){
         goto END;
 
     /* vacuum material */
-    if(par_state->mat == NULL){
+    if(!par_state->mat){
         par_state->macro_tot_cs = ZERO_ERG;
         par_state->macro_nu_fis_cs = ZERO;
         goto END;
@@ -55,7 +50,7 @@ double sample_free_fly_dis(particle_state_t *par_state, bool erg_changed){
         if(par_state->erg >= mat->sab_nuc_esa || (sab_nuc && nuc->zaid != sab_nuc->zaid))
             sab_nuc = NULL;
 
-        get_nuc_tot_fis_cs(&base_acedata, nuc, sab_nuc, par_state->erg, par_state->cell_tmp);
+        get_nuc_tot_fis_cs(&base_acedata, nuc, sab_nuc, cur_nuc_cs, par_state->erg, par_state->cell_tmp);
 
         par_state->macro_tot_cs += nuc_atom_den * cur_nuc_cs->tot;
         if(GT_ZERO(cur_nuc_cs->fis))
@@ -67,5 +62,5 @@ double sample_free_fly_dis(particle_state_t *par_state, bool erg_changed){
         par_state->macro_nu_fis_cs = ZERO;
     }
 END:
-    return -log(get_rand_slave(&RNG_slave)) / par_state->macro_tot_cs;
+    return -log(get_rand_slave(RNG_slave)) / par_state->macro_tot_cs;
 }

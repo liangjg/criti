@@ -3,12 +3,9 @@
 //
 
 #include "neutron_transport.h"
-#include "RNG.h"
 
 
-extern RNG_t RNG_slave;
-
-void rotate_dir(double mu, const double *old_dir, double *new_dir){
+void rotate_dir(double mu, const double *old_dir, double *new_dir, RNG_t *RNG_slave){
     double ksi1, ksi2;
     double r, s, t;
 
@@ -19,8 +16,8 @@ void rotate_dir(double mu, const double *old_dir, double *new_dir){
         return;
     }
     do {
-        ksi1 = 2.0 * get_rand_slave(&RNG_slave) - 1.0;
-        ksi2 = 2.0 * get_rand_slave(&RNG_slave) - 1.0;
+        ksi1 = 2.0 * get_rand_slave(RNG_slave) - 1.0;
+        ksi2 = 2.0 * get_rand_slave(RNG_slave) - 1.0;
         r = (ksi1 * ksi1) + (ksi2 * ksi2);
     } while(r > 1.0);
     r = sqrt((1.0 - (mu * mu)) / r);

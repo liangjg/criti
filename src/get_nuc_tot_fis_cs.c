@@ -6,13 +6,10 @@
 #include "global_fun.h"
 
 
-extern nuc_cs_t *nuc_cs_slave;
+void get_nuc_tot_fis_cs(acedata_t *obj, nuclide_t *nuc, nuclide_t *sab_nuc, nuc_cs_t *cur_nuc_cs, double erg,
+                        double cell_tmp){
 
-void get_nuc_tot_fis_cs(acedata_t *obj, nuclide_t *nuc, nuclide_t *sab_nuc, double erg, double cell_tmp){
     int NE = Get_erg_grid_num(nuc);
-    nuc_cs_t *cur_nuc_cs = &nuc_cs_slave[nuc->cs];
-
-    /////////////////////// Cal NU /////////////////////////////
     cur_nuc_cs->nu = get_total_nu(nuc, erg);
 
     int min, max;
@@ -46,5 +43,5 @@ void get_nuc_tot_fis_cs(acedata_t *obj, nuclide_t *nuc, nuclide_t *sab_nuc, doub
         return;
     }
 
-    interpolate_sab(nuc, sab_nuc, erg);
+    interpolate_sab(nuc, sab_nuc, cur_nuc_cs, erg);
 }

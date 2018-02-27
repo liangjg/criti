@@ -59,11 +59,12 @@ typedef struct{
 BEGIN_DECL
 void init_fission_source();
 
-void sample_fission_source(particle_state_t *par_state);
+void sample_fission_source(particle_state_t *par_state, int fis_src_cnt, fission_bank_t *fis_src_slave);
 
-void track_history(particle_state_t *par_state);
+/*void track_history(particle_state_t *par_state);*/
 
-void get_fis_neu_state(particle_state_t *par_state, int fis_MT, double fis_wgt);
+void get_fis_neu_state(particle_state_t *par_state, struct RNG *RNG_slave, fission_bank_t *fis_bank_slave, int *fis_bank_cnt,
+                       int fis_MT, double fis_wgt);
 
 void process_cycle_end();
 

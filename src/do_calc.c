@@ -4,9 +4,10 @@
 
 #include "RNG.h"
 #include "criticality.h"
-#include "nuclide.h"
+#include "neutron_transport.h"
 #include "slave.h"
 
+#define __thread_local
 __thread_local volatile unsigned int get_reply, put_reply;
 __thread_local int my_id;
 
@@ -34,7 +35,7 @@ __thread_local fission_bank_t fis_src_slave[400], fis_bank_slave[600];
 __thread_local int fis_src_cnt, fis_bank_cnt;
 
 /* 每个从核都需要一个存储在LDM中的particle_state对象，用于进行粒子输运 */
-__thread_local particle_state_t par_state_slave;
+__thread_local particle_state_t par_state;
 
 /* 每个从核在本代模拟的粒子发送到总碰撞次数 */
 __thread_local int col_cnt_slave;
@@ -106,9 +107,47 @@ void do_calc(){
     for(neu = 1; neu <= numbers_to_get; neu++){
         get_rand_seed_slave(&RNG_slave);
 
-        sample_fission_source(&par_state_slave);
+        sample_fission_source(&par_state, fis_src_cnt, fis_src_slave);
 
-        track_history(&par_state_slave);
+        fis_src_cnt++;
+
+        if(par_state.is_killed) continue;
+        do{
+            /* geometry tracking: free flying */
+            geometry_tracking(&par_state, keff_wgt_sum_slave, nuc_cs_slave, &RNG_slave);
+            if(par_state.is_killed) break;
+
+            /* sample collision nuclide */
+            sample_col_nuclide(&par_state, nuc_cs_slave, &RNG_slave);
+            if(par_state.is_killed) break;
+
+            /* calculate cross-section */
+            calc_col_nuc_cs(&par_state, &RNG_slave);
+
+            /* treat fission */
+            treat_fission(&par_state, &RNG_slave, fis_bank_slave, &fis_bank_cnt, keff_wgt_sum_slave, keff_final);
+
+            /* implicit capture(including fission) */
+            treat_implicit_capture(&par_state, &RNG_slave);
+            if(par_state.is_killed) break;
+
+            /* sample collision type */
+            par_state.collision_type = sample_col_type(&par_state, &RNG_slave);
+            if(par_state.is_killed) break;
+
+            /* sample exit state */
+            get_exit_state(&par_state, &RNG_slave);
+            if(par_state.is_killed) break;
+
+            /* update particle state */
+            par_state.erg = par_state.exit_erg;
+            for(i = 0; i < 3; i++)
+                par_state.dir[i] = par_state.exit_dir[i];
+            double length = ONE / sqrt(SQUARE(par_state.dir[0]) + SQUARE(par_state.dir[1]) + SQUARE(par_state.dir[2]));
+            par_state.dir[0] *= length;
+            par_state.dir[1] *= length;
+            par_state.dir[2] *= length;
+        } while(++col_cnt_slave < MAX_ITER);
     }
 
     /* 等待最后一次athread_get完成 */
