@@ -11,10 +11,10 @@ CC_HOST = sw5cc -host
 CC_SLAVE = sw5cc -slave
 
 # Set the CXX host compiler
-CXX_HOST = sw5CC -host
+CXX_HOST = mpiCC
 
 # Set the Linker
-LINKER = sw5CC -hybrid
+LINKER = mpiCC
 
 # Set the C compiler flags
 C_FLAGS = -Wall -Wextra -pedantic -Wno-pointer-arith -O0 -g
@@ -124,7 +124,7 @@ criti_EXTERNAL_OBJECTS =
 
 
 $(TARGET): $(criti_OBJECTS)
-	$(LINKER) $(criti_OBJECTS) -o $(TARGET)
+	$(LINKER) $(criti_OBJECTS) -lm_slave -o $(TARGET)
 
 
 build/objs/RNG_host.c.o: src/RNG_host.c
