@@ -7,7 +7,6 @@
 #include "neutron_transport.h"
 #include "slave.h"
 
-#define __thread_local
 __thread_local volatile unsigned int get_reply, put_reply;
 __thread_local int my_id;
 

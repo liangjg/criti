@@ -7,9 +7,7 @@
 #include "sample_method.h"
 
 
-extern RNG_t RNG_slave;
-
-void react_by_laws(const nuclide_t *nuc, int MT, int law_type, int LDAT, double incident_erg,
+void react_by_laws(const nuclide_t *nuc, RNG_t *RNG_slave, int MT, int law_type, int LDAT, double incident_erg,
                    double *exit_erg_cm, double *exit_mu_cm){
     int NR, NE, NET, LN;
     int pos;
@@ -21,7 +19,7 @@ void react_by_laws(const nuclide_t *nuc, int MT, int law_type, int LDAT, double 
         LN = 2 * NR + NE + 2;
         NET = (int) (nuc->XSS[LDAT + LN]);
 
-        double ksi1 = get_rand_slave(&RNG_slave);
+        double ksi1 = get_rand_slave(RNG_slave);
         int k = 1 + (int) (ksi1 * NET + 1);
 
         int LC = LDAT + LN + NR + NET * (pos - 1);
@@ -33,13 +31,13 @@ void react_by_laws(const nuclide_t *nuc, int MT, int law_type, int LDAT, double 
         double E_1 = E_i_1 + frac * (E_i1_1 - E_i_1);
         double E_K = E_i_K + frac * (E_i1_K - E_i_K);
 
-        double ksi3 = get_rand_slave(&RNG_slave);
+        double ksi3 = get_rand_slave(RNG_slave);
         int pos_smpl = ksi3 < frac ? pos + 1 : pos;
 
         LC = LDAT + LN + (pos_smpl - 1) * NET;
         double E_l_k = nuc->XSS[LC + k];
         double E_l_k1 = nuc->XSS[LC + k + 1];
-        double ksi2 = get_rand_slave(&RNG_slave);
+        double ksi2 = get_rand_slave(RNG_slave);
         double E_pie = E_l_k + ksi2 * (E_l_k1 - E_l_k);
 
         if(pos_smpl == pos)
@@ -56,8 +54,8 @@ void react_by_laws(const nuclide_t *nuc, int MT, int law_type, int LDAT, double 
         LN = 2 * (NR + NE + 1);
         TI = get_erg_func_value(nuc, LDAT, incident_erg);
         NET = (int) (nuc->XSS[LDAT + LN]);
-        index = LDAT + LN + 1 + (int) (get_rand_slave(&RNG_slave) * (NET - 1));
-        *exit_erg_cm = TI * (nuc->XSS[index] + get_rand_slave(&RNG_slave) * (nuc->XSS[index + 1] - nuc->XSS[index]));
+        index = LDAT + LN + 1 + (int) (get_rand_slave(RNG_slave) * (NET - 1));
+        *exit_erg_cm = TI * (nuc->XSS[index] + get_rand_slave(RNG_slave) * (nuc->XSS[index + 1] - nuc->XSS[index]));
     } else if(law_type == 7){
         double T, U, CalTemp;
 
@@ -69,7 +67,7 @@ void react_by_laws(const nuclide_t *nuc, int MT, int law_type, int LDAT, double 
         if(CalTemp > 0){
             iter_cnt = 0;
             for(;;){
-                *exit_erg_cm = sample_maxwell_slave(&RNG_slave, T);
+                *exit_erg_cm = sample_maxwell_slave(RNG_slave, T);
                 if(*exit_erg_cm <= CalTemp)
                     break;
                 if((iter_cnt++) >= MAX_ITER){
@@ -91,8 +89,8 @@ void react_by_laws(const nuclide_t *nuc, int MT, int law_type, int LDAT, double 
         CalTemp = incident_erg - U;
         if(CalTemp > 0){
             for(;;){
-                double ksi1 = get_rand_slave(&RNG_slave);
-                double ksi2 = get_rand_slave(&RNG_slave);
+                double ksi1 = get_rand_slave(RNG_slave);
+                double ksi2 = get_rand_slave(RNG_slave);
                 *exit_erg_cm = -T * log(ksi1 * ksi2);
                 if(*exit_erg_cm <= CalTemp)
                     break;
@@ -115,7 +113,7 @@ void react_by_laws(const nuclide_t *nuc, int MT, int law_type, int LDAT, double 
         if(CalTemp > 0){
             iter_cnt = 0;
             for(;;){
-                *exit_erg_cm = sample_watt(&RNG_slave, a, b);
+                *exit_erg_cm = sample_watt(RNG_slave, a, b);
                 if(*exit_erg_cm <= CalTemp)
                     break;
                 if((iter_cnt++) >= MAX_ITER){
@@ -137,7 +135,7 @@ void react_by_laws(const nuclide_t *nuc, int MT, int law_type, int LDAT, double 
         iter_cnt = 0;
         do{
             LDAT = ie;
-            double fr = get_rand_slave(&RNG_slave);
+            double fr = get_rand_slave(RNG_slave);
             do{
                 LDAT = LDAT + 1;
                 fr = fr - nuc->XSS[LDAT];
@@ -156,9 +154,9 @@ void react_by_laws(const nuclide_t *nuc, int MT, int law_type, int LDAT, double 
         interpolate_xss_table(nuc, incident_erg, LDAT, &pos, &frac, &NR, &NE);
         LN = 2 * NR + NE + 2;
         NET = (int) (nuc->XSS[LDAT + LN]);
-        k = (int) (get_rand_slave(&RNG_slave) * (NET - 1));
+        k = (int) (get_rand_slave(RNG_slave) * (NET - 1));
         index = LDAT + LN + 1 + NET * (pos - 1) + k;
-        *exit_erg_cm = incident_erg * (nuc->XSS[index] + get_rand_slave(&RNG_slave) * (nuc->XSS[index + 1] - nuc->XSS[index]));
+        *exit_erg_cm = incident_erg * (nuc->XSS[index] + get_rand_slave(RNG_slave) * (nuc->XSS[index + 1] - nuc->XSS[index]));
     } else if(law_type == 4 || law_type == 44 || law_type == 61){
         int pos_smpl;
         int LDIS;
@@ -170,7 +168,7 @@ void react_by_laws(const nuclide_t *nuc, int MT, int law_type, int LDAT, double 
 
         interpolate_xss_table(nuc, incident_erg, LDAT, &pos, &frac, &NR, &NE);
         LN = 2 * NR + NE + 2;
-        pos_smpl = frac > get_rand_slave(&RNG_slave) ? pos + 1 : pos;
+        pos_smpl = frac > get_rand_slave(RNG_slave) ? pos + 1 : pos;
 
         LDIS = Get_loc_of_DLW(nuc);
         if(MT == -1)
@@ -215,7 +213,7 @@ void react_by_laws(const nuclide_t *nuc, int MT, int law_type, int LDAT, double 
         double c_k, E_l_k, p_l_k;
         double KM_R, KM_A;
 
-        r1 = get_rand_slave(&RNG_slave);
+        r1 = get_rand_slave(RNG_slave);
         ic = LC + 2 * NP + 1;
         ib = LC + 3 * NP;
         while(ib - ic > 1){
@@ -274,8 +272,8 @@ void react_by_laws(const nuclide_t *nuc, int MT, int law_type, int LDAT, double 
             *exit_erg_cm = E_1 + (*exit_erg_cm - E_i1_1) * (E_K - E_1) / (E_i1_K - E_i1_1);
 
         if(law_type == 44){
-            double ksi3 = get_rand_slave(&RNG_slave);
-            double ksi4 = get_rand_slave(&RNG_slave);
+            double ksi3 = get_rand_slave(RNG_slave);
+            double ksi4 = get_rand_slave(RNG_slave);
             if(ksi3 > KM_R){
                 double T = (2 * ksi4 - 1) * sinh(KM_A);
                 *exit_mu_cm = log(T + sqrt((T * T) + 1)) / KM_A;
@@ -293,14 +291,14 @@ void react_by_laws(const nuclide_t *nuc, int MT, int law_type, int LDAT, double 
             LM = (int) (nuc->XSS[LB]);
 
             if(LM == 0){
-                *exit_mu_cm = 2 * get_rand_slave(&RNG_slave) - 1;
+                *exit_mu_cm = 2 * get_rand_slave(RNG_slave) - 1;
                 return;
             }
             LC = Get_loc_of_DLW(nuc) + abs(LM) - 2;
             JJ = (int) (nuc->XSS[LC + 1]);
             NP = (int) (nuc->XSS[LC + 2]);
 
-            r3 = get_rand_slave(&RNG_slave);
+            r3 = get_rand_slave(RNG_slave);
             c_k = nuc->XSS[LC + 2 + 2 * NP + 1];
             for(k = 1; k <= NP - 1; ++k){
                 double temp = nuc->XSS[LC + 2 + 2 * NP + k + 1];
@@ -342,24 +340,24 @@ void react_by_laws(const nuclide_t *nuc, int MT, int law_type, int LDAT, double 
         Q = Get_nuc_fis_Q(nuc, MT);
         E_max = ((Ap - 1) / Ap) * (incident_erg * aw / (aw + 1) + Q);
 
-        lx = sample_maxwell_slave(&RNG_slave, 1);
+        lx = sample_maxwell_slave(RNG_slave, 1);
         if(NPSX == 3)
-            ly = sample_maxwell_slave(&RNG_slave, 1);
+            ly = sample_maxwell_slave(RNG_slave, 1);
         else if(NPSX == 4){
-            double temp = get_rand_slave(&RNG_slave) * get_rand_slave(&RNG_slave) * get_rand_slave(&RNG_slave);
+            double temp = get_rand_slave(RNG_slave) * get_rand_slave(RNG_slave) * get_rand_slave(RNG_slave);
             ly = log(temp);
         } else{
-            double r1 = get_rand_slave(&RNG_slave);
-            double r2 = get_rand_slave(&RNG_slave);
-            double r3 = get_rand_slave(&RNG_slave);
-            double r4 = get_rand_slave(&RNG_slave);
-            double r5 = get_rand_slave(&RNG_slave);
-            double r6 = get_rand_slave(&RNG_slave);
+            double r1 = get_rand_slave(RNG_slave);
+            double r2 = get_rand_slave(RNG_slave);
+            double r3 = get_rand_slave(RNG_slave);
+            double r4 = get_rand_slave(RNG_slave);
+            double r5 = get_rand_slave(RNG_slave);
+            double r6 = get_rand_slave(RNG_slave);
             ly = -log(r1 * r2 * r3 * r4) - log(r5) * cos(PI /TWO * r6) * cos(PI / TWO * r6);
         }
         V = lx / (lx + ly);
         *exit_erg_cm = V * E_max;
-        *exit_mu_cm = TWO * get_rand_slave(&RNG_slave) - ONE;
+        *exit_mu_cm = TWO * get_rand_slave(RNG_slave) - ONE;
     } else if(law_type == 67){
         int LC[3];
         int ix, ir;
@@ -378,7 +376,7 @@ void react_by_laws(const nuclide_t *nuc, int MT, int law_type, int LDAT, double 
         if(frac != 0){
             LC[2] = Get_loc_of_DLW(nuc) + (int) (nuc->XSS[LN + pos]) - 1;
             ir = 1;
-            if(get_rand_slave(&RNG_slave) <= frac)
+            if(get_rand_slave(RNG_slave) <= frac)
                 ix = 2;
         }
 
@@ -399,7 +397,7 @@ void react_by_laws(const nuclide_t *nuc, int MT, int law_type, int LDAT, double 
             }
             if(INTMU == 2){
                 ir = ir + 1;
-                if(get_rand_slave(&RNG_slave) <
+                if(get_rand_slave(RNG_slave) <
                    (*exit_mu_cm - nuc->XSS[le + LMU + 1]) / (nuc->XSS[le + LMU + 2] - nuc->XSS[le + LMU + 1]))
                     LMU = LMU + 1;
             } else if(INTMU != 1){
@@ -421,7 +419,7 @@ void react_by_laws(const nuclide_t *nuc, int MT, int law_type, int LDAT, double 
                 continue;
 
             ir = ir + 1;
-            ksi4 = get_rand_slave(&RNG_slave);
+            ksi4 = get_rand_slave(RNG_slave);
             ic = lb + 2 * NPEP + 1;
             ib = lb + 3 * NPEP;
 
@@ -493,6 +491,6 @@ End:
     if(!(*exit_mu_cm >= -1.000001 && *exit_mu_cm <= 1.000001)){
         printf("exit mu_cm out of range. nuc=%d, MT=%d, Law=%d, Mu=%f \n", nuc->zaid, MT, law_type, *exit_mu_cm);
         base_warnings++;
-        *exit_mu_cm = 2 * get_rand_slave(&RNG_slave) - 1.;
+        *exit_mu_cm = 2 * get_rand_slave(RNG_slave) - 1.;
     }
 }

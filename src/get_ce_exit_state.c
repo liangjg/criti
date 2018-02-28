@@ -12,7 +12,7 @@ void get_ce_exit_state(particle_state_t *par_state, RNG_t *RNG_slave, int MT, bo
     double exit_erg_lab;
     nuclide_t *nuc = par_state->nuc;
 
-    get_ce_exist_erg_mu(nuc, MT, par_state->erg_rel, &exit_erg_lab, &exit_mu_lab);
+    get_ce_exist_erg_mu(nuc, RNG_slave ,MT, par_state->erg_rel, &exit_erg_lab, &exit_mu_lab);
 
     /* 如果使用了自由气体模型则进一步转换出射方向和能量 */
     if(is_free_gas_col){

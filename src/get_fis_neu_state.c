@@ -37,10 +37,10 @@ void get_fis_neu_state(particle_state_t *par_state, RNG_t *RNG_slave, fission_ba
 
             j = MIN(j, NPCR);
             int LDAT;
-            int law_type = get_law_type(nuc, -j, erg, &LDAT);
+            int law_type = get_law_type(nuc, RNG_slave, -j, erg, &LDAT);
             double exit_erg;
             double exit_mu = TWO * get_rand_slave(RNG_slave) - ONE;
-            react_by_laws(nuc, -1, law_type, LDAT, erg, &exit_erg, &exit_mu);
+            react_by_laws(nuc, RNG_slave, -1, law_type, LDAT, erg, &exit_erg, &exit_mu);
 
             double phi = TWO * PI * get_rand_slave(RNG_slave);
             par_state->exit_dir[0] = exit_mu;
@@ -48,7 +48,7 @@ void get_fis_neu_state(particle_state_t *par_state, RNG_t *RNG_slave, fission_ba
             par_state->exit_dir[2] = sqrt(ONE - SQUARE(exit_mu)) * sin(phi);
             par_state->exit_erg = exit_erg;
         } else
-            get_ce_exit_state(par_state, NULL, fis_MT, false);
+            get_ce_exit_state(par_state, RNG_slave, fis_MT, false);
 
         for(j = 0; j < 3; j++){
             fis_bank_slave[fis_bank_cnt_local].pos[j] = par_state->pos[j];

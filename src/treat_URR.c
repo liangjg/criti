@@ -7,15 +7,11 @@
 #include "RNG.h"
 
 
-extern RNG_t RNG_slave;
-extern nuc_cs_t *nuc_cs_slave;
-
-void treat_URR(nuclide_t *nuc, double erg)
+void treat_URR(nuclide_t *nuc, RNG_t *RNG_slave, nuc_cs_t *cur_nuc_cs, double erg)
 {
     double el_factor, fis_factor, C_factor, interp_value, smooth_total, inel_balance, abs_balance;
     int idx, idx_s, idx_e, num_e;
 
-    nuc_cs_t *cur_nuc_cs = &nuc_cs_slave[nuc->cs];
     int num_erg_grid = Get_erg_grid_num(nuc);
     int loc_lunr_table = Get_loc_of_LUNR(nuc);
     int num_prob_table_incident_erg = (int) (nuc->XSS[loc_lunr_table]);
@@ -36,7 +32,7 @@ void treat_URR(nuclide_t *nuc, double erg)
     int nj1 = loc_prob_table;
     int nj2 = loc_prob_table + length_table * 6;
 
-    double rand_num = get_rand_slave(&RNG_slave);
+    double rand_num = get_rand_slave(RNG_slave);
     for(;;){
         if(nuc->XSS[nj1] >= rand_num)
             break;

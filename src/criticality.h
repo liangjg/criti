@@ -7,6 +7,7 @@
 
 #include "common.h"
 #include "particle_state.h"
+#include "RNG.h"
 
 
 typedef enum{
@@ -63,7 +64,7 @@ void sample_fission_source(particle_state_t *par_state, int fis_src_cnt, fission
 
 /*void track_history(particle_state_t *par_state);*/
 
-void get_fis_neu_state(particle_state_t *par_state, struct RNG *RNG_slave, fission_bank_t *fis_bank_slave, int *fis_bank_cnt,
+void get_fis_neu_state(particle_state_t *par_state, RNG_t *RNG_slave, fission_bank_t *fis_bank_slave, int *fis_bank_cnt,
                        int fis_MT, double fis_wgt);
 
 void process_cycle_end();

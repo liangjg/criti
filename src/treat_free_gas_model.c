@@ -38,7 +38,7 @@ void treat_free_gas_model(particle_state_t *par_state, RNG_t *RNG_slave, double 
         x2 = Ycn * Ycn + z2 - 2 * Ycn * z * c;
     } while(pow(get_rand_slave(RNG_slave) * (Ycn + z), 2) > x2);
 
-    rotate_dir(c, par_state->dir, par_state->vel_tgt, NULL);
+    rotate_dir(c, par_state->dir, par_state->vel_tgt, RNG_slave);
 
     for(i = 0; i < 3; ++i){
         par_state->vel_tgt[i] = z * par_state->vel_tgt[i];

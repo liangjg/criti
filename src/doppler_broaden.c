@@ -41,9 +41,7 @@ void doppler_broaden(){
     tot_nucs = 0;
     while((nuc_entry = map_iter_next(nuc_iter))){
         nuc = nuc_entry->v.val;
-        for(i = 0; i < NUMBERS_SLAVES; i++)
-            nuc->cs[i] = (void *)(tot_nucs);
-        tot_nucs++;
+        nuc->cs = tot_nucs++;
         nuc->broaden_tmp = nuc->tmp;
         if(!ISNUMBER(*nuc->id))
             continue;
