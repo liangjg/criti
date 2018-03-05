@@ -4,6 +4,8 @@
 
 #include "IO_releated.h"
 
+#define CODE_VERSION  "Beta 0.2.12"
+
 time_t start_time;
 time_t finish_time;
 extern IOfp_t base_IOfp;
@@ -64,7 +66,6 @@ void output_heading(){
     while(!feof(inp)){
         if(fgets(buf, 200, inp))
             fputs(buf, base_IOfp.opt_fp);
-//            fprintf(base_IOfp.opt_fp, "%s", buf);
     }
     fputs("\n---------------------- Input File End------------------------\n", base_IOfp.opt_fp);
     fclose(inp);

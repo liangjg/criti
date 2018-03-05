@@ -14,7 +14,6 @@ void calc_criticality(){
 
     particle_state_t par_state;
     for(int cyc = 1; cyc <= base_criti.tot_cycle_num; cyc++){
-        base_criti.current_cycle = cyc;
         for(int neu = 1; neu <= base_criti.cycle_neutron_num; neu++){
             get_rand_seed();
 
@@ -24,7 +23,7 @@ void calc_criticality(){
             /* neutron history */
             track_history(&par_state);
         }
-        process_cycle_end();
+        process_cycle_end(cyc);
     }
     output_summary();
 }

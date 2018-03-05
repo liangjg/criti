@@ -101,11 +101,6 @@ void get_surf_norm_vec(surface_t *obj, const double pos[3], double *surf_norm_ve
             surf_norm_vec[2] = ZERO;
             break;
         }
-        default:{
-            puts("unknown surface type.");
-            release_resource();
-            exit(0);
-        }
     }
 
     double length = ONE / sqrt(SQUARE(surf_norm_vec[0]) + SQUARE(surf_norm_vec[1]) + SQUARE(surf_norm_vec[2]));

@@ -53,8 +53,8 @@
 #define ISRETURN(_c)    (((_c) == 10) || ((_c) == 13))
 #define ISSPACE(_c)     ((_c) == 32)
 #define ISCOMMENT(_c)   ((_c) == 47)
-#define TOUPPER(_c)     (ISLOWER(_c) ? ((_c) - 32) : (_c))
-#define TOLOWER(_c)     (ISUPPER(_c) ? ((_c) + 32) : (_c))
+#define TOUPPER(_c)     ((_c) &= 95)
+#define TOLOWER(_c)     ((_c) |= 32)
 
 
 #define MAX_LINE_LENGTH      220
@@ -63,8 +63,6 @@
 
 #define KW_NUMBER       10
 #define MAX_KW_LENGTH   15
-
-#define CODE_VERSION  "Beta 2.5.7"
 
 #define WGT_CUTOFF    0.25
 #define EG0_CUTOFF    1.0E-20
