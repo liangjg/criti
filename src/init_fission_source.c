@@ -9,10 +9,10 @@
 extern criti_t base_criti;
 extern RNG_t base_RNG;
 extern double base_start_wgt;
-extern RNG_t RNGs[64];
+extern RNG_t RNGs[NUMBERS_SLAVES];
 
 void init_fission_source(){
-    int i, j, k;
+    int i, j;
     int remainder1, remainder2;
     int quotient;
 
@@ -37,7 +37,7 @@ void init_fission_source(){
     }
 
     for(i = 0; i < NUMBERS_SLAVES; i++){
-        size_t sz = (size_t) (1.5 * base_criti.fission_src_cnt[i]);
+        int sz =  2 * base_criti.fission_src_cnt[i];
         if(sz < 100) sz = 100;
         base_criti.fission_src[i] = malloc(sz * sizeof(fission_bank_t));
         base_criti.fission_bank[i] = malloc(sz * sizeof(fission_bank_t));

@@ -58,7 +58,7 @@ extern int col_cnt[NUMBERS_SLAVES];
 extern nuc_cs_t *base_nuc_cs[NUMBERS_SLAVES];
 
 void do_calc(){
-    void *start_addr;
+    fission_bank_t *start_addr;
     int i, neu;
 
     /* 取得每个从核的id */
@@ -76,8 +76,8 @@ void do_calc(){
     while(get_reply != 2);
 
     /* 从主核处取得实际数量的src */
-    start_addr = base_criti.fission_src[my_id] + offset_get * sizeof(fission_bank_t);
-    athread_get(PE_MODE, start_addr, fis_src_slave, numbers_to_get * sizeof(fission_bank_t), &get_reply, 0, 0, 0);
+    start_addr = base_criti.fission_src[my_id] + offset_get;
+    athread_get(PE_MODE, start_addr, &fis_src_slave[0], numbers_to_get * sizeof(fission_bank_t), &get_reply, 0, 0, 0);
     while(get_reply != 3);
 
     /* 从主核处取得上一代的keff */
@@ -89,7 +89,7 @@ void do_calc(){
     while(get_reply != 5);
 
     /* 从主核处取得nuc_cs地址 */
-    athread_get(PE_MODE, &base_nuc_cs[my_id], &nuc_cs_slave, sizeof(nuc_cs_t), &get_reply, 0, 0, 0);
+    athread_get(PE_MODE, &base_nuc_cs[my_id], &nuc_cs_slave, sizeof(nuc_cs_t *), &get_reply, 0, 0, 0);
     while(get_reply != 6);
 
     /* 从主核处取得put的位置偏移 */
@@ -153,14 +153,14 @@ void do_calc(){
     while(get_reply != 7);
 
     /* 写回计算结果 */
-    athread_put(PE_MODE, keff_wgt_sum_slave, &keff_wgt_sum[my_id], 3 * sizeof(double), &put_reply, 0, 0);
+    athread_put(PE_MODE, &keff_wgt_sum_slave[0], &keff_wgt_sum[my_id][0], 3 * sizeof(double), &put_reply, 0, 0);
     while(put_reply != 1);
 
     athread_put(PE_MODE, &fis_bank_cnt, &base_criti.fission_bank_cnt[my_id], sizeof(int), &put_reply, 0, 0);
     while(put_reply != 2);
 
-    start_addr = base_criti.fission_bank[my_id] + offset_put * sizeof(fission_bank_t);
-    athread_put(PE_MODE, fis_bank_slave, start_addr, fis_bank_cnt * sizeof(fission_bank_t), &put_reply, 0, 0);
+    start_addr = base_criti.fission_bank[my_id] + offset_put;
+    athread_put(PE_MODE, &fis_bank_slave[0], start_addr, fis_bank_cnt * sizeof(fission_bank_t), &put_reply, 0, 0);
     while(put_reply != 3);
 
     athread_put(PE_MODE, &RNG_slave, &RNGs[my_id], sizeof(RNG_t), &put_reply, 0, 0);

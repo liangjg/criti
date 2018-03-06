@@ -47,7 +47,7 @@ double sample_free_fly_dis(particle_state_t *par_state, nuc_cs_t *nuc_cs_slave, 
         sab_nuc = mat->sab_nuc;
         nuc_atom_den = mat->nuc_atom_den[i];
 
-        if(par_state->erg >= mat->sab_nuc_esa || (sab_nuc && nuc->zaid != sab_nuc->zaid))
+        if(sab_nuc && (sab_nuc->zaid != nuc->zaid || par_state->erg >= mat->sab_nuc_esa))
             sab_nuc = NULL;
 
         get_nuc_tot_fis_cs(&base_acedata, nuc, sab_nuc, cur_nuc_cs, par_state->erg, par_state->cell_tmp);

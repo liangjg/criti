@@ -34,12 +34,14 @@ void reflect_par(surface_t *obj, const double pos[3], double *dir, double *loc_d
     loc_dir[2] -= surf_norm_vec[2];
 
     dir_length = LENGTH_VECTOR(dir);
-    dir[0] /= dir_length;
-    dir[1] /= dir_length;
-    dir[2] /= dir_length;
+    temp = ONE / dir_length;
+    dir[0] *= temp;
+    dir[1] *= temp;
+    dir[2] *= temp;
 
     loc_dir_length = LENGTH_VECTOR(loc_dir);
-    loc_dir[0] /= loc_dir_length;
-    loc_dir[1] /= loc_dir_length;
-    loc_dir[2] /= loc_dir_length;
+    temp = ONE / loc_dir_length;
+    loc_dir[0] *= temp;
+    loc_dir[1] *= temp;
+    loc_dir[2] *= temp;
 }
