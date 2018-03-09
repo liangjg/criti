@@ -27,6 +27,12 @@ int sample_col_type_fixed(particle_state_t *par_state){
         int MT_num = Get_non_el_mt_num_with_neu(nuc);
         double ff = ONE;
 
+        if(nuc->ptable){
+            double cf = nuc->fis_XSS[par_state->interp_N0] + par_state->interp_K0 * (nuc->fis_XSS[par_state->interp_N0 + 1] - nuc->fis_XSS[par_state->interp_N0]);
+            if(!EQ_ZERO(cf))
+                ff = nuc->fis / cf;
+        }
+
         for(int i = 1; i <= MT_num; i++){
             int MT = (int) (nuc->XSS[Loc + i]);
             double cs;
