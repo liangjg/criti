@@ -11,7 +11,7 @@ extern fixed_src_t base_fixed_src;
 extern RNG_t base_RNG;
 extern double base_start_wgt;
 
-#define BANK_SZ    64
+#define BANK_SZ    256
 
 void init_external_src(){
     double ksi1, ksi2, ksi3;
