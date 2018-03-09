@@ -20,6 +20,7 @@ void calc_col_nuc_cs(particle_state_t *par_state){
     if(par_state->cell_tmp > 1.0E-24 &&
        (par_state->erg < 400 * par_state->cell_tmp || nuc->atom_wgt <= 1.5)){
         par_state->is_free_gas_col = true;
+        if(nuc->ptable) return;
         treat_free_gas_model(par_state, nuc->atom_wgt);
         par_state->interp_N = get_intplt_pos_fr(nuc->XSS, par_state->erg_rel, 1, Get_erg_grid_num(nuc),
                                                 &par_state->interp_K);
