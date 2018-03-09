@@ -26,8 +26,7 @@ typedef struct{
     SRC_TYPE_T ksrc_type;
     double ksrc_para[6];
 
-    int cycle_neutron_num;    /* 当前代要模拟的中子数目 */
-    int current_cycle;
+    int cycle_neutron_num;            /* 当前代要模拟的中子数目 */
 
     double keff_final;                /* final keff of each cycle */
     double keff_wgt_sum[3];           /* 0: Collision estimator,  1: Absorption estimator,  2:Track Length estimator */
@@ -40,8 +39,7 @@ typedef struct{
     double keff_covw_std[4];          /* covariance-weighted combined standard deviations */
     double tot_start_wgt;
 
-    unsigned long long tot_col_cnt;
-    unsigned long long col_cnt;
+    unsigned long long tot_col_cnt;   /* 所有粒子发生的碰撞次数之和 */
 
     int fission_bank_cnt;             /* 指向fission_bank的栈顶，也就是新粒子应该存储的下标 */
     int tot_fission_bank_cnt;         /* 在MPI中使用，用来统计所有核心产生的粒子之和 */
@@ -61,7 +59,7 @@ void track_history(particle_state_t *par_state);
 
 void get_fis_neu_state(particle_state_t *par_state, int fis_MT, double fis_wgt);
 
-void process_cycle_end();
+void process_cycle_end(int curren_cycle);
 
 #define Estimate_keff_col(wgt, macro_mu_fis_xs, macro_tot_xs)  \
     do{  \

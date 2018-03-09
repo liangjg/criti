@@ -10,9 +10,9 @@ extern criti_t base_criti;
 extern double base_start_wgt;
 extern IOfp_t base_IOfp;
 
-void _combine_keff();
+void _combine_keff(int current_cycle);
 
-void _output_keff();
+void _output_keff(int current_cycle);
 
 #define SWAP(_a, _b)    \
     do{    \
@@ -21,7 +21,7 @@ void _output_keff();
         (_b) = _temp;    \
     } while(0)
 
-void process_cycle_end(){
+void process_cycle_end(int curren_cycle){
     /* process eigenvalue */
     base_criti.tot_fission_bank_cnt = base_criti.fission_bank_cnt;
 
@@ -35,21 +35,15 @@ void process_cycle_end(){
         base_criti.keff_cycle[i] = base_criti.keff_wgt_sum[i] / base_criti.tot_start_wgt;
     base_criti.keff_final = base_criti.keff_cycle[0];
 
-    _combine_keff();
-    _output_keff();
+    _combine_keff(curren_cycle);
+    _output_keff(curren_cycle);
 
     /* process fission source and fission bank */
     /* 这里采用了一个小技巧，正常来说是应该将fission_bank 里面的值一一复制到fission_src里面，
      * 但是这样逐个复制的开销较大。因此这里直接交换两个数组的指针，同时交换bank_sz和src_sz，
      * 用O(1)时间完成交换
      */
-//    SWAP(base_criti.fission_src.start, base_criti.fission_bank.start);
-//    SWAP(base_criti.fission_src.finish, base_criti.fission_bank.finish);
-//    SWAP(base_criti.fission_src.end_of_storage, base_criti.fission_bank.end_of_storage);
     SWAP(base_criti.fission_src, base_criti.fission_bank);
-
-//    /* 将fission_bank清空，以便之后使用vector_push_back函数追加裂变产生的粒子 */
-//    base_criti.fission_bank.finish = base_criti.fission_bank.start;
 
     base_criti.cycle_neutron_num = base_criti.fission_bank_cnt;
     base_start_wgt = ONE * base_criti.tot_start_wgt / base_criti.tot_fission_bank_cnt;
@@ -62,8 +56,8 @@ void process_cycle_end(){
         base_criti.keff_wgt_sum[i] = ZERO;
 }
 
-void _combine_keff(){
-    if(base_criti.current_cycle <= base_criti.inactive_cycle_num)
+void _combine_keff(int current_cycle){
+    if(current_cycle <= base_criti.inactive_cycle_num)
         return;
 
     double keff_corr[3];                          // Correlation
@@ -71,7 +65,7 @@ void _combine_keff(){
     double d0, d1, d2, temp;
     double keff_covw[3][3], keff_covw_sum;
 
-    diffrence = base_criti.current_cycle - base_criti.inactive_cycle_num;
+    diffrence = current_cycle - base_criti.inactive_cycle_num;
     for(i = 0; i < 3; ++i){
         base_criti.keff_sum[i] = base_criti.keff_sum[i] + base_criti.keff_cycle[i];
         for(j = 0; j < 3; ++j)
@@ -162,53 +156,53 @@ go60:
 }
 
 
-void _output_keff(){
+void _output_keff(int current_cycle){
     /* cycle finish time */
     finish_time = clock();
     double compute_time_min = (double) (finish_time - start_time) / CLOCKS_PER_SEC / 60.0;
 
-    if(base_criti.current_cycle == base_criti.inactive_cycle_num + 1){
+    if(current_cycle == base_criti.inactive_cycle_num + 1){
         puts("************* Start Active Cycle *************");
         puts("Cycle      Active       Keff        Average        Std      Time(min)");
-    } else if(base_criti.current_cycle == 1){
+    } else if(current_cycle == 1){
         puts("\n************ Start Inactive Cycle ************");
         puts("Cycle        Keff      Time(min)");
     }
 
-    if(base_criti.current_cycle <= base_criti.inactive_cycle_num)
-        printf("%-6d     %-f     %-.4f\n", base_criti.current_cycle, base_criti.keff_cycle[0], compute_time_min);
-    if(base_criti.current_cycle > base_criti.inactive_cycle_num){
+    if(current_cycle <= base_criti.inactive_cycle_num)
+        printf("%-6d     %-f     %-.4f\n", current_cycle, base_criti.keff_cycle[0], compute_time_min);
+    else
         printf("%-6d     %-6d     %-f     %-f     %-f     %-.4f\n",
-               base_criti.current_cycle, base_criti.current_cycle - base_criti.inactive_cycle_num,
+               current_cycle, current_cycle - base_criti.inactive_cycle_num,
                base_criti.keff_cycle[0], base_criti.keff_individual_ave[0], base_criti.keff_individual_std[0],
                compute_time_min);
-    }
+
 
     /* output to file */
-    if(base_criti.current_cycle == base_criti.inactive_cycle_num + 1)
+    if(current_cycle == base_criti.inactive_cycle_num + 1)
         fputs("================== start active cycles ==================================================================================================\n",
               base_IOfp.opt_fp);
-    else if(base_criti.current_cycle == 1){
+    else if(current_cycle == 1){
         fputs("\n=========================================================================================================================================\n",
               base_IOfp.opt_fp);
         fputs("                      keff estimators by cycle             individual average keff and deviation           combined average keff\n",
               base_IOfp.opt_fp);
         fputs("cycle   history      k(col)    k(abs)     k(tl)     k(col)   st dev     k(abs)  st dev      k(tl) st dev     k(c/a/t)  st dev    Time(min)\n",
               base_IOfp.opt_fp);
-    } else if(base_criti.current_cycle % 10 == 1)
+    } else if(current_cycle % 10 == 1)
         fputs("=========================================================================================================================================\n",
               base_IOfp.opt_fp);
 
 
-    if(base_criti.current_cycle <= base_criti.inactive_cycle_num){
+    if(current_cycle <= base_criti.inactive_cycle_num){
         fprintf(base_IOfp.opt_fp,
                 "%-6d  %-9d | %-f  %-f  %-f |                                                                                %-.4f\n",
-                base_criti.current_cycle, base_criti.tot_fission_bank_cnt, base_criti.keff_cycle[0],
+                current_cycle, base_criti.tot_fission_bank_cnt, base_criti.keff_cycle[0],
                 base_criti.keff_cycle[1], base_criti.keff_cycle[2], compute_time_min);
     }
-    if(base_criti.current_cycle > base_criti.inactive_cycle_num){
+    if(current_cycle > base_criti.inactive_cycle_num){
         fprintf(base_IOfp.opt_fp, "%-6d  %-9d | %-f  %-f  %-f | %-f %-f  %-f %-f  %-f %-f | %-f %-f |  %-.4f\n",
-                base_criti.current_cycle, base_criti.tot_fission_bank_cnt, base_criti.keff_cycle[0],
+                current_cycle, base_criti.tot_fission_bank_cnt, base_criti.keff_cycle[0],
                 base_criti.keff_cycle[1], base_criti.keff_cycle[2],
                 base_criti.keff_individual_ave[0], base_criti.keff_individual_std[0], base_criti.keff_individual_ave[1],
                 base_criti.keff_individual_std[1], base_criti.keff_individual_ave[2], base_criti.keff_individual_std[2],

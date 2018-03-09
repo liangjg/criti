@@ -324,7 +324,7 @@ void react_by_laws(const nuclide_t *nuc, int MT, int law_type, int LDAT, double 
                 if(fr == 0)
                     *exit_mu_cm = mu_k + (r3 - c_k) / p_k;
                 else
-                    *exit_mu_cm = mu_k + (sqrt(p_k * p_k + 2 * fr * (r3 - c_k)) - p_k) / fr;
+                    *exit_mu_cm = mu_k + (sqrt(p_k * p_k + TWO * fr * (r3 - c_k)) - p_k) / fr;
             } else{
                 puts("unknown interpolation type.");
                 base_warnings++;
@@ -354,11 +354,11 @@ void react_by_laws(const nuclide_t *nuc, int MT, int law_type, int LDAT, double 
             double r4 = get_rand();
             double r5 = get_rand();
             double r6 = get_rand();
-            ly = -log(r1 * r2 * r3 * r4) - log(r5) * cos(PI / 2. * r6) * cos(PI / 2. * r6);
+            ly = -log(r1 * r2 * r3 * r4) - log(r5) * SQUARE(cos(PI / TWO * r6));
         }
         double V = lx / (lx + ly);
         *exit_erg_cm = V * E_max;
-        *exit_mu_cm = 2 * get_rand() - 1.;
+        *exit_mu_cm = TWO * get_rand() - ONE;
     } else if(law_type == 67){ // LABORATORY ENERGY-ANGLE LAW
         interpolate_xss_table(nuc, incident_erg, LDAT, &pos, &frac, &NR, &NE);
         LN = LDAT + 2 * NR + NE + 2;

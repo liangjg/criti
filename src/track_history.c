@@ -12,7 +12,7 @@ void track_history(particle_state_t *par_state){
     if(par_state->is_killed) return;
 
     /* 粒子在当前输运过程中发生碰撞的次数 */
-    base_criti.col_cnt = 0;
+    int col_cnt = 0;
 
     do{
         /* geometry tracking: free flying */
@@ -52,7 +52,7 @@ void track_history(particle_state_t *par_state){
         par_state->dir[1] *= length;
         par_state->dir[2] *= length;
 
-    } while(++base_criti.col_cnt < MAX_ITER);
+    } while(++col_cnt < MAX_ITER);
 
-    base_criti.tot_col_cnt += base_criti.col_cnt;
+    base_criti.tot_col_cnt += col_cnt;
 }

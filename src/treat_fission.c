@@ -25,6 +25,15 @@ void treat_fission(particle_state_t *par_state){
         for(int i = 1; i < 5; i++)
             fis_sub_cs[i] = get_nuc_mt_cs(nuc, fis_MT[i], par_state->interp_N0, par_state->interp_K0);
 
+    if(nuc->ptable){
+        double temp = nuc->fis_XSS[par_state->interp_N0] + par_state->interp_K0 * (nuc->fis_XSS[par_state->interp_N0 + 1] - nuc->fis_XSS[par_state->interp_N0]);
+        if(!EQ_ZERO(temp)){
+            double ff = nuc->fis / temp;
+            for(int i = 0; i < 5; i++)
+                fis_sub_cs[i] *= ff;
+        }
+    }
+
     Estimate_keff_abs(par_state->wgt, nuc->nu, nuc->fis, nuc->tot);
 
     double fis_R;

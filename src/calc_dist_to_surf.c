@@ -147,11 +147,6 @@ double calc_dist_to_surf(surface_t *obj, const double pos[3], const double dir[3
 
             return _do_calc_dist(a1, b1, is_at_surf);
         }
-        default:{
-            puts("unknown surface type.");
-            release_resource();
-            exit(0);
-        }
     }
 }
 

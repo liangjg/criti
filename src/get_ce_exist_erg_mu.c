@@ -14,7 +14,7 @@
 /// @param[out] exit_erg_lab 实验室系出射能量
 /// @param[out] exit_mu_lab 实验室系出射角余弦
 void get_ce_exist_erg_mu(const nuclide_t *nuc, int MT, double incident_erg, double *exit_erg_lab, double *exit_mu_lab){
-    double exit_mu_cm = 0;
+    double exit_mu_cm = ZERO;
     double exit_erg_cm;
 
     if(nuc->LAND[MT] >= 0)
@@ -61,6 +61,6 @@ void get_ce_exist_erg_mu(const nuclide_t *nuc, int MT, double incident_erg, doub
     if(!(*exit_mu_lab >= -1.000001 && *exit_mu_lab <= 1.000001)){
         printf("exit mu_lab out of range. nuc=%d, MT=%d, Mu=%f\n", nuc->zaid, MT, *exit_mu_lab);
         base_warnings++;
-        *exit_mu_lab = 2 * get_rand() - 1.;
+        *exit_mu_lab = TWO * get_rand() - ONE;
     }
 }
