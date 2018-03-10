@@ -9,7 +9,9 @@
 extern fixed_src_t base_fixed_src;
 extern IOfp_t base_IOfp;
 
-void output_summary_fixed(){
+void
+output_summary_fixed()
+{
     if(base_warnings)
         printf("\n%d warning found.\n", base_warnings);
 

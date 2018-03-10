@@ -7,13 +7,17 @@
 #define CRITI_CALCULATION_H
 
 BEGIN_DECL
-void calc_criticality();
+void
+calc_criticality();
 
-void calc_fixed_src();
+void
+calc_fixed_src();
 
-void calc_burnup();
+void
+calc_burnup();
 
-void calc_point_burn();
+void
+calc_point_burn();
 END_DECL
 
 #endif //CRITI_CALCULATION_H

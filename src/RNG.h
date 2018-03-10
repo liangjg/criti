@@ -15,7 +15,7 @@
  * p = modulus, p = 2^m
  */
 
-typedef struct RNG{
+typedef struct RNG {
     unsigned long long mult;
     unsigned long long add;
     unsigned long long mod;
@@ -32,9 +32,12 @@ typedef struct RNG{
 extern "C" {
 #endif
 
-double get_rand();
-void set_RNG_paras(int type);
-void get_rand_seed();
+double
+get_rand();
+void
+set_RNG_paras(int type);
+void
+get_rand_seed();
 
 #ifdef __cplusplus
 }

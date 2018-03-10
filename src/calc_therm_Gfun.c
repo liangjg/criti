@@ -5,18 +5,23 @@
 #include "acedata.h"
 
 
-static double _erf2_function(double a);
+static double
+_erf2_function(double a);
 
-void calc_therm_Gfun(acedata_t *obj){
+void
+calc_therm_Gfun(acedata_t *obj)
+{
     double b = ONE / sqrt(PI);
     obj->therm_func[0] = TWO * b;
-    for(int i = 1; i <= 50; i++){
+    for(int i = 1; i <= 50; i++) {
         double a = i * 0.04;
         obj->therm_func[i] = (a + HALF / a) * _erf2_function(a) + b * exp(-a * a);
     }
 }
 
-double _erf2_function(double a){
+double
+_erf2_function(double a)
+{
     // return the value of the error function of a.
     const double WF = 1.1283791670955;
 
@@ -41,7 +46,7 @@ double _erf2_function(double a){
     };
 
     double dErf2 = 0;
-    if(fabs(a) <= 8.429370e-8){
+    if(fabs(a) <= 8.429370e-8) {
         dErf2 = a * WF;
         return dErf2;
     }
@@ -50,30 +55,30 @@ double _erf2_function(double a){
     double b1 = 0;
     double b2 = 0;
     double c = 0;
-    if(b <= ONE){
-        for(int i = 1; i <= 12; i++){
+    if(b <= ONE) {
+        for(int i = 1; i <= 12; i++) {
             b2 = b1;
             b1 = b0;
             b0 = b1 * (4.0 * b - TWO) - b2 + ds1[13 - i];
         }
         dErf2 = a * (ONE + HALF * (b0 - b2));
-    } else{
+    } else {
         c = ONE;
         dErf2 = ONE;
         if(a < 0)
             dErf2 = -ONE;
-        if(b <= 4.0){
+        if(b <= 4.0) {
             c = (16.0 / b - 10.0) / 3.0;
-            for(int i = 1; i <= 21; i++){
+            for(int i = 1; i <= 21; i++) {
                 b2 = b1;
                 b1 = b0;
                 b0 = b1 * c - b2 + ds2[22 - i];
             }
-        } else{
+        } else {
             if(b > 32.6987)
                 return dErf2;
             c = 16.0 / b - TWO;
-            for(int i = 1; i <= 22; i++){
+            for(int i = 1; i <= 22; i++) {
                 b2 = b1;
                 b1 = b0;
                 b0 = b1 * c - b2 + ds3[23 - i];

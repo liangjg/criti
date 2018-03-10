@@ -4,23 +4,21 @@
 
 
 #include "common.h"
-#include "particle_state.h"
+#include "particle_status.h"
 #include "vector.h"
 
 
 #ifndef CRITI_FIXED_SOURCE_H
 #define CRITI_FIXED_SOURCE_H
 
-typedef struct
-{
+typedef struct {
     double pos[3];
     double dir[3];
     double erg;
     double wgt;
 } fixed_src_bank_t;
 
-typedef struct
-{
+typedef struct {
     /* 读取输入文件得到的参数 */
     int tot_neu_num;                      /* 总共要模拟的粒子数 */
     SRC_TYPE_T src_type;                  /* 初始源的类型 */
@@ -41,17 +39,24 @@ typedef struct
 } fixed_src_t;
 
 BEGIN_DECL
-void init_external_src();
+void
+init_external_src();
 
-void sample_fixed_src(particle_state_t *par_state);
+void
+sample_fixed_src(particle_status_t *par_status);
 
-void sample_fission_src_fixed(particle_state_t *par_state);
+void
+sample_fission_src_fixed(particle_status_t *par_status);
 
-void track_history_fixed(particle_state_t *par_state);
+void
+track_history_fixed(particle_status_t *par_status);
 
-void geometry_tracking_fixed(particle_state_t *par_state);
+void
+geometry_tracking_fixed(particle_status_t *par_status);
 
-void get_fis_neu_state_fixed(particle_state_t *par_state);
+void
+get_fis_neu_state_fixed(particle_status_t *par_status,
+                        double nu);
 END_DECL
 
 #endif //CRITI_FIXED_SOURCE_H

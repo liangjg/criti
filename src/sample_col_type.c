@@ -7,33 +7,36 @@
 #include "acedata.h"
 
 
-int sample_col_type(particle_state_t *par_state){
-    if(par_state->sab_nuc) return 0;
+int
+sample_col_type(particle_status_t *par_status)
+{
+    if(par_status->sab_nuc) return 0;
 
-    nuclide_t *nuc = par_state->nuc;
-    while(1){
-        if(get_rand() * (nuc->el + nuc->inel) - nuc->el <= ZERO)
+    nuclide_t *nuc = par_status->nuc;
+    nuc_xs_t *cur_nuc_xs = par_status->nuc_xs;
+    while(1) {
+        if(get_rand() * (cur_nuc_xs->el + cur_nuc_xs->inel) - cur_nuc_xs->el <= ZERO)
             return 2;
 
         double sum = 0;
-        double ksi = get_rand() * nuc->inel;
+        double ksi = get_rand() * cur_nuc_xs->inel;
         int Loc = Get_loc_of_MTR(nuc) - 1;
         int MT_num = Get_non_el_mt_num_with_neu(nuc);
-        for(int i = 1; i <= MT_num; i++){
+        for(int i = 1; i <= MT_num; i++) {
             int MT = (int) (nuc->XSS[Loc + i]);
             if(MT == 18 || MT == 19 || MT == 20 || MT == 21 || MT == 38)
                 continue;
-            double cs = get_nuc_mt_cs(nuc, MT, par_state->interp_N, par_state->interp_K);
-            if(cs > ZERO){
+            double cs = get_nuc_mt_cs(nuc, MT, par_status->interp_N, par_status->interp_K);
+            if(cs > ZERO) {
                 sum += cs;
                 if(ksi <= sum) return MT;
             }
         }
-        if(nuc->inel == sum) break;
-        nuc->inel = sum;
+        if(cur_nuc_xs->inel == sum) break;
+        cur_nuc_xs->inel = sum;
     }
 
     printf("incorrect sampling of collision type. nuc = %s.\n", nuc->id);
-    par_state->is_killed = true;
+    par_status->is_killed = true;
     return 0;
 }

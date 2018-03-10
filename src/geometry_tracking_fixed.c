@@ -9,35 +9,35 @@
 
 extern fixed_src_t base_fixed_src;
 
-void geometry_tracking_fixed(particle_state_t *par_state){
+void geometry_tracking_fixed(particle_status_t *par_status){
     double FFL;    /* free fly length */
     double DTB;    /* distance to boundary */
     double distance;
     int iter_cnt = 0;
     bool par_on_surf = false;
-    par_state->surf = 0;    /* particle is not on surface at hte beginning */
+    par_status->surf = 0;    /* particle is not on surface at hte beginning */
 
     do{
         if(iter_cnt++ > MAX_ITER){
-            par_state->is_killed = true;
+            par_status->is_killed = true;
             puts("too many times of surface crossing.");
             base_warnings++;
             return;
         }
 
         if(par_on_surf)
-            find_next_cell(par_state);
+            find_next_cell(par_status);
 
-        if(par_state->is_killed) return;
+        if(par_status->is_killed) return;
 
-        DTB = calc_dist_to_bound(par_state);
+        DTB = calc_dist_to_bound(par_status);
         if(LT_ZERO(DTB)){
             puts("failed to calculate distance to boundary.");
-            par_state->is_killed = true;
+            par_status->is_killed = true;
             DTB = ZERO;
         }
 
-        FFL = sample_free_fly_dis(par_state, !par_on_surf);
+        FFL = sample_free_fly_dis(par_status, !par_on_surf);
 
         if(FFL >= DTB){
             par_on_surf = true;

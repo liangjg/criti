@@ -6,26 +6,34 @@
 
 
 /* -------------------------- private prototypes ---------------------------- */
-static int _find_lat_index_rect(universe_t *obj, const double pos[3], const double dir[3]);
+static int
+_find_lat_index_rect(universe_t *obj,
+                     const double pos[3],
+                     const double dir[3]);
 
-static int _find_lat_index_hex(universe_t *obj, const double pos[3], const double dir[3]);
+static int
+_find_lat_index_hex(universe_t *obj,
+                    const double pos[3],
+                    const double dir[3]);
 
 /* ----------------------------- API implementation ------------------------- */
-int find_lat_index(universe_t *obj, const double pos[3], const double dir[3]) {
+int
+find_lat_index(universe_t *obj,
+               const double pos[3],
+               const double dir[3])
+{
     int lat_index = -1;
     int filled_lat_univs_sz = obj->scope[0] * obj->scope[1];
 
-    switch(obj->lattice_type){
-        case 1:
-            lat_index = _find_lat_index_rect(obj, pos, dir);
-            filled_lat_univs_sz *= obj->scope[2];
-            break;
-        case 2:
-            lat_index = _find_lat_index_hex(obj, pos, dir);
-            break;
+    switch(obj->lattice_type) {
+    case 1:lat_index = _find_lat_index_rect(obj, pos, dir);
+        filled_lat_univs_sz *= obj->scope[2];
+        break;
+    case 2:lat_index = _find_lat_index_hex(obj, pos, dir);
+        break;
     }
 
-    if(lat_index <= 0 || lat_index > filled_lat_univs_sz){
+    if(lat_index <= 0 || lat_index > filled_lat_univs_sz) {
         puts("failed to locate lattice index.");
         lat_index = -1;
         base_warnings++;
@@ -34,23 +42,27 @@ int find_lat_index(universe_t *obj, const double pos[3], const double dir[3]) {
 }
 
 /* ------------------------ private API implementation ---------------------- */
-int _find_lat_index_rect(universe_t *obj, const double pos[3], const double dir[3]) {
+int
+_find_lat_index_rect(universe_t *obj,
+                     const double pos[3],
+                     const double dir[3])
+{
     int lat_index = 0;
     int xyz[3];
-    for(int i = 0; i < 3; ++i){
+    for(int i = 0; i < 3; ++i) {
         if(obj->scope[i] == 1)
             xyz[i] = 0;
         else {
             double temp1 = pos[i] / obj->pitch[i];
-            int temp2 = (int)(temp1 + 0.5);
+            int temp2 = (int) (temp1 + 0.5);
 
-            if(fabs(temp1 - temp2) < EPSILON){
+            if(fabs(temp1 - temp2) < EPSILON) {
                 if(dir[i] >= 0)
                     xyz[i] = temp2;
                 else
                     xyz[i] = temp2 - 1;
             } else
-                xyz[i] = (int)(temp1);
+                xyz[i] = (int) (temp1);
         }
     }
     lat_index = 1 + xyz[0] + obj->scope[0] * xyz[1] + obj->scope[0] * obj->scope[1] * xyz[2];
@@ -58,7 +70,11 @@ int _find_lat_index_rect(universe_t *obj, const double pos[3], const double dir[
     return lat_index;
 }
 
-int _find_lat_index_hex(universe_t *obj, const double pos[3], const double dir[3]) {
+int
+_find_lat_index_hex(universe_t *obj,
+                    const double pos[3],
+                    const double dir[3])
+{
     //////////////////////////////// calculate lattice parameters ///////////////////////////////////
     double pos1 = pos[0], pos2 = pos[1];             //// point position in 2D rectangular coordinates
     double dir1 = dir[0], dir2 = dir[1];             //// point direction in 2D rectangular coordinates
@@ -70,8 +86,8 @@ int _find_lat_index_hex(universe_t *obj, const double pos[3], const double dir[3
     ////////////////// AM = k1*b1 + k2*b2, where b1=(L1,0) and b2 = (L1/2,height)  ////////////////////
     double dK2 = pos2 / obj->height;
     double dK1 = (pos1 - dK2 * 0.5 * len1) / len1;
-    int i1 = (int)(floor(dK1)); //// note: ik1,ik2 may be start from -1
-    int i2 = (int)(floor(dK2));
+    int i1 = (int) (floor(dK1)); //// note: ik1,ik2 may be start from -1
+    int i2 = (int) (floor(dK2));
     ///////////////////// offset r1 r2 to parallelogram of index 0 //////////////////////////
     pos1 = pos1 - (i1 * len1 + i2 * 0.5 * len1);
     pos2 = pos2 - i2 * obj->height;
@@ -82,9 +98,9 @@ int _find_lat_index_hex(universe_t *obj, const double pos[3], const double dir[3
     double sense1 = pos1 - len1;
     if(fabs(sense1) < EPSILON)
         sense1 = dir1 > 0 ? 1 : -1;
-    if(sense1 > 0){
+    if(sense1 > 0) {
         double sense2 = (pos1 - len1) * obj->cos_sita + pos2 * obj->sin_sita - 0.5 * dis2;
-        if(fabs(sense2) < EPSILON){
+        if(fabs(sense2) < EPSILON) {
             double sense_dir = dir1 * obj->cos_sita + dir2 * obj->sin_sita;
             sense2 = sense_dir > 0 ? 1 : -1;
         }
@@ -95,9 +111,9 @@ int _find_lat_index_hex(universe_t *obj, const double pos[3], const double dir[3
         double sense3 = pos1 - 0.5 * len1;
         if(fabs(sense3) < EPSILON)
             sense3 = dir1 > 0 ? 1 : -1;
-        if(sense3 > 0){
+        if(sense3 > 0) {
             double sense4 = (pos1 - len1) * obj->cos_sita - pos2 * obj->sin_sita + 0.5 * dis2;
-            if(fabs(sense4) < EPSILON){
+            if(fabs(sense4) < EPSILON) {
                 double sense_dir = dir1 * obj->cos_sita - dir2 * obj->sin_sita;
                 sense4 = sense_dir > 0 ? 1 : -1;
             }
@@ -107,7 +123,7 @@ int _find_lat_index_hex(universe_t *obj, const double pos[3], const double dir[3
                 i2 = i2 + 1;
         } else {
             double sense5 = pos1 * obj->cos_sita + pos2 * obj->sin_sita - 0.5 * dis2;
-            if(fabs(sense5) < EPSILON){
+            if(fabs(sense5) < EPSILON) {
                 double sense_dir = dir1 * obj->cos_sita + dir2 * obj->sin_sita;
                 sense5 = sense_dir > 0 ? 1 : -1;
             }

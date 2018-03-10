@@ -9,9 +9,12 @@
 extern "C" {
 #endif
 
-double sample_maxwell(double T);
+double
+sample_maxwell(double T);
 
-double sample_watt(double a, double b);
+double
+sample_watt(double a,
+            double b);
 
 #ifdef __cplusplus
 }

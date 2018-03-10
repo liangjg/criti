@@ -8,7 +8,7 @@
 #ifndef CRITI_PARTICLE_STATE_H
 #define CRITI_PARTICLE_STATE_H
 
-typedef struct{
+typedef struct {
     /* basic state */
     bool is_killed;
     double wgt;                 /* 粒子当前的权重 */
@@ -33,6 +33,7 @@ typedef struct{
     /* collision state */
     void *mat;                  /* 当前cell的材料 */
     void *nuc;                  /* 当前发生碰撞的核素，在相应的mat->nuc_id中的下标 */
+    void *nuc_xs;               /* 当前发生碰撞的核素的截面 */
     void *sab_nuc;              /* 和当前碰撞核素相应的热化核素 */
     int collision_type;         /* 当前反应的MT号 */
     double cell_tmp;            /* 当前cell的温度 */
@@ -52,19 +53,18 @@ typedef struct{
     double erg_rel;             /* relative energy in free gas model   */
     double dir_vel[3];          /* relative velocity in free gas model */
     double vel_tgt[3];          /* Target velocity in free gas model   */
-} particle_state_t;
-
+} particle_status_t;
 
 BEGIN_DECL
 //void Fly_by_length(double length);
 #define Fly_by_length(_length)    \
     do{    \
-        par_state->pos[0] += par_state->dir[0] * (_length);  \
-        par_state->pos[1] += par_state->dir[1] * (_length);  \
-        par_state->pos[2] += par_state->dir[2] * (_length);  \
-        par_state->loc_pos[0] += par_state->loc_dir[0] * (_length);  \
-        par_state->loc_pos[1] += par_state->loc_dir[1] * (_length);  \
-        par_state->loc_pos[2] += par_state->loc_dir[2] * (_length);  \
+        par_status->pos[0] += par_status->dir[0] * (_length);  \
+        par_status->pos[1] += par_status->dir[1] * (_length);  \
+        par_status->pos[2] += par_status->dir[2] * (_length);  \
+        par_status->loc_pos[0] += par_status->loc_dir[0] * (_length);  \
+        par_status->loc_pos[1] += par_status->loc_dir[1] * (_length);  \
+        par_status->loc_pos[2] += par_status->loc_dir[2] * (_length);  \
 } while(0)
 END_DECL
 

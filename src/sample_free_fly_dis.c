@@ -9,10 +9,15 @@
 
 
 extern acedata_t base_acedata;
+extern nuc_xs_t *base_nuc_xs;
 
-double sample_free_fly_dis(particle_state_t *par_state, bool erg_changed){
+double
+sample_free_fly_dis(particle_status_t *par_status,
+                    bool erg_changed)
+{
     mat_t *mat;
     nuclide_t *nuc, *sab_nuc;
+    nuc_xs_t *cur_nuc_xs;
     double nuc_atom_den;
 
     /***********************************************************************
@@ -20,45 +25,46 @@ double sample_free_fly_dis(particle_state_t *par_state, bool erg_changed){
      * 即可，不用重新计算。这种情况在大规模的重复几何结构中比较常见，采取这种方法，可以提高
      * 重复几何结构的计算的效率
      ***********************************************************************/
-    if(!erg_changed && !par_state->mat_changed && !par_state->cell_tmp_changed)
+    if(!erg_changed && !par_status->mat_changed && !par_status->cell_tmp_changed)
         goto END;
 
     /* vacuum material */
-    if(par_state->mat == NULL){
-        par_state->macro_tot_cs = ZERO_ERG;
-        par_state->macro_nu_fis_cs = ZERO;
+    if(par_status->mat == NULL) {
+        par_status->macro_tot_cs = ZERO_ERG;
+        par_status->macro_nu_fis_cs = ZERO;
         goto END;
     }
 
-    par_state->macro_tot_cs = ZERO;
-    par_state->macro_nu_fis_cs = ZERO;
+    par_status->macro_tot_cs = ZERO;
+    par_status->macro_nu_fis_cs = ZERO;
 
-    mat = par_state->mat;
+    mat = par_status->mat;
 
     /*************************************************
      * calculate total cross section of each nuclide,
      * and then, sum them up.
      *************************************************/
 
-    for(int i = 0; i < mat->tot_nuc_num; i++){
+    for(int i = 0; i < mat->tot_nuc_num; i++) {
         nuc = mat->nucs[i];
         sab_nuc = mat->sab_nuc;
         nuc_atom_den = mat->nuc_atom_den[i];
+        cur_nuc_xs = &base_nuc_xs[nuc->xs];
 
-        if(sab_nuc && (sab_nuc->zaid != nuc->zaid || par_state->erg >= mat->sab_nuc_esa))
+        if(sab_nuc && (sab_nuc->zaid != nuc->zaid || par_status->erg >= mat->sab_nuc_esa))
             sab_nuc = NULL;
 
-        get_nuc_tot_fis_cs(&base_acedata, nuc, sab_nuc, par_state->erg, par_state->cell_tmp);
+        get_nuc_tot_fis_cs(&base_acedata, nuc, sab_nuc, cur_nuc_xs, par_status->erg, par_status->cell_tmp);
 
-        par_state->macro_tot_cs += nuc_atom_den * nuc->tot;
-        if(GT_ZERO(nuc->fis))
-            par_state->macro_nu_fis_cs += nuc_atom_den * nuc->fis * nuc->nu;
+        par_status->macro_tot_cs += nuc_atom_den * cur_nuc_xs->tot;
+        if(GT_ZERO(cur_nuc_xs->fis))
+            par_status->macro_nu_fis_cs += nuc_atom_den * cur_nuc_xs->fis * cur_nuc_xs->nu;
     }
 
-    if(!GT_ZERO(par_state->macro_tot_cs)){
-        par_state->macro_tot_cs = ZERO_ERG;
-        par_state->macro_nu_fis_cs = ZERO;
+    if(!GT_ZERO(par_status->macro_tot_cs)) {
+        par_status->macro_tot_cs = ZERO_ERG;
+        par_status->macro_nu_fis_cs = ZERO;
     }
 END:
-    return -log(get_rand()) / par_state->macro_tot_cs;
+    return -log(get_rand()) / par_status->macro_tot_cs;
 }

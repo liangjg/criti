@@ -25,6 +25,7 @@ fixed_src_t base_fixed_src;
 IOfp_t base_IOfp;
 RNG_t base_RNG;
 acedata_t base_acedata;
+nuc_xs_t *base_nuc_xs;
 
 /* key: universe index; val: corresponding universe instance address */
 map *base_univs;
@@ -42,24 +43,36 @@ map *base_surfs;
 map *base_nucs;
 
 /* -------------------------- hash function prototypes ---------------------------- */
-static uint64_t _int_hash_func(const void *key);
+static uint64_t
+_int_hash_func(const void *key);
 
-static uint64_t _str_hash_func(const void *key);
+static uint64_t
+_str_hash_func(const void *key);
 
-static int _str_key_comp_func(uint64_t key1, uint64_t key2);
+static int
+_str_key_comp_func(uint64_t key1,
+                   uint64_t key2);
 
-static void _univ_free(void *obj);
+static void
+_univ_free(void *obj);
 
-static void _cell_free(void *obj);
+static void
+_cell_free(void *obj);
 
-static void _surf_free(void *obj);
+static void
+_surf_free(void *obj);
 
-static void _mat_free(void *obj);
+static void
+_mat_free(void *obj);
 
-static void _nuc_free(void *obj);
+static void
+_nuc_free(void *obj);
 
 /* ------------------------ main function --------------------------- */
-int main(int argc, char *argv[]){
+int
+main(int argc,
+     char *argv[])
+{
     /* set hash functions of every map_type */
     map_type *mat_type = (map_type *) malloc(sizeof(map_type));
     map_type *univ_type = (map_type *) malloc(sizeof(map_type));
@@ -133,26 +146,21 @@ int main(int argc, char *argv[]){
     doppler_broaden();
 
     /* run calculation */
-    switch(calc_mode){
-        case CRITICALITY:
-            puts("\n******** Calculation mode: criticality ********\n");
-            calc_criticality();
-            break;
-        case FIXEDSOURCE:
-            puts("\n******** Calculation mode: fixed-source ********\n");
-            calc_fixed_src();
-            break;
-        case BURNUP:
-            puts("\n******** Calculation mode: burnup ********\n");
-            //            calc_burnup();
-            break;
-        case POINTBURN:
-            puts("\n******** Calculation mode: point burnup ********\n");
-            //            calc_point_burn();
-            break;
-        default:
-            puts("\n******** Unknown calculation mode. ********\n");
-            break;
+    switch(calc_mode) {
+    case CRITICALITY:puts("\n******** Calculation mode: criticality ********\n");
+        calc_criticality();
+        break;
+    case FIXEDSOURCE:puts("\n******** Calculation mode: fixed-source ********\n");
+        calc_fixed_src();
+        break;
+    case BURNUP:puts("\n******** Calculation mode: burnup ********\n");
+        //            calc_burnup();
+        break;
+    case POINTBURN:puts("\n******** Calculation mode: point burnup ********\n");
+        //            calc_point_burn();
+        break;
+    default:puts("\n******** Unknown calculation mode. ********\n");
+        break;
     }
 
     /* output ending */
@@ -171,12 +179,16 @@ int main(int argc, char *argv[]){
 }
 
 /* ------------------------ hash function implementation ---------------------- */
-static uint64_t _int_hash_func(const void *key){
+static uint64_t
+_int_hash_func(const void *key)
+{
     return _default_int_hash_func(*(uint32_t *) key);
 }
 
 /* DJB string hash function */
-static uint64_t _str_hash_func(const void *key){
+static uint64_t
+_str_hash_func(const void *key)
+{
     char *str = (char *) (*(uint64_t *) key);
     uint64_t hash = 5381;
     int c;
@@ -185,26 +197,39 @@ static uint64_t _str_hash_func(const void *key){
     return hash;
 }
 
-static int _str_key_comp_func(uint64_t key1, uint64_t key2){
+static int
+_str_key_comp_func(uint64_t key1,
+                   uint64_t key2)
+{
     return strcmp((const char *) key1, (const char *) key2);
 }
 
-static void _univ_free(void *obj){
+static void
+_univ_free(void *obj)
+{
     univ_free((universe_t *) (obj));
 }
 
-static void _cell_free(void *obj){
+static void
+_cell_free(void *obj)
+{
     cell_free((cell_t *) (obj));
 }
 
-static void _surf_free(void *obj){
+static void
+_surf_free(void *obj)
+{
     surf_free((surface_t *) obj);
 }
 
-static void _mat_free(void *obj){
+static void
+_mat_free(void *obj)
+{
     mat_free((mat_t *) (obj));
 }
 
-static void _nuc_free(void *obj){
+static void
+_nuc_free(void *obj)
+{
     nuc_free((nuclide_t *) (obj));
 }

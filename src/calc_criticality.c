@@ -9,19 +9,21 @@
 
 extern criti_t base_criti;
 
-void calc_criticality(){
+void
+calc_criticality()
+{
     init_fission_src();
 
-    particle_state_t par_state;
-    for(int cyc = 1; cyc <= base_criti.tot_cycle_num; cyc++){
-        for(int neu = 1; neu <= base_criti.cycle_neutron_num; neu++){
+    particle_status_t par_status;
+    for(int cyc = 1; cyc <= base_criti.tot_cycle_num; cyc++) {
+        for(int neu = 1; neu <= base_criti.cycle_neutron_num; neu++) {
             get_rand_seed();
 
             /* sample source particle */
-            sample_fission_src(&par_state);
+            sample_fission_src(&par_status);
 
             /* neutron history */
-            track_history(&par_state);
+            track_history(&par_status);
         }
         process_cycle_end(cyc);
     }

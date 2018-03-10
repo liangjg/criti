@@ -3,7 +3,7 @@
 //
 
 #include "common.h"
-#include "particle_state.h"
+#include "particle_status.h"
 
 
 #ifndef CRITI_CRITICALITY_H
@@ -53,11 +53,15 @@ typedef struct{
 BEGIN_DECL
 void init_fission_src();
 
-void sample_fission_src(particle_state_t *par_state);
+void sample_fission_src(particle_status_t *par_status);
 
-void track_history(particle_state_t *par_state);
+void track_history(particle_status_t *par_status);
 
-void get_fis_neu_state(particle_state_t *par_state, int fis_MT, double fis_wgt);
+void
+get_fis_neu_state(particle_status_t *par_status,
+                  int fis_MT,
+                  double fis_wgt,
+                  double nu);
 
 void process_cycle_end(int curren_cycle);
 

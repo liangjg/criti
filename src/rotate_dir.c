@@ -5,7 +5,12 @@
 #include "neutron_transport.h"
 #include "RNG.h"
 
-void rotate_dir(double mu, const double *old_dir, double *new_dir){
+
+void
+rotate_dir(double mu,
+           const double *old_dir,
+           double *new_dir)
+{
     double ksi1, ksi2;
     double r, s, t;
 

@@ -7,17 +7,19 @@
 #include "RNG.h"
 
 
-void treat_implicit_capture_fixed(particle_state_t *par_state){
-    nuclide_t *nuc;
+void
+treat_implicit_capture_fixed(particle_status_t *par_status)
+{
+    nuc_xs_t *cur_nuc_xs;
     double wgt_survival;
 
-    nuc = par_state->nuc;
-    par_state->wgt *= (1 - nuc->abs / nuc->tot);
+    cur_nuc_xs = par_status->nuc_xs;
+    par_status->wgt *= (1 - cur_nuc_xs->abs / cur_nuc_xs->tot);
 
-    if(par_state->wgt > WGT_CUTOFF) return;
+    if(par_status->wgt > WGT_CUTOFF) return;
 
     wgt_survival = 2 * WGT_CUTOFF;
-    if(get_rand() < par_state->wgt / wgt_survival)
-        par_state->wgt = wgt_survival;
-    else par_state->is_killed = true;
+    if(get_rand() < par_status->wgt / wgt_survival)
+        par_status->wgt = wgt_survival;
+    else par_status->is_killed = true;
 }

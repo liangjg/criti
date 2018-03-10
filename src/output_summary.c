@@ -5,14 +5,15 @@
 #include "IO_releated.h"
 #include "criticality.h"
 
+
 extern IOfp_t base_IOfp;
 extern criti_t base_criti;
 
-void output_summary(){
+void
+output_summary()
+{
     if(base_warnings)
         printf("\n%d warning found.\n", base_warnings);
-    //    if(particle_missing)
-    //        printf("\n%d particle missing.\n", particle_missing);
 
     printf("\nAverage collisions per particle: %.2f \n",
            base_criti.tot_col_cnt / (base_criti.tot_start_wgt * base_criti.tot_cycle_num));

@@ -39,7 +39,10 @@ typedef struct {
     double *inel_XSS;
     int inel_XSS_sz;
 
-    /* cross sections */
+    int xs;    /* 用来表示该核素的截面(xs)在base_nuc_xs[]中的下标 */
+} nuclide_t;
+
+typedef struct {
     double tot;
     double abs;
     double el;
@@ -49,7 +52,8 @@ typedef struct {
 
     int inter_pos;
     double inter_frac;
-} nuclide_t;
+} nuc_xs_t;
+
 
 BEGIN_DECL
 /*ce ace data */

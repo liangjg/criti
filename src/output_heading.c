@@ -4,13 +4,16 @@
 
 #include "IO_releated.h"
 
+
 #define CODE_VERSION  "Beta 0.3.2"
 
 time_t start_time;
 time_t finish_time;
 extern IOfp_t base_IOfp;
 
-void output_heading(){
+void
+output_heading()
+{
     start_time = clock();
     char start_wall_clock_str[64];
     time_t start_wall_clock = time(NULL);
@@ -28,14 +31,14 @@ void output_heading(){
     puts("      RRR     RRR   MMM         MMM      CCCCCCCCC   ");
     printf("\nCode version: %s\n", CODE_VERSION);
     printf("\nBuild time  : %s %s\n", __TIME__, __DATE__);
-    # ifdef GIT_SHA1
+# ifdef GIT_SHA1
     printf("Git commit  : %s\n", GIT_SHA1);
-    # endif
-    # ifdef USE_MPI
+# endif
+# ifdef USE_MPI
     printf("MPI parallel: ON, %d processes\n", OParallel.p_nProcsNum);
-    # else
+# else
     puts("MPI parallel: OFF\n");
-    # endif
+# endif
 
     fputs("Copyrights Reserved by Reactor Engineering Analysis Laboratory(REAL).\n\n", base_IOfp.opt_fp);
     fputs("      RRRRRRRR       MM         MM        CCCCCCCC   \n", base_IOfp.opt_fp);
@@ -48,22 +51,25 @@ void output_heading(){
     fputs("      RRR     RRR   MMM         MMM      CCCCCCCCC   \n", base_IOfp.opt_fp);
     fprintf(base_IOfp.opt_fp, "\nCode version: %s\n", CODE_VERSION);
     fprintf(base_IOfp.opt_fp, "\nBuild time  : %s %s\n", __TIME__, __DATE__);
-    # ifdef GIT_SHA1
+# ifdef GIT_SHA1
     fprintf(base_IOfp.opt_fp, "Git commit  : %s\n", GIT_SHA1);
-    # endif
-    # ifdef USE_MPI
+# endif
+# ifdef USE_MPI
     fprintf(base_IOfp.opt_fp, "MPI parallel: ON, %d processes\n", OParallel.p_nProcsNum);
-    # else
+# else
     fputs("MPI parallel: OFF\n", base_IOfp.opt_fp);
-    # endif
+# endif
 
     printf("RMC Calculation Start.\nInput File = %s     %s \n\n", base_IOfp.inp_file_name, start_wall_clock_str);
-    fprintf(base_IOfp.opt_fp, "RMC Calculation Start.\nInput File = %s     %s \n\n", base_IOfp.inp_file_name, start_wall_clock_str);
+    fprintf(base_IOfp.opt_fp,
+            "RMC Calculation Start.\nInput File = %s     %s \n\n",
+            base_IOfp.inp_file_name,
+            start_wall_clock_str);
 
     fputs("------------------ Input File Start --------------------\n", base_IOfp.opt_fp);
     char buf[200];
     FILE *inp = fopen(base_IOfp.inp_file_name, "r");
-    while(!feof(inp)){
+    while(!feof(inp)) {
         if(fgets(buf, 200, inp))
             fputs(buf, base_IOfp.opt_fp);
     }
