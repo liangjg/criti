@@ -4,7 +4,6 @@
 
 #include "common.h"
 #include "map.h"
-#include "criticality.h"
 #include "IO_releated.h"
 #include "fixed_source.h"
 #include "nuclide.h"
@@ -15,10 +14,9 @@ extern map *base_cells;
 extern map *base_surfs;
 extern map *base_mats;
 extern map *base_nucs;
-extern criti_t base_criti;
 extern fixed_src_t base_fixed_src;
 extern IOfp_t base_IOfp;
-extern nuc_xs_t *base_nuc_xs;
+extern nuc_xs_t *base_nuc_xs[NUM_THREADS];
 
 void
 release_resource()
@@ -34,11 +32,11 @@ release_resource()
     map_free(base_nucs);
     free(base_nucs);
 
-    free(base_criti.fission_src);
-    free(base_criti.fission_bank);
     free(base_fixed_src.fixed_src);
     free(base_fixed_src.fixed_bank);
-    free(base_nuc_xs);
+
+    for(int i = 0; i < NUM_THREADS; i++)
+        free(base_nuc_xs[i]);
 
     /* close all FILE structure if opened */
     if(base_IOfp.opt_fp) fclose(base_IOfp.opt_fp);

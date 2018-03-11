@@ -9,6 +9,7 @@
 
 extern map *base_nucs;
 extern map *base_mats;
+extern nuc_xs_t *base_nuc_xs[NUM_THREADS];
 
 void
 check_ce_ace_block()
@@ -96,16 +97,18 @@ check_ce_ace_block()
             }
 
             if(Get_loc_of_LUNR(nuc)) {
-                int num_prob_erg = (int) (nuc->XSS[nuc->ptable]);
-                int num_prob_tab = (int) (nuc->XSS[nuc->ptable + 1]);
-                int start_loc = nuc->ptable + 6;
+                int num_prob_erg = (int) (nuc->XSS[Get_loc_of_LUNR(nuc)]);
+                int num_prob_tab = (int) (nuc->XSS[Get_loc_of_LUNR(nuc) + 1]);
+                int start_loc = Get_loc_of_LUNR(nuc) + 6;
                 int data_length = num_prob_erg * 6 * num_prob_tab;
 
                 for(int i = 0; i < data_length; i++) {
                     if(nuc->XSS[start_loc + i] < ZERO)
                         nuc->JXS[23] = 0;    /* 关闭该核素的概率表 */
                 }
-                nuc->ptable = Get_loc_of_LUNR(nuc);
+                for(int i = 0; i < NUM_THREADS; i++)
+                    base_nuc_xs[i][nuc->xs].ptable = Get_loc_of_LUNR(nuc);
+
             }
 
             int NE = Get_erg_grid_num(nuc);

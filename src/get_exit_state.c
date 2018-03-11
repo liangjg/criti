@@ -7,15 +7,14 @@
 
 
 void
-get_exit_state(particle_status_t *par_status)
+get_exit_state(particle_status_t *par_status,
+               RNG_t *RNG)
 {
     nuclide_t *nuc = par_status->nuc;
     nuclide_t *sab_nuc = par_status->sab_nuc;
-    nuc_xs_t *cur_nuc_xs = par_status->nuc_xs;
 
     if(sab_nuc) {
-        treat_sab_colli_type(sab_nuc, cur_nuc_xs->el, cur_nuc_xs->inel, par_status->erg, par_status->dir, &par_status->exit_erg,
-                             par_status->exit_dir);
+        treat_sab_colli_type(sab_nuc, par_status, RNG);
         /* 这里似乎应该是出射能量而不是原本的能量 */
         if(par_status->erg <= EG0_CUTOFF)
             par_status->is_killed = true;
@@ -32,7 +31,7 @@ get_exit_state(particle_status_t *par_status)
 
     par_status->wgt *= emiss_neu_num;
 
-    get_ce_exit_state(par_status, par_status->collision_type, par_status->is_free_gas_col);
+    get_ce_exit_state(par_status, RNG, par_status->collision_type, par_status->is_free_gas_col);
 
     /* 这里似乎应该是出射能量而不是原本的能量 */
     if(par_status->erg <= EG0_CUTOFF)

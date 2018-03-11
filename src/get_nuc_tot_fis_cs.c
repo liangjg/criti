@@ -12,7 +12,8 @@ get_nuc_tot_fis_cs(acedata_t *obj,
                    nuclide_t *sab_nuc,
                    nuc_xs_t *cur_nuc_xs,
                    double erg,
-                   double cell_tmp)
+                   double cell_tmp,
+                   RNG_t *RNG)
 {
     int NE = Get_erg_grid_num(nuc);
 
@@ -27,11 +28,11 @@ get_nuc_tot_fis_cs(acedata_t *obj,
     cur_nuc_xs->inter_pos = get_intplt_pos_fr(nuc->XSS, erg, min, max, &cur_nuc_xs->inter_frac);
 
     int ptable = Get_loc_of_LUNR(nuc);
-    nuc->ptable = 0;
+    cur_nuc_xs->ptable = 0;
     if(ptable) {
         if(erg > nuc->XSS[ptable + 6] && erg < nuc->XSS[ptable + 5 + (int) (nuc->XSS[ptable])]) {
-            nuc->ptable = ptable;
-            treat_URR(nuc, cur_nuc_xs, erg);
+            cur_nuc_xs->ptable = ptable;
+            treat_URR(nuc, cur_nuc_xs, RNG, erg);
             return;
         }
     }

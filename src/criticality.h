@@ -2,31 +2,25 @@
 // Created by xaq on 10/26/17.
 //
 
-#include "common.h"
-#include "particle_status.h"
-
-
 #ifndef CRITI_CRITICALITY_H
 #define CRITI_CRITICALITY_H
 
-typedef struct{
-    double pos[3];
-    double dir[3];
-    double erg;
-} fission_bank_t;
+#include "common.h"
+#include "particle_status.h"
+#include "RNG.h"
+#include "pth_arg.h"
 
-typedef struct{
+
+typedef struct {
     /* 读取输入文件时的参数 */
-    int neu_num_per_cycle;
     int tot_cycle_num;
     int inactive_cycle_num;
-    int active_cycle_num;
+    int cycle_neu_num;                /* 当前代要模拟的中子数目 */
 
     /* 初始源参数 */
     SRC_TYPE_T ksrc_type;
     double ksrc_para[6];
 
-    int cycle_neutron_num;            /* 当前代要模拟的中子数目 */
 
     double keff_final;                /* final keff of each cycle */
     double keff_wgt_sum[3];           /* 0: Collision estimator,  1: Absorption estimator,  2:Track Length estimator */
@@ -39,31 +33,31 @@ typedef struct{
     double keff_covw_std[4];          /* covariance-weighted combined standard deviations */
     double tot_start_wgt;
 
-    unsigned long long tot_col_cnt;   /* 所有粒子发生的碰撞次数之和 */
-
-    int fission_bank_cnt;             /* 指向fission_bank的栈顶，也就是新粒子应该存储的下标 */
-    int tot_fission_bank_cnt;         /* 在MPI中使用，用来统计所有核心产生的粒子之和 */
-    int fission_src_cnt;              /* 指向fission_src的栈顶，也就是新粒子应该抽样的下标 */
-
-    fission_bank_t *fission_src;      /* 当前代要模拟的中子源，每个中子都从其中抽样产生 */
-    fission_bank_t *fission_bank;     /* 存储每一代裂变产生的中子，供下一代模拟用；一般来说，src_sz = bank_sz*/
+    int tot_col_cnt;                  /* 所有粒子发生的碰撞次数之和 */
+    int tot_fis_bank_cnt;             /* 用来统计所有线程产生的粒子之和 */
 } criti_t;
 
-
 BEGIN_DECL
-void init_fission_src();
-
-void sample_fission_src(particle_status_t *par_status);
-
-void track_history(particle_status_t *par_status);
-
 void
+init_fission_src(void *pth_args);
+
+//void
+//sample_fission_src(particle_status_t *par_status);
+//
+//void
+//track_history(particle_status_t *par_status);
+
+int
 get_fis_neu_state(particle_status_t *par_status,
+                  fission_bank_t *cur_fis_bank,
+                  RNG_t *RNG,
                   int fis_MT,
                   double fis_wgt,
                   double nu);
 
-void process_cycle_end(int curren_cycle);
+void
+process_cycle_end(int currenr_cycle,
+                  pth_arg_t *pth_args);
 
 #define Estimate_keff_col(wgt, macro_mu_fis_xs, macro_tot_xs)  \
     do{  \

@@ -6,9 +6,11 @@
 #include "IO_releated.h"
 
 
+
 extern criti_t base_criti;
 extern double base_start_wgt;
 extern IOfp_t base_IOfp;
+extern RNG_t base_RNG;
 
 void
 _combine_keff(int current_cycle);
@@ -24,40 +26,58 @@ _output_keff(int current_cycle);
     } while(0)
 
 void
-process_cycle_end(int curren_cycle)
+process_cycle_end(int currenr_cycle,
+                  pth_arg_t *pth_args)
 {
-    /* process eigenvalue */
-    base_criti.tot_fission_bank_cnt = base_criti.fission_bank_cnt;
+    int i, j;
 
-    if(base_criti.tot_fission_bank_cnt < 5) {
+    for(i = 0; i < NUM_THREADS; i++){
+        base_criti.tot_col_cnt += pth_args[i].col_cnt;
+        base_criti.tot_fis_bank_cnt += pth_args[i].fis_bank_cnt;
+        for(j = 0; j < 3; j++)
+            base_criti.keff_wgt_sum[j] += pth_args[i].keff_wgt_sum[j];
+    }
+
+    if(base_criti.tot_fis_bank_cnt < 5) {
         puts("Insufficient fission source to be sampled.");
         release_resource();
         exit(0);
     }
 
-    for(int i = 0; i < 3; i++)
+    for(i = 0; i < 3; i++)
         base_criti.keff_cycle[i] = base_criti.keff_wgt_sum[i] / base_criti.tot_start_wgt;
     base_criti.keff_final = base_criti.keff_cycle[0];
 
-    _combine_keff(curren_cycle);
-    _output_keff(curren_cycle);
+    _combine_keff(currenr_cycle);
+    _output_keff(currenr_cycle);
 
-    /* process fission source and fission bank */
-    /* 这里采用了一个小技巧，正常来说是应该将fission_bank 里面的值一一复制到fission_src里面，
-     * 但是这样逐个复制的开销较大。因此这里直接交换两个数组的指针，同时交换bank_sz和src_sz，
-     * 用O(1)时间完成交换
-     */
-    SWAP(base_criti.fission_src, base_criti.fission_bank);
+    base_criti.cycle_neu_num = base_criti.tot_fis_bank_cnt;
+    base_start_wgt = ONE * base_criti.tot_start_wgt / base_criti.tot_fis_bank_cnt;
 
-    base_criti.cycle_neutron_num = base_criti.fission_bank_cnt;
-    base_start_wgt = ONE * base_criti.tot_start_wgt / base_criti.tot_fission_bank_cnt;
+    memcpy(&base_RNG, &pth_args[NUM_THREADS - 1].RNG, sizeof(RNG_t));
+    memcpy(&pth_args[0].RNG, &base_RNG, sizeof(RNG_t));
+    for(i = 1; i < NUM_THREADS; i++){
+        memcpy(&pth_args[i].RNG, &pth_args[i - 1].RNG, sizeof(RNG_t));
+
+        int skip_src = pth_args[i - 1].fis_bank_cnt;
+        for(j = 0; j < skip_src; j++)
+            get_rand_seed(&pth_args[i].RNG);
+    }
 
     /* reset criticality */
-    base_criti.fission_bank_cnt = 0;
-    base_criti.fission_src_cnt = 0;
-
-    for(int i = 0; i < 3; i++)
+    base_criti.tot_fis_bank_cnt = 0;
+    for(i = 0; i < 3; i++)
         base_criti.keff_wgt_sum[i] = ZERO;
+
+    for(i = 0; i < NUM_THREADS; i++){
+        SWAP(pth_args[i].fis_src, pth_args[i].fis_bank);
+        pth_args[i].fis_src_cnt = pth_args[i].fis_bank_cnt;
+        pth_args[i].fis_bank_cnt = 0;
+        pth_args[i].col_cnt = 0;
+        pth_args[i].keff_final = base_criti.keff_final;
+        for(j = 0; j < 3; j++)
+            pth_args[i].keff_wgt_sum[j] = ZERO;
+    }
 }
 
 void
@@ -209,7 +229,7 @@ _output_keff(int current_cycle)
         fprintf(base_IOfp.opt_fp,
                 "%-6d  %-9d | %-f  %-f  %-f |                                                                                %-.4f\n",
                 current_cycle,
-                base_criti.tot_fission_bank_cnt,
+                base_criti.tot_fis_bank_cnt,
                 base_criti.keff_cycle[0],
                 base_criti.keff_cycle[1],
                 base_criti.keff_cycle[2],
@@ -217,7 +237,7 @@ _output_keff(int current_cycle)
     }
     if(current_cycle > base_criti.inactive_cycle_num) {
         fprintf(base_IOfp.opt_fp, "%-6d  %-9d | %-f  %-f  %-f | %-f %-f  %-f %-f  %-f %-f | %-f %-f |  %-.4f\n",
-                current_cycle, base_criti.tot_fission_bank_cnt, base_criti.keff_cycle[0],
+                current_cycle, base_criti.tot_fis_bank_cnt, base_criti.keff_cycle[0],
                 base_criti.keff_cycle[1], base_criti.keff_cycle[2],
                 base_criti.keff_individual_ave[0], base_criti.keff_individual_std[0], base_criti.keff_individual_ave[1],
                 base_criti.keff_individual_std[1], base_criti.keff_individual_ave[2], base_criti.keff_individual_std[2],

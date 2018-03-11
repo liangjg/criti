@@ -8,18 +8,19 @@
 
 
 int
-sample_col_type(particle_status_t *par_status)
+sample_col_type(particle_status_t *par_status,
+                RNG_t *RNG)
 {
     if(par_status->sab_nuc) return 0;
 
     nuclide_t *nuc = par_status->nuc;
     nuc_xs_t *cur_nuc_xs = par_status->nuc_xs;
     while(1) {
-        if(get_rand() * (cur_nuc_xs->el + cur_nuc_xs->inel) - cur_nuc_xs->el <= ZERO)
+        if(get_rand(RNG) * (cur_nuc_xs->el + cur_nuc_xs->inel) - cur_nuc_xs->el <= ZERO)
             return 2;
 
         double sum = 0;
-        double ksi = get_rand() * cur_nuc_xs->inel;
+        double ksi = get_rand(RNG) * cur_nuc_xs->inel;
         int Loc = Get_loc_of_MTR(nuc) - 1;
         int MT_num = Get_non_el_mt_num_with_neu(nuc);
         for(int i = 1; i <= MT_num; i++) {

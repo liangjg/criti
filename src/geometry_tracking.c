@@ -3,14 +3,14 @@
 //
 
 #include "neutron_transport.h"
-#include "criticality.h"
 #include "geometry.h"
 
 
-extern criti_t base_criti;
-
 void
-geometry_tracking(particle_status_t *par_status)
+geometry_tracking(particle_status_t *par_status,
+                  double *keff_wgt_sum,
+                  nuc_xs_t *nuc_cs,
+                  RNG_t *RNG)
 {
     double FFL;    /* free fly length */
     double DTB;    /* distance to boundary */
@@ -22,7 +22,7 @@ geometry_tracking(particle_status_t *par_status)
     do {
         if(iter_cnt++ > MAX_ITER) {
             par_status->is_killed = true;
-            puts("too many times of surface crossing.");
+            puts("Too many times of surface crossing.");
             base_warnings++;
             return;
         }
@@ -35,12 +35,12 @@ geometry_tracking(particle_status_t *par_status)
 
         DTB = calc_dist_to_bound(par_status);
         if(LT_ZERO(DTB)) {
-            puts("failed to calculate distance to boundary.");
+            puts("Failed to calculate distance to boundary.");
             par_status->is_killed = true;
             DTB = ZERO;
         }
 
-        FFL = sample_free_fly_dis(par_status, !par_on_surf);
+        FFL = sample_free_fly_dis(par_status, nuc_cs, RNG, !par_on_surf);
 
         if(FFL >= DTB) {
             par_on_surf = true;
@@ -50,10 +50,10 @@ geometry_tracking(particle_status_t *par_status)
             distance = FFL;
         }
 
-        Estimate_keff_tl(par_status->wgt, par_status->macro_nu_fis_cs, distance);
+        keff_wgt_sum[2] += par_status->wgt * par_status->macro_nu_fis_cs * distance;
 
         Fly_by_length(distance);
     } while(par_on_surf);
 
-    Estimate_keff_col(par_status->wgt, par_status->macro_nu_fis_cs, par_status->macro_tot_cs);
+    keff_wgt_sum[0] += par_status->wgt * par_status->macro_nu_fis_cs / par_status->macro_tot_cs;
 }

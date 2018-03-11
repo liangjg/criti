@@ -8,7 +8,7 @@
 
 BEGIN_DECL
 void
-calc_criticality();
+calc_criticality(int tot_cycle_num);
 
 void
 calc_fixed_src();

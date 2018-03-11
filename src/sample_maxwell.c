@@ -3,12 +3,11 @@
 //
 
 #include "sample_method.h"
-#include "RNG.h"
-#include "common.h"
 
 
 double
-sample_maxwell(double T)
+sample_maxwell(double T,
+               RNG_t *RNG)
 {
     //===============================================================================
     // MAXWELL_SPECTRUM samples an energy from the Maxwell fission distribution based
@@ -21,9 +20,9 @@ sample_maxwell(double T)
     double ksi1, ksi2, ksi3;
     double c;       // cosine of pi/2*r3
 
-    ksi1 = get_rand();
-    ksi2 = get_rand();
-    ksi3 = get_rand();
+    ksi1 = get_rand(RNG);
+    ksi2 = get_rand(RNG);
+    ksi3 = get_rand(RNG);
     c = cos(PI / TWO * ksi3);
 
     return -T * (log(ksi1) + log(ksi2) * SQUARE(c));

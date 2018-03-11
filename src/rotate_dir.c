@@ -8,6 +8,7 @@
 
 void
 rotate_dir(double mu,
+           RNG_t *RNG,
            const double *old_dir,
            double *new_dir)
 {
@@ -21,8 +22,8 @@ rotate_dir(double mu,
         return;
     }
     do {
-        ksi1 = 2.0 * get_rand() - 1.0;
-        ksi2 = 2.0 * get_rand() - 1.0;
+        ksi1 = 2.0 * get_rand(RNG) - 1.0;
+        ksi2 = 2.0 * get_rand(RNG) - 1.0;
         r = (ksi1 * ksi1) + (ksi2 * ksi2);
     } while(r > 1.0);
     r = sqrt((1.0 - (mu * mu)) / r);

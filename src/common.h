@@ -12,6 +12,7 @@
 #include <float.h>
 #include <time.h>
 #include <stdbool.h>
+#include <pthread.h>
 
 #ifdef USE_MPI
     #include <mpi.h>
@@ -46,6 +47,7 @@
 #define TOUPPER(_c)     ((_c) &= 95)
 #define TOLOWER(_c)     ((_c) |= 32)
 
+#define NUM_THREADS    4
 
 #define MAX_LINE_LENGTH      220
 #define MAX_WORLD_LENGTH     20
@@ -120,6 +122,19 @@ typedef enum{
     CYL_Y,
     CYL_Z
 } SRC_TYPE_T;
+
+typedef struct{
+    double pos[3];
+    double dir[3];
+    double erg;
+} fission_bank_t;
+
+typedef struct {
+    double pos[3];
+    double dir[3];
+    double erg;
+    double wgt;
+} fixed_src_bank_t;
 
 /* time elapsed */
 extern time_t start_time;

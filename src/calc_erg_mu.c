@@ -14,17 +14,18 @@
 /// @param[out] exit_erg_lab 实验室系出射能量
 /// @param[out] exit_mu_lab 实验室系出射角余弦
 void
-get_ce_exist_erg_mu(const nuclide_t *nuc,
-                    int MT,
-                    double incident_erg,
-                    double *exit_erg_lab,
-                    double *exit_mu_lab)
+calc_erg_mu(const nuclide_t *nuc,
+            RNG_t *RNG,
+            int MT,
+            double incident_erg,
+            double *exit_erg_lab,
+            double *exit_mu_lab)
 {
     double exit_mu_cm = ZERO;
     double exit_erg_cm;
 
     if(nuc->LAND[MT] >= 0)
-        exit_mu_cm = get_scatt_cosine(nuc, MT, incident_erg);
+        exit_mu_cm = get_scatt_cosine(nuc, RNG, MT, incident_erg);
 
     /// 弹性散射情形
     if(MT == 2) {
@@ -40,9 +41,9 @@ get_ce_exist_erg_mu(const nuclide_t *nuc,
     else {
         int LawType, LDAT;
         ///   抽样Law
-        LawType = get_law_type(nuc, MT, incident_erg, &LDAT);
+        LawType = get_law_type(nuc, MT, incident_erg, RNG, &LDAT);
         ///   根据Law确定质心系出射角余弦和出射能量
-        react_by_laws(nuc, MT, LawType, LDAT, incident_erg, &exit_erg_cm, &exit_mu_cm);
+        react_by_laws(nuc, RNG, MT, LawType, LDAT, incident_erg, &exit_erg_cm, &exit_mu_cm);
         ///   将质心系出射角余弦和出射能量转化为实验室系出射角余弦和出射能量
         if(Get_emiss_neu_num(nuc, MT) < 0) {
             double aw = nuc->atom_wgt;
@@ -69,6 +70,6 @@ get_ce_exist_erg_mu(const nuclide_t *nuc,
     if(!(*exit_mu_lab >= -1.000001 && *exit_mu_lab <= 1.000001)) {
         printf("exit mu_lab out of range. nuc=%d, MT=%d, Mu=%f\n", nuc->zaid, MT, *exit_mu_lab);
         base_warnings++;
-        *exit_mu_lab = TWO * get_rand() - ONE;
+        *exit_mu_lab = TWO * get_rand(RNG) - ONE;
     }
 }

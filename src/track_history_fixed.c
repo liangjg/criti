@@ -20,10 +20,10 @@ track_history_fixed(particle_status_t *par_status)
         geometry_tracking_fixed(par_status);
         if(par_status->is_killed) break;
 
-        sample_col_nuclide(par_status);
+        sample_col_nuclide(par_status, NULL, NULL);
         if(par_status->is_killed) break;
 
-        calc_col_nuc_cs(par_status);
+        calc_col_nuc_cs(par_status, NULL);
 
         /* implicit capture(excluding fission) */
         treat_implicit_capture_fixed(par_status);

@@ -8,6 +8,7 @@
 
 void
 get_ce_exit_state(particle_status_t *par_status,
+                  RNG_t *RNG,
                   int MT,
                   bool is_free_gas_col)
 {
@@ -15,13 +16,13 @@ get_ce_exit_state(particle_status_t *par_status,
     double exit_erg_lab;
     nuclide_t *nuc = par_status->nuc;
 
-    get_ce_exist_erg_mu(nuc, MT, par_status->erg_rel, &exit_erg_lab, &exit_mu_lab);
+    calc_erg_mu(nuc, RNG, MT, par_status->erg_rel, &exit_erg_lab, &exit_mu_lab);
 
     /* 如果使用了自由气体模型则进一步转换出射方向和能量 */
     if(is_free_gas_col) {
         double atom_tmp, temp1, temp2;
 
-        rotate_dir(exit_mu_lab, par_status->dir_vel, par_status->exit_dir);
+        rotate_dir(exit_mu_lab, RNG, par_status->dir_vel, par_status->exit_dir);
 
         atom_tmp = nuc->atom_wgt / par_status->cell_tmp;
         temp1 = sqrt(exit_erg_lab * atom_tmp);
@@ -32,7 +33,7 @@ get_ce_exit_state(particle_status_t *par_status,
             par_status->exit_dir[i] /= sqrt(temp2);
         par_status->exit_erg = temp2 / atom_tmp;
     } else {    /* 转换出射方向 */
-        rotate_dir(exit_mu_lab, par_status->dir, par_status->exit_dir);
+        rotate_dir(exit_mu_lab, RNG, par_status->dir, par_status->exit_dir);
         par_status->exit_erg = exit_erg_lab;
     }
 

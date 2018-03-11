@@ -3,13 +3,12 @@
 //
 
 #include "sample_method.h"
-#include "RNG.h"
-#include "common.h"
 
 
 double
 sample_watt(double a,
-            double b)
+            double b,
+            RNG_t *RNG)
 {
     //===============================================================================
     // WATT_SPECTRUM samples the outgoing energy from a Watt energy-dependent fission
@@ -19,7 +18,7 @@ sample_watt(double a,
     // original Watt spectrum derivation (See F. Brown's MC lectures).
     //===============================================================================
 
-    double w = sample_maxwell(a);
-    double ksi = get_rand();
+    double w = sample_maxwell(a, RNG);
+    double ksi = get_rand(RNG);
     return w + a * a * b / 4. + (TWO * ksi - ONE) * sqrt(a * a * b * w);
 }

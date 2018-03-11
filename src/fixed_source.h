@@ -2,21 +2,12 @@
 // Created by x1314aq on 18-1-16.
 //
 
-
-#include "common.h"
-#include "particle_status.h"
-#include "vector.h"
-
-
 #ifndef CRITI_FIXED_SOURCE_H
 #define CRITI_FIXED_SOURCE_H
 
-typedef struct {
-    double pos[3];
-    double dir[3];
-    double erg;
-    double wgt;
-} fixed_src_bank_t;
+#include "common.h"
+#include "particle_status.h"
+
 
 typedef struct {
     /* 读取输入文件得到的参数 */

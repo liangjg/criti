@@ -5,6 +5,8 @@
 #ifndef CRITI_RNG_H
 #define CRITI_RNG_H
 
+typedef unsigned long long ULL;
+
 /* linear congruential RNGs
  * r(k) = S(k)/p
  * S(k+1) = [ g * S(k) + c ] mod p
@@ -16,16 +18,19 @@
  */
 
 typedef struct RNG {
-    unsigned long long mult;
-    unsigned long long add;
-    unsigned long long mod;
-    unsigned long long mask;
+    ULL mult;
+    ULL add;
+    ULL mod;
+    ULL mask;
     double norm;
-    unsigned long long seed;
-    unsigned long long seed0;
-    unsigned long long stride;
+    ULL seed;
+    ULL seed0;
+    ULL stride;
     int position;
     int position_pre;
+    ULL GK;
+    ULL CK;
+    ULL iseed;
 } RNG_t;
 
 #ifdef __cplusplus
@@ -33,11 +38,11 @@ extern "C" {
 #endif
 
 double
-get_rand();
+get_rand(RNG_t *RNG);
 void
 set_RNG_paras(int type);
 void
-get_rand_seed();
+get_rand_seed(RNG_t *RNG);
 
 #ifdef __cplusplus
 }

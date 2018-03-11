@@ -25,7 +25,7 @@ fixed_src_t base_fixed_src;
 IOfp_t base_IOfp;
 RNG_t base_RNG;
 acedata_t base_acedata;
-nuc_xs_t *base_nuc_xs;
+nuc_xs_t *base_nuc_xs[NUM_THREADS];
 
 /* key: universe index; val: corresponding universe instance address */
 map *base_univs;
@@ -130,9 +130,6 @@ main(int argc,
     /* read ACE database */
     read_ace_data();
 
-    /* check ACE data */
-    check_ce_ace_block();
-
     /* 将用户输入的密度转换成程序使用的原子密度 */
     convert_mat_nuc_den();
 
@@ -145,10 +142,13 @@ main(int argc,
     /* 多普勒展宽 */
     doppler_broaden();
 
+    /* check ACE data */
+    check_ce_ace_block();
+
     /* run calculation */
     switch(calc_mode) {
     case CRITICALITY:puts("\n******** Calculation mode: criticality ********\n");
-        calc_criticality();
+        calc_criticality(base_criti.tot_cycle_num);
         break;
     case FIXEDSOURCE:puts("\n******** Calculation mode: fixed-source ********\n");
         calc_fixed_src();

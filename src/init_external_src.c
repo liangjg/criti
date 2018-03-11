@@ -30,7 +30,7 @@ init_external_src()
     switch(base_fixed_src.src_type) {
     case POINT: {
         for(int i = 0; i < tot_neutron; i++) {
-            get_rand_seed();
+            get_rand_seed(NULL);
             fixed_src = &base_fixed_src.fixed_src[i];
             fixed_src->pos[0] = base_fixed_src.src_paras[0];
             fixed_src->pos[1] = base_fixed_src.src_paras[1];
@@ -43,22 +43,22 @@ init_external_src()
         double len_y = base_fixed_src.src_paras[3] - base_fixed_src.src_paras[2];
         double len_z = base_fixed_src.src_paras[5] - base_fixed_src.src_paras[4];
         for(int i = 0; i < tot_neutron; i++) {
-            get_rand_seed();
+            get_rand_seed(NULL);
             fixed_src = &base_fixed_src.fixed_src[i];
-            fixed_src->pos[0] = base_fixed_src.src_paras[0] + get_rand() * len_x;
-            fixed_src->pos[1] = base_fixed_src.src_paras[1] + get_rand() * len_y;
-            fixed_src->pos[2] = base_fixed_src.src_paras[2] + get_rand() * len_z;
+            fixed_src->pos[0] = base_fixed_src.src_paras[0] + get_rand(NULL) * len_x;
+            fixed_src->pos[1] = base_fixed_src.src_paras[1] + get_rand(NULL) * len_y;
+            fixed_src->pos[2] = base_fixed_src.src_paras[2] + get_rand(NULL) * len_z;
         }
         break;
     }
     case SPHERE: {
         for(int i = 0; i < tot_neutron; i++) {
-            get_rand_seed();
+            get_rand_seed(NULL);
             fixed_src = &base_fixed_src.fixed_src[i];
             do {
-                ksi1 = TWO * get_rand() - ONE;
-                ksi2 = TWO * get_rand() - ONE;
-                ksi3 = TWO * get_rand() - ONE;
+                ksi1 = TWO * get_rand(NULL) - ONE;
+                ksi2 = TWO * get_rand(NULL) - ONE;
+                ksi3 = TWO * get_rand(NULL) - ONE;
             } while(SQUARE(ksi1) + SQUARE(ksi2) + SQUARE(ksi3) > ONE);
             fixed_src->pos[0] = base_fixed_src.src_paras[0] + base_fixed_src.src_paras[3] * ksi1;
             fixed_src->pos[1] = base_fixed_src.src_paras[1] + base_fixed_src.src_paras[3] * ksi2;
@@ -69,13 +69,13 @@ init_external_src()
     case CYL_X: {
         double height = base_fixed_src.src_paras[4] - base_fixed_src.src_paras[3];
         for(int i = 0; i < tot_neutron; i++) {
-            get_rand_seed();
+            get_rand_seed(NULL);
             fixed_src = &base_fixed_src.fixed_src[i];
             do {
-                ksi1 = TWO * get_rand() - ONE;
-                ksi2 = TWO * get_rand() - ONE;
+                ksi1 = TWO * get_rand(NULL) - ONE;
+                ksi2 = TWO * get_rand(NULL) - ONE;
             } while(SQUARE(ksi1) + SQUARE(ksi2) > ONE);
-            fixed_src->pos[0] = base_fixed_src.src_paras[3] + get_rand() * height;
+            fixed_src->pos[0] = base_fixed_src.src_paras[3] + get_rand(NULL) * height;
             fixed_src->pos[1] = base_fixed_src.src_paras[0] + base_fixed_src.src_paras[2] * ksi1;
             fixed_src->pos[2] = base_fixed_src.src_paras[1] + base_fixed_src.src_paras[2] * ksi2;
         }
@@ -84,14 +84,14 @@ init_external_src()
     case CYL_Y: {
         double height = base_fixed_src.src_paras[4] - base_fixed_src.src_paras[3];
         for(int i = 0; i < tot_neutron; i++) {
-            get_rand_seed();
+            get_rand_seed(NULL);
             fixed_src = &base_fixed_src.fixed_src[i];
             do {
-                ksi1 = TWO * get_rand() - ONE;
-                ksi2 = TWO * get_rand() - ONE;
+                ksi1 = TWO * get_rand(NULL) - ONE;
+                ksi2 = TWO * get_rand(NULL) - ONE;
             } while(SQUARE(ksi1) + SQUARE(ksi2) > ONE);
             fixed_src->pos[0] = base_fixed_src.src_paras[0] + base_fixed_src.src_paras[2] * ksi1;
-            fixed_src->pos[1] = base_fixed_src.src_paras[3] + get_rand() * height;
+            fixed_src->pos[1] = base_fixed_src.src_paras[3] + get_rand(NULL) * height;
             fixed_src->pos[2] = base_fixed_src.src_paras[1] + base_fixed_src.src_paras[2] * ksi2;
         }
         break;
@@ -99,15 +99,15 @@ init_external_src()
     case CYL_Z: {
         double height = base_fixed_src.src_paras[4] - base_fixed_src.src_paras[3];
         for(int i = 0; i < tot_neutron; i++) {
-            get_rand_seed();
+            get_rand_seed(NULL);
             fixed_src = &base_fixed_src.fixed_src[i];
             do {
-                ksi1 = TWO * get_rand() - ONE;
-                ksi2 = TWO * get_rand() - ONE;
+                ksi1 = TWO * get_rand(NULL) - ONE;
+                ksi2 = TWO * get_rand(NULL) - ONE;
             } while(SQUARE(ksi1) + SQUARE(ksi2) > ONE);
             fixed_src->pos[0] = base_fixed_src.src_paras[0] + base_fixed_src.src_paras[2] * ksi1;
             fixed_src->pos[1] = base_fixed_src.src_paras[1] + base_fixed_src.src_paras[2] * ksi2;
-            fixed_src->pos[2] = base_fixed_src.src_paras[3] + get_rand() * height;
+            fixed_src->pos[2] = base_fixed_src.src_paras[3] + get_rand(NULL) * height;
         }
         break;
     }
@@ -122,10 +122,10 @@ init_external_src()
     base_RNG.position = 0;
 
     for(int i = 0; i < tot_neutron; i++) {
-        get_rand_seed();
+        get_rand_seed(NULL);
 
-        ksi1 = get_rand();
-        ksi2 = get_rand();
+        ksi1 = get_rand(NULL);
+        ksi2 = get_rand(NULL);
         fixed_src = &base_fixed_src.fixed_src[i];
         fixed_src->dir[0] = TWO * ksi2 - ONE;
         fixed_src->dir[1] = sqrt(ONE - SQUARE(fixed_src->dir[0])) * cos(TWO * PI * ksi1);
@@ -135,7 +135,7 @@ init_external_src()
             fixed_src->erg = base_fixed_src.fixed_src_erg;
         else {
             double T = 4.0 / 3.0;
-            fixed_src->erg = sample_maxwell(T);
+            fixed_src->erg = sample_maxwell(T, NULL);
         }
     }
 

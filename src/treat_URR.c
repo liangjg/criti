@@ -10,13 +10,14 @@
 void
 treat_URR(nuclide_t *nuc,
           nuc_xs_t *cur_nuc_xs,
+          RNG_t *RNG,
           double erg)  // Treat Unresolved Resonance Range
 {
     double el_factor, fis_factor, C_factor, interp_value, smooth_total, inel_balance, abs_balance;
     int idx, idx_s, idx_e, num_e;
 
     int num_erg_grid = Get_erg_grid_num(nuc);
-    int loc_lunr_table = nuc->ptable;
+    int loc_lunr_table = cur_nuc_xs->ptable;
     int num_prob_table_incident_erg = (int) (nuc->XSS[loc_lunr_table]);
     int loc_incident_erg = loc_lunr_table + 6;
     int length_table = (int) (nuc->XSS[loc_lunr_table + 1]);
@@ -36,7 +37,7 @@ treat_URR(nuclide_t *nuc,
     int nj1 = loc_prob_table;
     int nj2 = loc_prob_table + length_table * 6;
 
-    double rand_num = get_rand();
+    double rand_num = get_rand(RNG);
     for(;;) {
         if(nuc->XSS[nj1] >= rand_num)
             break;

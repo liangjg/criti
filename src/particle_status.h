@@ -2,11 +2,11 @@
 // Created by xaq on 10/27/17.
 //
 
-#include "common.h"
-
-
 #ifndef CRITI_PARTICLE_STATE_H
 #define CRITI_PARTICLE_STATE_H
+
+#include "common.h"
+
 
 typedef struct {
     /* basic state */

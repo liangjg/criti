@@ -9,10 +9,11 @@
 
 
 extern acedata_t base_acedata;
-extern nuc_xs_t *base_nuc_xs;
 
 double
 sample_free_fly_dis(particle_status_t *par_status,
+                    nuc_xs_t *nuc_xs,
+                    RNG_t *RNG,
                     bool erg_changed)
 {
     mat_t *mat;
@@ -49,12 +50,12 @@ sample_free_fly_dis(particle_status_t *par_status,
         nuc = mat->nucs[i];
         sab_nuc = mat->sab_nuc;
         nuc_atom_den = mat->nuc_atom_den[i];
-        cur_nuc_xs = &base_nuc_xs[nuc->xs];
+        cur_nuc_xs = &nuc_xs[nuc->xs];
 
         if(sab_nuc && (sab_nuc->zaid != nuc->zaid || par_status->erg >= mat->sab_nuc_esa))
             sab_nuc = NULL;
 
-        get_nuc_tot_fis_cs(&base_acedata, nuc, sab_nuc, cur_nuc_xs, par_status->erg, par_status->cell_tmp);
+        get_nuc_tot_fis_cs(&base_acedata, nuc, sab_nuc, cur_nuc_xs, par_status->erg, par_status->cell_tmp, RNG);
 
         par_status->macro_tot_cs += nuc_atom_den * cur_nuc_xs->tot;
         if(GT_ZERO(cur_nuc_xs->fis))
@@ -66,5 +67,5 @@ sample_free_fly_dis(particle_status_t *par_status,
         par_status->macro_nu_fis_cs = ZERO;
     }
 END:
-    return -log(get_rand()) / par_status->macro_tot_cs;
+    return -log(get_rand(RNG)) / par_status->macro_tot_cs;
 }

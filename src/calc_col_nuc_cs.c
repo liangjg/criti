@@ -8,10 +8,10 @@
 
 
 extern acedata_t base_acedata;
-extern nuc_xs_t *base_nuc_xs;
 
 void
-calc_col_nuc_cs(particle_status_t *par_status)
+calc_col_nuc_cs(particle_status_t *par_status,
+                RNG_t *RNG)
 {
     if(par_status->sab_nuc)
         return;
@@ -22,12 +22,12 @@ calc_col_nuc_cs(particle_status_t *par_status)
     par_status->interp_K0 = cur_nuc_xs->inter_frac;
 
     if(par_status->cell_tmp > 1.0E-24 &&
-        (par_status->erg < 400 * par_status->cell_tmp || nuc->atom_wgt <= 1.5)) {
+       (par_status->erg < 400 * par_status->cell_tmp || nuc->atom_wgt <= 1.5)) {
         par_status->is_free_gas_col = true;
-        if(nuc->ptable) return;
-        treat_free_gas_model(par_status, nuc->atom_wgt);
+        if(cur_nuc_xs->ptable) return;
+        treat_free_gas_model(par_status, RNG, nuc->atom_wgt);
         par_status->interp_N = get_intplt_pos_fr(nuc->XSS, par_status->erg_rel, 1, Get_erg_grid_num(nuc),
-                                                &par_status->interp_K);
+                                                 &par_status->interp_K);
     } else {
         par_status->is_free_gas_col = false;
         par_status->erg_rel = par_status->erg;

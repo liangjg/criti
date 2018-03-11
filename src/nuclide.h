@@ -10,7 +10,6 @@
 typedef struct {
     char id[12];
     int zaid;
-    int ptable;               /* ptable=0说明该核素不存在概率表，大于0的值表示概率表的位置 */
     double atom_wgt;
     double tmp;
     double broaden_tmp;
@@ -52,6 +51,8 @@ typedef struct {
 
     int inter_pos;
     double inter_frac;
+
+    int ptable;         /* ptable=0说明该核素不存在概率表，大于0的值表示概率表的位置 */
 } nuc_xs_t;
 
 

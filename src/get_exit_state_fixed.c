@@ -15,8 +15,7 @@ get_exit_state_fixed(particle_status_t *par_status)
     nuc_xs_t *cur_nuc_xs = par_status->nuc_xs;
 
     if(sab_nuc) {
-        treat_sab_colli_type(sab_nuc, cur_nuc_xs->el, cur_nuc_xs->inel, par_status->erg, par_status->dir,
-                             &par_status->exit_erg, par_status->exit_dir);
+        treat_sab_colli_type(sab_nuc, NULL, NULL);
         /* 这里似乎应该是出射能量而不是原本的能量 */
         if(par_status->erg <= EG0_CUTOFF)
             par_status->is_killed = true;
@@ -41,7 +40,7 @@ get_exit_state_fixed(particle_status_t *par_status)
     /* ordinary scattering */
     par_status->wgt *= emiss_neu_num;
 
-    get_ce_exit_state(par_status, par_status->collision_type, par_status->is_free_gas_col);
+    get_ce_exit_state(par_status, NULL, par_status->collision_type, par_status->is_free_gas_col);
 
     /* 这里似乎应该是出射能量而不是原本的能量 */
     if(par_status->erg <= EG0_CUTOFF)

@@ -37,7 +37,7 @@ void geometry_tracking_fixed(particle_status_t *par_status){
             DTB = ZERO;
         }
 
-        FFL = sample_free_fly_dis(par_status, !par_on_surf);
+        FFL = sample_free_fly_dis(par_status, NULL, NULL, !par_on_surf);
 
         if(FFL >= DTB){
             par_on_surf = true;

@@ -10,6 +10,7 @@
 /// 根据能角不耦合的Law确定质心系下出射能量和出射角余弦
 void
 react_by_laws(const nuclide_t *nuc,
+              RNG_t *RNG,
               int MT,
               int law_type,
               int LDAT,
@@ -29,7 +30,7 @@ react_by_laws(const nuclide_t *nuc,
         NET = (int) (nuc->XSS[LDAT + LN]);
 
         //// Sample outgoing energy bin
-        double ksi1 = get_rand();
+        double ksi1 = get_rand(RNG);
         int k = 1 + (int) (ksi1 * NET + 1);
 
         //// calculate E_1 and E_K
@@ -43,14 +44,14 @@ react_by_laws(const nuclide_t *nuc,
         double E_K = E_i_K + frac * (E_i1_K - E_i_K);
 
         //// Sample outgoing table for incoming energy E_i and E_(i+1)
-        double ksi3 = get_rand();
+        double ksi3 = get_rand(RNG);
         int pos_smpl = ksi3 < frac ? pos + 1 : pos;
 
         //// Calculate E_l_k, E_l_k+1 and E'
         LC = LDAT + LN + (pos_smpl - 1) * NET;
         double E_l_k = nuc->XSS[LC + k];
         double E_l_k1 = nuc->XSS[LC + k + 1];
-        double ksi2 = get_rand();
+        double ksi2 = get_rand(RNG);
         double E_pie = E_l_k + ksi2 * (E_l_k1 - E_l_k);
 
         //// scaled interpolation between tables
@@ -66,8 +67,8 @@ react_by_laws(const nuclide_t *nuc,
         LN = 2 * (NR + NE + 1);
         double TI = get_erg_func_value(nuc, LDAT, incident_erg);
         int NET = (int) (nuc->XSS[LDAT + LN]);
-        int i = LDAT + LN + 1 + (int) (get_rand() * (NET - 1));
-        *exit_erg_cm = TI * (nuc->XSS[i] + get_rand() * (nuc->XSS[i + 1] - nuc->XSS[i]));
+        int i = LDAT + LN + 1 + (int) (get_rand(RNG) * (NET - 1));
+        *exit_erg_cm = TI * (nuc->XSS[i] + get_rand(RNG) * (nuc->XSS[i + 1] - nuc->XSS[i]));
     } else if(law_type == 7) { // MAXWELL FISSION SPECTRUM
         NR = (int) (nuc->XSS[LDAT]);
         NE = (int) (nuc->XSS[LDAT + 2 * NR + 1]);
@@ -77,7 +78,7 @@ react_by_laws(const nuclide_t *nuc,
         if(CalTemp > 0) {
             iter_cnt = 0;
             for(;;) {
-                *exit_erg_cm = sample_maxwell(T);
+                *exit_erg_cm = sample_maxwell(T, RNG);
                 if(*exit_erg_cm <= CalTemp)
                     break;
                 if((iter_cnt++) >= MAX_ITER) {
@@ -100,8 +101,8 @@ react_by_laws(const nuclide_t *nuc,
         if(dCalcTemp > 0) {
             iter_cnt = 0;
             for(;;) {
-                double ksi1 = get_rand();
-                double ksi2 = get_rand();
+                double ksi1 = get_rand(RNG);
+                double ksi2 = get_rand(RNG);
                 *exit_erg_cm = -T * log(ksi1 * ksi2);
                 if(*exit_erg_cm <= dCalcTemp)
                     break;
@@ -124,7 +125,7 @@ react_by_laws(const nuclide_t *nuc,
         if(dCalTemp > 0) {
             iter_cnt = 0;
             for(;;) {
-                *exit_erg_cm = sample_watt(a, b);
+                *exit_erg_cm = sample_watt(a, b, RNG);
                 if(*exit_erg_cm <= dCalTemp)
                     break;
                 if((iter_cnt++) >= MAX_ITER) {
@@ -144,7 +145,7 @@ react_by_laws(const nuclide_t *nuc,
         iter_cnt = 0;
         do {
             LDAT = ie;
-            double fr = get_rand();
+            double fr = get_rand(RNG);
             do {
                 LDAT = LDAT + 1;
                 fr = fr - nuc->XSS[LDAT];
@@ -161,9 +162,9 @@ react_by_laws(const nuclide_t *nuc,
         interpolate_xss_table(nuc, incident_erg, LDAT, &pos, &frac, &NR, &NE);
         LN = 2 * NR + NE + 2;
         NET = (int) (nuc->XSS[LDAT + LN]);
-        int k = (int) (get_rand() * (NET - 1));
+        int k = (int) (get_rand(RNG) * (NET - 1));
         int i = LDAT + LN + 1 + NET * (pos - 1) + k;
-        *exit_erg_cm = incident_erg * (nuc->XSS[i] + get_rand() * (nuc->XSS[i + 1] - nuc->XSS[i]));
+        *exit_erg_cm = incident_erg * (nuc->XSS[i] + get_rand(RNG) * (nuc->XSS[i + 1] - nuc->XSS[i]));
     } else if(law_type == 4 || law_type == 44 || law_type == 61) {
 
         interpolate_xss_table(nuc, incident_erg, LDAT, &pos, &frac, &NR, &NE);
@@ -171,7 +172,7 @@ react_by_laws(const nuclide_t *nuc,
         LN = 2 * NR + NE + 2;
 
         //// Sample between the ith and (i+1)th bin
-        int nPos_smpl = frac > get_rand() ? pos + 1 : pos;
+        int nPos_smpl = frac > get_rand(RNG) ? pos + 1 : pos;
 
         //// obtain endpoints on grid i
         int LDIS = Get_loc_of_DLW(nuc);
@@ -218,7 +219,7 @@ react_by_laws(const nuclide_t *nuc,
 
         //printf("INTTP = %d, INTT = %d, NP = %d\n",INTTp,INTT,NP);
         //// sample outgoing energy bin
-        double r1 = get_rand();
+        double r1 = get_rand(RNG);
         int ic = LC + 2 * NP + 1;
         int ib = LC + 3 * NP;
         int ih;
@@ -280,8 +281,8 @@ react_by_laws(const nuclide_t *nuc,
 
         ///// sample angular distribution for law 44 & law 61 ////
         if(law_type == 44) { //// Sampled correlated angle from Kalbach-Mann parameters
-            double ksi3 = get_rand();
-            double ksi4 = get_rand();
+            double ksi3 = get_rand(RNG);
+            double ksi4 = get_rand(RNG);
             if(ksi3 > KM_R) {
                 double T = (2 * ksi4 - 1) * sinh(KM_A);
                 *exit_mu_cm = log(T + sqrt((T * T) + 1)) / KM_A;
@@ -295,7 +296,7 @@ react_by_laws(const nuclide_t *nuc,
             int LM = (int) (nuc->XSS[LB]);
 
             if(LM == 0) { // isotropic
-                *exit_mu_cm = 2 * get_rand() - 1;
+                *exit_mu_cm = 2 * get_rand(RNG) - 1;
                 return;
             }
             LC = Get_loc_of_DLW(nuc) + abs(LM) - 2;
@@ -304,7 +305,7 @@ react_by_laws(const nuclide_t *nuc,
             int NP = (int) (nuc->XSS[LC + 2]);
 
             //// determine outgoing cosine bin
-            double r3 = get_rand();
+            double r3 = get_rand(RNG);
             double c_k = nuc->XSS[LC + 2 + 2 * NP + 1];
             int k;
             for(k = 1; k <= NP - 1; ++k) {
@@ -345,26 +346,26 @@ react_by_laws(const nuclide_t *nuc,
                                  MT); //Nuclides[nuc].XSS[GetLocOfLQR(nuc) + Nuclides[nuc].MTRIndex[mt]-1]; // Q-value
         double E_max = ((Ap - 1) / Ap) * (incident_erg * aw / (aw + 1) + Q);
 
-        double lx = sample_maxwell(1);
+        double lx = sample_maxwell(1, RNG);
         double ly;
 
         if(NPSX == 3)
-            ly = sample_maxwell(1);
+            ly = sample_maxwell(1, RNG);
         else if(NPSX == 4) {
-            double temp = get_rand() * get_rand() * get_rand();
+            double temp = get_rand(RNG) * get_rand(RNG) * get_rand(RNG);
             ly = log(temp);
         } else {
-            double r1 = get_rand();
-            double r2 = get_rand();
-            double r3 = get_rand();
-            double r4 = get_rand();
-            double r5 = get_rand();
-            double r6 = get_rand();
+            double r1 = get_rand(RNG);
+            double r2 = get_rand(RNG);
+            double r3 = get_rand(RNG);
+            double r4 = get_rand(RNG);
+            double r5 = get_rand(RNG);
+            double r6 = get_rand(RNG);
             ly = -log(r1 * r2 * r3 * r4) - log(r5) * SQUARE(cos(PI / TWO * r6));
         }
         double V = lx / (lx + ly);
         *exit_erg_cm = V * E_max;
-        *exit_mu_cm = TWO * get_rand() - ONE;
+        *exit_mu_cm = TWO * get_rand(RNG) - ONE;
     } else if(law_type == 67) { // LABORATORY ENERGY-ANGLE LAW
         interpolate_xss_table(nuc, incident_erg, LDAT, &pos, &frac, &NR, &NE);
         LN = LDAT + 2 * NR + NE + 2;
@@ -379,7 +380,7 @@ react_by_laws(const nuclide_t *nuc,
         if(frac != 0) {
             LC[2] = Get_loc_of_DLW(nuc) + (int) (nuc->XSS[LN + pos]) - 1;
             ir = 1;
-            if(get_rand() <= frac)
+            if(get_rand(RNG) <= frac)
                 ix = 2;
         }
 
@@ -400,7 +401,7 @@ react_by_laws(const nuclide_t *nuc,
             }
             if(INTMU == 2) { // lin-lin
                 ir = ir + 1;
-                if(get_rand() <
+                if(get_rand(RNG) <
                    (*exit_mu_cm - nuc->XSS[le + LMU + 1]) / (nuc->XSS[le + LMU + 2] - nuc->XSS[le + LMU + 1]))
                     LMU = LMU + 1;
             } else if(INTMU != 1) { // lin-lin
@@ -419,7 +420,7 @@ react_by_laws(const nuclide_t *nuc,
                 continue;
 
             ir = ir + 1;
-            double ksi4 = get_rand();
+            double ksi4 = get_rand(RNG);
 
             int ic = lb + 2 * NPEP + 1, ib = lb + 3 * NPEP;
             while(ib - ic > 1) {
@@ -487,6 +488,6 @@ End:
     if(!(*exit_mu_cm >= -1.000001 && *exit_mu_cm <= 1.000001)) {
         printf("exit mu_cm out of range. nuc=%d, MT=%d, Law=%d, Mu=%f \n", nuc->zaid, MT, law_type, *exit_mu_cm);
         base_warnings++;
-        *exit_mu_cm = 2 * get_rand() - 1.;
+        *exit_mu_cm = 2 * get_rand(RNG) - 1.;
     }
 }

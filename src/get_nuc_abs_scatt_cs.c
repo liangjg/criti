@@ -13,7 +13,7 @@ get_nuc_abs_scatt_cs(acedata_t *obj,
                      particle_status_t *par_status)
 {
     /* URR case: NucInterpCs[CurrentNUCLIDE][0,1,2,3,4] have been calculated in subroutine treat_URR */
-    if(nuc->ptable)
+    if(cur_nuc_xs->ptable)
         return;
 
     /* Norma case: interpolate SIG (a,el,inel) */

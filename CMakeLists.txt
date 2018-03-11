@@ -35,7 +35,7 @@ endif ()
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-set(COMPILE_FLAGS "-m64 -Wall -Wextra -pedantic")
+set(COMPILE_FLAGS "-m64 -Wall -Wextra -pedantic -pthread")
 set(IGNORED_WARNINGS "-Wno-pointer-arith")
 if(CMAKE_C_COMPILER_ID MATCHES "Clang")
     set(IGNORED_WARNINGS "${IGNORED_WARNINGS} -Wno-newline-eof")

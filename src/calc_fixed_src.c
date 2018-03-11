@@ -21,7 +21,7 @@ calc_fixed_src()
         if(neu % 1000 == 0)
             printf("neutron: %d\n", neu);
 
-        get_rand_seed();
+        get_rand_seed(NULL);
 
         sample_fixed_src(&par_status);
 
