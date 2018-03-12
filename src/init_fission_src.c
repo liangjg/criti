@@ -43,7 +43,7 @@ init_fission_src(void *args)
     }
 
     for(i = 0; i < NUM_THREADS; i++){
-        int bank_sz = 2 * pth_args[i].fis_src_cnt;
+        int bank_sz = 5 * pth_args[i].fis_src_cnt;
         if(bank_sz < 100) bank_sz = 100;    /* 如果要模拟的粒子数目太少了的话会导致fission_bank空间过小，有越界的可能 */
         pth_args[i].fis_src = malloc(bank_sz * sizeof(fission_bank_t));
         pth_args[i].fis_bank = malloc(bank_sz * sizeof(fission_bank_t));
