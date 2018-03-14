@@ -55,6 +55,7 @@ process_cycle_end(int currenr_cycle,
     base_criti.cycle_neu_num = base_criti.tot_fis_bank_cnt;
     base_start_wgt = ONE * base_criti.tot_start_wgt / base_criti.tot_fis_bank_cnt;
 
+#ifdef USE_PTHREAD
     memcpy(&base_RNG, &pth_args[base_num_threads - 1].RNG, sizeof(RNG_t));
     memcpy(&pth_args[0].RNG, &base_RNG, sizeof(RNG_t));
     for(i = 1; i < base_num_threads; i++){
@@ -64,6 +65,7 @@ process_cycle_end(int currenr_cycle,
         for(j = 0; j < skip_src; j++)
             get_rand_seed(&pth_args[i].RNG);
     }
+#endif
 
     /* reset criticality */
     base_criti.tot_fis_bank_cnt = 0;

@@ -36,9 +36,11 @@ release_resource()
     free(base_fixed_src.fixed_src);
     free(base_fixed_src.fixed_bank);
 
-    for(int i = 0; i < base_num_threads; i++)
-        free(base_nuc_xs[i]);
-    free(base_nuc_xs);
+    if(base_nuc_xs){
+        for(int i = 0; i < base_num_threads; i++)
+            free(base_nuc_xs[i]);
+        free(base_nuc_xs);
+    }
 
     /* close all FILE structure if opened */
     if(base_IOfp.opt_fp) fclose(base_IOfp.opt_fp);

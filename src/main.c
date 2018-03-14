@@ -81,6 +81,7 @@ main(int argc,
     char tally_fn[MAX_FILENAME_LENGTH];
     int c;
     opterr = 0;
+    base_num_threads = 1;    /* 默认使用单线程进行计算，除非用-s指定了线程数目 */
 
     while((c = getopt(argc, argv, "ho:s:")) != -1) {
         switch(c) {
@@ -91,7 +92,10 @@ main(int argc,
                 puts("General options:");
                 puts("  -h        Print this help");
                 puts("  -o        Specify output file");
-                puts("  -s        Specify how many POSIX threads to calculate simultaneously\n");
+#ifdef USE_PTHREAD
+                puts("  -s        Specify how many POSIX threads to calculate simultaneously");
+#endif
+                puts("");
                 return 0;
             }
             case 'o': {
@@ -180,6 +184,9 @@ main(int argc,
     /* read input file */
     read_input_blocks(&calc_mode);
 
+    /* 进行几何预处理，包括构建邻居栅元等等 */
+    preprocess_geometry();
+
     /* read ACE database */
     read_ace_data();
 
@@ -188,9 +195,6 @@ main(int argc,
 
     /* 输出material文件 */
     output_mat_file();
-
-    /* 进行几何预处理，包括构建邻居栅元等等 */
-    preprocess_geometry();
 
     /* 多普勒展宽 */
     doppler_broaden();

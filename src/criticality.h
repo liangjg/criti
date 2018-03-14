@@ -39,13 +39,7 @@ typedef struct {
 
 BEGIN_DECL
 void
-init_fission_src(void *pth_args);
-
-//void
-//sample_fission_src(particle_status_t *par_status);
-//
-//void
-//track_history(particle_status_t *par_status);
+init_fission_src(pth_arg_t *pth_args);
 
 int
 get_fis_neu_state(particle_status_t *par_status,

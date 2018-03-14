@@ -22,26 +22,40 @@ void
 calc_criticality(int tot_cycle_num)
 {
     void *status;
-    pth_arg_t pth_args[base_num_threads];
-    pthread_t threads[base_num_threads];
+    pth_arg_t *pth_args = malloc(base_num_threads * sizeof(pth_arg_t));
+
+#ifdef USE_PTHREAD
+    pthread_t *threads = malloc(base_num_threads * sizeof(pthread_t));
+#endif
 
     init_fission_src(pth_args);
 
     for(int cyc = 1; cyc <= tot_cycle_num; cyc++) {
-        for(int i = 0; i < base_num_threads; i++)
+#ifdef USE_PTHREAD
+        for(int i = 0; i < base_num_threads - 1; i++)
             pthread_create(&threads[i], NULL, do_calc, &pth_args[i]);
+#endif
 
-        for(int i = 0; i < base_num_threads; i++)
+        do_calc(&pth_args[base_num_threads - 1]);
+
+#ifdef USE_PTHREAD
+        for(int i = 0; i < base_num_threads - 1; i++)
             pthread_join(threads[i], &status);
+#endif
 
         process_cycle_end(cyc, pth_args);
     }
     output_summary();
 
-    for(int i = 0; i < base_num_threads; i++){
+    for(int i = 0; i < base_num_threads; i++) {
         free(pth_args[i].fis_src);
         free(pth_args[i].fis_bank);
     }
+    free(pth_args);
+
+#ifdef USE_PTHREAD
+    free(threads);
+#endif
 }
 
 void *

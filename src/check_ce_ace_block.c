@@ -109,7 +109,6 @@ check_ce_ace_block()
                 }
                 for(int i = 0; i < base_num_threads; i++)
                     base_nuc_xs[i][nuc->xs].ptable = Get_loc_of_LUNR(nuc);
-
             }
 
             int NE = Get_erg_grid_num(nuc);

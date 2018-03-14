@@ -12,7 +12,10 @@
 #include <float.h>
 #include <time.h>
 #include <stdbool.h>
-#include <pthread.h>
+
+#ifdef USE_PTHREAD
+    #include <pthread.h>
+#endif
 
 #ifdef USE_MPI
     #include <mpi.h>
