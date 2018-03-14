@@ -16,7 +16,8 @@ extern map *base_mats;
 extern map *base_nucs;
 extern fixed_src_t base_fixed_src;
 extern IOfp_t base_IOfp;
-extern nuc_xs_t *base_nuc_xs[NUM_THREADS];
+extern nuc_xs_t **base_nuc_xs;
+extern int base_num_threads;
 
 void
 release_resource()
@@ -35,8 +36,9 @@ release_resource()
     free(base_fixed_src.fixed_src);
     free(base_fixed_src.fixed_bank);
 
-    for(int i = 0; i < NUM_THREADS; i++)
+    for(int i = 0; i < base_num_threads; i++)
         free(base_nuc_xs[i]);
+    free(base_nuc_xs);
 
     /* close all FILE structure if opened */
     if(base_IOfp.opt_fp) fclose(base_IOfp.opt_fp);

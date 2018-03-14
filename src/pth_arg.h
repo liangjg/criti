@@ -17,7 +17,6 @@ typedef struct pth_arg_t {
     int fis_src_cnt;               /* fis_src的长度 */
     int fis_bank_cnt;              /* 总共产生的裂变源数目 */
     int col_cnt;                   /* 总共碰撞次数 */
-    int id;
     double keff_wgt_sum[3];
     double keff_final;
 } pth_arg_t;

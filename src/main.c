@@ -6,6 +6,7 @@
 //  Copyright © 2017年 xaq. All rights reserved.
 //
 
+#include <unistd.h>
 #include "IO_releated.h"
 #include "RNG.h"
 #include "criticality.h"
@@ -17,15 +18,18 @@
 #include "map.h"
 
 
+#define CODE_VERSION  "Beta 0.4.1"
+
 /* 全局变量初始化 */
-unsigned base_warnings = 0;
-double base_start_wgt = ZERO;
+unsigned base_warnings;
+double base_start_wgt;
+int base_num_threads;
 criti_t base_criti;
 fixed_src_t base_fixed_src;
 IOfp_t base_IOfp;
 RNG_t base_RNG;
 acedata_t base_acedata;
-nuc_xs_t *base_nuc_xs[NUM_THREADS];
+nuc_xs_t **base_nuc_xs;
 
 /* key: universe index; val: corresponding universe instance address */
 map *base_univs;
@@ -73,6 +77,58 @@ int
 main(int argc,
      char *argv[])
 {
+    char mat_fn[MAX_FILENAME_LENGTH];
+    char tally_fn[MAX_FILENAME_LENGTH];
+    int c;
+    opterr = 0;
+
+    while((c = getopt(argc, argv, "ho:s:")) != -1) {
+        switch(c) {
+            case 'h': {
+                printf("RMC -- Reactor Monte Carlo code, version: %s\n", CODE_VERSION);
+                puts("Usage: RMC [OPTION...] FILE");
+                puts("Copyright (c) 2000-2017 REAL Tsinghua University. All Rights Reserved.\n");
+                puts("General options:");
+                puts("  -h        Print this help");
+                puts("  -o        Specify output file");
+                puts("  -s        Specify how many POSIX threads to calculate simultaneously\n");
+                return 0;
+            }
+            case 'o': {
+                strcpy(base_IOfp.opt_file_name, optarg);
+                break;
+            }
+            case 's': {
+                base_num_threads = *optarg - '0';
+                break;
+            }
+            default:puts("Unknown option character!");
+        }
+    }
+
+    /* 设置默认的输入输出文件 */
+    strcpy(base_IOfp.inp_file_name, "inp");
+    if(optind < argc)
+        strcpy(base_IOfp.inp_file_name, argv[optind]);
+    if(!base_IOfp.opt_file_name[0]) {    /* 没有指定输出文件名 */
+        strcpy(base_IOfp.opt_file_name, base_IOfp.inp_file_name);
+        strcat(base_IOfp.opt_file_name, ".out");
+    }
+
+    strcpy(mat_fn, base_IOfp.inp_file_name);
+    strcat(mat_fn, ".mat");
+    strcpy(tally_fn, base_IOfp.inp_file_name);
+    strcat(tally_fn, ".tally");
+
+    base_IOfp.inp_fp = fopen(base_IOfp.inp_file_name, "rb");
+    if(!base_IOfp.inp_fp) {
+        printf("%s does not exist.\n", base_IOfp.inp_file_name);
+        return 0;
+    }
+
+    base_IOfp.opt_fp = fopen(base_IOfp.opt_file_name, "wb");
+    base_IOfp.mat_fp = fopen(mat_fn, "wb");
+
     /* set hash functions of every map_type */
     map_type *mat_type = (map_type *) malloc(sizeof(map_type));
     map_type *univ_type = (map_type *) malloc(sizeof(map_type));
@@ -118,9 +174,6 @@ main(int argc,
 
     CALC_MODE_T calc_mode;
 
-    /* check command line arguments */
-    check_IO_file(argc, argv);
-
     /* output heading */
     output_heading();
 
@@ -147,20 +200,20 @@ main(int argc,
 
     /* run calculation */
     switch(calc_mode) {
-    case CRITICALITY:puts("\n******** Calculation mode: criticality ********\n");
-        calc_criticality(base_criti.tot_cycle_num);
-        break;
-    case FIXEDSOURCE:puts("\n******** Calculation mode: fixed-source ********\n");
-        calc_fixed_src();
-        break;
-    case BURNUP:puts("\n******** Calculation mode: burnup ********\n");
-        //            calc_burnup();
-        break;
-    case POINTBURN:puts("\n******** Calculation mode: point burnup ********\n");
-        //            calc_point_burn();
-        break;
-    default:puts("\n******** Unknown calculation mode. ********\n");
-        break;
+        case CRITICALITY:puts("\n******** Calculation mode: criticality ********\n");
+            calc_criticality(base_criti.tot_cycle_num);
+            break;
+        case FIXEDSOURCE:puts("\n******** Calculation mode: fixed-source ********\n");
+            calc_fixed_src();
+            break;
+        case BURNUP:puts("\n******** Calculation mode: burnup ********\n");
+            //            calc_burnup();
+            break;
+        case POINTBURN:puts("\n******** Calculation mode: point burnup ********\n");
+            //            calc_point_burn();
+            break;
+        default:puts("\n******** Unknown calculation mode. ********\n");
+            break;
     }
 
     /* output ending */
@@ -179,14 +232,14 @@ main(int argc,
 }
 
 /* ------------------------ hash function implementation ---------------------- */
-static uint64_t
+uint64_t
 _int_hash_func(const void *key)
 {
     return _default_int_hash_func(*(uint32_t *) key);
 }
 
 /* DJB string hash function */
-static uint64_t
+uint64_t
 _str_hash_func(const void *key)
 {
     char *str = (char *) (*(uint64_t *) key);
@@ -197,38 +250,38 @@ _str_hash_func(const void *key)
     return hash;
 }
 
-static int
+int
 _str_key_comp_func(uint64_t key1,
                    uint64_t key2)
 {
     return strcmp((const char *) key1, (const char *) key2);
 }
 
-static void
+void
 _univ_free(void *obj)
 {
     univ_free((universe_t *) (obj));
 }
 
-static void
+void
 _cell_free(void *obj)
 {
     cell_free((cell_t *) (obj));
 }
 
-static void
+void
 _surf_free(void *obj)
 {
     surf_free((surface_t *) obj);
 }
 
-static void
+void
 _mat_free(void *obj)
 {
     mat_free((mat_t *) (obj));
 }
 
-static void
+void
 _nuc_free(void *obj)
 {
     nuc_free((nuclide_t *) (obj));

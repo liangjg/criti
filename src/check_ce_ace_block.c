@@ -9,7 +9,8 @@
 
 extern map *base_nucs;
 extern map *base_mats;
-extern nuc_xs_t *base_nuc_xs[NUM_THREADS];
+extern nuc_xs_t **base_nuc_xs;
+extern int base_num_threads;
 
 void
 check_ce_ace_block()
@@ -106,7 +107,7 @@ check_ce_ace_block()
                     if(nuc->XSS[start_loc + i] < ZERO)
                         nuc->JXS[23] = 0;    /* 关闭该核素的概率表 */
                 }
-                for(int i = 0; i < NUM_THREADS; i++)
+                for(int i = 0; i < base_num_threads; i++)
                     base_nuc_xs[i][nuc->xs].ptable = Get_loc_of_LUNR(nuc);
 
             }

@@ -11,7 +11,8 @@
 extern criti_t base_criti;
 extern RNG_t base_RNG;
 extern double base_start_wgt;
-extern nuc_xs_t *base_nuc_xs[NUM_THREADS];
+extern nuc_xs_t **base_nuc_xs;
+extern int base_num_threads;
 
 void
 init_fission_src(void *args)
@@ -24,10 +25,9 @@ init_fission_src(void *args)
 
     base_criti.tot_start_wgt = ONE * base_criti.cycle_neu_num;
 
-    quotient = base_criti.cycle_neu_num / NUM_THREADS;
-    remainder = base_criti.cycle_neu_num - quotient * NUM_THREADS;
-    for(i = 0; i < NUM_THREADS; i++){
-        pth_args[i].id = i;
+    quotient = base_criti.cycle_neu_num / base_num_threads;
+    remainder = base_criti.cycle_neu_num - quotient * base_num_threads;
+    for(i = 0; i < base_num_threads; i++){
         pth_args[i].fis_src_cnt = quotient;
         pth_args[i].fis_bank_cnt = 0;
         pth_args[i].nuc_xs = base_nuc_xs[i];
@@ -42,7 +42,7 @@ init_fission_src(void *args)
             pth_args[i].fis_src_cnt++;
     }
 
-    for(i = 0; i < NUM_THREADS; i++){
+    for(i = 0; i < base_num_threads; i++){
         int bank_sz = 5 * pth_args[i].fis_src_cnt;
         if(bank_sz < 100) bank_sz = 100;    /* 如果要模拟的粒子数目太少了的话会导致fission_bank空间过小，有越界的可能 */
         pth_args[i].fis_src = malloc(bank_sz * sizeof(fission_bank_t));
@@ -54,7 +54,7 @@ init_fission_src(void *args)
     int fis_src_cnt = 0;
     switch(base_criti.ksrc_type) {
     case POINT: {
-        for(i = 0; i < NUM_THREADS; i++) {
+        for(i = 0; i < base_num_threads; i++) {
             fis_src_cnt = pth_args[i].fis_src_cnt;
             for(j = 0; j < fis_src_cnt; j++){
                 get_rand_seed(&base_RNG);
@@ -71,7 +71,7 @@ init_fission_src(void *args)
         double len_y = base_criti.ksrc_para[3] - base_criti.ksrc_para[2];
         double len_z = base_criti.ksrc_para[5] - base_criti.ksrc_para[4];
 
-        for(i = 0; i < NUM_THREADS; i++){
+        for(i = 0; i < base_num_threads; i++){
             fis_src_cnt = pth_args[i].fis_src_cnt;
             for(j = 0; j < fis_src_cnt; j++){
                 get_rand_seed(&base_RNG);
@@ -84,7 +84,7 @@ init_fission_src(void *args)
         break;
     }
     case SPHERE: {
-        for(i = 0; i < NUM_THREADS; i++){
+        for(i = 0; i < base_num_threads; i++){
             fis_src_cnt = pth_args[i].fis_src_cnt;
             for(j = 0; j < fis_src_cnt; j++){
                 get_rand_seed(&base_RNG);
@@ -108,7 +108,7 @@ init_fission_src(void *args)
     base_RNG.position_pre = -1000;
     base_RNG.position = 0;
 
-    for(i = 0; i < NUM_THREADS; i++){
+    for(i = 0; i < base_num_threads; i++){
         fis_src_cnt = pth_args[i].fis_src_cnt;
         for(j = 0; j < fis_src_cnt; j++){
             get_rand_seed(&base_RNG);
@@ -130,7 +130,7 @@ init_fission_src(void *args)
     base_RNG.position = 0;
 
     memcpy(&pth_args[0].RNG, &base_RNG, sizeof(RNG_t));
-    for(i = 1; i < NUM_THREADS; i++){
+    for(i = 1; i < base_num_threads; i++){
         memcpy(&pth_args[i].RNG, &pth_args[i - 1].RNG, sizeof(RNG_t));
 
         int skip_src = pth_args[i - 1].fis_src_cnt;

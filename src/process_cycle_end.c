@@ -11,6 +11,7 @@ extern criti_t base_criti;
 extern double base_start_wgt;
 extern IOfp_t base_IOfp;
 extern RNG_t base_RNG;
+extern int base_num_threads;
 
 void
 _combine_keff(int current_cycle);
@@ -31,7 +32,7 @@ process_cycle_end(int currenr_cycle,
 {
     int i, j;
 
-    for(i = 0; i < NUM_THREADS; i++){
+    for(i = 0; i < base_num_threads; i++){
         base_criti.tot_col_cnt += pth_args[i].col_cnt;
         base_criti.tot_fis_bank_cnt += pth_args[i].fis_bank_cnt;
         for(j = 0; j < 3; j++)
@@ -54,9 +55,9 @@ process_cycle_end(int currenr_cycle,
     base_criti.cycle_neu_num = base_criti.tot_fis_bank_cnt;
     base_start_wgt = ONE * base_criti.tot_start_wgt / base_criti.tot_fis_bank_cnt;
 
-    memcpy(&base_RNG, &pth_args[NUM_THREADS - 1].RNG, sizeof(RNG_t));
+    memcpy(&base_RNG, &pth_args[base_num_threads - 1].RNG, sizeof(RNG_t));
     memcpy(&pth_args[0].RNG, &base_RNG, sizeof(RNG_t));
-    for(i = 1; i < NUM_THREADS; i++){
+    for(i = 1; i < base_num_threads; i++){
         memcpy(&pth_args[i].RNG, &pth_args[i - 1].RNG, sizeof(RNG_t));
 
         int skip_src = pth_args[i - 1].fis_bank_cnt;
@@ -69,7 +70,7 @@ process_cycle_end(int currenr_cycle,
     for(i = 0; i < 3; i++)
         base_criti.keff_wgt_sum[i] = ZERO;
 
-    for(i = 0; i < NUM_THREADS; i++){
+    for(i = 0; i < base_num_threads; i++){
         SWAP(pth_args[i].fis_src, pth_args[i].fis_bank);
         pth_args[i].fis_src_cnt = pth_args[i].fis_bank_cnt;
         pth_args[i].fis_bank_cnt = 0;

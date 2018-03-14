@@ -13,6 +13,7 @@
 
 extern double base_start_wgt;
 extern universe_t *root_universe;
+extern int base_num_threads;
 
 void *
 do_calc(void *args);
@@ -21,23 +22,23 @@ void
 calc_criticality(int tot_cycle_num)
 {
     void *status;
-    pth_arg_t pth_args[NUM_THREADS];
-    pthread_t threads[NUM_THREADS];
+    pth_arg_t pth_args[base_num_threads];
+    pthread_t threads[base_num_threads];
 
     init_fission_src(pth_args);
 
     for(int cyc = 1; cyc <= tot_cycle_num; cyc++) {
-        for(int i = 0; i < NUM_THREADS; i++)
+        for(int i = 0; i < base_num_threads; i++)
             pthread_create(&threads[i], NULL, do_calc, &pth_args[i]);
 
-        for(int i = 0; i < NUM_THREADS; i++)
+        for(int i = 0; i < base_num_threads; i++)
             pthread_join(threads[i], &status);
 
         process_cycle_end(cyc, pth_args);
     }
     output_summary();
 
-    for(int i = 0; i < NUM_THREADS; i++){
+    for(int i = 0; i < base_num_threads; i++){
         free(pth_args[i].fis_src);
         free(pth_args[i].fis_bank);
     }

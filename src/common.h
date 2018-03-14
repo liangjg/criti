@@ -47,8 +47,6 @@
 #define TOUPPER(_c)     ((_c) &= 95)
 #define TOLOWER(_c)     ((_c) |= 32)
 
-#define NUM_THREADS    4
-
 #define MAX_LINE_LENGTH      220
 #define MAX_WORLD_LENGTH     20
 #define MAX_FILENAME_LENGTH  50

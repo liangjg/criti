@@ -5,7 +5,7 @@
 #include "IO_releated.h"
 
 
-#define CODE_VERSION  "Beta 0.3.2"
+#define CODE_VERSION  "Beta 0.4.1"
 
 time_t start_time;
 time_t finish_time;
