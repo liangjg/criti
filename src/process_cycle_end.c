@@ -188,8 +188,8 @@ void
 _output_keff(int current_cycle)
 {
     /* cycle finish time */
-    finish_time = clock();
-    double compute_time_min = (double) (finish_time - start_time) / CLOCKS_PER_SEC / 60.0;
+    gettimeofday(&finish_time, NULL);
+    double compute_time_min = (finish_time.tv_sec - start_time.tv_sec + (finish_time.tv_usec - start_time.tv_usec) / 1000000.0) / 60.0;
 
     if(current_cycle == base_criti.inactive_cycle_num + 1) {
         puts("************* Start Active Cycle *************");

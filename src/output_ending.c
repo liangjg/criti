@@ -14,8 +14,8 @@ output_ending()
     time_t finish_wall_clock = time(NULL);
     strftime(finish_wall_clock_str, sizeof(finish_wall_clock_str), "%Y/%m/%d %X %A", localtime(&finish_wall_clock));
 
-    finish_time = clock();
-    double total_calc_time = (double) (finish_time - start_time) / CLOCKS_PER_SEC;
+    gettimeofday(&finish_time, NULL);
+    double total_calc_time = finish_time.tv_sec - start_time.tv_sec + (finish_time.tv_usec - start_time.tv_usec) / 1000000.0;
 
     printf("\nRMC Calculation Finish at %s.\n", finish_wall_clock_str);
     printf("Total Calculation Time: %.3lf seconds.\n", total_calc_time);

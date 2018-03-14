@@ -7,14 +7,14 @@
 
 #define CODE_VERSION  "Beta 0.4.1"
 
-time_t start_time;
-time_t finish_time;
+struct timeval start_time;
+struct timeval finish_time;
 extern IOfp_t base_IOfp;
 
 void
 output_heading()
 {
-    start_time = clock();
+    gettimeofday(&start_time, NULL);
     char start_wall_clock_str[64];
     time_t start_wall_clock = time(NULL);
     strftime(start_wall_clock_str, sizeof(start_wall_clock_str), "%Y/%m/%d %X %A", localtime(&start_wall_clock));

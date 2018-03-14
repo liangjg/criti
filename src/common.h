@@ -12,6 +12,7 @@
 #include <float.h>
 #include <time.h>
 #include <stdbool.h>
+#include <sys/time.h>
 
 #ifdef USE_PTHREAD
     #include <pthread.h>
@@ -21,13 +22,6 @@
     #include <mpi.h>
 #endif
 
-#if defined(__linux__) || defined(__linux) || defined(linux)
-    #define OS_LINUX
-#elif defined(__WIN32__) || defined(_WIN32) || defined(WIN32)
-#define OS_WIN32
-#elif defined(__APPLE__)
-    #define OS_MAC
-#endif
 
 #if defined(__cplusplus)
     #define BEGIN_DECL    extern "C" {
@@ -138,8 +132,8 @@ typedef struct {
 } fixed_src_bank_t;
 
 /* time elapsed */
-extern time_t start_time;
-extern time_t finish_time;
+extern struct timeval start_time;
+extern struct timeval finish_time;
 
 /* warnings found */
 extern unsigned base_warnings;

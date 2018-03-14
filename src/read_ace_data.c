@@ -5,15 +5,8 @@
 #include "IO_releated.h"
 #include "map.h"
 #include "nuclide.h"
-
-
-#if defined(OS_LINUX) || defined(OS_MAC)
 #include <unistd.h>
 
-
-#elif defined(OS_WIN32)
-#include <windows.h>
-#endif
 
 #define MAX_LINES         51781
 #define CHAR_PER_LINE     81
@@ -53,13 +46,8 @@ read_ace_data()
 
     fscanf(xsdir_fp, "%*[^=]=%s", data_path);
 
-#if defined(OS_LINUX) || defined(OS_MAC)
     getcwd(cwd, 64);
     chdir(data_path);
-#elif defined(OS_WIN32)
-    GetCurrentDirectory(64, cwd);
-    SetCurrentDirectory(data_path);
-#endif
 
     while(true) {
         fscanf(xsdir_fp, "%s", temp);
@@ -81,15 +69,15 @@ read_ace_data()
             fscanf(xsdir_fp, "%lf %s %*d %d %d %d %*d %*d %*lf",
                    &nuc->atom_wgt, ace_path, &file_type, &start_addr, &nuc->XSS_sz);
             switch(_read_ace(ace_path, file_type, start_addr, nuc)) {
-            case FILE_NOT_EXIST:printf("file %s does not exist in directory %s.\n", ace_path, data_path);
-                fclose(xsdir_fp);
-                release_resource();
-                exit(0);
-            case FILE_TYPE_ERR:printf("wrong ACE file type in xsdir, nuclide: %s.\n", nuc->id);
-                fclose(xsdir_fp);
-                release_resource();
-                exit(0);
-            default:break;
+                case FILE_NOT_EXIST:printf("file %s does not exist in directory %s.\n", ace_path, data_path);
+                    fclose(xsdir_fp);
+                    release_resource();
+                    exit(0);
+                case FILE_TYPE_ERR:printf("wrong ACE file type in xsdir, nuclide: %s.\n", nuc->id);
+                    fclose(xsdir_fp);
+                    release_resource();
+                    exit(0);
+                default:break;
             }
         }
         fgets(buf, 90, xsdir_fp);
@@ -97,12 +85,7 @@ read_ace_data()
 
     fclose(xsdir_fp);
     puts("Finished.");
-
-#if defined(OS_LINUX) || defined(OS_MAC)
     chdir(cwd);
-#elif defined(OS_WIN32)
-    SetCurrentDiretory(cwd);
-#endif
 }
 
 int
