@@ -18,7 +18,7 @@
 #include "map.h"
 
 
-#define CODE_VERSION  "Beta 0.4.1"
+#define CODE_VERSION  "Beta 0.4.2"
 
 /* 全局变量初始化 */
 unsigned base_warnings;
