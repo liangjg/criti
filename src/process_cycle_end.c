@@ -91,22 +91,12 @@ process_cycle_end(int currenr_cycle,
             pth_args[i].keff_wgt_sum[j] = ZERO;
     }
 
-#ifdef USE_PTHREAD
-    memcpy(&base_RNG, &pth_args[base_num_threads - 1].RNG, sizeof(RNG_t));
-    memcpy(&pth_args[0].RNG, &base_RNG, sizeof(RNG_t));
-    for(i = 1; i < base_num_threads; i++) {
-        memcpy(&pth_args[i].RNG, &pth_args[i - 1].RNG, sizeof(RNG_t));
-
-        int skip_src = pth_args[i - 1].fis_src_cnt;
-        for(j = 0; j < skip_src; j++)
-            get_rand_seed(&pth_args[i].RNG);
-    }
-#endif
-
     /* reset criticality */
     base_criti.tot_fis_bank_cnt = 0;
     for(i = 0; i < 3; i++)
         base_criti.keff_wgt_sum[i] = ZERO;
+
+    memcpy(&base_RNG, &pth_args[base_num_threads - 1].RNG, sizeof(RNG_t));
 }
 
 void

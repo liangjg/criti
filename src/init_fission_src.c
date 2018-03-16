@@ -29,6 +29,7 @@ init_fission_src(pth_arg_t *pth_args)
         pth_args[i].fis_bank_cnt = 0;
         pth_args[i].nuc_xs = base_nuc_xs[i];
         pth_args[i].col_cnt = 0;
+        pth_args[i].id = i;
         pth_args[i].keff_final = base_criti.keff_final;
         for(j = 0; j < 3; j++)
             pth_args[i].keff_wgt_sum[j] = ZERO;
@@ -125,17 +126,6 @@ init_fission_src(pth_arg_t *pth_args)
 
     base_RNG.position_pre = -1000;
     base_RNG.position = 0;
-
-    memcpy(&pth_args[0].RNG, &base_RNG, sizeof(RNG_t));
-#ifdef USE_PTHREAD
-    for(i = 1; i < base_num_threads; i++) {
-        memcpy(&pth_args[i].RNG, &pth_args[i - 1].RNG, sizeof(RNG_t));
-
-        int skip_src = pth_args[i - 1].fis_src_cnt;
-        for(j = 0; j < skip_src; j++)
-            get_rand_seed(&pth_args[i].RNG);
-    }
-#endif
 
     puts("Finished.");
 }

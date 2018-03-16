@@ -2,7 +2,9 @@
 // Created by xaq on 10/26/17.
 //
 
+#define _GNU_SOURCE
 
+#include <sched.h>
 #include "RNG.h"
 #include "IO_releated.h"
 #include "pth_arg.h"
@@ -14,6 +16,10 @@
 extern double base_start_wgt;
 extern universe_t *root_universe;
 extern int base_num_threads;
+extern RNG_t base_RNG;
+
+int
+_set_cpu(int i);
 
 void *
 do_calc(void *args);
@@ -22,6 +28,7 @@ void
 calc_criticality(int tot_cycle_num)
 {
     void *status;
+    int i, j, cyc;
     pth_arg_t *pth_args = malloc(base_num_threads * sizeof(pth_arg_t));
 
 #ifdef USE_PTHREAD
@@ -30,16 +37,24 @@ calc_criticality(int tot_cycle_num)
 
     init_fission_src(pth_args);
 
-    for(int cyc = 1; cyc <= tot_cycle_num; cyc++) {
+    for(cyc = 1; cyc <= tot_cycle_num; cyc++) {
+        memcpy(&pth_args[0].RNG, &base_RNG, sizeof(RNG_t));
+
 #ifdef USE_PTHREAD
-        for(int i = 0; i < base_num_threads - 1; i++)
-            pthread_create(&threads[i], NULL, do_calc, &pth_args[i]);
+        for(i = 1; i < base_num_threads; i++) {
+            pthread_create(&threads[i - 1], NULL, do_calc, &pth_args[i - 1]);
+            memcpy(&pth_args[i].RNG, &pth_args[i - 1].RNG, sizeof(RNG_t));
+
+            int skip_src = pth_args[i - 1].fis_src_cnt;
+            for(j = 0; j < skip_src; j++)
+                get_rand_seed(&pth_args[i].RNG);
+        }
 #endif
 
         do_calc(&pth_args[base_num_threads - 1]);
 
 #ifdef USE_PTHREAD
-        for(int i = 0; i < base_num_threads - 1; i++)
+        for(i = 0; i < base_num_threads - 1; i++)
             pthread_join(threads[i], &status);
 #endif
 
@@ -47,7 +62,7 @@ calc_criticality(int tot_cycle_num)
     }
     output_summary();
 
-    for(int i = 0; i < base_num_threads; i++) {
+    for(i = 0; i < base_num_threads; i++) {
         free(pth_args[i].fis_src);
         free(pth_args[i].fis_bank);
     }
@@ -61,14 +76,16 @@ calc_criticality(int tot_cycle_num)
 void *
 do_calc(void *args)
 {
-    pth_arg_t *pth_args = (pth_arg_t *) args;
     particle_status_t par_status;
+    pth_arg_t *pth_arg = (pth_arg_t *) args;
 
-    int tot_neu = pth_args->fis_src_cnt;
-    RNG_t *RNG = &pth_args->RNG;
-    fission_bank_t *fis_src = pth_args->fis_src;
-    nuc_xs_t *nuc_xs = pth_args->nuc_xs;
-    double *keff_wgt_sum = pth_args->keff_wgt_sum;
+    int tot_neu = pth_arg->fis_src_cnt;
+    RNG_t *RNG = &pth_arg->RNG;
+    fission_bank_t *fis_src = pth_arg->fis_src;
+    nuc_xs_t *nuc_xs = pth_arg->nuc_xs;
+    double *keff_wgt_sum = pth_arg->keff_wgt_sum;
+
+    _set_cpu(pth_arg->id);
 
     for(int neu = 0; neu < tot_neu; neu++) {
         get_rand_seed(RNG);
@@ -113,7 +130,7 @@ do_calc(void *args)
             calc_col_nuc_cs(&par_status, RNG);
 
             /* treat fission */
-            treat_fission(&par_status, pth_args);
+            treat_fission(&par_status, pth_arg);
 
             /* implicit capture(including fission) */
             treat_implicit_capture(&par_status, RNG);
@@ -140,8 +157,17 @@ do_calc(void *args)
 
         } while(++col_cnt < MAX_ITER);
 
-        pth_args->col_cnt += col_cnt;
+        pth_arg->col_cnt += col_cnt;
     }
 
     return NULL;
+}
+
+int
+_set_cpu(int i)
+{
+    cpu_set_t mask;
+    CPU_ZERO(&mask);
+    CPU_SET(i, &mask);
+    return pthread_setaffinity_np(pthread_self(), sizeof(mask), &mask);
 }
