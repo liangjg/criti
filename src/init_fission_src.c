@@ -25,8 +25,8 @@ init_fission_src(pth_arg_t *pth_args)
     quotient = base_criti.cycle_neu_num / base_num_threads;
     remainder = base_criti.cycle_neu_num - quotient * base_num_threads;
     for(i = 0; i < base_num_threads; i++) {
-        pth_args[i].fis_src_cnt = quotient;
-        pth_args[i].fis_bank_cnt = 0;
+        pth_args[i].src_cnt = quotient;
+        pth_args[i].bank_cnt = 0;
         pth_args[i].nuc_xs = base_nuc_xs[i];
         pth_args[i].col_cnt = 0;
         pth_args[i].id = i;
@@ -35,31 +35,30 @@ init_fission_src(pth_arg_t *pth_args)
             pth_args[i].keff_wgt_sum[j] = ZERO;
     }
 
-    if(remainder) {
+    if(remainder)
         for(i = 0; i < remainder; i++)
-            pth_args[i].fis_src_cnt++;
-    }
+            pth_args[i].src_cnt++;
 
     for(i = 0; i < base_num_threads; i++) {
-        int bank_sz = 5 * pth_args[i].fis_src_cnt;
+        int bank_sz = 5 * pth_args[i].src_cnt;
         if(bank_sz < 100) bank_sz = 100;    /* 如果要模拟的粒子数目太少了的话会导致fission_bank空间过小，有越界的可能 */
-        pth_args[i].fis_src = malloc(bank_sz * sizeof(fission_bank_t));
-        pth_args[i].fis_bank = malloc(bank_sz * sizeof(fission_bank_t));
+        pth_args[i].fis_src = malloc(bank_sz * sizeof(bank_t));
+        pth_args[i].fis_bank = malloc(bank_sz * sizeof(bank_t));
     }
 
     double ksi1, ksi2, ksi3;
-    fission_bank_t *fis_src;
-    int fis_src_cnt = 0;
+    bank_t *ksrc;
+    int ksrc_cnt = 0;
     switch(base_criti.ksrc_type) {
         case POINT: {
             for(i = 0; i < base_num_threads; i++) {
-                fis_src_cnt = pth_args[i].fis_src_cnt;
-                for(j = 0; j < fis_src_cnt; j++) {
+                ksrc_cnt = pth_args[i].src_cnt;
+                for(j = 0; j < ksrc_cnt; j++) {
                     get_rand_seed(&base_RNG);
-                    fis_src = &pth_args[i].fis_src[j];
-                    fis_src->pos[0] = base_criti.ksrc_para[0];
-                    fis_src->pos[1] = base_criti.ksrc_para[1];
-                    fis_src->pos[2] = base_criti.ksrc_para[2];
+                    ksrc = &pth_args[i].fis_src[j];
+                    ksrc->pos[0] = base_criti.ksrc_para[0];
+                    ksrc->pos[1] = base_criti.ksrc_para[1];
+                    ksrc->pos[2] = base_criti.ksrc_para[2];
                 }
             }
             break;
@@ -70,55 +69,53 @@ init_fission_src(pth_arg_t *pth_args)
             double len_z = base_criti.ksrc_para[5] - base_criti.ksrc_para[4];
 
             for(i = 0; i < base_num_threads; i++) {
-                fis_src_cnt = pth_args[i].fis_src_cnt;
-                for(j = 0; j < fis_src_cnt; j++) {
+                ksrc_cnt = pth_args[i].src_cnt;
+                for(j = 0; j < ksrc_cnt; j++) {
                     get_rand_seed(&base_RNG);
-                    fis_src = &pth_args[i].fis_src[j];
-                    fis_src->pos[0] = base_criti.ksrc_para[0] + get_rand(&base_RNG) * len_x;
-                    fis_src->pos[1] = base_criti.ksrc_para[1] + get_rand(&base_RNG) * len_y;
-                    fis_src->pos[2] = base_criti.ksrc_para[2] + get_rand(&base_RNG) * len_z;
+                    ksrc = &pth_args[i].fis_src[j];
+                    ksrc->pos[0] = base_criti.ksrc_para[0] + get_rand(&base_RNG) * len_x;
+                    ksrc->pos[1] = base_criti.ksrc_para[1] + get_rand(&base_RNG) * len_y;
+                    ksrc->pos[2] = base_criti.ksrc_para[2] + get_rand(&base_RNG) * len_z;
                 }
             }
             break;
         }
         case SPHERE: {
             for(i = 0; i < base_num_threads; i++) {
-                fis_src_cnt = pth_args[i].fis_src_cnt;
-                for(j = 0; j < fis_src_cnt; j++) {
+                ksrc_cnt = pth_args[i].src_cnt;
+                for(j = 0; j < ksrc_cnt; j++) {
                     get_rand_seed(&base_RNG);
-                    fis_src = &pth_args[i].fis_src[j];
+                    ksrc = &pth_args[i].fis_src[j];
                     do {
                         ksi1 = TWO * get_rand(&base_RNG) - ONE;
                         ksi2 = TWO * get_rand(&base_RNG) - ONE;
                         ksi3 = TWO * get_rand(&base_RNG) - ONE;
                     } while(SQUARE(ksi1) + SQUARE(ksi2) + SQUARE(ksi3) > 1);
-                    fis_src->pos[0] = base_criti.ksrc_para[0] + base_criti.ksrc_para[3] * ksi1;
-                    fis_src->pos[1] = base_criti.ksrc_para[1] + base_criti.ksrc_para[3] * ksi2;
-                    fis_src->pos[2] = base_criti.ksrc_para[2] + base_criti.ksrc_para[3] * ksi3;
+                    ksrc->pos[0] = base_criti.ksrc_para[0] + base_criti.ksrc_para[3] * ksi1;
+                    ksrc->pos[1] = base_criti.ksrc_para[1] + base_criti.ksrc_para[3] * ksi2;
+                    ksrc->pos[2] = base_criti.ksrc_para[2] + base_criti.ksrc_para[3] * ksi3;
                 }
             }
             break;
         }
-        default:puts("unknown fission source type.");
-            break;
     }
 
     base_RNG.position_pre = -1000;
     base_RNG.position = 0;
 
     for(i = 0; i < base_num_threads; i++) {
-        fis_src_cnt = pth_args[i].fis_src_cnt;
-        for(j = 0; j < fis_src_cnt; j++) {
+        ksrc_cnt = pth_args[i].src_cnt;
+        for(j = 0; j < ksrc_cnt; j++) {
             get_rand_seed(&base_RNG);
             ksi1 = get_rand(&base_RNG);
             ksi2 = get_rand(&base_RNG);
-            fis_src = &pth_args[i].fis_src[j];
-            fis_src->dir[0] = TWO * ksi2 - ONE;
-            fis_src->dir[1] = sqrt(ONE - SQUARE(fis_src->dir[0])) * cos(TWO * PI * ksi1);
-            fis_src->dir[2] = sqrt(ONE - SQUARE(fis_src->dir[0])) * sin(TWO * PI * ksi1);
+            ksrc = &pth_args[i].fis_src[j];
+            ksrc->dir[0] = TWO * ksi2 - ONE;
+            ksrc->dir[1] = sqrt(ONE - SQUARE(ksrc->dir[0])) * cos(TWO * PI * ksi1);
+            ksrc->dir[2] = sqrt(ONE - SQUARE(ksrc->dir[0])) * sin(TWO * PI * ksi1);
 
             double T = 4.0 / 3.0;
-            fis_src->erg = sample_maxwell(T, &base_RNG);
+            ksrc->erg = sample_maxwell(T, &base_RNG);
         }
     }
 

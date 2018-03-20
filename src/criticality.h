@@ -34,7 +34,7 @@ typedef struct {
     double tot_start_wgt;
 
     int tot_col_cnt;                  /* 所有粒子发生的碰撞次数之和 */
-    int tot_fis_bank_cnt;             /* 用来统计所有线程产生的粒子之和 */
+    int tot_bank_cnt;                 /* 用来统计所有线程产生的粒子之和 */
 } criti_t;
 
 BEGIN_DECL
@@ -43,7 +43,7 @@ init_fission_src(pth_arg_t *pth_args);
 
 int
 get_fis_neu_state(particle_status_t *par_status,
-                  fission_bank_t *cur_fis_bank,
+                  bank_t *cur_fis_bank,
                   RNG_t *RNG,
                   int fis_MT,
                   double fis_wgt,

@@ -3,7 +3,6 @@
 //
 
 #include "neutron_transport.h"
-#include "RNG.h"
 #include "acedata.h"
 
 

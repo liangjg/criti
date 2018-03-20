@@ -8,14 +8,17 @@
 
 
 void
-get_exit_state_fixed(particle_status_t *par_status)
+get_exit_state_fixed(particle_status_t *par_status,
+                     pth_arg_t *arg)
 {
     nuclide_t *nuc = par_status->nuc;
     nuclide_t *sab_nuc = par_status->sab_nuc;
     nuc_xs_t *cur_nuc_xs = par_status->nuc_xs;
+    bank_t *cur_fixed_bank = &arg->fis_bank[arg->bank_cnt];
+    RNG_t *RNG = &arg->RNG;
 
     if(sab_nuc) {
-        treat_sab_colli_type(sab_nuc, NULL, NULL);
+        treat_sab_colli_type(sab_nuc, par_status, RNG);
         /* 这里似乎应该是出射能量而不是原本的能量 */
         if(par_status->erg <= EG0_CUTOFF)
             par_status->is_killed = true;
@@ -32,7 +35,7 @@ get_exit_state_fixed(particle_status_t *par_status)
 
     /* special treatment for fixed source, fission reaction */
     if(emiss_neu_num == 19) {
-        get_fis_neu_state_fixed(par_status, cur_nuc_xs->nu);
+        arg->bank_cnt += get_fis_neu_state_fixed(par_status, cur_fixed_bank, RNG, cur_nuc_xs->nu);
         par_status->is_killed = true;
         return;
     }
@@ -40,7 +43,7 @@ get_exit_state_fixed(particle_status_t *par_status)
     /* ordinary scattering */
     par_status->wgt *= emiss_neu_num;
 
-    get_ce_exit_state(par_status, NULL, par_status->collision_type, par_status->is_free_gas_col);
+    get_ce_exit_state(par_status, RNG, par_status->collision_type, par_status->is_free_gas_col);
 
     /* 这里似乎应该是出射能量而不是原本的能量 */
     if(par_status->erg <= EG0_CUTOFF)

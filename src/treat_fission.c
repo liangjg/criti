@@ -16,12 +16,12 @@ treat_fission(particle_status_t *par_status,
     nuclide_t *nuc;
     nuc_xs_t *cur_nuc_xs;
     double fis_sub_cs[5];
-    fission_bank_t *cur_fis_bank;
+    bank_t *cur_fis_bank;
     RNG_t *RNG;
 
     nuc = par_status->nuc;
     cur_nuc_xs = par_status->nuc_xs;
-    cur_fis_bank = &arg->fis_bank[arg->fis_bank_cnt];
+    cur_fis_bank = &arg->fis_bank[arg->bank_cnt];
     RNG = &arg->RNG;
 
     if(cur_nuc_xs->fis <= ZERO) return;
@@ -49,13 +49,13 @@ treat_fission(particle_status_t *par_status,
     if(nuc->LSIG[18] > 0) {
         if(fis_sub_cs[0] > 0) {
             fis_R = par_status->wgt * cur_nuc_xs->nu * fis_sub_cs[0] / cur_nuc_xs->tot / arg->keff_final;
-            arg->fis_bank_cnt += get_fis_neu_state(par_status, cur_fis_bank, RNG, fis_MT[0], fis_R, cur_nuc_xs->nu);
+            arg->bank_cnt += get_fis_neu_state(par_status, cur_fis_bank, RNG, fis_MT[0], fis_R, cur_nuc_xs->nu);
         }
     } else {
         for(int i = 1; i < 5; i++) {
             if(fis_sub_cs[i] > 0) {
                 fis_R = par_status->wgt * cur_nuc_xs->nu * fis_sub_cs[i] / cur_nuc_xs->tot / arg->keff_final;
-                arg->fis_bank_cnt += get_fis_neu_state(par_status, cur_fis_bank, RNG, fis_MT[i], fis_R, cur_nuc_xs->nu);
+                arg->bank_cnt += get_fis_neu_state(par_status, cur_fis_bank, RNG, fis_MT[i], fis_R, cur_nuc_xs->nu);
             }
         }
     }

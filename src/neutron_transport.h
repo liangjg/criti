@@ -16,7 +16,7 @@ BEGIN_DECL
 void
 geometry_tracking(particle_status_t *par_status,
                   double *keff_wgt_sum,
-                  nuc_xs_t *nuc_cs,
+                  nuc_xs_t *nuc_xs,
                   RNG_t *RNG);
 
 double
@@ -43,21 +43,24 @@ treat_implicit_capture(particle_status_t *par_status,
                        RNG_t *RNG);
 
 void
-treat_implicit_capture_fixed(particle_status_t *par_status);
+treat_implicit_capture_fixed(particle_status_t *par_status,
+                             RNG_t *RNG);
 
 int
 sample_col_type(particle_status_t *par_status,
                 RNG_t *RNG);
 
 int
-sample_col_type_fixed(particle_status_t *par_status);
+sample_col_type_fixed(particle_status_t *par_status,
+                      RNG_t *RNG);
 
 void
 get_exit_state(particle_status_t *par_status,
                RNG_t *RNG);
 
 void
-get_exit_state_fixed(particle_status_t *par_status);
+get_exit_state_fixed(particle_status_t *par_status,
+                     pth_arg_t *arg);
 
 void
 rotate_dir(double mu,

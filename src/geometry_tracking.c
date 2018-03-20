@@ -9,7 +9,7 @@
 void
 geometry_tracking(particle_status_t *par_status,
                   double *keff_wgt_sum,
-                  nuc_xs_t *nuc_cs,
+                  nuc_xs_t *nuc_xs,
                   RNG_t *RNG)
 {
     double FFL;    /* free fly length */
@@ -40,7 +40,7 @@ geometry_tracking(particle_status_t *par_status,
             DTB = ZERO;
         }
 
-        FFL = sample_free_fly_dis(par_status, nuc_cs, RNG, !par_on_surf);
+        FFL = sample_free_fly_dis(par_status, nuc_xs, RNG, !par_on_surf);
 
         if(FFL >= DTB) {
             par_on_surf = true;

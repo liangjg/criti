@@ -9,7 +9,11 @@
 
 extern fixed_src_t base_fixed_src;
 
-void geometry_tracking_fixed(particle_status_t *par_status){
+void
+geometry_tracking_fixed(particle_status_t *par_status,
+                        nuc_xs_t *nuc_xs,
+                        RNG_t *RNG)
+{
     double FFL;    /* free fly length */
     double DTB;    /* distance to boundary */
     double distance;
@@ -17,8 +21,8 @@ void geometry_tracking_fixed(particle_status_t *par_status){
     bool par_on_surf = false;
     par_status->surf = 0;    /* particle is not on surface at hte beginning */
 
-    do{
-        if(iter_cnt++ > MAX_ITER){
+    do {
+        if(iter_cnt++ > MAX_ITER) {
             par_status->is_killed = true;
             puts("too many times of surface crossing.");
             base_warnings++;
@@ -31,18 +35,18 @@ void geometry_tracking_fixed(particle_status_t *par_status){
         if(par_status->is_killed) return;
 
         DTB = calc_dist_to_bound(par_status);
-        if(LT_ZERO(DTB)){
+        if(LT_ZERO(DTB)) {
             puts("failed to calculate distance to boundary.");
             par_status->is_killed = true;
             DTB = ZERO;
         }
 
-        FFL = sample_free_fly_dis(par_status, NULL, NULL, !par_on_surf);
+        FFL = sample_free_fly_dis(par_status, nuc_xs, RNG, !par_on_surf);
 
-        if(FFL >= DTB){
+        if(FFL >= DTB) {
             par_on_surf = true;
             distance = DTB;
-        } else{
+        } else {
             par_on_surf = false;
             distance = FFL;
         }

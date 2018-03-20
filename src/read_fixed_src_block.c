@@ -62,45 +62,45 @@ read_fixed_src_block()
     CONVERT_TO_UPPER(ret);
 
     if(strcmp(kw_start, "POINT") == 0) {    /* POINT source */
-        base_fixed_src.src_type = POINT;
+        base_fixed_src.fsrc_type = POINT;
         while(!ISNUMBER(*ret)) ret++;
         for(int i = 0; i < 3; i++) {
-            base_fixed_src.src_paras[i] = strtod(ret, &end);
+            base_fixed_src.fsrc_paras[i] = strtod(ret, &end);
             ret = end;
         }
     } else if(strcmp(kw_start, "SLAB") == 0) {    /* SLAB source */
-        base_fixed_src.src_type = SLAB;
+        base_fixed_src.fsrc_type = SLAB;
         while(!ISNUMBER(*ret)) ret++;
         for(int i = 0; i < 6; i++) {
-            base_fixed_src.src_paras[i] = strtod(ret, &end);
+            base_fixed_src.fsrc_paras[i] = strtod(ret, &end);
             ret = end;
         }
     } else if(strcmp(kw_start, "SPH") == 0) {    /* SPHERE source */
-        base_fixed_src.src_type = SPHERE;
+        base_fixed_src.fsrc_type = SPHERE;
         while(!ISNUMBER(*ret)) ret++;
         for(int i = 0; i < 4; i++) {
-            base_fixed_src.src_paras[i] = strtod(ret, &end);
+            base_fixed_src.fsrc_paras[i] = strtod(ret, &end);
             ret = end;
         }
     } else if(strcmp(kw_start, "CYL/X") == 0) {    /* CYL/X source */
-        base_fixed_src.src_type = CYL_X;
+        base_fixed_src.fsrc_type = CYL_X;
         while(!ISNUMBER(*ret)) ret++;
         for(int i = 0; i < 5; i++) {
-            base_fixed_src.src_paras[i] = strtod(ret, &end);
+            base_fixed_src.fsrc_paras[i] = strtod(ret, &end);
             ret = end;
         }
     } else if(strcmp(kw_start, "CYL/Y") == 0) {    /* CYL/Y source */
-        base_fixed_src.src_type = CYL_Y;
+        base_fixed_src.fsrc_type = CYL_Y;
         while(!ISNUMBER(*ret)) ret++;
         for(int i = 0; i < 5; i++) {
-            base_fixed_src.src_paras[i] = strtod(ret, &end);
+            base_fixed_src.fsrc_paras[i] = strtod(ret, &end);
             ret = end;
         }
     } else if(strcmp(kw_start, "CYL/Z") == 0) {    /* CYL/Z source */
-        base_fixed_src.src_type = CYL_Z;
+        base_fixed_src.fsrc_type = CYL_Z;
         while(!ISNUMBER(*ret)) ret++;
         for(int i = 0; i < 5; i++) {
-            base_fixed_src.src_paras[i] = strtod(ret, &end);
+            base_fixed_src.fsrc_paras[i] = strtod(ret, &end);
             ret = end;
         }
     } else {
@@ -122,5 +122,5 @@ read_fixed_src_block()
     }
 
     while(!ISNUMBER(*ret)) ret++;
-    base_fixed_src.fixed_src_erg = strtod(ret, &end);
+    base_fixed_src.fsrc_erg = strtod(ret, &end);
 }

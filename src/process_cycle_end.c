@@ -34,12 +34,12 @@ process_cycle_end(int currenr_cycle,
 
     for(i = 0; i < base_num_threads; i++) {
         base_criti.tot_col_cnt += pth_args[i].col_cnt;
-        base_criti.tot_fis_bank_cnt += pth_args[i].fis_bank_cnt;
+        base_criti.tot_bank_cnt += pth_args[i].bank_cnt;
         for(j = 0; j < 3; j++)
             base_criti.keff_wgt_sum[j] += pth_args[i].keff_wgt_sum[j];
     }
 
-    if(base_criti.tot_fis_bank_cnt < 5) {
+    if(base_criti.tot_bank_cnt < 5) {
         puts("Insufficient fission source to be sampled.");
         release_resource();
         exit(0);
@@ -52,39 +52,39 @@ process_cycle_end(int currenr_cycle,
     _combine_keff(currenr_cycle);
     _output_keff(currenr_cycle);
 
-    base_criti.cycle_neu_num = base_criti.tot_fis_bank_cnt;
-    base_start_wgt = ONE * base_criti.tot_start_wgt / base_criti.tot_fis_bank_cnt;
+    base_criti.cycle_neu_num = base_criti.tot_bank_cnt;
+    base_start_wgt = ONE * base_criti.tot_start_wgt / base_criti.tot_bank_cnt;
 
-    quotient = base_criti.tot_fis_bank_cnt / base_num_threads;
-    remainder = base_criti.tot_fis_bank_cnt - quotient * base_num_threads;
+    quotient = base_criti.tot_bank_cnt / base_num_threads;
+    remainder = base_criti.tot_bank_cnt - quotient * base_num_threads;
 
     for(i = 0; i < base_num_threads; i++) {
         SWAP(pth_args[i].fis_src, pth_args[i].fis_bank);
-        pth_args[i].fis_src_cnt = quotient;
+        pth_args[i].src_cnt = quotient;
     }
     for(i = 0; i < remainder; i++)
-        pth_args[i].fis_src_cnt++;
+        pth_args[i].src_cnt++;
 
     for(i = 0; i < base_num_threads; i++) {
         /* 负载均衡策略 */
-        fission_bank_t *dest, *src;
-        int diff = pth_args[i].fis_bank_cnt - pth_args[i].fis_src_cnt;
+        bank_t *dest, *src;
+        int diff = pth_args[i].bank_cnt - pth_args[i].src_cnt;
         if(diff > 0) {
             dest = pth_args[i + 1].fis_src + diff;
-            src = pth_args[i].fis_src + pth_args[i].fis_src_cnt;
-            memmove(dest, pth_args[i + 1].fis_src, pth_args[i + 1].fis_bank_cnt * sizeof(fission_bank_t));
-            memcpy(pth_args[i + 1].fis_src, src, diff * sizeof(fission_bank_t));
-            pth_args[i + 1].fis_bank_cnt += diff;
+            src = pth_args[i].fis_src + pth_args[i].src_cnt;
+            memmove(dest, pth_args[i + 1].fis_src, pth_args[i + 1].bank_cnt * sizeof(bank_t));
+            memcpy(pth_args[i + 1].fis_src, src, diff * sizeof(bank_t));
+            pth_args[i + 1].bank_cnt += diff;
         } else if(diff < 0) {
             diff = ~(diff - 1);    /* 求diff的绝对值 */
-            dest = pth_args[i].fis_src + pth_args[i].fis_bank_cnt;
+            dest = pth_args[i].fis_src + pth_args[i].bank_cnt;
             src = pth_args[i + 1].fis_src + diff;
-            memcpy(dest, pth_args[i + 1].fis_src, diff * sizeof(fission_bank_t));
-            pth_args[i + 1].fis_bank_cnt -= diff;
-            memcpy(pth_args[i + 1].fis_src, src, pth_args[i + 1].fis_bank_cnt * sizeof(fission_bank_t));
+            memcpy(dest, pth_args[i + 1].fis_src, diff * sizeof(bank_t));
+            pth_args[i + 1].bank_cnt -= diff;
+            memcpy(pth_args[i + 1].fis_src, src, pth_args[i + 1].bank_cnt * sizeof(bank_t));
         }
 
-        pth_args[i].fis_bank_cnt = 0;
+        pth_args[i].bank_cnt = 0;
         pth_args[i].col_cnt = 0;
         pth_args[i].keff_final = base_criti.keff_final;
         for(j = 0; j < 3; j++)
@@ -92,7 +92,7 @@ process_cycle_end(int currenr_cycle,
     }
 
     /* reset criticality */
-    base_criti.tot_fis_bank_cnt = 0;
+    base_criti.tot_bank_cnt = 0;
     for(i = 0; i < 3; i++)
         base_criti.keff_wgt_sum[i] = ZERO;
 
@@ -249,7 +249,7 @@ _output_keff(int current_cycle)
         fprintf(base_IOfp.opt_fp,
                 "%-6d  %-9d | %-f  %-f  %-f |                                                                                %-.4f\n",
                 current_cycle,
-                base_criti.tot_fis_bank_cnt,
+                base_criti.tot_bank_cnt,
                 base_criti.keff_cycle[0],
                 base_criti.keff_cycle[1],
                 base_criti.keff_cycle[2],
@@ -257,7 +257,7 @@ _output_keff(int current_cycle)
     }
     if(current_cycle > base_criti.inactive_cycle_num) {
         fprintf(base_IOfp.opt_fp, "%-6d  %-9d | %-f  %-f  %-f | %-f %-f  %-f %-f  %-f %-f | %-f %-f |  %-.4f\n",
-                current_cycle, base_criti.tot_fis_bank_cnt, base_criti.keff_cycle[0],
+                current_cycle, base_criti.tot_bank_cnt, base_criti.keff_cycle[0],
                 base_criti.keff_cycle[1], base_criti.keff_cycle[2],
                 base_criti.keff_individual_ave[0], base_criti.keff_individual_std[0], base_criti.keff_individual_ave[1],
                 base_criti.keff_individual_std[1], base_criti.keff_individual_ave[2], base_criti.keff_individual_std[2],

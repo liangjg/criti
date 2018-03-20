@@ -14,21 +14,23 @@
 #include <stdbool.h>
 #include <sys/time.h>
 
+
 #ifdef USE_PTHREAD
-    #include <pthread.h>
+#include <pthread.h>
+
+
 #endif
 
 #ifdef USE_MPI
-    #include <mpi.h>
+#include <mpi.h>
 #endif
 
-
 #if defined(__cplusplus)
-    #define BEGIN_DECL    extern "C" {
-    #define END_DECL      }
+#define BEGIN_DECL    extern "C" {
+#define END_DECL      }
 #else
-    #define BEGIN_DECL
-    #define END_DECL
+#define BEGIN_DECL
+#define END_DECL
 #endif
 
 #define MAX(_x, _y)     ((_x) < (_y) ? (_y) : (_x))
@@ -72,36 +74,36 @@
 
 /* Global static read-only key word */
 static const char keyword[KW_NUMBER][MAX_KW_LENGTH] = {
-        "UNIVERSE",
-        "SURFACE",
-        "MATERIAL",
-        "CRITICALITY",
-        "TALLY",
-        "FIXEDSOURCE",
-        "DEPLETION",
-        "BURNUP"
+    "UNIVERSE",
+    "SURFACE",
+    "MATERIAL",
+    "CRITICALITY",
+    "TALLY",
+    "FIXEDSOURCE",
+    "DEPLETION",
+    "BURNUP"
 };
 
 /* number of boolean expression operator */
 #define N_OPTR  6
 
 /* 交,并,补,左括号,右括号,表达式结束 */
-typedef enum{INTER, UNION, COMPLEMENT, L_P, R_P, EOE} OPERATOR_T;
+typedef enum { INTER, UNION, COMPLEMENT, L_P, R_P, EOE } OPERATOR_T;
 
 /* 大于、小于和等于号表示运算的优先级，空格表示该情况不存在 */
 static const char priority[N_OPTR][N_OPTR] = {
-        /*-----------|---------------CurOp-------------------|*/
-        /*-----------&-------:-------!-------(-------)------\0*/
-    {   /*-|--&-*/  '>',    '>',    '<',    '<',    '>',    '>'},
-    {   /*-T--:-*/  '>',    '>',    '<',    '<',    '>',    '>'},
-    {   /*-o--!-*/  '>',    '>',    '>',    '<',    '>',    '>'},
-    {   /*-p--(-*/  '<',    '<',    '<',    '<',    '=',    ' '},
-    {   /*-O--)-*/  ' ',    ' ',    ' ',    ' ',    ' ',    ' '},
-    {   /*-P-\0-*/  '<',    '<',    '<',    '<',    ' ',    '='}
+    /*-----------|---------------CurOp-------------------|*/
+    /*-----------&-------:-------!-------(-------)------\0*/
+    {   /*-|--&-*/  '>', '>', '<', '<', '>', '>'},
+    {   /*-T--:-*/  '>', '>', '<', '<', '>', '>'},
+    {   /*-o--!-*/  '>', '>', '>', '<', '>', '>'},
+    {   /*-p--(-*/  '<', '<', '<', '<', '=', ' '},
+    {   /*-O--)-*/  ' ', ' ', ' ', ' ', ' ', ' '},
+    {   /*-P-\0-*/  '<', '<', '<', '<', ' ', '='}
 };
 
 /* calculation mode */
-typedef enum{
+typedef enum CALC_MODE_T {
     CRITICALITY = 1,
     BURNUP,
     POINTBURN,
@@ -109,7 +111,7 @@ typedef enum{
 } CALC_MODE_T;
 
 /* source type */
-typedef enum{
+typedef enum SRC_TYPE_T {
     POINT,
     SLAB,
     SPHERE,
@@ -118,18 +120,12 @@ typedef enum{
     CYL_Z
 } SRC_TYPE_T;
 
-typedef struct{
-    double pos[3];
-    double dir[3];
-    double erg;
-} fission_bank_t;
-
-typedef struct {
+typedef struct bank_t {
     double pos[3];
     double dir[3];
     double erg;
     double wgt;
-} fixed_src_bank_t;
+} bank_t;
 
 /* time elapsed */
 extern struct timeval start_time;
@@ -139,7 +135,9 @@ extern struct timeval finish_time;
 extern unsigned base_warnings;
 
 BEGIN_DECL
-void release_resource();
+void
+release_resource();
+
 END_DECL
 
 #endif //CRITI_COMMON_H

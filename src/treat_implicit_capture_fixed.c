@@ -3,12 +3,11 @@
 //
 
 #include "neutron_transport.h"
-#include "nuclide.h"
-#include "RNG.h"
 
 
 void
-treat_implicit_capture_fixed(particle_status_t *par_status)
+treat_implicit_capture_fixed(particle_status_t *par_status,
+                             RNG_t *RNG)
 {
     nuc_xs_t *cur_nuc_xs;
     double wgt_survival;
@@ -19,7 +18,7 @@ treat_implicit_capture_fixed(particle_status_t *par_status)
     if(par_status->wgt > WGT_CUTOFF) return;
 
     wgt_survival = 2 * WGT_CUTOFF;
-    if(get_rand(NULL) < par_status->wgt / wgt_survival)
+    if(get_rand(RNG) < par_status->wgt / wgt_survival)
         par_status->wgt = wgt_survival;
     else par_status->is_killed = true;
 }

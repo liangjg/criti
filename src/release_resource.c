@@ -33,9 +33,6 @@ release_resource()
     map_free(base_nucs);
     free(base_nucs);
 
-    free(base_fixed_src.fixed_src);
-    free(base_fixed_src.fixed_bank);
-
     if(base_nuc_xs){
         for(int i = 0; i < base_num_threads; i++)
             free(base_nuc_xs[i]);

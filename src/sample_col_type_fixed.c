@@ -3,11 +3,13 @@
 //
 
 #include "neutron_transport.h"
-#include "RNG.h"
 #include "acedata.h"
 
 
-int sample_col_type_fixed(particle_status_t *par_status){
+int
+sample_col_type_fixed(particle_status_t *par_status,
+                      RNG_t *RNG)
+{
     if(par_status->sab_nuc) return 0;
 
     nuclide_t *nuc = par_status->nuc;
@@ -18,12 +20,12 @@ int sample_col_type_fixed(particle_status_t *par_status){
 
     while(1){
         /* elastic scattering */
-        if(get_rand(NULL) * (cur_nuc_xs->el + cur_nuc_xs->inel) - cur_nuc_xs->el <= ZERO)
+        if(get_rand(RNG) * (cur_nuc_xs->el + cur_nuc_xs->inel) - cur_nuc_xs->el <= ZERO)
             return 2;
 
         /* inelastic scattering */
         double sum = ZERO;
-        double ksi = get_rand(NULL) * cur_nuc_xs->inel;
+        double ksi = get_rand(RNG) * cur_nuc_xs->inel;
         int Loc = Get_loc_of_MTR(nuc) - 1;
         int MT_num = Get_non_el_mt_num_with_neu(nuc);
         double ff = ONE;

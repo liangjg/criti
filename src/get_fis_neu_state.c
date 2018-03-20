@@ -9,7 +9,7 @@
 
 int
 get_fis_neu_state(particle_status_t *par_status,
-                  fission_bank_t *cur_fis_bank,
+                  bank_t *cur_fis_bank,
                   RNG_t *RNG,
                   int fis_MT,
                   double fis_wgt,

@@ -18,10 +18,10 @@ extern universe_t *root_universe;
 extern int base_num_threads;
 extern RNG_t base_RNG;
 
-int
+static int
 _set_cpu(int i);
 
-void *
+static void *
 do_calc(void *args);
 
 void
@@ -45,7 +45,7 @@ calc_criticality(int tot_cycle_num)
             pthread_create(&threads[i - 1], NULL, do_calc, &pth_args[i - 1]);
             memcpy(&pth_args[i].RNG, &pth_args[i - 1].RNG, sizeof(RNG_t));
 
-            int skip_src = pth_args[i - 1].fis_src_cnt;
+            int skip_src = pth_args[i - 1].src_cnt;
             for(j = 0; j < skip_src; j++)
                 get_rand_seed(&pth_args[i].RNG);
         }
@@ -79,9 +79,9 @@ do_calc(void *args)
     particle_status_t par_status;
     pth_arg_t *pth_arg = (pth_arg_t *) args;
 
-    int tot_neu = pth_arg->fis_src_cnt;
+    int tot_neu = pth_arg->src_cnt;
     RNG_t *RNG = &pth_arg->RNG;
-    fission_bank_t *fis_src = pth_arg->fis_src;
+    bank_t *fis_src = pth_arg->fis_src;
     nuc_xs_t *nuc_xs = pth_arg->nuc_xs;
     double *keff_wgt_sum = pth_arg->keff_wgt_sum;
 
@@ -93,7 +93,7 @@ do_calc(void *args)
         /* sample fission source */
         memset(&par_status, 0x0, sizeof(particle_status_t));
 
-        fission_bank_t *cur_src = &fis_src[neu];
+        bank_t *cur_src = &fis_src[neu];
 
         for(int i = 0; i < 3; i++) {
             par_status.pos[i] = cur_src->pos[i];

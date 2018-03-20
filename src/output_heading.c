@@ -5,7 +5,7 @@
 #include "IO_releated.h"
 
 
-#define CODE_VERSION  "Beta 0.4.2"
+#define CODE_VERSION  "Beta 0.4.3"
 
 struct timeval start_time;
 struct timeval finish_time;
