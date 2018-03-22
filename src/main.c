@@ -24,6 +24,7 @@
 unsigned base_warnings;
 double base_start_wgt;
 int base_num_threads;
+int base_num_procs;
 criti_t base_criti;
 fixed_src_t base_fixed_src;
 IOfp_t base_IOfp;

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.2)
 project(criti C CXX)
 
 # Check build directory
@@ -14,9 +14,9 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules)
 #===============================================================================
 # Command line options
 #===============================================================================
-option(pthread "Compile with POSIX thread model" ON)
-option(mpi     "Compile with MPI"                OFF)
-option(pg      "Enable profile with gpro"        OFF)
+option(Pthread "Enable POSIX thread parallelism" ON)
+option(MPI     "Enable MPI parallelism"          OFF)
+option(pg      "Enable profile with gprof"       OFF)
 
 #===============================================================================
 # Enable C++ 11 standard
@@ -61,17 +61,15 @@ if(CMAKE_C_COMPILER_ID MATCHES "Clang")
     set(IGNORED_WARNINGS "${IGNORED_WARNINGS} -Wno-newline-eof")
 endif()
 
-if(pthread)
-    add_definitions(-DUSE_PTHREAD)
-    set(COMPILE_FLAGS "${COMPILE_FLAGS} -pthread")
-
+if(MPI)
+    add_definitions(-DUSE_MPI)
+    find_package(MPI REQUIRED)
+    include_directories(${MPI_C_INCLUDE_PATH})
 endif()
 
-if(mpi)
-    add_definitions(-DUSE_MPI)
-    set(MPI_LIBS "")
-    set(MPI_INCLUDES "")
-    set(COMPILE_FLAGS "${COMPILE_FLAGS} -I${MPI_INCLUDES} -l${MPI_LIBS}")
+if(Pthread)
+    add_definitions(-DUSE_PTHREAD)
+    set(COMPILE_FLAGS "${COMPILE_FLAGS} -pthread")
 endif()
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${COMPILE_FLAGS} ${IGNORED_WARNINGS}")
@@ -94,8 +92,8 @@ message(STATUS "C compiler: ${CMAKE_C_COMPILER}")
 message(STATUS "C compiler flags: ${CMAKE_C_FLAGS}")
 message(STATUS "CXX compiler: ${CMAKE_CXX_COMPILER}")
 message(STATUS "CXX compiler flags: ${CMAKE_CXX_FLAGS}")
-message(STATUS "pthread parallel: turned ${pthread}")
-message(STATUS "MPI parallel: turned ${mpi}")
+message(STATUS "Pthread parallel: turned ${Pthread}")
+message(STATUS "MPI parallel: turned ${MPI}")
 
 #===============================================================================
 # Architecture specific definitions
@@ -123,3 +121,7 @@ file(GLOB SRC_C ${CMAKE_SOURCE_DIR}/src/*.c)
 file(GLOB SRC_CPP ${CMAKE_SOURCE_DIR}/src/*.cpp)
 
 add_executable(criti ${SRC_C} ${SRC_CPP} ${SRC_H})
+
+if(MPI)
+    target_link_libraries(criti ${MPI_C_LIBRARIES})
+endif()

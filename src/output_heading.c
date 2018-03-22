@@ -10,6 +10,8 @@
 struct timeval start_time;
 struct timeval finish_time;
 extern IOfp_t base_IOfp;
+extern int base_num_threads;
+extern int base_num_procs;
 
 void
 output_heading()
@@ -31,14 +33,19 @@ output_heading()
     puts("      RRR     RRR   MMM         MMM      CCCCCCCCC   ");
     printf("\nCode version: %s\n", CODE_VERSION);
     printf("\nBuild time  : %s %s\n", __TIME__, __DATE__);
-# ifdef GIT_SHA1
+#ifdef GIT_SHA1
     printf("Git commit  : %s\n", GIT_SHA1);
-# endif
-# ifdef USE_MPI
-    printf("MPI parallel: ON, %d processes\n", OParallel.p_nProcsNum);
-# else
+#endif
+#ifdef USE_PTHREAD
+    printf("Pthread parallel: ON, %d pthreads used\n", base_num_threads);
+#else
+    puts("Pthread parallel: OFF\n");
+#endif
+#ifdef USE_MPI
+    printf("MPI parallel: ON, %d processes\n", base_num_procs);
+#else
     puts("MPI parallel: OFF\n");
-# endif
+#endif
 
     fputs("Copyrights Reserved by Reactor Engineering Analysis Laboratory(REAL).\n\n", base_IOfp.opt_fp);
     fputs("      RRRRRRRR       MM         MM        CCCCCCCC   \n", base_IOfp.opt_fp);
@@ -51,14 +58,19 @@ output_heading()
     fputs("      RRR     RRR   MMM         MMM      CCCCCCCCC   \n", base_IOfp.opt_fp);
     fprintf(base_IOfp.opt_fp, "\nCode version: %s\n", CODE_VERSION);
     fprintf(base_IOfp.opt_fp, "\nBuild time  : %s %s\n", __TIME__, __DATE__);
-# ifdef GIT_SHA1
+#ifdef GIT_SHA1
     fprintf(base_IOfp.opt_fp, "Git commit  : %s\n", GIT_SHA1);
-# endif
-# ifdef USE_MPI
-    fprintf(base_IOfp.opt_fp, "MPI parallel: ON, %d processes\n", OParallel.p_nProcsNum);
-# else
+#endif
+#ifdef USE_PTHREAD
+    fprintf(base_IOfp.opt_fp, "Pthread parallel: ON, %d pthreads used\n", base_num_threads);
+#else
+    fputs("Pthread parallel: OFF\n", base_IOfp.opt_fp);
+#endif
+#ifdef USE_MPI
+    fprintf(base_IOfp.opt_fp, "MPI parallel: ON, %d processes\n", base_num_procs);
+#else
     fputs("MPI parallel: OFF\n", base_IOfp.opt_fp);
-# endif
+#endif
 
     printf("RMC Calculation Start.\nInput File = %s     %s \n\n", base_IOfp.inp_file_name, start_wall_clock_str);
     fprintf(base_IOfp.opt_fp,

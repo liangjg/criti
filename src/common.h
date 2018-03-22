@@ -17,12 +17,10 @@
 
 #ifdef USE_PTHREAD
 #include <pthread.h>
-
-
 #endif
 
 #ifdef USE_MPI
-#include <mpi.h>
+#include "mpi.h"
 #endif
 
 #if defined(__cplusplus)
