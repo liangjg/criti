@@ -59,7 +59,7 @@ process_cycle_end(int currenr_cycle,
     remainder = base_criti.tot_bank_cnt - quotient * base_num_threads;
 
     for(i = 0; i < base_num_threads; i++) {
-        SWAP(pth_args[i].fis_src, pth_args[i].fis_bank);
+        SWAP(pth_args[i].src, pth_args[i].bank);
         pth_args[i].src_cnt = quotient;
     }
     for(i = 0; i < remainder; i++)
@@ -70,18 +70,18 @@ process_cycle_end(int currenr_cycle,
         bank_t *dest, *src;
         int diff = pth_args[i].bank_cnt - pth_args[i].src_cnt;
         if(diff > 0) {
-            dest = pth_args[i + 1].fis_src + diff;
-            src = pth_args[i].fis_src + pth_args[i].src_cnt;
-            memmove(dest, pth_args[i + 1].fis_src, pth_args[i + 1].bank_cnt * sizeof(bank_t));
-            memcpy(pth_args[i + 1].fis_src, src, diff * sizeof(bank_t));
+            dest = pth_args[i + 1].src + diff;
+            src = pth_args[i].src + pth_args[i].src_cnt;
+            memmove(dest, pth_args[i + 1].src, pth_args[i + 1].bank_cnt * sizeof(bank_t));
+            memcpy(pth_args[i + 1].src, src, diff * sizeof(bank_t));
             pth_args[i + 1].bank_cnt += diff;
         } else if(diff < 0) {
             diff = ~(diff - 1);    /* 求diff的绝对值 */
-            dest = pth_args[i].fis_src + pth_args[i].bank_cnt;
-            src = pth_args[i + 1].fis_src + diff;
-            memcpy(dest, pth_args[i + 1].fis_src, diff * sizeof(bank_t));
+            dest = pth_args[i].src + pth_args[i].bank_cnt;
+            src = pth_args[i + 1].src + diff;
+            memcpy(dest, pth_args[i + 1].src, diff * sizeof(bank_t));
             pth_args[i + 1].bank_cnt -= diff;
-            memcpy(pth_args[i + 1].fis_src, src, pth_args[i + 1].bank_cnt * sizeof(bank_t));
+            memcpy(pth_args[i + 1].src, src, pth_args[i + 1].bank_cnt * sizeof(bank_t));
         }
 
         pth_args[i].bank_cnt = 0;

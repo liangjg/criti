@@ -21,7 +21,7 @@ treat_fission(particle_status_t *par_status,
 
     nuc = par_status->nuc;
     cur_nuc_xs = par_status->nuc_xs;
-    cur_fis_bank = &arg->fis_bank[arg->bank_cnt];
+    cur_fis_bank = &arg->bank[arg->bank_cnt];
     RNG = &arg->RNG;
 
     if(cur_nuc_xs->fis <= ZERO) return;

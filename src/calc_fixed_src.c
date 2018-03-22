@@ -51,6 +51,8 @@ calc_fixed_src()
 
     do_calc(&pth_args[base_num_threads - 1]);
 
+    printf("neutron: %d\n", base_fixed_src.tot_neu_num);
+
 #ifdef USE_PTHREAD
     for(i = 0; i < base_num_threads - 1; i++)
         pthread_join(threads[i], &status);
@@ -58,8 +60,8 @@ calc_fixed_src()
 
     for(i = 0; i < base_num_threads; i++) {
         base_fixed_src.tot_col_cnt += pth_args[i].col_cnt;
-        free(pth_args[i].fis_src);
-        free(pth_args[i].fis_bank);
+        free(pth_args[i].src);
+        free(pth_args[i].bank);
     }
     free(pth_args);
 
@@ -78,14 +80,14 @@ do_calc(void *args)
 
     int tot_neu = pth_arg->src_cnt;
     RNG_t *RNG = &pth_arg->RNG;
-    bank_t *fsrc = pth_arg->fis_src;
+    bank_t *fsrc = pth_arg->src;
     nuc_xs_t *nuc_xs = pth_arg->nuc_xs;
 
     _set_cpu(pth_arg->id);
 
     for(int neu = 0; neu < tot_neu; neu++) {
         if(neu % 1000 == 0 && pth_arg->id == 0)
-            printf("neutron: %d\n", neu);
+            printf("neutron: %d\n", neu * base_num_threads);
 
         get_rand_seed(RNG);
 
@@ -151,7 +153,7 @@ do_calc(void *args)
             if(pth_arg->bank_cnt) {
                 memset(&par_status, 0x0, sizeof(par_status));
 
-                cur_src = &pth_arg->fis_bank[--pth_arg->bank_cnt];
+                cur_src = &pth_arg->bank[--pth_arg->bank_cnt];
                 for(int i = 0; i < 3; i++) {
                     par_status.pos[i] = cur_src->pos[i];
                     par_status.dir[i] = cur_src->dir[i];

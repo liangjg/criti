@@ -14,7 +14,7 @@ get_exit_state_fixed(particle_status_t *par_status,
     nuclide_t *nuc = par_status->nuc;
     nuclide_t *sab_nuc = par_status->sab_nuc;
     nuc_xs_t *cur_nuc_xs = par_status->nuc_xs;
-    bank_t *cur_fixed_bank = &arg->fis_bank[arg->bank_cnt];
+    bank_t *cur_fixed_bank = &arg->bank[arg->bank_cnt];
     RNG_t *RNG = &arg->RNG;
 
     if(sab_nuc) {

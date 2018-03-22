@@ -63,8 +63,8 @@ calc_criticality(int tot_cycle_num)
     output_summary();
 
     for(i = 0; i < base_num_threads; i++) {
-        free(pth_args[i].fis_src);
-        free(pth_args[i].fis_bank);
+        free(pth_args[i].src);
+        free(pth_args[i].bank);
     }
     free(pth_args);
 
@@ -81,7 +81,7 @@ do_calc(void *args)
 
     int tot_neu = pth_arg->src_cnt;
     RNG_t *RNG = &pth_arg->RNG;
-    bank_t *fis_src = pth_arg->fis_src;
+    bank_t *fis_src = pth_arg->src;
     nuc_xs_t *nuc_xs = pth_arg->nuc_xs;
     double *keff_wgt_sum = pth_arg->keff_wgt_sum;
 
