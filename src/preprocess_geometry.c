@@ -12,7 +12,9 @@ extern map *base_surfs;
 extern map *base_mats;
 universe_t *root_universe;
 
-int preprocess_geometry(){
+int
+preprocess_geometry()
+{
     universe_t *univ;
     cell_t *cell;
     map_entry *entry;
@@ -23,10 +25,10 @@ int preprocess_geometry(){
     int i;
 
     cell_iter = map_get_iter(base_cells);
-    while((entry = map_iter_next(cell_iter))){
+    while((entry = map_iter_next(cell_iter))) {
         cell = entry->v.val;
         /* 调整cell->fill指针和univ->parent指针 */
-        if(cell->fill){
+        if(cell->fill) {
             filled_univ_index = (int) cell->fill;
             univ = map_get(base_univs, filled_univ_index);
             cell->fill = univ;
@@ -36,7 +38,7 @@ int preprocess_geometry(){
         /* 调整cell->surfs_addr */
         surfs_sz = cell->surfs_sz;
         cell->surfs_addr = (void **) malloc(surfs_sz * sizeof(void *));
-        for(i = 0; i < surfs_sz; i++){
+        for(i = 0; i < surfs_sz; i++) {
             surf_index = abs(cell->surfs[i]);
             cell->surfs_addr[i] = map_get(base_surfs, surf_index);
         }
@@ -47,13 +49,13 @@ int preprocess_geometry(){
     }
 
     univ_iter = map_get_iter(base_univs);
-    while((entry = map_iter_next(univ_iter))){
+    while((entry = map_iter_next(univ_iter))) {
         univ = entry->v.val;
         /* 调整univ->filled_lat_univs */
-        if(univ->filled_lat_univs){
+        if(univ->filled_lat_univs) {
             filled_lat_univs_sz = univ->scope[0] * univ->scope[1];
             if(univ->lattice_type == 1) filled_lat_univs_sz *= univ->scope[2];
-            for(i = 0; i < filled_lat_univs_sz; i++){
+            for(i = 0; i < filled_lat_univs_sz; i++) {
                 filled_univ_index = (int) univ->filled_lat_univs[i];
                 univ->filled_lat_univs[i] = map_get(base_univs, filled_univ_index);
             }

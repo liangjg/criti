@@ -6,23 +6,23 @@
 #define CRITI_CRITICALITY_H
 
 #include "common.h"
-#include "particle_state.h"
+#include "particle_status.h"
 #include "RNG.h"
 
 
-typedef enum{
+typedef enum {
     POINT,
     SLAB,
     SPHERE
 } KSRC_T;
 
-typedef struct{
+typedef struct {
     double pos[3];
     double dir[3];
     double erg;
 } fission_bank_t;
 
-typedef struct{
+typedef struct {
     /* 读取输入文件时的参数 */
     int tot_cycle_num;
     int inactive_cycle_num;
@@ -56,18 +56,27 @@ typedef struct{
     int tot_transfer_num;               /* 主核总共要向从核传输多少次数据 */
 } criti_t;
 
-
 BEGIN_DECL
-void init_fission_source();
+void
+init_fission_source();
 
-void sample_fission_source(particle_state_t *par_state, int fis_src_cnt, fission_bank_t *fis_src_slave);
+void
+sample_fission_source(particle_status_t *par_status,
+                      int fis_src_cnt,
+                      fission_bank_t *fis_src_slave);
 
-/*void track_history(particle_state_t *par_state);*/
+/*void track_history(particle_status_t *par_status);*/
 
-void get_fis_neu_state(particle_state_t *par_state, RNG_t *RNG_slave, fission_bank_t *fis_bank_slave, int *fis_bank_cnt,
-                       int fis_MT, double fis_wgt);
+void
+get_fis_neu_state(particle_status_t *par_status,
+                  RNG_t *RNG_slave,
+                  fission_bank_t *fis_bank_slave,
+                  int *fis_bank_cnt,
+                  int fis_MT,
+                  double fis_wgt);
 
-void process_cycle_end();
+void
+process_cycle_end();
 
 #define Estimate_keff_col(wgt, macro_mu_fis_xs, macro_tot_xs)  \
     do{  \

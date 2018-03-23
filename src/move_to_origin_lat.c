@@ -5,8 +5,12 @@
 #include "universe.h"
 
 
-void move_to_origin_lat(universe_t *obj, int lat_index, double pos[3]){
-    if(obj->lattice_type == 1){
+void
+move_to_origin_lat(universe_t *obj,
+                   int lat_index,
+                   double pos[3])
+{
+    if(obj->lattice_type == 1) {
         int xyz[3];
         int i;
         xyz[2] = (lat_index - 1) / (obj->scope[0] * obj->scope[1]);
@@ -16,8 +20,7 @@ void move_to_origin_lat(universe_t *obj, int lat_index, double pos[3]){
         for(i = 0; i < 3; i++)
             if(obj->scope[i] != 1)
                 pos[i] -= obj->pitch[i] * xyz[i];
-    }
-    else{
+    } else {
         double len1 = obj->pitch[0];
         int i2 = (lat_index - 1) / obj->scope[0];
         int i1 = lat_index - 1 - i2 * obj->scope[0];

@@ -7,7 +7,8 @@
 
 #include "common.h"
 
-typedef enum{
+
+typedef enum SURF_T {
     P = 1,        //任意类型的平面，Ax+By+Cz=D
     PX = 2,       //垂直于X轴的平面，x=x0
     PY = 3,       //垂直于y轴的平面，y=y0
@@ -25,28 +26,44 @@ typedef enum{
     CZ = 15       //轴线在z轴的圆柱面，x^2+y^2=R^2
 } SURF_T;
 
-typedef struct {
+typedef struct surface_t {
     int id;              /* surface id */
     SURF_T type;         /* surface type */
     double paras[4];     /* type parameters */
     int bc;              /* boundary condition of this surface */
 } surface_t;
 
-
 BEGIN_DECL
 #define LENGTH_VECTOR(vec)    (sqrt(SQUARE((vec)[0]) + SQUARE((vec)[1]) + SQUARE((vec)[2])))
 
-surface_t *surf_init();
+surface_t *
+surf_init();
 
-int calc_surf_sense(surface_t *obj, const double pos[3], const double dir[3]);
+int
+calc_surf_sense(surface_t *obj,
+                const double pos[3],
+                const double dir[3]);
 
-void get_surf_norm_vec(surface_t *obj, const double pos[3], double *surf_norm_vec);
+void
+get_surf_norm_vec(surface_t *obj,
+                  const double pos[3],
+                  double *surf_norm_vec);
 
-double calc_dist_to_surf(surface_t *obj, const double pos[3], const double dir[3], bool is_at_surf);
+double
+calc_dist_to_surf(surface_t *obj,
+                  const double pos[3],
+                  const double dir[3],
+                  bool is_at_surf);
 
-void reflect_par(surface_t *obj, const double pos[3], double *dir, double *loc_dir);
+void
+reflect_par(surface_t *obj,
+            const double pos[3],
+            double *dir,
+            double *loc_dir);
 
-void surf_free(surface_t *obj);
+void
+surf_free(surface_t *obj);
+
 END_DECL
 
 #endif //CRITI_SURFACE_H

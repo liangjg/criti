@@ -12,9 +12,11 @@ extern double base_start_wgt;
 extern IOfp_t base_IOfp;
 extern RNG_t RNGs[64];
 
-void _combine_keff();
+void
+_combine_keff();
 
-void _output_keff();
+void
+_output_keff();
 
 #define SWAP(_a, _b)    \
     do{    \
@@ -23,14 +25,15 @@ void _output_keff();
         (_b) = _temp;    \
     } while(0)
 
-
-void process_cycle_end(){
+void
+process_cycle_end()
+{
     int i, j;
     int remainder1, remainder2;
     int quotient;
 
     /* process eigenvalue */
-    if(base_criti.tot_fission_bank_cnt < 5){
+    if(base_criti.tot_fission_bank_cnt < 5) {
         puts("Insufficient fission source to be sampled.");
         release_resource();
         exit(0);
@@ -63,7 +66,7 @@ void process_cycle_end(){
     remainder1 = base_criti.cycle_neutron_num - NUMBERS_PER_TRANS * base_criti.tot_transfer_num;
     for(i = 0; i < NUMBERS_SLAVES; i++)
         base_criti.fission_src_cnt[i] = base_criti.tot_transfer_num * 400;
-    if(remainder1 > 0){
+    if(remainder1 > 0) {
         base_criti.tot_transfer_num++;
         quotient = remainder1 / NUMBERS_SLAVES;
         remainder2 = remainder1 - quotient * NUMBERS_SLAVES;
@@ -77,7 +80,7 @@ void process_cycle_end(){
     /* 为每个从核准备随机数发生器 */
     memcpy(&RNGs[0], &RNGs[63], sizeof(RNG_t));
 
-    for(i = 1; i < NUMBERS_SLAVES; i++){
+    for(i = 1; i < NUMBERS_SLAVES; i++) {
         memcpy(&RNGs[i], &RNGs[i - 1], sizeof(RNG_t));
 
         int fis_src_cnt = base_criti.fission_src_cnt[i - 1];
@@ -86,7 +89,9 @@ void process_cycle_end(){
     }
 }
 
-void _combine_keff(){
+void
+_combine_keff()
+{
     if(base_criti.current_cycle <= base_criti.inactive_cycle_num)
         return;
 
@@ -96,14 +101,14 @@ void _combine_keff(){
     double keff_covw[3][3], keff_covw_sum;
 
     diffrence = base_criti.current_cycle - base_criti.inactive_cycle_num;
-    for(i = 0; i < 3; ++i){
+    for(i = 0; i < 3; ++i) {
         base_criti.keff_sum[i] = base_criti.keff_sum[i] + base_criti.keff_cycle[i];
         for(j = 0; j < 3; ++j)
             base_criti.keff_cp_sum[i][j] =
-                    base_criti.keff_cp_sum[i][j] + base_criti.keff_cycle[i] * base_criti.keff_cycle[j];
+                base_criti.keff_cp_sum[i][j] + base_criti.keff_cycle[i] * base_criti.keff_cycle[j];
     }
 
-    for(i = 0; i < 4; ++i){
+    for(i = 0; i < 4; ++i) {
         base_criti.keff_covw_ave[i] = ZERO;
         base_criti.keff_covw_std[i] = ZERO;
     }
@@ -111,12 +116,12 @@ void _combine_keff(){
     keff_covw_sum = ZERO;
     d0 = diffrence;
     d1 = sqrt(d0 / MAX(1, diffrence - 1));
-    for(i = 0; i < 3; ++i){
+    for(i = 0; i < 3; ++i) {
         base_criti.keff_individual_ave[i] = base_criti.keff_sum[i] / diffrence;
         keff_corr[i] = ZERO;
-        for(j = 0; j < 3; ++j){
+        for(j = 0; j < 3; ++j) {
             keff_covw[i][j] =
-                    base_criti.keff_cp_sum[i][j] - base_criti.keff_sum[i] * base_criti.keff_sum[j] / diffrence;
+                base_criti.keff_cp_sum[i][j] - base_criti.keff_sum[i] * base_criti.keff_sum[j] / diffrence;
             keff_covw_sum = keff_covw_sum + keff_covw[i][j];
         }
         base_criti.keff_individual_std[i] = d1 * sqrt(fabs(keff_covw[i][i])) / diffrence;
@@ -125,21 +130,21 @@ void _combine_keff(){
     if(diffrence <= 2)
         return;
     d2 = sqrt(d0 / (d0 - TWO));
-    for(i = 0; i < 3; ++i){
+    for(i = 0; i < 3; ++i) {
         j = (i + 1) % 3;
         base_criti.keff_covw_ave[i] = base_criti.keff_individual_ave[i];
         base_criti.keff_covw_std[i] = base_criti.keff_individual_std[i];
         temp = keff_covw[i][i] + keff_covw[j][j] - TWO * keff_covw[i][j];
-        if(temp > 1.e-10 * (fabs(keff_covw[i][i]) + fabs(keff_covw[i][j]) + fabs(keff_covw[j][j]))){
+        if(temp > 1.e-10 * (fabs(keff_covw[i][i]) + fabs(keff_covw[i][j]) + fabs(keff_covw[j][j]))) {
             base_criti.keff_covw_ave[i] = base_criti.keff_individual_ave[i] -
                                           (base_criti.keff_individual_ave[i] - base_criti.keff_individual_ave[j]) *
                                           (keff_covw[i][i] - keff_covw[j][j]) / temp;
             base_criti.keff_covw_std[i] =
-                    d2 * sqrt(fabs((keff_covw[i][i] * keff_covw[j][j] - keff_covw[i][j] * keff_covw[i][j]) *
-                                   (temp +
-                                    d0 * (base_criti.keff_individual_ave[i] - base_criti.keff_individual_ave[j]) *
-                                    (base_criti.keff_individual_ave[i] - base_criti.keff_individual_ave[j])) /
-                                   (temp * temp))) / diffrence;
+                d2 * sqrt(fabs((keff_covw[i][i] * keff_covw[j][j] - keff_covw[i][j] * keff_covw[i][j]) *
+                               (temp +
+                                d0 * (base_criti.keff_individual_ave[i] - base_criti.keff_individual_ave[j]) *
+                                (base_criti.keff_individual_ave[i] - base_criti.keff_individual_ave[j])) /
+                               (temp * temp))) / diffrence;
         }
         if(keff_covw[i][i] * keff_covw[j][j] > 0)
             keff_corr[i] = keff_covw[i][j] / sqrt(fabs(keff_covw[i][i] * keff_covw[j][j]));
@@ -155,7 +160,7 @@ void _combine_keff(){
     k = 2;
     if(fabs(keff_corr[0] - ONE) < 1.0E-5)
         goto go60;
-    for(i = 0; i < 3; ++i){
+    for(i = 0; i < 3; ++i) {
         j = (i + 1) % 3;
         k = (j + 1) % 3;
         al = keff_covw[j][j] * keff_covw[k][k] - keff_covw[j][j] * keff_covw[i][k] - keff_covw[k][k] * keff_covw[i][j] +
@@ -181,23 +186,24 @@ go60:
     base_criti.keff_final = base_criti.keff_covw_ave[3];
 }
 
-
-void _output_keff(){
+void
+_output_keff()
+{
     /* cycle finish time */
     finish_time = clock();
     double compute_time_min = (double) (finish_time - start_time) / CLOCKS_PER_SEC / 60.0;
 
-    if(base_criti.current_cycle == base_criti.inactive_cycle_num + 1){
+    if(base_criti.current_cycle == base_criti.inactive_cycle_num + 1) {
         puts("************* Start Active Cycle *************");
         puts("Cycle      Active       Keff        Average        Std      Time(min)");
-    } else if(base_criti.current_cycle == 1){
+    } else if(base_criti.current_cycle == 1) {
         puts("\n************ Start Inactive Cycle ************");
         puts("Cycle        Keff      Time(min)");
     }
 
     if(base_criti.current_cycle <= base_criti.inactive_cycle_num)
         printf("%-6d     %-f     %-.4f\n", base_criti.current_cycle, base_criti.keff_cycle[0], compute_time_min);
-    if(base_criti.current_cycle > base_criti.inactive_cycle_num){
+    if(base_criti.current_cycle > base_criti.inactive_cycle_num) {
         printf("%-6d     %-6d     %-f     %-f     %-f     %-.4f\n",
                base_criti.current_cycle, base_criti.current_cycle - base_criti.inactive_cycle_num,
                base_criti.keff_cycle[0], base_criti.keff_individual_ave[0], base_criti.keff_individual_std[0],
@@ -208,7 +214,7 @@ void _output_keff(){
     if(base_criti.current_cycle == base_criti.inactive_cycle_num + 1)
         fputs("================== start active cycles ==================================================================================================\n",
               base_IOfp.opt_fp);
-    else if(base_criti.current_cycle == 1){
+    else if(base_criti.current_cycle == 1) {
         fputs("\n=========================================================================================================================================\n",
               base_IOfp.opt_fp);
         fputs("                      keff estimators by cycle             individual average keff and deviation           combined average keff\n",
@@ -219,14 +225,13 @@ void _output_keff(){
         fputs("=========================================================================================================================================\n",
               base_IOfp.opt_fp);
 
-
-    if(base_criti.current_cycle <= base_criti.inactive_cycle_num){
+    if(base_criti.current_cycle <= base_criti.inactive_cycle_num) {
         fprintf(base_IOfp.opt_fp,
                 "%-6d  %-9d | %-f  %-f  %-f |                                                                                %-.4f\n",
                 base_criti.current_cycle, base_criti.tot_fission_bank_cnt, base_criti.keff_cycle[0],
                 base_criti.keff_cycle[1], base_criti.keff_cycle[2], compute_time_min);
     }
-    if(base_criti.current_cycle > base_criti.inactive_cycle_num){
+    if(base_criti.current_cycle > base_criti.inactive_cycle_num) {
         fprintf(base_IOfp.opt_fp, "%-6d  %-9d | %-f  %-f  %-f | %-f %-f  %-f %-f  %-f %-f | %-f %-f |  %-.4f\n",
                 base_criti.current_cycle, base_criti.tot_fission_bank_cnt, base_criti.keff_cycle[0],
                 base_criti.keff_cycle[1], base_criti.keff_cycle[2],

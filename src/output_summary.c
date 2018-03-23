@@ -5,10 +5,13 @@
 #include "IO_releated.h"
 #include "criticality.h"
 
+
 extern IOfp_t base_IOfp;
 extern criti_t base_criti;
 
-void output_summary(){
+void
+output_summary()
+{
     if(base_warnings)
         printf("\n%d warning found.\n", base_warnings);
 

@@ -10,7 +10,9 @@
 extern map *base_nucs;
 extern map *base_mats;
 
-void check_ce_ace_block(){
+void
+check_ce_ace_block()
+{
     map_entry *entry;
     nuclide_t *nuc, *sab_nuc;
     mat_t *mat;
@@ -22,17 +24,17 @@ void check_ce_ace_block(){
     map_iterator *nuc_iter = map_get_iter(base_nucs);
 
     /* 连续能量ACE截面模块 */
-    while((entry = map_iter_next(nuc_iter))){
+    while((entry = map_iter_next(nuc_iter))) {
         nuc = (nuclide_t *) entry->v.val;
-        if(ISNUMBER(*nuc->id)){
+        if(ISNUMBER(*nuc->id)) {
             int NMT_4 = Get_non_el_mt_num(nuc);
-            if(NMT_4 == 0){
+            if(NMT_4 == 0) {
                 nuc->MTR_index_sz = 110;
                 nuc->MTR_index = (int *) malloc(sizeof(int) * nuc->MTR_index_sz);
                 nuc->LAND_sz = 3;
                 nuc->LAND = (int *) malloc(sizeof(int) * nuc->LAND_sz);
                 nuc->LAND[2] = (int) (nuc->XSS[Get_loc_of_LAND(nuc)]);
-            } else{
+            } else {
                 int L3, L6, L8, L10, NMT_5, MT_max_4, MT_max_5;
                 NMT_5 = Get_non_el_mt_num_with_neu(nuc);
                 L3 = Get_loc_of_MTR(nuc);
@@ -43,25 +45,25 @@ void check_ce_ace_block(){
                 MT_max_5 = (int) (MAX(nuc->XSS[L3 + NMT_5 - 1], nuc->XSS[L3]));
                 nuc->MTR_index_sz = MAX(110, MT_max_4 + 1);
                 nuc->MTR_index = (int *) malloc(
-                        sizeof(int) * nuc->MTR_index_sz);
+                    sizeof(int) * nuc->MTR_index_sz);
                 nuc->LSIG_sz = MAX(110, MT_max_4 + 1);
                 nuc->LSIG = (int *) malloc(
-                        sizeof(int) * nuc->LSIG_sz);
+                    sizeof(int) * nuc->LSIG_sz);
                 nuc->LAND_sz = MT_max_5 + 3;
                 nuc->LAND = (int *) malloc(
-                        sizeof(int) * nuc->LAND_sz);
+                    sizeof(int) * nuc->LAND_sz);
                 nuc->LAND[2] = (int) (nuc->XSS[L8]);
                 nuc->LDLW_sz = MT_max_5 + 3;
                 nuc->LDLW = (int *) malloc(sizeof(int) * nuc->LDLW_sz);
-                for(j = 1; j <= NMT_4; j++){
+                for(j = 1; j <= NMT_4; j++) {
                     int MT_temp = (int) (nuc->XSS[L3 + j - 1]);
-                    if(MT_temp <= 0){
+                    if(MT_temp <= 0) {
                         printf("negative MT = %d for nuclide %s", MT_temp, nuc->id);
                         release_resource();
                         exit(0);
                     }
 
-                    if(MT_temp >= nuc->MTR_index_sz){
+                    if(MT_temp >= nuc->MTR_index_sz) {
                         /* resize nuc->MTR_index */
                         old_addr = nuc->MTR_index;
                         old_sz = nuc->MTR_index_sz;
@@ -81,7 +83,7 @@ void check_ce_ace_block(){
                     nuc->MTR_index[MT_temp] = j;
                     nuc->LSIG[MT_temp] = (int) (nuc->XSS[L6 + j - 1]);
 
-                    if(j <= NMT_5){
+                    if(j <= NMT_5) {
                         nuc->LAND[MT_temp] = (int) (nuc->XSS[L8 + j]);
                         nuc->LDLW[MT_temp] = (int) (nuc->XSS[L10 + j - 1]);
                     }
@@ -95,14 +97,14 @@ void check_ce_ace_block(){
             nuc->inel_XSS = (double *) malloc(sizeof(double) * (NE + 1));
 
             bool MT_18_exist = false;
-            for(j = 1; j <= Get_erg_grid_num(nuc); j++){
+            for(j = 1; j <= Get_erg_grid_num(nuc); j++) {
                 nuc->fis_XSS[j] = 0;
                 nuc->inel_XSS[j] = 0;
                 int loc = Get_loc_of_MTR(nuc) - 1;
-                for(k = 1; k <= Get_non_el_mt_num_with_neu(nuc); k++){
+                for(k = 1; k <= Get_non_el_mt_num_with_neu(nuc); k++) {
                     int MT_temp = (int) (nuc->XSS[loc + k]);
 
-                    if(MT_temp <= 0){
+                    if(MT_temp <= 0) {
                         printf("unknown MT number.\n   Nuc = %d, MT = XSS[%d] = %d.\n", nuc->zaid, loc + k,
                                MT_temp);
                         base_warnings++;
@@ -111,17 +113,17 @@ void check_ce_ace_block(){
                     int IE_LOCA = Get_loc_of_SIG(nuc) + nuc->LSIG[MT_temp] - 1;
                     int SIG_IE = (int) (nuc->XSS[IE_LOCA]);
                     int SIG_NE = (int) (nuc->XSS[IE_LOCA + 1]);
-                    if((SIG_IE + SIG_NE - 1) != NE){
+                    if((SIG_IE + SIG_NE - 1) != NE) {
                         printf("Abnormal cross-section of reaction MT=%d in nuc=%s \n", MT_temp, nuc->id);
                         release_resource();
                         exit(0);
                     }
                     if(MT_temp == 18)
                         MT_18_exist = true;
-                    if(j >= SIG_IE){
-                        if(MT_temp != 18 && MT_temp != 19 && MT_temp != 20 && MT_temp != 21 && MT_temp != 38){
+                    if(j >= SIG_IE) {
+                        if(MT_temp != 18 && MT_temp != 19 && MT_temp != 20 && MT_temp != 21 && MT_temp != 38) {
                             nuc->inel_XSS[j] += nuc->XSS[IE_LOCA + 2 + j - SIG_IE];
-                        } else{
+                        } else {
                             if(MT_18_exist)
                                 nuc->fis_XSS[j] = nuc->XSS[IE_LOCA + 2 + j - SIG_IE];
                             else
@@ -135,18 +137,18 @@ void check_ce_ace_block(){
 
 
     /* 检查SAB截面模块 */
-    while((entry = map_iter_next(mat_iter))){
+    while((entry = map_iter_next(mat_iter))) {
         mat = entry->v.val;
-        if(mat->tot_sab_nuc_num){
+        if(mat->tot_sab_nuc_num) {
             sab_nuc = mat->sab_nuc;
             if(!sab_nuc)
                 continue;
-            for(j = 0; j < mat->tot_nuc_num; j++){
+            for(j = 0; j < mat->tot_nuc_num; j++) {
                 nuc = mat->nucs[j];
-                if(nuc->zaid == sab_nuc->zaid){
+                if(nuc->zaid == sab_nuc->zaid) {
                     location = Get_loc_of_sab_inel_erg(sab_nuc);
                     esa1 = sab_nuc->XSS[location + (int) (sab_nuc->XSS[location])];
-                    if(Get_loc_of_sab_el_erg(sab_nuc) && Get_sab_el_mode(sab_nuc) != 4){
+                    if(Get_loc_of_sab_el_erg(sab_nuc) && Get_sab_el_mode(sab_nuc) != 4) {
                         location = Get_loc_of_sab_el_erg(sab_nuc);
                         esa2 = sab_nuc->XSS[location + (int) (sab_nuc->XSS[location])];
                         esa1 = MIN(esa1, esa2);

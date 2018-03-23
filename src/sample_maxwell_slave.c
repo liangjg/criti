@@ -6,7 +6,10 @@
 #include "common.h"
 
 
-double sample_maxwell_slave(RNG_t *RNG, double T){
+double
+sample_maxwell_slave(RNG_t *RNG,
+                     double T)
+{
     //===============================================================================
     // MAXWELL_SPECTRUM samples an energy from the Maxwell fission distribution based
     // on a direct sampling scheme. The probability distribution function for a

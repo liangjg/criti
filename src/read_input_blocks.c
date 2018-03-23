@@ -4,27 +4,31 @@
 
 #include "IO_releated.h"
 
+
 extern IOfp_t base_IOfp;
 
 /* -------------------------- private prototypes ---------------------------- */
-int _identify_kw(char *kw);
+int
+_identify_kw(char *kw);
 
 /* ----------------------------- API implementation ------------------------- */
-void read_input_blocks(CALC_MODE_T *calc_mode){
+void
+read_input_blocks(CALC_MODE_T *calc_mode)
+{
     char buf[256];
     char *ret;
     char *kw_start;
 
     printf("Reading input file...");
 
-    while((ret = fgets(buf, MAX_LINE_LENGTH, base_IOfp.inp_fp))){
+    while((ret = fgets(buf, MAX_LINE_LENGTH, base_IOfp.inp_fp))) {
         /* find the first non-space character */
         while(ISSPACE(*ret)) ret++;
 
         /* comment line or blank line */
         if(ISCOMMENT(*ret) || ISRETURN(*ret)) continue;
 
-        if(ISALPHA(*ret)){
+        if(ISALPHA(*ret)) {
             kw_start = ret;
 
             while(ISALPHA(*ret)) {
@@ -34,7 +38,7 @@ void read_input_blocks(CALC_MODE_T *calc_mode){
             *ret = 0;
 
             /* process all cases depending on key words */
-            switch(_identify_kw(kw_start)){
+            switch(_identify_kw(kw_start)) {
                 case 0:    /* UNIVERSE */
                     ret++;
                     read_universe_block(ret);
@@ -62,8 +66,7 @@ void read_input_blocks(CALC_MODE_T *calc_mode){
                     *calc_mode = BURNUP;
                     /*read_burnup_block();*/
                     break;
-                default:
-                    printf("unknown key word %s.\n", kw_start);
+                default:printf("unknown key word %s.\n", kw_start);
                     break;
             }
         }
@@ -73,9 +76,11 @@ void read_input_blocks(CALC_MODE_T *calc_mode){
 }
 
 /* ------------------------ private API implementation ---------------------- */
-int _identify_kw(char *kw){
+int
+_identify_kw(char *kw)
+{
     int i;
-    for(i = 0; i < KW_NUMBER; i++){
+    for(i = 0; i < KW_NUMBER; i++) {
         if(strcmp(kw, keyword[i]) == 0)
             return i;
     }

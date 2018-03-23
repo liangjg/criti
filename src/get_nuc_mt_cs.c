@@ -6,7 +6,12 @@
 #include "global_fun.h"
 
 
-double get_nuc_mt_cs(nuclide_t *nuc, int MT, int interp_pos, double interp_frac){
+double
+get_nuc_mt_cs(nuclide_t *nuc,
+              int MT,
+              int interp_pos,
+              double interp_frac)
+{
     if(MT >= nuc->LSIG_sz)
         return 0;
 

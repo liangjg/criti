@@ -7,12 +7,21 @@
 
 #include "RNG.h"
 
+
 BEGIN_DECL
-double sample_maxwell_host(RNG_t *RNG, double T);
+double
+sample_maxwell_host(RNG_t *RNG,
+                    double T);
 
-double sample_maxwell_slave(RNG_t *RNG, double T);
+double
+sample_maxwell_slave(RNG_t *RNG,
+                     double T);
 
-double sample_watt(RNG_t *RNG, double a, double b);
+double
+sample_watt(RNG_t *RNG,
+            double a,
+            double b);
+
 END_DECL
 
 #endif //CRITI_SAMPLE_METHOD_H

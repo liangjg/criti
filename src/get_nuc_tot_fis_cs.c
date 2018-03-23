@@ -6,8 +6,14 @@
 #include "global_fun.h"
 
 
-void get_nuc_tot_fis_cs(acedata_t *obj, nuclide_t *nuc, nuclide_t *sab_nuc, nuc_cs_t *cur_nuc_cs, double erg,
-                        double cell_tmp){
+void
+get_nuc_tot_fis_cs(acedata_t *obj,
+                   nuclide_t *nuc,
+                   nuclide_t *sab_nuc,
+                   nuc_xs_t *cur_nuc_cs,
+                   double erg,
+                   double cell_tmp)
+{
 
     int NE = Get_erg_grid_num(nuc);
     cur_nuc_cs->nu = get_total_nu(nuc, erg);
@@ -18,19 +24,19 @@ void get_nuc_tot_fis_cs(acedata_t *obj, nuclide_t *nuc, nuclide_t *sab_nuc, nuc_
 
     cur_nuc_cs->inter_pos = get_intplt_pos_fr(nuc->XSS, erg, min, max, &cur_nuc_cs->inter_frac);
 
-    if(!sab_nuc){
+    if(!sab_nuc) {
         cur_nuc_cs->tot = intplt_by_pos_fr(nuc->XSS, cur_nuc_cs->inter_pos + NE, cur_nuc_cs->inter_frac);
         cur_nuc_cs->fis = intplt_by_pos_fr(nuc->fis_XSS, cur_nuc_cs->inter_pos, cur_nuc_cs->inter_frac);
 
         /* 多普勒展宽总截面 */
-        if(nuc->broaden_tmp == ZERO && nuc->broaden_tmp != cell_tmp){ //th_ad:  thermal adjustment
+        if(nuc->broaden_tmp == ZERO && nuc->broaden_tmp != cell_tmp) { //th_ad:  thermal adjustment
             double a, b, a2, f;
             int bi, j;
             a2 = nuc->atom_wgt * erg;
-            if(a2 <= 500.0 * cell_tmp){
+            if(a2 <= 500.0 * cell_tmp) {
                 if(a2 >= 4.0 * cell_tmp)
                     f = HALF * cell_tmp / a2;
-                else{
+                else {
                     a = sqrt(a2 / cell_tmp);
                     b = 25. * a;
                     bi = (int) (b);

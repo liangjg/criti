@@ -5,7 +5,12 @@
 #include "acedata.h"
 
 
-int get_law_type(const nuclide_t *nuc, RNG_t *RNG_slave, int MT, double incident_erg, int *LDAT)
+int
+get_law_type(const nuclide_t *nuc,
+             RNG_t *RNG_slave,
+             int MT,
+             double incident_erg,
+             int *LDAT)
 {
     int law_type;
     double E1, E0, Pi = ZERO, ksi;
@@ -13,24 +18,24 @@ int get_law_type(const nuclide_t *nuc, RNG_t *RNG_slave, int MT, double incident
     int which_Pi = 1;
 
     int LDIS = MT > 0 ? Get_loc_of_DLW(nuc) : Get_loc_of_DNED(nuc);
-    int LOCC = MT > 0 ? LDIS + nuc->LDLW[MT] : LDIS + (int)(nuc->XSS[Get_loc_of_DNEDL(nuc) - MT - 1]);
+    int LOCC = MT > 0 ? LDIS + nuc->LDLW[MT] : LDIS + (int) (nuc->XSS[Get_loc_of_DNEDL(nuc) - MT - 1]);
 
-    LNW = (int)(nuc->XSS[LOCC - 1]);
-    law_type = (int)(nuc->XSS[LOCC]);
+    LNW = (int) (nuc->XSS[LOCC - 1]);
+    law_type = (int) (nuc->XSS[LOCC]);
     if(law_type <= 0) {
         printf("unknown Law type %d. \nNuc = %d, MT = %d, Law_type = XSS[%d] = %9.5E.\n",
                law_type, nuc->zaid, MT, LOCC, nuc->XSS[LOCC]);
         base_warnings++;
     }
 
-    IDAT = (int)(nuc->XSS[LOCC + 1]);
+    IDAT = (int) (nuc->XSS[LOCC + 1]);
     if(LNW == 0) {
         *LDAT = LDIS + IDAT - 1;
         return law_type;
     }
 
-    NR = (int)(nuc->XSS[LOCC + 2]);
-    NE = (int)(nuc->XSS[LOCC + 3 + 2 * NR]);
+    NR = (int) (nuc->XSS[LOCC + 2]);
+    NE = (int) (nuc->XSS[LOCC + 3 + 2 * NR]);
 
     if(incident_erg <= nuc->XSS[LOCC + 4 + 2 * NR]) {
         which_Pi = 1;
@@ -60,11 +65,11 @@ int get_law_type(const nuclide_t *nuc, RNG_t *RNG_slave, int MT, double incident
     while(ksi > Pi) {
         Pi = Pi + nuc->XSS[LDIS + LNW + 4 + 2 * NR + NE + which_Pi - 1];
         if(ksi <= Pi) {
-            law_type = (int)(nuc->XSS[LDIS + LNW]);
-            IDAT = (int)(nuc->XSS[LDIS + LNW + 1]);
+            law_type = (int) (nuc->XSS[LDIS + LNW]);
+            IDAT = (int) (nuc->XSS[LDIS + LNW + 1]);
             break;
         }
-        LNW = (int)(nuc->XSS[LDIS + LNW - 1]);
+        LNW = (int) (nuc->XSS[LDIS + LNW - 1]);
         if(LNW == 0)
             break;
     }

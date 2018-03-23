@@ -8,7 +8,7 @@
 #include "common.h"
 
 
-typedef struct {
+typedef struct universe_t {
     int id;
     double origin[3];
     double rotation[3][3];
@@ -30,37 +30,57 @@ typedef struct {
     void *parent;             /* 包含当前universe的的上级结构，可能是cell，也可能是另一个universe */
 } universe_t;
 
-
 #define UNIV_KW_NUMBER      7
 #define UNIV_MAX_KW_LENGTH  8
 
 static const char universe_kw[UNIV_KW_NUMBER][UNIV_MAX_KW_LENGTH] = {
-        "MOVE",
-        "ROTATE",
-        "LAT",
-        "PITCH",
-        "SCOPE",
-        "SITA",
-        "FILL"
+    "MOVE",
+    "ROTATE",
+    "LAT",
+    "PITCH",
+    "SCOPE",
+    "SITA",
+    "FILL"
 };
 
-
 BEGIN_DECL
-universe_t *univ_init();
+universe_t *
+univ_init();
 
-void trans_univ_coord(universe_t *obj, double pos[3], double dir[3]);
+void
+trans_univ_coord(universe_t *obj,
+                 double pos[3],
+                 double dir[3]);
 
-void trans_univ_dir(universe_t *obj, double dir[3]);
+void
+trans_univ_dir(universe_t *obj,
+               double dir[3]);
 
-int find_lat_index(universe_t *obj, const double pos[3], const double dir[3]);
+int
+find_lat_index(universe_t *obj,
+               const double pos[3],
+               const double dir[3]);
 
-void move_to_origin_lat(universe_t *obj, int lat_index, double pos[3]);
+void
+move_to_origin_lat(universe_t *obj,
+                   int lat_index,
+                   double pos[3]);
 
-double calc_dist_to_lat(universe_t *obj, const double pos[3], const double dir[3], int *which_surf);
+double
+calc_dist_to_lat(universe_t *obj,
+                 const double pos[3],
+                 const double dir[3],
+                 int *which_surf);
 
-int offset_neighbor_lat(universe_t *obj, int lat_index, int lat_bound_surf, double pos[3]);
+int
+offset_neighbor_lat(universe_t *obj,
+                    int lat_index,
+                    int lat_bound_surf,
+                    double pos[3]);
 
-void univ_free(universe_t *obj);
+void
+univ_free(universe_t *obj);
+
 END_DECL
 
 #endif //CRITI_UNIVERSE_H

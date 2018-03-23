@@ -6,7 +6,11 @@
 #include "common.h"
 
 
-double sample_watt(RNG_t *RNG, double a, double b){
+double
+sample_watt(RNG_t *RNG,
+            double a,
+            double b)
+{
     //===============================================================================
     // WATT_SPECTRUM samples the outgoing energy from a Watt energy-dependent fission
     // spectrum. Although fitted parameters exist for many nuclides, generally the

@@ -5,7 +5,12 @@
 #include "surface.h"
 
 
-void reflect_par(surface_t *obj, const double pos[3], double *dir, double *loc_dir){
+void
+reflect_par(surface_t *obj,
+            const double pos[3],
+            double *dir,
+            double *loc_dir)
+{
     double surf_norm_vec[3];
     double temp;
     double dir_length;
@@ -14,7 +19,7 @@ void reflect_par(surface_t *obj, const double pos[3], double *dir, double *loc_d
     get_surf_norm_vec(obj, pos, surf_norm_vec);
 
     temp = dir[0] * surf_norm_vec[0] + dir[1] * surf_norm_vec[1] + dir[2] * surf_norm_vec[2];
-    if(LT_ZERO(temp)){
+    if(LT_ZERO(temp)) {
         surf_norm_vec[0] = -surf_norm_vec[0];
         surf_norm_vec[1] = -surf_norm_vec[1];
         surf_norm_vec[2] = -surf_norm_vec[2];

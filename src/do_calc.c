@@ -7,6 +7,8 @@
 #include "neutron_transport.h"
 #include "slave.h"
 
+
+#define __thread_local
 __thread_local volatile unsigned int get_reply, put_reply;
 __thread_local int my_id;
 
@@ -23,7 +25,7 @@ __thread_local unsigned int offset_get;
 __thread_local unsigned int offset_put;
 
 /* 每个从核在输运过程中存储核素截面的结构 */
-__thread_local nuc_cs_t *nuc_cs_slave;
+__thread_local nuc_xs_t *nuc_cs_slave;
 
 /* ***********************************************************************
  * 每个从核LDM中都保存了1000个fission_bank_t对象，其中400个用于存储这一代需要
@@ -34,7 +36,7 @@ __thread_local fission_bank_t fis_src_slave[400], fis_bank_slave[600];
 __thread_local int fis_src_cnt, fis_bank_cnt;
 
 /* 每个从核都需要一个存储在LDM中的particle_state对象，用于进行粒子输运 */
-__thread_local particle_state_t par_state;
+__thread_local particle_status_t par_status;
 
 /* 每个从核在本代模拟的粒子发送到总碰撞次数 */
 __thread_local int col_cnt_slave;
@@ -55,9 +57,11 @@ extern unsigned int offset_put_per_slave[NUMBERS_SLAVES];
 extern double keff_wgt_sum[NUMBERS_SLAVES][3];
 extern RNG_t RNGs[NUMBERS_SLAVES];
 extern int col_cnt[NUMBERS_SLAVES];
-extern nuc_cs_t *base_nuc_cs[NUMBERS_SLAVES];
+extern nuc_xs_t **base_nuc_xs;
 
-void do_calc(){
+void
+do_calc()
+{
     fission_bank_t *start_addr;
     int i, neu;
 
@@ -89,7 +93,7 @@ void do_calc(){
     while(get_reply != 5);
 
     /* 从主核处取得nuc_cs地址 */
-    athread_get(PE_MODE, &base_nuc_cs[my_id], &nuc_cs_slave, sizeof(nuc_cs_t *), &get_reply, 0, 0, 0);
+    athread_get(PE_MODE, &base_nuc_xs[my_id], &nuc_cs_slave, sizeof(nuc_xs_t *), &get_reply, 0, 0, 0);
     while(get_reply != 6);
 
     /* 从主核处取得put的位置偏移 */
@@ -103,49 +107,49 @@ void do_calc(){
         keff_wgt_sum_slave[i] = ZERO;
 
     /* 模拟每个粒子 */
-    for(neu = 1; neu <= numbers_to_get; neu++){
+    for(neu = 1; neu <= numbers_to_get; neu++) {
         get_rand_seed_slave(&RNG_slave);
 
-        sample_fission_source(&par_state, fis_src_cnt, fis_src_slave);
+        sample_fission_source(&par_status, fis_src_cnt, fis_src_slave);
 
         fis_src_cnt++;
 
-        if(par_state.is_killed) continue;
-        do{
+        if(par_status.is_killed) continue;
+        do {
             /* geometry tracking: free flying */
-            geometry_tracking(&par_state, keff_wgt_sum_slave, nuc_cs_slave, &RNG_slave);
-            if(par_state.is_killed) break;
+            geometry_tracking(&par_status, keff_wgt_sum_slave, nuc_cs_slave, &RNG_slave);
+            if(par_status.is_killed) break;
 
             /* sample collision nuclide */
-            sample_col_nuclide(&par_state, nuc_cs_slave, &RNG_slave);
-            if(par_state.is_killed) break;
+            sample_col_nuclide(&par_status, nuc_cs_slave, &RNG_slave);
+            if(par_status.is_killed) break;
 
             /* calculate cross-section */
-            calc_col_nuc_cs(&par_state, &RNG_slave);
+            calc_col_nuc_cs(&par_status, &RNG_slave);
 
             /* treat fission */
-            treat_fission(&par_state, &RNG_slave, fis_bank_slave, &fis_bank_cnt, keff_wgt_sum_slave, keff_final);
+            treat_fission(&par_status, &RNG_slave, fis_bank_slave, &fis_bank_cnt, keff_wgt_sum_slave, keff_final);
 
             /* implicit capture(including fission) */
-            treat_implicit_capture(&par_state, &RNG_slave);
-            if(par_state.is_killed) break;
+            treat_implicit_capture(&par_status, &RNG_slave);
+            if(par_status.is_killed) break;
 
             /* sample collision type */
-            par_state.collision_type = sample_col_type(&par_state, &RNG_slave);
-            if(par_state.is_killed) break;
+            par_status.collision_type = sample_col_type(&par_status, &RNG_slave);
+            if(par_status.is_killed) break;
 
             /* sample exit state */
-            get_exit_state(&par_state, &RNG_slave);
-            if(par_state.is_killed) break;
+            get_exit_state(&par_status, &RNG_slave);
+            if(par_status.is_killed) break;
 
             /* update particle state */
-            par_state.erg = par_state.exit_erg;
+            par_status.erg = par_status.exit_erg;
             for(i = 0; i < 3; i++)
-                par_state.dir[i] = par_state.exit_dir[i];
-            double length = ONE / sqrt(SQUARE(par_state.dir[0]) + SQUARE(par_state.dir[1]) + SQUARE(par_state.dir[2]));
-            par_state.dir[0] *= length;
-            par_state.dir[1] *= length;
-            par_state.dir[2] *= length;
+                par_status.dir[i] = par_status.exit_dir[i];
+            double length = ONE / sqrt(SQUARE(par_status.dir[0]) + SQUARE(par_status.dir[1]) + SQUARE(par_status.dir[2]));
+            par_status.dir[0] *= length;
+            par_status.dir[1] *= length;
+            par_status.dir[2] *= length;
         } while(++col_cnt_slave < MAX_ITER);
     }
 

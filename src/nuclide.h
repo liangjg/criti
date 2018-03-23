@@ -40,9 +40,8 @@ typedef struct {
     int inel_XSS_sz;
 
     /* cross sections */
-    int cs;
+    int xs;
 } nuclide_t;
-
 
 typedef struct {
     double tot;
@@ -54,7 +53,9 @@ typedef struct {
 
     int inter_pos;
     double inter_frac;
-} nuc_cs_t;
+
+    int ptable;              /* ptable=0说明该核素不存在概率表，大于0的值表示概率表的位置 */
+} nuc_xs_t;
 
 BEGIN_DECL
 /*ce ace data */
@@ -98,7 +99,9 @@ BEGIN_DECL
 #define Get_loc_of_sab_el_xs(nuclide)        ((nuclide)->JXS[5])
 #define Get_loc_of_sab_el_mu(nuclide)        ((nuclide)->JXS[6])
 
-void nuc_free(nuclide_t *obj);
+void
+nuc_free(nuclide_t *obj);
+
 END_DECL
 
 #endif //CRITI_NUCLIDE_H

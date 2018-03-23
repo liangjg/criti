@@ -22,29 +22,30 @@ double keff_wgt_sum[NUMBERS_SLAVES][3];
 RNG_t RNGs[NUMBERS_SLAVES];
 int col_cnt[NUMBERS_SLAVES];
 
-void calc_criticality(){
+void
+calc_criticality()
+{
     int cyc, i, j, k, m, n;
 
     /* 初始化裂变源 */
     init_fission_source();
 
     athread_init();
-    for(cyc = 1; cyc <= base_criti.tot_cycle_num; cyc++){
+    for(cyc = 1; cyc <= base_criti.tot_cycle_num; cyc++) {
         base_criti.current_cycle = cyc;
 
         /* 初始偏移均为0 */
-        for(i = 0; i < NUMBERS_SLAVES; i++){
+        for(i = 0; i < NUMBERS_SLAVES; i++) {
             offset_put_per_slave[i] = 0;
             offset_get_per_slave[i] = 0;
         }
 
-        for(i = 0; i < base_criti.tot_transfer_num; i++){
+        for(i = 0; i < base_criti.tot_transfer_num; i++) {
             /* 准备从核需要的数据 */
-            if(i + 1 == base_criti.tot_transfer_num){    /* 如果已经是最后一次传输数据，那么把剩下的全部传过去 */
+            if(i + 1 == base_criti.tot_transfer_num) {    /* 如果已经是最后一次传输数据，那么把剩下的全部传过去 */
                 for(j = 0; j < NUMBERS_SLAVES; j++)
                     numbers_per_slave[j] = base_criti.fission_src_cnt[j] - 400 * i;
-            }
-            else{    /* 如果不是最后一次传输数据，说明后续还有数据，那么这次最多传输400个 */
+            } else {    /* 如果不是最后一次传输数据，说明后续还有数据，那么这次最多传输400个 */
                 for(j = 0; j < NUMBERS_SLAVES; j++)
                     numbers_per_slave[j] = 400;
             }
@@ -54,7 +55,7 @@ void calc_criticality(){
             athread_join();
 
             /* 处理从核回传的计算结果 */
-            for(m = 0; m < NUMBERS_SLAVES; m++){
+            for(m = 0; m < NUMBERS_SLAVES; m++) {
                 for(n = 0; n < 3; n++)
                     base_criti.keff_wgt_sum[n] += keff_wgt_sum[m][n];
 

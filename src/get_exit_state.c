@@ -6,31 +6,34 @@
 #include "acedata.h"
 
 
-void get_exit_state(particle_state_t *par_state, RNG_t *RNG_slave){
-    nuclide_t *nuc = par_state->nuc;
-    nuclide_t *sab_nuc = par_state->sab_nuc;
+void
+get_exit_state(particle_status_t *par_status,
+               RNG_t *RNG_slave)
+{
+    nuclide_t *nuc = par_status->nuc;
+    nuclide_t *sab_nuc = par_status->sab_nuc;
 
-    if(sab_nuc){
-        treat_sab_colli_type(sab_nuc, par_state, RNG_slave);
+    if(sab_nuc) {
+        treat_sab_colli_type(sab_nuc, par_status, RNG_slave);
         /* 这里似乎应该是出射能量而不是原本的能量 */
-        if(par_state->erg <= EG0_CUTOFF)
-            par_state->is_killed = true;
+        if(par_status->erg <= EG0_CUTOFF)
+            par_status->is_killed = true;
         return;
     }
 
-    int emiss_neu_num = abs(Get_emiss_neu_num(nuc, par_state->collision_type));
+    int emiss_neu_num = abs(Get_emiss_neu_num(nuc, par_status->collision_type));
 
-    if(emiss_neu_num == 0){
-        par_state->is_killed = true;
+    if(emiss_neu_num == 0) {
+        par_status->is_killed = true;
         return;
     } else if(emiss_neu_num > 100)
         emiss_neu_num = 1;
 
-    par_state->wgt *= emiss_neu_num;
+    par_status->wgt *= emiss_neu_num;
 
-    get_ce_exit_state(par_state, RNG_slave, par_state->collision_type, par_state->is_free_gas_col);
+    get_ce_exit_state(par_status, RNG_slave, par_status->collision_type, par_status->is_free_gas_col);
 
     /* 这里似乎应该是出射能量而不是原本的能量 */
-    if(par_state->erg <= EG0_CUTOFF)
-        par_state->is_killed = true;
+    if(par_status->erg <= EG0_CUTOFF)
+        par_status->is_killed = true;
 }

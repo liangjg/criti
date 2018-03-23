@@ -5,8 +5,10 @@
 #include "cell.h"
 
 
-cell_t *cell_init(){
-    cell_t *_new_cell = (cell_t *)malloc(sizeof(cell_t));
+cell_t *
+cell_init()
+{
+    cell_t *_new_cell = (cell_t *) malloc(sizeof(cell_t));
     _new_cell->imp = 1;
     _new_cell->tmp = 2.53E-08;
     _new_cell->vol = 1.0;
@@ -25,7 +27,9 @@ cell_t *cell_init(){
     return _new_cell;
 }
 
-void cell_free(cell_t *obj){
+void
+cell_free(cell_t *obj)
+{
     int i;
 
     free(obj->rpn);

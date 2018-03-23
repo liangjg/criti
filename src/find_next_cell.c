@@ -8,46 +8,47 @@
 #define REFLECTIVE    1
 #define CROSSING      0
 
-void find_next_cell(particle_state_t *par_state){
+void
+find_next_cell(particle_status_t *par_status)
+{
     universe_t *univ;
     cell_t *cell;
     surface_t *surf;
     void *prev_mat;
     double prev_cell_tmp;
-    int level = par_state->bound_level;
+    int level = par_status->bound_level;
 
-    univ = par_state->loc_univs[level];
-    prev_mat = par_state->mat;
-    prev_cell_tmp = par_state->cell_tmp;
+    univ = par_status->loc_univs[level];
+    prev_mat = par_status->mat;
+    prev_cell_tmp = par_status->cell_tmp;
 
     if(univ->lattice_type)
-        find_neighbor_cell(par_state);
-    else{
-        cell = univ->cells[par_state->loc_cells[level]];
-        surf = cell->surfs_addr[par_state->bound_index];
+        find_neighbor_cell(par_status);
+    else {
+        cell = univ->cells[par_status->loc_cells[level]];
+        surf = cell->surfs_addr[par_status->bound_index];
 
-        switch(surf->bc){
-            case CROSSING:
-                find_neighbor_cell(par_state);
+        switch(surf->bc) {
+            case CROSSING:find_neighbor_cell(par_status);
                 break;
-            case REFLECTIVE:{
+            case REFLECTIVE: {
                 /* TODO: 当cell为凹多边形时，可能存在假的反射面，这时应该继续输运而不进行反射 */
-                reflect_par(surf, par_state->pos, par_state->dir, par_state->loc_dir);
+                reflect_par(surf, par_status->pos, par_status->dir, par_status->loc_dir);
                 break;
             }
         }
     }
 
-    if(!par_state->cell){
-        par_state->is_killed = true;
+    if(!par_status->cell) {
+        par_status->is_killed = true;
         return;
     }
 
-    cell = par_state->cell;
+    cell = par_status->cell;
     if(cell->imp == 0)
-        par_state->is_killed = true;
-    par_state->mat = cell->mat;
-    par_state->cell_tmp = cell->tmp;
-    par_state->mat_changed = (prev_mat != par_state->mat);
-    par_state->cell_tmp_changed = !EQ_ZERO(prev_cell_tmp - par_state->cell_tmp);
+        par_status->is_killed = true;
+    par_status->mat = cell->mat;
+    par_status->cell_tmp = cell->tmp;
+    par_status->mat_changed = (prev_mat != par_status->mat);
+    par_status->cell_tmp_changed = !EQ_ZERO(prev_cell_tmp - par_status->cell_tmp);
 }

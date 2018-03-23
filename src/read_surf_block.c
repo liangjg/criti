@@ -10,21 +10,23 @@
 extern map *base_surfs;
 extern IOfp_t base_IOfp;
 
-void read_surf_block(){
+void
+read_surf_block()
+{
     int i;
     int index;
     char buf[256];
     char *ret, *end, *type_start;
     char c;
 
-    while((ret = fgets(buf, MAX_LINE_LENGTH, base_IOfp.inp_fp))){
+    while((ret = fgets(buf, MAX_LINE_LENGTH, base_IOfp.inp_fp))) {
         while(ISSPACE(*ret)) ret++;
         if(ISCOMMENT(*ret)) continue;
         if(ISRETURN(*ret)) break;    /* current line is blank, SURFACE block terminates */
 
         while(!ISNUMBER(*ret)) ret++;
         index = 0;
-        do{
+        do {
             index *= 10;
             index += *ret++ - '0';
         } while(ISNUMBER(*ret));
@@ -36,9 +38,9 @@ void read_surf_block(){
         while(!ISALPHA(*ret)) ret++;
         type_start = ret;
 
-        if(TOUPPER(*type_start) == 'P'){    /* 平面类型 */
+        if(TOUPPER(*type_start) == 'P') {    /* 平面类型 */
             type_start++;
-            if(ISALPHA(*type_start)){
+            if(ISALPHA(*type_start)) {
                 c = TOUPPER(*type_start);
                 if(c == 'X')
                     surf->type = PX;
@@ -46,12 +48,10 @@ void read_surf_block(){
                     surf->type = PY;
                 else if(c == 'Z')
                     surf->type = PZ;
-            }
-            else surf->type = P;
-        }
-        else if(TOUPPER(*type_start) == 'S'){    /* 球面类型 */
+            } else surf->type = P;
+        } else if(TOUPPER(*type_start) == 'S') {    /* 球面类型 */
             type_start++;
-            if(ISALPHA(*type_start)){
+            if(ISALPHA(*type_start)) {
                 c = TOUPPER(*type_start);
                 if(c == 'X')
                     surf->type = SX;
@@ -61,12 +61,10 @@ void read_surf_block(){
                     surf->type = SZ;
                 else if(c == 'O')
                     surf->type = SO;
-            }
-            else surf->type = S;
-        }
-        else if(TOUPPER(*type_start) == 'C'){    /* 圆柱类型 */
+            } else surf->type = S;
+        } else if(TOUPPER(*type_start) == 'C') {    /* 圆柱类型 */
             type_start++;
-            if(*type_start == '/'){
+            if(*type_start == '/') {
                 type_start++;
                 c = TOUPPER(*type_start);
                 if(c == 'X')
@@ -75,8 +73,7 @@ void read_surf_block(){
                     surf->type = C_Y;
                 else if(c == 'Z')
                     surf->type = C_Z;
-            }
-            else{
+            } else {
                 c = TOUPPER(*type_start);
                 if(c == 'X')
                     surf->type = CX;
@@ -89,7 +86,7 @@ void read_surf_block(){
 
         ret += 3;
 
-        for(i = 0; i < 4; i++){
+        for(i = 0; i < 4; i++) {
             surf->paras[i] = strtod(ret, &end);
             ret = end;
         }

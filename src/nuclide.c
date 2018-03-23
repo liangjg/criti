@@ -4,7 +4,10 @@
 
 #include "nuclide.h"
 
-void nuc_free(nuclide_t *obj){
+
+void
+nuc_free(nuclide_t *obj)
+{
     free(obj->XSS);
     free(obj->MTR_index);
     free(obj->LSIG);

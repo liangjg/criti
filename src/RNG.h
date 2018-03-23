@@ -18,7 +18,7 @@
  * p = modulus, p = 2^m
  */
 
-typedef struct RNG{
+typedef struct RNG {
     unsigned long long mult;
     unsigned long long add;
     unsigned long long mod;
@@ -32,15 +32,22 @@ typedef struct RNG{
 } RNG_t;
 
 BEGIN_DECL
-double get_rand_slave(RNG_t *RNG);
+double
+get_rand_slave(RNG_t *RNG);
 
-double get_rand_host(RNG_t *RNG);
+double
+get_rand_host(RNG_t *RNG);
 
-void get_rand_seed_slave(RNG_t *RNG);
+void
+get_rand_seed_slave(RNG_t *RNG);
 
-void get_rand_seed_host(RNG_t *RNG);
+void
+get_rand_seed_host(RNG_t *RNG);
 
-void set_RNG_paras(RNG_t *RNG, int type);
+void
+set_RNG_paras(RNG_t *RNG,
+              int type);
+
 END_DECL
 
 #endif //CRITI_RNG_H

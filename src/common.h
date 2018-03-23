@@ -15,23 +15,23 @@
 
 
 #ifdef USE_MPI
-    #include <mpi.h>
+#include <mpi.h>
 #endif
 
 #if defined(__linux__) || defined(__linux) || defined(linux)
-    #define OS_LINUX
+#define OS_LINUX
 #elif defined(__WIN32__) || defined(_WIN32) || defined(WIN32)
 #define OS_WIN32
 #elif defined(__APPLE__)
-    #define OS_MAC
+#define OS_MAC
 #endif
 
 #if defined(__cplusplus)
-    #define BEGIN_DECL    extern "C" {
-    #define END_DECL      }
+#define BEGIN_DECL    extern "C" {
+#define END_DECL      }
 #else
-    #define BEGIN_DECL
-    #define END_DECL
+#define BEGIN_DECL
+#define END_DECL
 #endif
 
 #define MAX(_x, _y)     ((_x) < (_y) ? (_y) : (_x))
@@ -46,7 +46,6 @@
 #define ISCOMMENT(_c)   ((_c) == 47)
 #define TOUPPER(_c)     (ISLOWER(_c) ? ((_c) - 32) : (_c))
 #define TOLOWER(_c)     (ISUPPER(_c) ? ((_c) + 32) : (_c))
-
 
 #define MAX_LINE_LENGTH      220
 #define MAX_WORLD_LENGTH     20
@@ -96,7 +95,7 @@ static const char keyword[KW_NUMBER][MAX_KW_LENGTH] = {
 #define N_OPTR  6
 
 /* 交,并,补,左括号,右括号,表达式结束 */
-typedef enum{INTER, UNION, COMPLEMENT, L_P, R_P, EOE} OPERATOR_T;
+typedef enum { INTER, UNION, COMPLEMENT, L_P, R_P, EOE } OPERATOR_T;
 
 /* 大于、小于和等于号表示运算的优先级，空格表示该情况不存在 */
 static const char priority[N_OPTR][N_OPTR] = {
@@ -111,12 +110,29 @@ static const char priority[N_OPTR][N_OPTR] = {
 };
 
 /* calculation mode */
-typedef enum{
+typedef enum {
     CRITICALITY = 1,
     BURNUP,
     POINTBURN,
     FIXEDSOURCE
 } CALC_MODE_T;
+
+/* source type */
+typedef enum SRC_TYPE_T {
+    POINT,
+    SLAB,
+    SPHERE,
+    CYL_X,
+    CYL_Y,
+    CYL_Z
+} SRC_TYPE_Y;
+
+typedef struct bank_t {
+    double pos[3];
+    double dir[3];
+    double erg;
+    double wgt;
+} bank_t;
 
 /* time elapsed */
 extern time_t start_time;
@@ -126,7 +142,9 @@ extern time_t finish_time;
 extern unsigned base_warnings;
 
 BEGIN_DECL
-void release_resource();
+void
+release_resource();
+
 END_DECL
 
 #endif //CRITI_COMMON_H

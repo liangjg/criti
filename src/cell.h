@@ -8,7 +8,7 @@
 #include "common.h"
 
 
-typedef struct {
+typedef struct cell_t {
     int id;                    /* cell id */
     int imp;                   /* imp关键字 */
     int surfs_sz;              /* 布尔表达式所包含的面的数目 */
@@ -32,21 +32,27 @@ typedef struct {
 #define CELL_MAX_KW_LENGTH    6
 
 static const char cell_kw[CELL_KW_NUMBER][CELL_MAX_KW_LENGTH] = {
-        "FILL",
-        "MAT",
-        "IMP",
-        "TMP",
-        "VOL",
-        "INNER",
-        "VOID"
+    "FILL",
+    "MAT",
+    "IMP",
+    "TMP",
+    "VOL",
+    "INNER",
+    "VOID"
 };
 
 BEGIN_DECL
-cell_t *cell_init();
+cell_t *
+cell_init();
 
-bool particle_is_in_cell(const cell_t *obj, const double pos[3], const double dir[3]);
+bool
+particle_is_in_cell(const cell_t *obj,
+                    const double pos[3],
+                    const double dir[3]);
 
-void cell_free(cell_t *obj);
+void
+cell_free(cell_t *obj);
+
 END_DECL
 
 #endif //CRITI_CELL_H

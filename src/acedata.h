@@ -5,53 +5,110 @@
 #ifndef CRITI_ACEDATA_H
 #define CRITI_ACEDATA_H
 
-#include "particle_state.h"
+#include "particle_status.h"
 #include "nuclide.h"
 #include "RNG.h"
 
-typedef struct{
+
+typedef struct acedata_t {
     int tot_nucs_include_sab;  /* 所有的非重复的核素数目，包括热化核素在内 */
     int tot_nucs_exclude_sab;  /* 所有非重复核素的数目，不包括热化核素在内 */
     double therm_func[52];
 } acedata_t;
 
-
 BEGIN_DECL
-void check_ce_ace_block();
+void
+check_ce_ace_block();
 
-void calc_therm_Gfun(acedata_t *obj);
+void
+calc_therm_Gfun(acedata_t *obj);
 
-void doppler_broaden();
+void
+doppler_broaden();
 
-void get_nuc_tot_fis_cs(acedata_t *obj, nuclide_t *nuc, nuclide_t *sab_nuc, nuc_cs_t *cur_nuc_cs, double erg,
-                        double cell_tmp);
+void
+get_nuc_tot_fis_cs(acedata_t *obj,
+                   nuclide_t *nuc,
+                   nuclide_t *sab_nuc,
+                   nuc_xs_t *cur_nuc_cs,
+                   double erg,
+                   double cell_tmp);
 
-void get_nuc_abs_scatt_cs(acedata_t *obj, nuclide_t *nuc, particle_state_t *par_state);
+void
+get_nuc_abs_scatt_cs(acedata_t *obj,
+                     nuclide_t *nuc,
+                     particle_status_t *par_status);
 
-double get_nuc_mt_cs(nuclide_t *nuc, int MT, int interp_pos, double interp_frac);
+double
+get_nuc_mt_cs(nuclide_t *nuc,
+              int MT,
+              int interp_pos,
+              double interp_frac);
 
-void interpolate_sab(nuclide_t *nuc, nuclide_t *sab_nuc, nuc_cs_t *cur_nuc_cs, double erg);
+void
+interpolate_sab(nuclide_t *nuc,
+                nuclide_t *sab_nuc,
+                nuc_xs_t *cur_nuc_cs,
+                double erg);
 
-void get_ce_exist_erg_mu(const nuclide_t *nuc, RNG_t *RNG_slave, int MT, double incident_erg, double *exit_erg_lab,
-                         double *exit_mu_lab);
+void
+get_ce_exist_erg_mu(const nuclide_t *nuc,
+                    RNG_t *RNG_slave,
+                    int MT,
+                    double incident_erg,
+                    double *exit_erg_lab,
+                    double *exit_mu_lab);
 
-double get_scatt_cosine(const nuclide_t *nuc, RNG_t *RNG_slave, int MT, double incident_erg);
+double
+get_scatt_cosine(const nuclide_t *nuc,
+                 RNG_t *RNG_slave,
+                 int MT,
+                 double incident_erg);
 
-int get_law_type(const nuclide_t *nuc, RNG_t *RNG_slave, int MT, double incident_erg, int *LDAT);
+int
+get_law_type(const nuclide_t *nuc,
+             RNG_t *RNG_slave,
+             int MT,
+             double incident_erg,
+             int *LDAT);
 
-void react_by_laws(const nuclide_t *nuc, RNG_t *RNG_slave, int MT, int law_type, int LDAT, double incident_erg,
-                   double *exit_erg_cm, double *mu_cm);
+void
+react_by_laws(const nuclide_t *nuc,
+              RNG_t *RNG_slave,
+              int MT,
+              int law_type,
+              int LDAT,
+              double incident_erg,
+              double *exit_erg_cm,
+              double *mu_cm);
 
-void treat_sab_colli_type(const nuclide_t *sab_nuc, particle_state_t *par_state, RNG_t *RNG_slave);
+void
+treat_sab_colli_type(const nuclide_t *sab_nuc,
+                     particle_status_t *par_status,
+                     RNG_t *RNG_slave);
 
-double get_total_nu(nuclide_t *nuc, double erg);
+double
+get_total_nu(nuclide_t *nuc,
+             double erg);
 
-double get_delayed_nu(nuclide_t *nuc, double erg);
+double
+get_delayed_nu(nuclide_t *nuc,
+               double erg);
 
-void interpolate_xss_table(const nuclide_t *nuc, double incident_erg, int LDAT, int *pos, double *frac,
-                           int *num_of_interp_region, int *num_of_erg_grid);
+void
+interpolate_xss_table(const nuclide_t *nuc,
+                      double incident_erg,
+                      int LDAT,
+                      int *pos,
+                      double *frac,
+                      int *num_of_interp_region,
+                      int *num_of_erg_grid);
 
-double get_erg_func_value(const nuclide_t *nuc, int LDAT, double erg);
+double
+get_erg_func_value(const nuclide_t *nuc,
+                   int LDAT,
+                   double erg);
+
 END_DECL
 
 #endif //CRITI_ACEDATA_H

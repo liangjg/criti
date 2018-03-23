@@ -16,9 +16,11 @@ extern map *base_mats;
 extern map *base_nucs;
 extern criti_t base_criti;
 extern IOfp_t base_IOfp;
-extern nuc_cs_t *base_nuc_cs[NUMBERS_SLAVES];
+extern nuc_xs_t **base_nuc_xs;
 
-void release_resource(){
+void
+release_resource()
+{
     int i;
 
     map_free(base_univs);
@@ -32,10 +34,10 @@ void release_resource(){
     map_free(base_nucs);
     free(base_nucs);
 
-    for(i = 0; i < NUMBERS_SLAVES; i++){
+    for(i = 0; i < NUMBERS_SLAVES; i++) {
         free(base_criti.fission_src[i]);
         free(base_criti.fission_bank[i]);
-        free(base_nuc_cs[i]);
+        free(base_nuc_xs[i]);
     }
 
     /* close all FILE structure if opened */

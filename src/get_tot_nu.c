@@ -5,7 +5,10 @@
 #include "acedata.h"
 
 
-double get_total_nu(nuclide_t *nuc, double erg){
+double
+get_total_nu(nuclide_t *nuc,
+             double erg)
+{
     int KNU = Get_loc_of_NU(nuc);
     if(KNU == 0)
         return ZERO;
@@ -16,7 +19,7 @@ double get_total_nu(nuclide_t *nuc, double erg){
         KNU = KNU - KNU_judge + 1;
 
     int LNU = (int) (nuc->XSS[KNU]);
-    if(LNU == 1){
+    if(LNU == 1) {
         int i;
         int NC = (int) (nuc->XSS[KNU + 1]) - 1;
         double nu = nuc->XSS[KNU + NC + 2];

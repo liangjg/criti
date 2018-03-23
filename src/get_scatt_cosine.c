@@ -5,11 +5,16 @@
 #include "acedata.h"
 
 
-double get_scatt_cosine(const nuclide_t *nuc, RNG_t *RNG_slave, int MT, double incident_erg){
+double
+get_scatt_cosine(const nuclide_t *nuc,
+                 RNG_t *RNG_slave,
+                 int MT,
+                 double incident_erg)
+{
     double exit_mu_cm = 0;
 
     /* 各向同性的情况 */
-    if(nuc->LAND[MT] == 0){
+    if(nuc->LAND[MT] == 0) {
         exit_mu_cm = 2 * get_rand_slave(RNG_slave) - 1;
         return exit_mu_cm;
     }
@@ -27,8 +32,8 @@ double get_scatt_cosine(const nuclide_t *nuc, RNG_t *RNG_slave, int MT, double i
         LC = (int) (nuc->XSS[min + NE]);
     else if(incident_erg >= nuc->XSS[max])
         LC = (int) (nuc->XSS[max + NE]);
-    else{
-        while(max - min > 1){
+    else {
+        while(max - min > 1) {
             mid = (min + max) / 2;
             if(incident_erg >= nuc->XSS[mid])
                 min = mid;
@@ -42,14 +47,14 @@ double get_scatt_cosine(const nuclide_t *nuc, RNG_t *RNG_slave, int MT, double i
         LC = (int) (nuc->XSS[min + NE]);
     }
 
-    if(LC == 0){    /* 各向同性的情况 */
+    if(LC == 0) {    /* 各向同性的情况 */
         exit_mu_cm = 2 * get_rand_slave(RNG_slave) - 1;
         return exit_mu_cm;
     }
 
     int LOCC2;
     LOCC2 = Get_loc_of_AND(nuc) + abs(LC) - 1;
-    if(LC > 0){    /* 32等概率余弦表 */
+    if(LC > 0) {    /* 32等概率余弦表 */
         Ksi = 32 * get_rand_slave(RNG_slave);
         Ksi_int = (int) (Ksi);
         exit_mu_cm = nuc->XSS[LOCC2 + Ksi_int] +
@@ -60,14 +65,14 @@ double get_scatt_cosine(const nuclide_t *nuc, RNG_t *RNG_slave, int MT, double i
     int AND_JJ, AND_NP;
     double fa, ca, bb;
     /* 角分布表 */
-    if(LC < 0){
+    if(LC < 0) {
         AND_JJ = (int) (nuc->XSS[LOCC2]);
         AND_NP = (int) (nuc->XSS[LOCC2 + 1]);
 
         min = LOCC2 + 2 * AND_NP + 2;
         max = LOCC2 + 3 * AND_NP + 1;
         Ksi = get_rand_slave(RNG_slave);
-        while(max - min > 1){
+        while(max - min > 1) {
             mid = (min + max) / 2;
             if(Ksi >= nuc->XSS[mid])
                 min = mid;
@@ -80,7 +85,7 @@ double get_scatt_cosine(const nuclide_t *nuc, RNG_t *RNG_slave, int MT, double i
 
         if(AND_JJ == 1)
             exit_mu_cm = ca + (Ksi - nuc->XSS[min]) / fa;
-        else{
+        else {
             bb = (nuc->XSS[min - AND_NP + 1] - fa) / (nuc->XSS[min - 2 * AND_NP + 1] - ca);
             if(!EQ_ZERO(bb))
                 exit_mu_cm = ca + (sqrt(MAX(0.0, fa * fa + 2 * bb * (Ksi - nuc->XSS[min]))) - fa) / bb;
@@ -90,7 +95,7 @@ double get_scatt_cosine(const nuclide_t *nuc, RNG_t *RNG_slave, int MT, double i
     }
 
 END:
-    if(!(exit_mu_cm >= -1.000001 && exit_mu_cm <= 1.000001)){
+    if(!(exit_mu_cm >= -1.000001 && exit_mu_cm <= 1.000001)) {
         printf("exit mu out of range. nuc=%d, MT=%d, Mu_cm=%20.16f\n", nuc->zaid, MT, exit_mu_cm);
         base_warnings++;
         exit_mu_cm = 2 * get_rand_slave(RNG_slave) - 1;
