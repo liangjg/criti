@@ -58,7 +58,7 @@ read_input_blocks(CALC_MODE_T *calc_mode)
                     break;
                 case 5:    /* FIXEDSOURCE */
                     *calc_mode = FIXEDSOURCE;
-                    /*read_fixed_src_block();*/
+                    read_fixed_src_block();
                 case 6:    /* DEPLETION */
                     *calc_mode = POINTBURN;
                     break;

@@ -1,35 +1,35 @@
 //
-// Created by xaq on 11/15/17.
+// Created by 叶鑫 on 2018/3/26.
 //
 
-#include "criticality.h"
+#include "fixed_source.h"
 #include "acedata.h"
 #include "neutron_transport.h"
 
 
+extern fixed_src_t base_fixed_src;
+
 int
-get_fis_neu_state(particle_status_t *par_status,
-                  bank_t *cur_fis_bank,
-                  RNG_t *RNG,
-                  int fis_MT,
-                  double fis_wgt,
-                  double nu)
+get_fis_neu_state_fixed(particle_status_t *par_status,
+                        bank_t *cur_fixed_bank,
+                        RNG_t *RNG,
+                        double nu)
 {
-    int i, j;
+    int fis_MT = par_status->collision_type;
     nuclide_t *nuc = par_status->nuc;
     double erg = par_status->erg;
-    int fis_neu_num = (int) (fis_wgt + get_rand_slave(RNG));
     double nu_delayed = get_delayed_nu(nuc, erg);
     double beta = nu_delayed / nu;
+    int fis_neu_num = (int) (nu + get_rand_slave(RNG));
 
-    for(i = 0; i < fis_neu_num; i++) {
-        /* sample prompt/delayed fission neutrons */
-        if(get_rand_slave(RNG) < beta) {
+    for(int i = 0; i < fis_neu_num; i++){
+        if(get_rand_slave(RNG) < beta){
             int NPCR = Get_NPCR(nuc);
             int Loc = Get_loc_of_BDD(nuc);
             double ksi = get_rand_slave(RNG);
             double prob_sum = ZERO;
-            for(j = 1; j < NPCR; j++) {
+            int j;
+            for(j = 1; j < NPCR; j++){
                 int NR = (int) (nuc->XSS[Loc + 1]);
                 int NE = (int) (nuc->XSS[Loc + 2 + 2 * NR]);
                 double yield = get_erg_func_value(nuc, Loc + 1, erg);
@@ -41,7 +41,7 @@ get_fis_neu_state(particle_status_t *par_status,
 
             j = MIN(j, NPCR);
             int LDAT;
-            int law_type = get_law_type(nuc, RNG, -j, erg, &LDAT);
+            int law_type = get_law_type(nuc, -j, erg, RNG, &LDAT);
             double exit_erg;
             double exit_mu = TWO * get_rand_slave(RNG) - ONE;
             react_by_laws(nuc, RNG, -1, law_type, LDAT, erg, &exit_erg, &exit_mu);
@@ -54,12 +54,13 @@ get_fis_neu_state(particle_status_t *par_status,
         } else
             get_ce_exit_state(par_status, RNG, fis_MT, false);
 
-        for(j = 0; j < 3; j++) {
-            cur_fis_bank->pos[j] = par_status->pos[j];
-            cur_fis_bank->dir[j] = par_status->exit_dir[j];
+        for(int j = 0; j < 3; j++){
+            cur_fixed_bank->pos[j] = par_status->pos[j];
+            cur_fixed_bank->dir[j] = par_status->exit_dir[j];
         }
-        cur_fis_bank->erg = par_status->exit_erg;
-        cur_fis_bank++;
+        cur_fixed_bank->erg = par_status->exit_erg;
+        cur_fixed_bank->wgt = par_status->wgt;
+        cur_fixed_bank++;
     }
     return fis_neu_num;
 }

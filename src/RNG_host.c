@@ -5,8 +5,6 @@
 #include "RNG.h"
 
 
-typedef unsigned long long ULL;
-
 /* -------------------------- private prototypes ---------------------------- */
 static void
 _get_skip_para(RNG_t *RNG,
@@ -34,9 +32,9 @@ get_rand_host(RNG_t *RNG)
 void
 get_rand_seed_host(RNG_t *RNG)
 {
-    static ULL GK;
-    static ULL CK;
-    static ULL iseed;
+    ULL GK = RNG->GK;
+    ULL CK = RNG->CK;
+    ULL iseed = RNG->iseed;
     if(RNG->position_pre != RNG->position - 1) {
         _get_skip_para(RNG, RNG->stride, &GK, &CK);
         ULL GK_temp, CK_temp;
@@ -47,6 +45,9 @@ get_rand_seed_host(RNG_t *RNG)
     RNG->seed = iseed;
     RNG->position_pre = RNG->position;
     RNG->position++;
+    RNG->GK = GK;
+    RNG->CK = CK;
+    RNG->iseed = iseed;
 }
 
 void

@@ -12,18 +12,12 @@
 #include <float.h>
 #include <time.h>
 #include <stdbool.h>
+#include <sys/time.h>
+#include <unistd.h>
 
 
 #ifdef USE_MPI
-#include <mpi.h>
-#endif
-
-#if defined(__linux__) || defined(__linux) || defined(linux)
-#define OS_LINUX
-#elif defined(__WIN32__) || defined(_WIN32) || defined(WIN32)
-#define OS_WIN32
-#elif defined(__APPLE__)
-#define OS_MAC
+#include "mpi.h"
 #endif
 
 #if defined(__cplusplus)
@@ -52,13 +46,12 @@
 #define MAX_FILENAME_LENGTH  50
 
 /* 64个从核，每个从核一次需要400个粒子的数据 */
-#define NUMBERS_PER_TRANS    25600    /* 64*400=25600 */
-#define NUMBERS_SLAVES       64
+#define NUMBER_SLAVES       64
 
 #define KW_NUMBER       10
 #define MAX_KW_LENGTH   15
 
-#define CODE_VERSION  "Beta 0.2.8"
+#define CODE_VERSION  "Beta 0.2.0"
 
 #define WGT_CUTOFF    0.25
 #define EG0_CUTOFF    1.0E-20
@@ -125,7 +118,7 @@ typedef enum SRC_TYPE_T {
     CYL_X,
     CYL_Y,
     CYL_Z
-} SRC_TYPE_Y;
+} SRC_TYPE_T;
 
 typedef struct bank_t {
     double pos[3];
@@ -135,8 +128,8 @@ typedef struct bank_t {
 } bank_t;
 
 /* time elapsed */
-extern time_t start_time;
-extern time_t finish_time;
+extern struct timeval start_time;
+extern struct timeval finish_time;
 
 /* warnings found */
 extern unsigned base_warnings;

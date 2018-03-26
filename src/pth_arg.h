@@ -17,7 +17,6 @@ typedef struct pth_arg_t {
     int src_cnt;
     int bank_cnt;
     int col_cnt;
-    int id;
     double keff_wgt_sum[3];
     double keff_final;
 } pth_arg_t;

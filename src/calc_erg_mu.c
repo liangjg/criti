@@ -7,18 +7,18 @@
 
 
 void
-get_ce_exist_erg_mu(const nuclide_t *nuc,
-                    RNG_t *RNG_slave,
-                    int MT,
-                    double incident_erg,
-                    double *exit_erg_lab,
-                    double *exit_mu_lab)
+calc_erg_mu(const nuclide_t *nuc,
+            RNG_t *RNG,
+            int MT,
+            double incident_erg,
+            double *exit_erg_lab,
+            double *exit_mu_lab)
 {
     double exit_mu_cm = 0;
     double exit_erg_cm;
 
     if(nuc->LAND[MT] >= 0)
-        exit_mu_cm = get_scatt_cosine(nuc, RNG_slave, MT, incident_erg);
+        exit_mu_cm = get_scatt_cosine(nuc, RNG, MT, incident_erg);
 
     if(MT == 2) {
         double aw = nuc->atom_wgt;
@@ -31,8 +31,8 @@ get_ce_exist_erg_mu(const nuclide_t *nuc,
         }
     } else {
         int LawType, LDAT;
-        LawType = get_law_type(nuc, RNG_slave, MT, incident_erg, &LDAT);
-        react_by_laws(nuc, RNG_slave, MT, LawType, LDAT, incident_erg, &exit_erg_cm, &exit_mu_cm);
+        LawType = get_law_type(nuc, RNG, MT, incident_erg, &LDAT);
+        react_by_laws(nuc, RNG, MT, LawType, LDAT, incident_erg, &exit_erg_cm, &exit_mu_cm);
         if(Get_emiss_neu_num(nuc, MT) < 0) {
             double aw = nuc->atom_wgt;
             *exit_erg_lab = exit_erg_cm + (incident_erg + 2 * exit_mu_cm * (aw + 1) * sqrt(incident_erg * exit_erg_cm)) /
@@ -55,6 +55,6 @@ get_ce_exist_erg_mu(const nuclide_t *nuc,
     if(!(*exit_mu_lab >= -1.000001 && *exit_mu_lab <= 1.000001)) {
         printf("exit mu_lab out of range. nuc=%d, MT=%d, Mu=%f\n", nuc->zaid, MT, *exit_mu_lab);
         base_warnings++;
-        *exit_mu_lab = 2 * get_rand_slave(RNG_slave) - ONE;
+        *exit_mu_lab = 2 * get_rand_slave(RNG) - ONE;
     }
 }

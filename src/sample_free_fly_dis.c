@@ -11,14 +11,14 @@ extern acedata_t base_acedata;
 
 double
 sample_free_fly_dis(particle_status_t *par_status,
-                    nuc_xs_t *nuc_cs_slave,
-                    RNG_t *RNG_slave,
+                    nuc_xs_t *nuc_xs,
+                    RNG_t *RNG,
                     bool erg_changed)
 {
     mat_t *mat;
     nuclide_t *nuc, *sab_nuc;
     double nuc_atom_den;
-    nuc_xs_t *cur_nuc_cs;
+    nuc_xs_t *cur_nuc_xs;
     int i;
 
     /***********************************************************************
@@ -48,18 +48,18 @@ sample_free_fly_dis(particle_status_t *par_status,
 
     for(i = 0; i < mat->tot_nuc_num; i++) {
         nuc = mat->nucs[i];
-        cur_nuc_cs = &nuc_cs_slave[nuc->xs];
+        cur_nuc_xs = &nuc_xs[nuc->xs];
         sab_nuc = mat->sab_nuc;
         nuc_atom_den = mat->nuc_atom_den[i];
 
         if(sab_nuc && (sab_nuc->zaid != nuc->zaid || par_status->erg >= mat->sab_nuc_esa))
             sab_nuc = NULL;
 
-        get_nuc_tot_fis_cs(&base_acedata, nuc, sab_nuc, cur_nuc_cs, par_status->erg, par_status->cell_tmp);
+        get_nuc_tot_fis_cs(&base_acedata, nuc, sab_nuc, cur_nuc_xs, RNG, par_status->erg, par_status->cell_tmp);
 
-        par_status->macro_tot_cs += nuc_atom_den * cur_nuc_cs->tot;
-        if(GT_ZERO(cur_nuc_cs->fis))
-            par_status->macro_nu_fis_cs += nuc_atom_den * cur_nuc_cs->fis * cur_nuc_cs->nu;
+        par_status->macro_tot_cs += nuc_atom_den * cur_nuc_xs->tot;
+        if(GT_ZERO(cur_nuc_xs->fis))
+            par_status->macro_nu_fis_cs += nuc_atom_den * cur_nuc_xs->fis * cur_nuc_xs->nu;
     }
 
     if(!GT_ZERO(par_status->macro_tot_cs)) {
@@ -67,5 +67,5 @@ sample_free_fly_dis(particle_status_t *par_status,
         par_status->macro_nu_fis_cs = ZERO;
     }
 END:
-    return -log(get_rand_slave(RNG_slave)) / par_status->macro_tot_cs;
+    return -log(get_rand_slave(RNG)) / par_status->macro_tot_cs;
 }

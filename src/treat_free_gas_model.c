@@ -7,7 +7,7 @@
 
 void
 treat_free_gas_model(particle_status_t *par_status,
-                     RNG_t *RNG_slave,
+                     RNG_t *RNG,
                      double nuc_wgt)
 {
     double atom_tmp;
@@ -24,24 +24,24 @@ treat_free_gas_model(particle_status_t *par_status,
             base_warnings++;
         }
 
-        if(get_rand_slave(RNG_slave) * (Ycn + 1.12837917) > Ycn) {
-            r1 = get_rand_slave(RNG_slave);
-            z2 = -log(r1 * get_rand_slave(RNG_slave));
+        if(get_rand_slave(RNG) * (Ycn + 1.12837917) > Ycn) {
+            r1 = get_rand_slave(RNG);
+            z2 = -log(r1 * get_rand_slave(RNG));
         } else {
             do {
-                double ksi1 = get_rand_slave(RNG_slave);
-                double ksi2 = get_rand_slave(RNG_slave);
+                double ksi1 = get_rand_slave(RNG);
+                double ksi2 = get_rand_slave(RNG);
                 r1 = ksi1 * ksi1;
                 s = r1 + ksi2 * ksi2;
             } while(s > 1);
-            z2 = -r1 * log(s) / s - log(get_rand_slave(RNG_slave));
+            z2 = -r1 * log(s) / s - log(get_rand_slave(RNG));
         }
         z = sqrt(z2);
-        c = 2 * get_rand_slave(RNG_slave) - 1.;
+        c = 2 * get_rand_slave(RNG) - 1.;
         x2 = Ycn * Ycn + z2 - 2 * Ycn * z * c;
-    } while(pow(get_rand_slave(RNG_slave) * (Ycn + z), 2) > x2);
+    } while(pow(get_rand_slave(RNG) * (Ycn + z), 2) > x2);
 
-    rotate_dir(c, par_status->dir, par_status->vel_tgt, RNG_slave);
+    rotate_dir(c, par_status->dir, par_status->vel_tgt, RNG);
 
     for(i = 0; i < 3; ++i) {
         par_status->vel_tgt[i] = z * par_status->vel_tgt[i];

@@ -9,6 +9,8 @@
 
 extern map *base_nucs;
 extern map *base_mats;
+extern nuc_xs_t **base_nuc_xs;
+extern int base_num_threads;
 
 void
 check_ce_ace_block()
@@ -19,7 +21,7 @@ check_ce_ace_block()
     double esa1, esa2;
     int location;
     int *old_addr, old_sz;
-    int j, k;
+    int i, j, k;
     map_iterator *mat_iter = map_get_iter(base_mats);
     map_iterator *nuc_iter = map_get_iter(base_nucs);
 
@@ -88,6 +90,20 @@ check_ce_ace_block()
                         nuc->LDLW[MT_temp] = (int) (nuc->XSS[L10 + j - 1]);
                     }
                 }
+            }
+
+            if(Get_loc_of_LUNR(nuc)) {
+                int num_prob_erg = (int) (nuc->XSS[Get_loc_of_LUNR(nuc)]);
+                int num_prob_tab = (int) (nuc->XSS[Get_loc_of_LUNR(nuc) + 1]);
+                int start_loc = Get_loc_of_LUNR(nuc) + 6;
+                int data_length = num_prob_erg * 6 * num_prob_tab;
+
+                for(i = 0; i < data_length; i++) {
+                    if(nuc->XSS[start_loc + i] < ZERO)
+                        nuc->JXS[23] = 0;
+                }
+                for(i = 0; i < base_num_threads; i++)
+                    base_nuc_xs[i][nuc->xs].ptable = Get_loc_of_LUNR(nuc);
             }
 
             int NE = Get_erg_grid_num(nuc);

@@ -21,10 +21,6 @@ typedef struct {
 
 BEGIN_DECL
 void
-check_IO_file(int,
-              char **);
-
-void
 read_input_blocks(CALC_MODE_T *calc_mode);
 
 void
@@ -71,6 +67,9 @@ output_mat_file();
 
 void
 output_summary();
+
+void
+output_summary_fixed();
 
 void
 output_heading();

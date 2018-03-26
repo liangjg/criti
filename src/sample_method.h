@@ -6,6 +6,7 @@
 #define CRITI_SAMPLE_METHOD_H
 
 #include "RNG.h"
+#include "common.h"
 
 
 BEGIN_DECL

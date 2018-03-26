@@ -48,7 +48,7 @@ read_criticality_block()
 
                 if(strcmp(sub_kw_start, "POPULATION") == 0) {
                     while(!ISNUMBER(*ret)) ret++;
-                    base_criti.cycle_neutron_num = strtol(ret, &end, 10);
+                    base_criti.cycle_neu_num = strtol(ret, &end, 10);
                     ret = end;
                     base_criti.inactive_cycle_num = strtol(ret, &end, 10);
                     ret = end;

@@ -75,6 +75,54 @@ int
 main(int argc,
      char *argv[])
 {
+    char mat_fn[MAX_FILENAME_LENGTH];
+    char tally_fn[MAX_FILENAME_LENGTH];
+    int c;
+    opterr = 0;
+    base_num_threads = NUMBER_SLAVES;
+
+    while((c = getopt(argc, argv, "ho:s:")) != -1) {
+        switch(c) {
+            case 'h': {
+                puts("Usage: RMC [OPTION...] FILE");
+                puts("");
+                return 0;
+            }
+            case 'o': {
+                strcpy(base_IOfp.opt_file_name, optarg);
+                break;
+            }
+            case 's': {
+                base_num_threads = *optarg - '0';
+                break;
+            }
+            default: puts("Unknown option character!");
+        }
+    }
+
+    /* 设置默认的输入和输出文件 */
+    strcpy(base_IOfp.inp_file_name, "inp");
+    if(optind < argc)
+        strcpy(base_IOfp.inp_file_name, argv[optind]);
+    if(!base_IOfp.opt_file_name[0]){
+        strcpy(base_IOfp.opt_file_name, base_IOfp.inp_file_name);
+        strcat(base_IOfp.opt_file_name, ".out");
+    }
+
+    strcpy(mat_fn, base_IOfp.inp_file_name);
+    strcat(mat_fn, ".mat");
+    strcpy(tally_fn, base_IOfp.inp_file_name);
+    strcat(tally_fn, ".tally");
+
+    base_IOfp.inp_fp = fopen(base_IOfp.inp_file_name, "rb");
+    if(!base_IOfp.inp_fp) {
+        printf("%s does not exist.\n", base_IOfp.inp_file_name);
+        return 0;
+    }
+
+    base_IOfp.opt_fp = fopen(base_IOfp.opt_file_name, "rb");
+    base_IOfp.mat_fp = fopen(mat_fn, "wb");
+
     /* set hash functions of every map_type */
     map_type *mat_type = (map_type *) malloc(sizeof(map_type));
     map_type *univ_type = (map_type *) malloc(sizeof(map_type));
@@ -120,20 +168,17 @@ main(int argc,
 
     CALC_MODE_T calc_mode;
 
-    /* check command line arguments */
-    check_IO_file(argc, argv);
-
     /* output heading */
     output_heading();
 
     /* read input file */
     read_input_blocks(&calc_mode);
 
+    /* 进行几何预处理，包括构建邻居栅元等等 */
+    preprocess_geometry();
+
     /* read ACE database */
     read_ace_data();
-
-    /* check ACE data */
-    check_ce_ace_block();
 
     /* 将用户输入的密度转换成程序使用的原子密度 */
     convert_mat_nuc_den();
@@ -141,11 +186,11 @@ main(int argc,
     /* 输出material文件 */
     output_mat_file();
 
-    /* 进行几何预处理，包括构建邻居栅元等等 */
-    preprocess_geometry();
-
     /* 多普勒展宽 */
     doppler_broaden();
+
+    /* check ACE data */
+    check_ce_ace_block();
 
     /* run calculation */
     switch(calc_mode) {
@@ -153,7 +198,7 @@ main(int argc,
             calc_criticality();
             break;
         case FIXEDSOURCE:puts("\n******** Calculation mode: fixed-source ********\n");
-            //            calc_fixed_source();
+            calc_fixed_source();
             break;
         case BURNUP:puts("\n******** Calculation mode: burnup ********\n");
             //            calc_burnup();

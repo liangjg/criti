@@ -5,8 +5,8 @@
 #ifndef CRITI_RNG_H
 #define CRITI_RNG_H
 
-#include "common.h"
 
+typedef unsigned long long ULL;
 
 /* linear congruential RNGs
  * r(k) = S(k)/p
@@ -29,9 +29,15 @@ typedef struct RNG {
     unsigned long long stride;
     int position;
     int position_pre;
+    ULL GK;
+    ULL CK;
+    ULL iseed;
 } RNG_t;
 
-BEGIN_DECL
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 double
 get_rand_slave(RNG_t *RNG);
 
@@ -48,6 +54,8 @@ void
 set_RNG_paras(RNG_t *RNG,
               int type);
 
-END_DECL
+#ifdef __cplusplus
+}
+#endif
 
 #endif //CRITI_RNG_H

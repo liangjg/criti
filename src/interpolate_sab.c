@@ -9,7 +9,7 @@
 void
 interpolate_sab(nuclide_t *nuc,
                 nuclide_t *sab_nuc,
-                nuc_xs_t *cur_nuc_cs,
+                nuc_xs_t *cur_nuc_xs,
                 double erg)
 {
     int min, max;
@@ -45,12 +45,12 @@ interpolate_sab(nuclide_t *nuc,
         }
     }
 
-    int nn = cur_nuc_cs->inter_pos;
-    double kk = cur_nuc_cs->inter_frac;
+    int nn = cur_nuc_xs->inter_pos;
+    double kk = cur_nuc_xs->inter_frac;
     int NE = Get_erg_grid_num(nuc);
-    cur_nuc_cs->abs = nuc->XSS[nn + 2 * NE] + kk * (nuc->XSS[nn + 2 * NE + 1] - nuc->XSS[nn + 2 * NE]);
-    cur_nuc_cs->tot = cur_nuc_cs->abs + SIG_sab_el + SIG_sab_inel;
-    cur_nuc_cs->el = SIG_sab_el;
-    cur_nuc_cs->inel = SIG_sab_inel;
-    cur_nuc_cs->fis = 0;
+    cur_nuc_xs->abs = nuc->XSS[nn + 2 * NE] + kk * (nuc->XSS[nn + 2 * NE + 1] - nuc->XSS[nn + 2 * NE]);
+    cur_nuc_xs->tot = cur_nuc_xs->abs + SIG_sab_el + SIG_sab_inel;
+    cur_nuc_xs->el = SIG_sab_el;
+    cur_nuc_xs->inel = SIG_sab_inel;
+    cur_nuc_xs->fis = 0;
 }

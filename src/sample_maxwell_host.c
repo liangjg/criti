@@ -3,7 +3,6 @@
 //
 
 #include "sample_method.h"
-#include "common.h"
 
 
 double

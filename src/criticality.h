@@ -8,31 +8,18 @@
 #include "common.h"
 #include "particle_status.h"
 #include "RNG.h"
+#include "pth_arg.h"
 
 
-typedef enum {
-    POINT,
-    SLAB,
-    SPHERE
-} KSRC_T;
-
-typedef struct {
-    double pos[3];
-    double dir[3];
-    double erg;
-} fission_bank_t;
-
-typedef struct {
+typedef struct criti_t {
     /* 读取输入文件时的参数 */
     int tot_cycle_num;
     int inactive_cycle_num;
+    int cycle_neu_num;                  /* 当前代要模拟的中子数目 */
 
     /* 初始源参数 */
-    KSRC_T ksrc_type;
+    SRC_TYPE_T ksrc_type;
     double ksrc_para[6];
-
-    int cycle_neutron_num;              /* 当前代要模拟的中子数目 */
-    int current_cycle;
 
     double keff_final;                  /* final keff of each cycle */
     double keff_wgt_sum[3];             /* 0: Collision estimator,  1: Absorption estimator,  2:Track Length estimator */
@@ -45,53 +32,26 @@ typedef struct {
     double keff_covw_std[4];            /* covariance-weighted combined standard deviations */
     double tot_start_wgt;
 
-    int fission_src_cnt[64];            /* 每个从核的源粒子数目 */
-    int fission_bank_cnt[64];           /* 每个从核的裂变粒子数目 */
-    int tot_fission_bank_cnt;           /* 64个从核产生的裂变粒子数总和 */
-
-    fission_bank_t *fission_src[64];    /* 当前代要模拟的中子源，每个中子都从其中抽样产生 */
-    fission_bank_t *fission_bank[64];   /* 存储每一代裂变产生的中子，供下一代模拟用；一般来说，src_sz = bank_sz*/
-
-    unsigned long long tot_col_cnt;     /* 总碰撞次数 */
+    int tot_col_cnt;                    /* 总碰撞次数 */
+    int tot_bank_cnt;
     int tot_transfer_num;               /* 主核总共要向从核传输多少次数据 */
 } criti_t;
 
 BEGIN_DECL
 void
-init_fission_source();
+init_fission_source(pth_arg_t *pth_args);
 
-void
-sample_fission_source(particle_status_t *par_status,
-                      int fis_src_cnt,
-                      fission_bank_t *fis_src_slave);
-
-/*void track_history(particle_status_t *par_status);*/
-
-void
+int
 get_fis_neu_state(particle_status_t *par_status,
-                  RNG_t *RNG_slave,
-                  fission_bank_t *fis_bank_slave,
-                  int *fis_bank_cnt,
+                  bank_t *cur_fis_bank,
+                  RNG_t *RNG,
                   int fis_MT,
-                  double fis_wgt);
+                  double fis_wgt,
+                  double nu);
 
 void
-process_cycle_end();
-
-#define Estimate_keff_col(wgt, macro_mu_fis_xs, macro_tot_xs)  \
-    do{  \
-        keff_wgt_sum_slave[0] += (wgt) * (macro_mu_fis_xs) / (macro_tot_xs);  \
-    } while(0)
-
-#define Estimate_keff_abs(wgt, nu, micro_fis_xs, micro_tot_xs)  \
-    do{  \
-        keff_wgt_sum_slave[1] += (wgt) * (nu) * (micro_fis_xs) / (micro_tot_xs);  \
-    } while(0)
-
-#define Estimate_keff_tl(wgt, macro_mu_fis_xs, tl)  \
-    do{  \
-        keff_wgt_sum_slave[2] += (wgt) * (tl) * (macro_mu_fis_xs);  \
-    } while(0)
+process_cycle_end(int current_cycle,
+                  pth_arg_t *pth_args);
 END_DECL
 
 #endif //CRITI_CRITICALITY_H

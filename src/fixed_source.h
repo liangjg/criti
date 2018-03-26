@@ -17,8 +17,6 @@ typedef struct fixed_src_t {
     double fsrc_erg;
     double tot_start_wgt;
 
-    int tot_bank_cnt;
-
     /* 总碰撞次数 */
     int tot_col_cnt;
 } fixed_src_t;

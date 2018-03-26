@@ -1,24 +1,25 @@
 //
-// Created by xaq on 10/27/17.
+// Created by 叶鑫 on 2018/3/26.
 //
 
-#include "neutron_transport.h"
-#include "criticality.h"
+#include "fixed_source.h"
 #include "geometry.h"
+#include "neutron_transport.h"
 
+
+extern fixed_src_t base_fixed_src;
 
 void
-geometry_tracking(particle_status_t *par_status,
-                  double *keff_wgt_sum,
-                  nuc_xs_t *nuc_xs,
-                  RNG_t *RNG)
+geometry_tracking_fixed(particle_status_t *par_status,
+                        nuc_xs_t *nuc_xs,
+                        RNG_t *RNG)
 {
-    double FFL;
-    double DTB;
+    double FFL;    /* free fly length */
+    double DTB;    /* distance to boundary */
     double distance;
     int iter_cnt = 0;
     bool par_on_surf = false;
-    par_status->surf = 0;
+    par_status->surf = 0;    /* particle is not on surface at hte beginning */
 
     do {
         if(iter_cnt++ > MAX_ITER) {
@@ -50,10 +51,6 @@ geometry_tracking(particle_status_t *par_status,
             distance = FFL;
         }
 
-        keff_wgt_sum[2] += par_status->wgt * par_status->macro_nu_fis_cs * distance;
-
         Fly_by_length(distance);
     } while(par_on_surf);
-
-    keff_wgt_sum[0] += par_status->wgt * par_status->macro_nu_fis_cs / par_status->macro_tot_cs;
 }

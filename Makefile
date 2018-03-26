@@ -44,24 +44,28 @@ build/objs/calc_criticality.c.o \
 build/objs/calc_dist_to_bound.c.o \
 build/objs/calc_dist_to_lat.c.o \
 build/objs/calc_dist_to_surf.c.o \
+build/objs/calc_erg_mu.c.o \
+build/objs/calc_fixed_src.c.o \
 build/objs/calc_surf_sense.c.o \
 build/objs/calc_therm_Gfun.c.o \
 build/objs/cell.c.o \
-build/objs/check_IO_file.c.o \
 build/objs/check_ce_ace_block.c.o \
 build/objs/convert_mat_nuc_den.c.o \
 build/objs/do_calc.c.o \
+build/objs/do_calc_fixed.c.o \
 build/objs/doppler_broaden.c.o \
 build/objs/find_lat_index.c.o \
 build/objs/find_neighbor_cell.c.o \
 build/objs/find_next_cell.c.o \
 build/objs/geometry_tracking.c.o \
-build/objs/get_ce_exist_erg_mu.c.o \
+build/objs/geometry_tracking_fixed.c.o \
 build/objs/get_ce_exit_state.c.o \
 build/objs/get_delayed_nu.c.o \
 build/objs/get_erg_func_value.c.o \
 build/objs/get_exit_state.c.o \
+build/objs/get_exit_state_fixed.c.o \
 build/objs/get_fis_neu_state.c.o \
+build/objs/get_fis_neu_state_fixed.c.o \
 build/objs/get_law_type.c.o \
 build/objs/get_nuc_abs_scatt_cs.c.o \
 build/objs/get_nuc_mt_cs.c.o \
@@ -70,6 +74,7 @@ build/objs/get_scatt_cosine.c.o \
 build/objs/get_surf_norm_vec.c.o \
 build/objs/get_tot_nu.c.o \
 build/objs/global_fun.c.o \
+build/objs/init_external_src.c.o \
 build/objs/init_fission_source.c.o \
 build/objs/interpolate_sab.c.o \
 build/objs/interpolate_xss_table.c.o \
@@ -84,12 +89,14 @@ build/objs/output_ending.c.o \
 build/objs/output_heading.c.o \
 build/objs/output_mat_file.c.o \
 build/objs/output_summary.c.o \
+build/objs/output_summary_fixed.c.o \
 build/objs/particle_is_in_cell.c.o \
 build/objs/preprocess_geometry.c.o \
 build/objs/process_cycle_end.c.o \
 build/objs/react_by_law.c.o \
 build/objs/read_ace_data.c.o \
 build/objs/read_criticality_block.c.o \
+build/objs/read_fixed_src_block.c.o \
 build/objs/read_input_blocks.c.o \
 build/objs/read_surf_block.c.o \
 build/objs/read_universe_block.c.o \
@@ -98,7 +105,7 @@ build/objs/release_resource.c.o \
 build/objs/rotate_dir.c.o \
 build/objs/sample_col_nuclide.c.o \
 build/objs/sample_col_type.c.o \
-build/objs/sample_fission_source.c.o \
+build/objs/sample_col_type_fixed.c.o \
 build/objs/sample_free_fly_dis.c.o \
 build/objs/sample_maxwell_host.c.o \
 build/objs/sample_maxwell_slave.c.o \
@@ -110,7 +117,8 @@ build/objs/trans_univ_dir.c.o \
 build/objs/treat_URR.c.o \
 build/objs/treat_fission.c.o \
 build/objs/treat_free_gas_model.c.o \
-build/objs/treat_implicit_capure.c.o \
+build/objs/treat_implicit_capture.c.o \
+build/objs/treat_implicit_capture_fixed.c.o \
 build/objs/treat_sab_collision_type.c.o \
 build/objs/universe.c.o \
 build/objs/vector.c.o \
@@ -158,6 +166,14 @@ build/objs/calc_dist_to_surf.c.o: src/calc_dist_to_surf.c
 	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/calc_dist_to_surf.c.o   -c src/calc_dist_to_surf.c
 
 
+build/objs/calc_erg_mu.c.o: src/calc_erg_mu.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/calc_erg_mu.c.o  -c src/calc_erg_mu.c
+
+
+build/objs/calc_fixed_src.c.o: src/calc_fixed_src.c
+	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/calc_fixed_src.c.o -c src/calc_fixed_src.c
+
+
 build/objs/calc_surf_sense.c.o: src/calc_surf_sense.c
 	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/calc_surf_sense.c.o   -c src/calc_surf_sense.c
 
@@ -170,10 +186,6 @@ build/objs/cell.c.o: src/cell.c
 	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/cell.c.o   -c src/cell.c
 
 
-build/objs/check_IO_file.c.o: src/check_IO_file.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/check_IO_file.c.o   -c src/check_IO_file.c
-
-
 build/objs/check_ce_ace_block.c.o: src/check_ce_ace_block.c
 	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/check_ce_ace_block.c.o   -c src/check_ce_ace_block.c
 
@@ -184,6 +196,10 @@ build/objs/convert_mat_nuc_den.c.o: src/convert_mat_nuc_den.c
 
 build/objs/do_calc.c.o: src/do_calc.c
 	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/do_calc.c.o   -c src/do_calc.c
+
+
+build/objs/do_calc_fixed.c.o: src/do_calc_fixed.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/do_calc_fixed.c.o -c src/do_calc_fixed.c
 
 
 build/objs/doppler_broaden.c.o: src/doppler_broaden.c
@@ -206,8 +222,8 @@ build/objs/geometry_tracking.c.o: src/geometry_tracking.c
 	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/geometry_tracking.c.o   -c src/geometry_tracking.c
 
 
-build/objs/get_ce_exist_erg_mu.c.o: src/get_ce_exist_erg_mu.c
-	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/get_ce_exist_erg_mu.c.o   -c src/get_ce_exist_erg_mu.c
+build/objs/geometry_tracking_fixed.c.o: src/geometry_tracking_fixed.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/geometry_tracking_fixed.c.o  -c src/geometry_tracking_fixed.c
 
 
 build/objs/get_ce_exit_state.c.o: src/get_ce_exit_state.c
@@ -226,8 +242,16 @@ build/objs/get_exit_state.c.o: src/get_exit_state.c
 	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/get_exit_state.c.o   -c src/get_exit_state.c
 
 
+build/objs/get_exit_state_fixed.c.o: src/get_exit_state_fixed.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/get_exit_state_fixed.c.o   -c src/get_exit_state_fixed.c
+
+
 build/objs/get_fis_neu_state.c.o: src/get_fis_neu_state.c
 	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/get_fis_neu_state.c.o   -c src/get_fis_neu_state.c
+
+
+build/objs/get_fis_neu_state_fixed.c.o: src/get_fis_neu_state_fixed.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/get_fis_neu_state_fixed.c.o   -c src/get_fis_neu_state_fixed.c
 
 
 build/objs/get_law_type.c.o: src/get_law_type.c
@@ -260,6 +284,10 @@ build/objs/get_tot_nu.c.o: src/get_tot_nu.c
 
 build/objs/global_fun.c.o: src/global_fun.c
 	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/global_fun.c.o   -c src/global_fun.c
+
+
+build/objs/init_external_src.c.o: src/init_external_src.c
+	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/init_external_src.c.o  -c src/init_external_src.c
 
 
 build/objs/init_fission_source.c.o: src/init_fission_source.c
@@ -318,6 +346,10 @@ build/objs/output_summary.c.o: src/output_summary.c
 	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/output_summary.c.o   -c src/output_summary.c
 
 
+build/objs/output_summary_fixed.c.o: src/output_summary_fixed.c
+	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o output_summary_fixed.c.o  -c src/output_summary_fixed.c
+
+
 build/objs/particle_is_in_cell.c.o: src/particle_is_in_cell.c
 	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/particle_is_in_cell.c.o   -c src/particle_is_in_cell.c
 
@@ -340,6 +372,10 @@ build/objs/read_ace_data.c.o: src/read_ace_data.c
 
 build/objs/read_criticality_block.c.o: src/read_criticality_block.c
 	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/read_criticality_block.c.o   -c src/read_criticality_block.c
+
+
+build/objs/read_fixed_src_block.c.o: src/read_fixed_src_block.c
+	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/read_fixed_src_block.c.o  -c src/read_fixed_src_block.c
 
 
 build/objs/read_input_blocks.c.o: src/read_input_blocks.c
@@ -374,8 +410,8 @@ build/objs/sample_col_type.c.o: src/sample_col_type.c
 	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/sample_col_type.c.o   -c src/sample_col_type.c
 
 
-build/objs/sample_fission_source.c.o: src/sample_fission_source.c
-	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/sample_fission_source.c.o   -c src/sample_fission_source.c
+build/objs/sample_col_type_fixed.c.o: src/sample_col_type_fixed.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/sample_col_type_fixed.c.o  -c src/sample_col_type_fixed.c
 
 
 build/objs/sample_free_fly_dis.c.o: src/sample_free_fly_dis.c
@@ -422,8 +458,12 @@ build/objs/treat_free_gas_model.c.o: src/treat_free_gas_model.c
 	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/treat_free_gas_model.c.o   -c src/treat_free_gas_model.c
 
 
-build/objs/treat_implicit_capure.c.o: src/treat_implicit_capure.c
-	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/treat_implicit_capure.c.o   -c src/treat_implicit_capure.c
+build/objs/treat_implicit_capture.c.o: src/treat_implicit_capture.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/treat_implicit_capture.c.o   -c src/treat_implicit_capture.c
+
+
+build/objs/treat_implicit_capture_fixed.c.o: src/treat_implicit_capture_fixed.c
+	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/treat_implicit_capture_fixed.c.o  -c src/treat_implicit_capture_fixed.c
 
 
 build/objs/treat_sab_collision_type.c.o: src/treat_sab_collision_type.c

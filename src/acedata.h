@@ -30,13 +30,15 @@ void
 get_nuc_tot_fis_cs(acedata_t *obj,
                    nuclide_t *nuc,
                    nuclide_t *sab_nuc,
-                   nuc_xs_t *cur_nuc_cs,
+                   nuc_xs_t *cur_nuc_xs,
+                   RNG_t *RNG,
                    double erg,
                    double cell_tmp);
 
 void
 get_nuc_abs_scatt_cs(acedata_t *obj,
                      nuclide_t *nuc,
+                     nuc_xs_t *cur_nuc_xs,
                      particle_status_t *par_status);
 
 double
@@ -48,33 +50,39 @@ get_nuc_mt_cs(nuclide_t *nuc,
 void
 interpolate_sab(nuclide_t *nuc,
                 nuclide_t *sab_nuc,
-                nuc_xs_t *cur_nuc_cs,
+                nuc_xs_t *cur_nuc_xs,
                 double erg);
 
 void
-get_ce_exist_erg_mu(const nuclide_t *nuc,
-                    RNG_t *RNG_slave,
-                    int MT,
-                    double incident_erg,
-                    double *exit_erg_lab,
-                    double *exit_mu_lab);
+treat_URR(nuclide_t *nuc,
+          nuc_xs_t *cur_nuc_xs,
+          RNG_t *RNG,
+          double erg);
+
+void
+calc_erg_mu(const nuclide_t *nuc,
+            RNG_t *RNG,
+            int MT,
+            double incident_erg,
+            double *exit_erg_lab,
+            double *exit_mu_lab);
 
 double
 get_scatt_cosine(const nuclide_t *nuc,
-                 RNG_t *RNG_slave,
+                 RNG_t *RNG,
                  int MT,
                  double incident_erg);
 
 int
 get_law_type(const nuclide_t *nuc,
-             RNG_t *RNG_slave,
+             RNG_t *RNG,
              int MT,
              double incident_erg,
              int *LDAT);
 
 void
 react_by_laws(const nuclide_t *nuc,
-              RNG_t *RNG_slave,
+              RNG_t *RNG,
               int MT,
               int law_type,
               int LDAT,
@@ -85,7 +93,7 @@ react_by_laws(const nuclide_t *nuc,
 void
 treat_sab_colli_type(const nuclide_t *sab_nuc,
                      particle_status_t *par_status,
-                     RNG_t *RNG_slave);
+                     RNG_t *RNG);
 
 double
 get_total_nu(nuclide_t *nuc,
