@@ -38,7 +38,7 @@ treat_fission(particle_status_t *par_status,
               RNG_t *RNG,
               double *keff_wgt_sum,
               bank_t *bank,
-              int *bank_cnt,
+              int *cur_bank_cnt,
               double keff_final);
 
 void

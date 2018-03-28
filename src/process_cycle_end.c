@@ -31,8 +31,7 @@ process_cycle_end(int current_cycle,
                   pth_arg_t *pth_args)
 {
     int i, j;
-    int remainder;
-    int quotient;
+    int quotient, remainder;
 
     for(i = 0; i < base_num_threads; i++) {
         base_criti.tot_col_cnt += pth_args[i].col_cnt;
@@ -68,7 +67,7 @@ process_cycle_end(int current_cycle,
     for(i = 0; i < remainder; i++)
         pth_args[i].src_cnt++;
 
-    for(i = 0; i < base_num_threads; i++) {
+    for(i = 0; i < base_num_threads - 1; i++) {
         bank_t *dest, *src;
         int diff = pth_args[i].bank_cnt - pth_args[i].src_cnt;
         if(diff > 0) {
@@ -86,12 +85,11 @@ process_cycle_end(int current_cycle,
             memcpy(pth_args[i + 1].src, src, pth_args[i + 1].bank_cnt * sizeof(bank_t));
         }
 
-        pth_args[i].bank_cnt = 0;
-        pth_args[i].col_cnt = 0;
         pth_args[i].keff_final = base_criti.keff_final;
-        for(j = 0; j < 3; j++)
-            pth_args[i].keff_wgt_sum[j] = ZERO;
     }
+
+    /* 处理最后一个pth_arg */
+    pth_args[base_num_threads - 1].keff_final = base_criti.keff_final;
 
     /* reset criticality */
     for(i = 0; i < 3; i++)

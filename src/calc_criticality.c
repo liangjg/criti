@@ -21,7 +21,7 @@ calc_criticality()
     int cyc, i, j, skip_src;
     pth_arg_t *pth_args;
 
-    pth_args = malloc(base_num_threads * sizeof(pth_arg_t));
+    pth_args = malloc((base_num_threads + 1) * sizeof(pth_arg_t));
 
     /* 初始化裂变源 */
     init_fission_source(pth_args);
@@ -31,14 +31,16 @@ calc_criticality()
     for(cyc = 1; cyc <= base_criti.tot_cycle_num; cyc++) {
         memcpy(&pth_args[0].RNG, &base_RNG, sizeof(RNG_t));
 
-        for(i = 1; i < base_num_threads; i++) {
-            athread_create(i - 1, do_calc, &pth_args[i - 1]);
-            memcpy(&pth_args[i].RNG, &pth_args[i].RNG, sizeof(RNG_t));
+        for(i = 0; i < base_num_threads; i++) {
+            athread_create(i, do_calc, &pth_args[i]);
+            memcpy(&pth_args[i + 1].RNG, &pth_args[i].RNG, sizeof(RNG_t));
 
-            skip_src = pth_args[i - 1].src_cnt;
+            skip_src = pth_args[i].src_cnt;
             for(j = 0; j < skip_src; j++)
-                get_rand_seed_host(&pth_args[i].RNG);
+                get_rand_seed_host(&pth_args[i + 1].RNG);
         }
+
+        /* do_calc_master(&pth_arg[base_num_threads]); */
 
         for(i = 0; i < base_num_threads; i++)
             athread_wait(i);

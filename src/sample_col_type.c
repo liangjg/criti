@@ -13,8 +13,12 @@ sample_col_type(particle_status_t *par_status,
     if(par_status->sab_nuc) return 0;
 
     int i;
-    nuclide_t *nuc = par_status->nuc;
-    nuc_xs_t *cur_nuc_xs = par_status->nuc_xs;
+    nuclide_t *nuc;
+    nuc_xs_t *cur_nuc_xs;
+
+    nuc = par_status->nuc;
+    cur_nuc_xs = par_status->nuc_xs;
+
     while(1) {
         if(get_rand_slave(RNG) * (cur_nuc_xs->el + cur_nuc_xs->inel) - cur_nuc_xs->el <= ZERO)
             return 2;

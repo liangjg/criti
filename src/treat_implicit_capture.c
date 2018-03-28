@@ -15,7 +15,7 @@ treat_implicit_capture(particle_status_t *par_status,
     nuc_xs_t *cur_nuc_xs;
 
     cur_nuc_xs = par_status->nuc_xs;
-    par_status->wgt *= (1 - (cur_nuc_xs->abs + cur_nuc_xs->fis) / cur_nuc_xs->tot);
+    par_status->wgt *= (ONE - (cur_nuc_xs->abs + cur_nuc_xs->fis) / cur_nuc_xs->tot);
 
     if(par_status->wgt > WGT_CUTOFF) return;
 

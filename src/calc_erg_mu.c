@@ -35,16 +35,15 @@ calc_erg_mu(const nuclide_t *nuc,
         react_by_laws(nuc, RNG, MT, LawType, LDAT, incident_erg, &exit_erg_cm, &exit_mu_cm);
         if(Get_emiss_neu_num(nuc, MT) < 0) {
             double aw = nuc->atom_wgt;
-            *exit_erg_lab = exit_erg_cm + (incident_erg + 2 * exit_mu_cm * (aw + 1) * sqrt(incident_erg * exit_erg_cm)) /
-                                          (((1 + aw) * (1 + aw)));
-            *exit_mu_lab = exit_mu_cm * sqrt(exit_erg_cm / *exit_erg_lab) + sqrt(incident_erg / *exit_erg_lab) / (aw + 1);
+            *exit_erg_lab = exit_erg_cm + (incident_erg + TWO * exit_mu_cm * (aw + ONE) * sqrt(incident_erg * exit_erg_cm)) / (((ONE + aw) * (ONE + aw)));
+            *exit_mu_lab = exit_mu_cm * sqrt(exit_erg_cm / *exit_erg_lab) + sqrt(incident_erg / *exit_erg_lab) / (aw + ONE);
         } else {
             *exit_erg_lab = exit_erg_cm;
             *exit_mu_lab = exit_mu_cm;
         }
     }
 
-    if(*exit_erg_lab == 0)  // occasionally with MT = 2
+    if(*exit_erg_lab == 0)
         *exit_erg_lab = ZERO_ERG;
     else if(!(*exit_erg_lab > 0 && *exit_erg_lab < 100)) {
         printf("exit erg_lab out of range. nuc=%d, MT=%d, Erg=%9.6E\n", nuc->zaid, MT, *exit_erg_lab);
@@ -55,6 +54,6 @@ calc_erg_mu(const nuclide_t *nuc,
     if(!(*exit_mu_lab >= -1.000001 && *exit_mu_lab <= 1.000001)) {
         printf("exit mu_lab out of range. nuc=%d, MT=%d, Mu=%f\n", nuc->zaid, MT, *exit_mu_lab);
         base_warnings++;
-        *exit_mu_lab = 2 * get_rand_slave(RNG) - ONE;
+        *exit_mu_lab = TWO * get_rand_slave(RNG) - ONE;
     }
 }

@@ -10,8 +10,11 @@ void
 get_exit_state(particle_status_t *par_status,
                RNG_t *RNG)
 {
-    nuclide_t *nuc = par_status->nuc;
-    nuclide_t *sab_nuc = par_status->sab_nuc;
+    nuclide_t *nuc;
+    nuclide_t *sab_nuc;
+
+    nuc = par_status->nuc;
+    sab_nuc = par_status->sab_nuc;
 
     if(sab_nuc) {
         treat_sab_colli_type(sab_nuc, par_status, RNG);

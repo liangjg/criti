@@ -52,15 +52,6 @@ extern universe_t *root_universe;
 void
 _do_calc(int neu);
 
-/*extern int numbers_per_slave[NUMBER_SLAVES];
- *extern unsigned int offset_get_per_slave[NUMBER_SLAVES];
- *extern unsigned int offset_put_per_slave[NUMBER_SLAVES];
- *
- *extern double keff_wgt_sum[NUMBER_SLAVES][3];
- *extern RNG_t RNGs[NUMBER_SLAVES];
- *extern int col_cnt[NUMBER_SLAVES];
- *extern nuc_xs_t **base_nuc_xs;*/
-
 void
 do_calc(void *args)
 {
@@ -84,15 +75,15 @@ do_calc(void *args)
     quotient = tot_neu / SZ_SRC;
     remainder = tot_neu - quotient * SZ_SRC;
 
-    /* 从主核处取得上一代的keff */
+    /* 上一代的keff */
     athread_get(PE_MODE, &pth_arg->keff_final, &keff_final, sizeof(double), &get_reply, 0, 0, 0);
     while(get_reply != 2);
 
-    /* 从主核处取得随机数发生器RNG */
+    /* 随机数发生器RNG */
     athread_get(PE_MODE, &pth_arg->RNG, &RNG, sizeof(RNG_t), &get_reply, 0, 0, 0);
     while(get_reply != 3);
 
-    /* 从主核处取得nuc_cs地址 */
+    /* nuc_xs地址 */
     athread_get(PE_MODE, &pth_arg->nuc_xs, &nuc_xs, sizeof(nuc_xs_t *), &get_reply, 0, 0, 0);
     while(get_reply != 4);
 
@@ -115,7 +106,7 @@ do_calc(void *args)
 
         /* 写回部分计算结果，主要是bank中的数据 */
         athread_put(PE_MODE, bank, &pth_arg->bank[bank_cnt], cur_bank_cnt * sizeof(bank_t), &put_reply, 0, 0);
-        while(put_reply != time + 1);
+        while(put_reply != 1 + time);
 
         bank_cnt += cur_bank_cnt;
         cur_bank_cnt = 0;
@@ -181,9 +172,6 @@ _do_calc(int neu)
         return;
 
     cell = par_status.cell;
-    if(cell->imp == 0)
-        return;
-
     par_status.mat = cell->mat;
     par_status.cell_tmp = cell->tmp;
 
@@ -203,6 +191,7 @@ _do_calc(int neu)
         treat_fission(&par_status, &RNG, keff_wgt_sum, bank, &cur_bank_cnt, keff_final);
 
         /* implicit capture(including fission) */
+        /* TODO: 把treat_implicit_capture_fixed一并考虑进来 */
         treat_implicit_capture(&par_status, &RNG);
         if(par_status.is_killed) break;
 

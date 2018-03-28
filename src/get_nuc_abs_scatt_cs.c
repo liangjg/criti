@@ -28,7 +28,7 @@ get_nuc_abs_scatt_cs(acedata_t *obj,
     cur_nuc_xs->inel = intplt_by_pos_fr(nuc->inel_XSS, interp_pos, interp_frac);
 
     /* 多普勒展宽吸收截面和散射截面 */
-    if(nuc->atom_wgt * erg <= 500.0 * nuc->broaden_tmp) { // thermal adjustment
+    if(nuc->atom_wgt * erg <= 500.0 * nuc->broaden_tmp) {
         double a2, a, b;
         int bi;
         a2 = nuc->atom_wgt * erg / nuc->broaden_tmp;

@@ -48,8 +48,7 @@ treat_free_gas_model(particle_status_t *par_status,
         par_status->dir_vel[i] = Ycn * par_status->dir[i] - par_status->vel_tgt[i];
     }
 
-    double length = ONE / sqrt(SQUARE(par_status->dir_vel[0]) +
-                               SQUARE(par_status->dir_vel[1]) + SQUARE(par_status->dir_vel[2]));
+    double length = ONE / sqrt(SQUARE(par_status->dir_vel[0]) + SQUARE(par_status->dir_vel[1]) + SQUARE(par_status->dir_vel[2]));
     par_status->dir_vel[0] *= length;
     par_status->dir_vel[1] *= length;
     par_status->dir_vel[2] *= length;

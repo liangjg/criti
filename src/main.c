@@ -84,7 +84,7 @@ main(int argc,
     while((c = getopt(argc, argv, "ho:s:")) != -1) {
         switch(c) {
             case 'h': {
-                puts("Usage: RMC [OPTION...] FILE");
+                puts("Usage: criti [OPTION...] FILE");
                 puts("");
                 return 0;
             }
@@ -96,7 +96,12 @@ main(int argc,
                 base_num_threads = *optarg - '0';
                 break;
             }
-            default: puts("Unknown option character!");
+            default: {
+                puts("Unknown option character!");
+                puts("Usage: criti [OPTION...] FILE");
+                puts("");
+                return 0;
+            }
         }
     }
 
@@ -120,7 +125,7 @@ main(int argc,
         return 0;
     }
 
-    base_IOfp.opt_fp = fopen(base_IOfp.opt_file_name, "rb");
+    base_IOfp.opt_fp = fopen(base_IOfp.opt_file_name, "wb");
     base_IOfp.mat_fp = fopen(mat_fn, "wb");
 
     /* set hash functions of every map_type */
