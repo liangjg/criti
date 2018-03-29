@@ -4,7 +4,8 @@
 
 #include "IO_releated.h"
 
-
+struct timeval start_time;
+struct timeval finish_time;
 extern IOfp_t base_IOfp;
 
 void

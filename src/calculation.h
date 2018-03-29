@@ -13,7 +13,7 @@ void
 calc_criticality();
 
 void
-calc_fixed_source();
+calc_fixed_src();
 
 void
 calc_burnup();

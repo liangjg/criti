@@ -347,7 +347,7 @@ build/objs/output_summary.c.o: src/output_summary.c
 
 
 build/objs/output_summary_fixed.c.o: src/output_summary_fixed.c
-	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o output_summary_fixed.c.o  -c src/output_summary_fixed.c
+	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/output_summary_fixed.c.o  -c src/output_summary_fixed.c
 
 
 build/objs/particle_is_in_cell.c.o: src/particle_is_in_cell.c

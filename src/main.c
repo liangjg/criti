@@ -203,7 +203,7 @@ main(int argc,
             calc_criticality();
             break;
         case FIXEDSOURCE:puts("\n******** Calculation mode: fixed-source ********\n");
-            calc_fixed_source();
+            calc_fixed_src();
             break;
         case BURNUP:puts("\n******** Calculation mode: burnup ********\n");
             //            calc_burnup();

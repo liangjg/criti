@@ -12,8 +12,12 @@ sample_col_type_fixed(particle_status_t *par_status,
 {
     if(par_status->sab_nuc) return 0;
 
-    nuclide_t *nuc = par_status->nuc;
-    nuc_xs_t *cur_nuc_xs = par_status->nuc_xs;
+    int i;
+    nuclide_t *nuc;
+    nuc_xs_t *cur_nuc_xs;
+
+    nuc = par_status->nuc;
+    cur_nuc_xs = par_status->nuc_xs;
 
     /* fission is treated as inelastic scattering */
     cur_nuc_xs->inel += cur_nuc_xs->fis;
@@ -36,7 +40,7 @@ sample_col_type_fixed(particle_status_t *par_status,
                 ff = cur_nuc_xs->fis / cf;
         }
 
-        for(int i = 1; i <= MT_num; i++){
+        for(i = 1; i <= MT_num; i++){
             int MT = (int) (nuc->XSS[Loc + i]);
             double cs;
             if(MT == 18 || MT == 19 || MT == 20 || MT == 21 || MT == 38){
