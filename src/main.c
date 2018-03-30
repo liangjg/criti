@@ -198,6 +198,17 @@ main(int argc,
     check_ce_ace_block();
 
     /* run calculation */
+#ifdef KSRC    /* 临界计算功能 */
+    puts("\n******** Calculation mode: criticality ********\n");
+    calc_criticality();
+#endif
+
+#ifdef FSRC    /* 固定源计算功能 */
+    puts("\n******** Calculation mode: fixed-source ********\n");
+    calc_fixed_src();
+#endif
+
+    /*
     switch(calc_mode) {
         case CRITICALITY:puts("\n******** Calculation mode: criticality ********\n");
             calc_criticality();
@@ -214,6 +225,7 @@ main(int argc,
         default:puts("\n******** Unknown calculation mode. ********\n");
             break;
     }
+    */
 
     /* output ending */
     output_ending();

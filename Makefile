@@ -2,37 +2,48 @@
 # Set environment variables for the build.
 
 # Set the target
-TARGET = build/bin/criti
+KSRC_TARGET := build/bin/criti-ksrc
+FSRC_TARGET := build/bin/criti-fsrc
 
 # Set the C host compiler
-CC_HOST = sw5cc -host
+CC_HOST := sw5cc -host
 
 # Set the C slave compiler
-CC_SLAVE = sw5cc -slave
+CC_SLAVE := sw5cc -slave
 
 # Set the CXX host compiler
-CXX_HOST = mpiCC
+CXX_HOST := mpiCC
 
 # Set the Linker
-LINKER = mpiCC
+LINKER := mpiCC
 
 # Set the C compiler flags
-C_FLAGS = -Wall -Wextra -pedantic -Wno-pointer-arith -O0 -g
+C_FLAGS := -Wall -Wextra -pedantic -Wno-pointer-arith -O0 -g
 
 # Set the C defines
-C_DEFINES = -DGIT_SHA1=\"7905542bd4146a3df5b2881f779075ff067e6867\" -DUNIX
+C_DEFINES := -DUNIX
 
 # Set the C header files search path
-C_INCLUDES = 
+C_INCLUDES :=
 
 # Set the CXX compiler flags
-CXX_FLAGS = -Wall -Wextra -pedantic -Wno-pointer-arith -O0 -g
+CXX_FLAGS := -Wall -Wextra -pedantic -Wno-pointer-arith -O0 -g
 
 # Set the CXX defines
-CXX_DEFINES = -DGIT_SHA1=\"7905542bd4146a3df5b2881f779075ff067e6867\" -DUNIX
+CXX_DEFINES := -DUNIX
 
 # Set the CXX header files search path
-CXX_INCLUDES = 
+CXX_INCLUDES :=
+
+# # Debug build settings
+# DBG_C_FLAGS = $(C_FLAGS) -O0 -g
+# DBG_CXX_FLAGS = $(CXX_FLAGS) -O0 -g
+# DBG_TARGET = $(TARGET)
+
+# # Release build settings
+# REL_C_FLAGS = $(C_FLAGS) -O3 -DNDEBUG
+# REL_CXX_FLAGS = $(CXX_FLAGS) -O3 -DNDEBUG
+# REL_TARGET = $(TARGET)
 
 # Object files for target criti
 criti_OBJECTS = \
@@ -40,19 +51,15 @@ build/objs/RNG_host.c.o \
 build/objs/RNG_slave.c.o \
 build/objs/build_neighbor_list.c.o \
 build/objs/calc_col_nuc_cs.c.o \
-build/objs/calc_criticality.c.o \
 build/objs/calc_dist_to_bound.c.o \
 build/objs/calc_dist_to_lat.c.o \
 build/objs/calc_dist_to_surf.c.o \
 build/objs/calc_erg_mu.c.o \
-build/objs/calc_fixed_src.c.o \
 build/objs/calc_surf_sense.c.o \
 build/objs/calc_therm_Gfun.c.o \
 build/objs/cell.c.o \
 build/objs/check_ce_ace_block.c.o \
 build/objs/convert_mat_nuc_den.c.o \
-build/objs/do_calc.c.o \
-build/objs/do_calc_fixed.c.o \
 build/objs/doppler_broaden.c.o \
 build/objs/find_lat_index.c.o \
 build/objs/find_neighbor_cell.c.o \
@@ -126,12 +133,42 @@ build/objs/read_cell_card.cpp.o \
 build/objs/read_material_block.cpp.o
 
 
+# KSRC objects
+KSRC_OBJECTS = \
+build/objs/calc_criticality.c.o \
+build/objs/do_calc.c.o
+
+
+# FSRC objects
+FSRC_OBJECTS = \
+build/objs/calc_fixed_src.c.o \
+build/objs/do_calc_fixed.c.o
+
+
 # External object files for target criti
 criti_EXTERNAL_OBJECTS =
 
 
-$(TARGET): $(criti_OBJECTS)
-	$(LINKER) $(criti_OBJECTS) -lm_slave -o $(TARGET)
+.PHONY: all clean ksrc fsrc
+
+
+# Default build
+all: ksrc
+
+ksrc: C_DEFINES += -DKSRC
+ksrc: CXX_DEFINES += -DKSRC
+ksrc: $(KSRC_TARGET)
+
+$(KSRC_TARGET): $(criti_OBJECTS) $(KSRC_OBJECTS)
+	$(LINKER) $(criti_OBJECTS) $(KSRC_OBJECTS) -lm_slave -o $@
+
+
+fsrc: C_DEFINES += -DFSRC
+fsrc: CXX_DEFINES += -DFSRC
+fsrc: $(FSRC_TARGET)
+
+$(FSRC_TARGET): $(criti_OBJECTS) $(FSRC_OBJECTS)
+	$(LINKER) $(criti_OBJECTS) $(FSRC_OBJECTS) -lm_slave -o $@
 
 
 build/objs/RNG_host.c.o: src/RNG_host.c
@@ -488,4 +525,3 @@ build/objs/read_material_block.cpp.o: src/read_material_block.cpp
 
 clean:
 	-rm -rf $(TARGET) $(criti_OBJECTS)
-.PHONY : clean
