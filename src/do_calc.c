@@ -121,7 +121,7 @@ do_calc(void *args)
             _do_calc(neu);
         }
 
-        athread_put(PE_MODE, bank, &pth_arg->bank[bank_cnt], cur_bank_cnt * sizeof(bank_t), &get_reply, 0, 0);
+        athread_put(PE_MODE, bank, &pth_arg->bank[bank_cnt], cur_bank_cnt * sizeof(bank_t), &put_reply, 0, 0);
         while(put_reply != 1 + quotient);
 
         bank_cnt += cur_bank_cnt;
@@ -137,11 +137,11 @@ do_calc(void *args)
     while(put_reply != 2);
 
     athread_put(PE_MODE, &col_cnt, &pth_arg->col_cnt, sizeof(int), &put_reply, 0, 0);
-    while(put_reply != 4);
+    while(put_reply != 3);
 
     if(my_id == 63) {
         athread_put(PE_MODE, &RNG, &pth_arg->RNG, sizeof(RNG_t), &put_reply, 0, 0);
-        while(put_reply != 5);
+        while(put_reply != 4);
     }
 }
 
