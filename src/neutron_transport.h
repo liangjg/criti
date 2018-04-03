@@ -18,6 +18,11 @@ geometry_tracking(particle_status_t *par_status,
                   nuc_xs_t *nuc_xs,
                   RNG_t *RNG);
 
+void
+geometry_tracking_fixed(particle_status_t *par_status,
+                        nuc_xs_t *nuc_xs,
+                        RNG_t *RNG);
+
 double
 sample_free_fly_dis(particle_status_t *par_status,
                     nuc_xs_t *nuc_xs,

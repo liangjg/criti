@@ -7,8 +7,6 @@
 #include "neutron_transport.h"
 
 
-extern fixed_src_t base_fixed_src;
-
 void
 geometry_tracking_fixed(particle_status_t *par_status,
                         nuc_xs_t *nuc_xs,

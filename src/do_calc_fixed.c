@@ -38,10 +38,11 @@ __thread_local int bank_cnt, cur_bank_cnt;
 __thread_local particle_status_t par_status;
 
 /* 每个从核在本代模拟的粒子发生的总碰撞次数 */
-__thread_local int col_cnt;
+__thread_local int col_cnt, cur_col_cnt;
 
 extern double base_start_wgt;
 extern universe_t *root_universe;
+extern int base_num_threads;
 
 void
 _do_calc_fixed(int neu);
@@ -75,6 +76,10 @@ do_calc_fixed(void *args)
     athread_get(PE_MODE, &pth_arg->nuc_xs, &nuc_xs, sizeof(nuc_xs_t *), &get_reply, 0, 0, 0);
     while(get_reply != 3);
 
+    /* 初始化部分变量 */
+    bank_cnt = 0;
+    col_cnt = 0;
+
     for(time = 0; time < quotient; time++) {
         athread_get(PE_MODE, &pth_arg->src[time * SZ_SRC], src, SZ_SRC * sizeof(bank_t), &get_reply, 0, 0, 0);
         while(get_reply != 4 + time);
@@ -104,6 +109,9 @@ _do_calc_fixed(int neu)
     cell_t *cell;
     bank_t *cur_src;
 
+    if(neu % 100 == 0 && my_id == 0)
+        printf("neutron: %d\n", neu * base_num_threads);
+
     get_rand_seed_slave(&RNG);
 
     /* 抽样要输运的粒子 */
@@ -124,13 +132,11 @@ _do_calc_fixed(int neu)
         return;
 
     cell = par_status.cell;
-    if(cell->imp == 0)
-        return;
-
     par_status.mat = cell->mat;
     par_status.cell_tmp = cell->tmp;
 
     while(1) {
+        cur_col_cnt = 0;
         do {
             geometry_tracking_fixed(&par_status, nuc_xs, &RNG);
             if(par_status.is_killed) break;
@@ -158,7 +164,8 @@ _do_calc_fixed(int neu)
             par_status.dir[0] *= length;
             par_status.dir[1] *= length;
             par_status.dir[2] *= length;
-        } while(++col_cnt < MAX_ITER);
+        } while(++cur_col_cnt < MAX_ITER);
+        col_cnt += cur_col_cnt;
 
         if(bank_cnt) {
             memset(&par_status, 0x0, sizeof(par_status));
@@ -177,9 +184,6 @@ _do_calc_fixed(int neu)
                 continue;
 
             cell = par_status.cell;
-            if(cell->imp == 0)
-                continue;
-
             par_status.mat = cell->mat;
             par_status.cell_tmp = cell->tmp;
         } else break;

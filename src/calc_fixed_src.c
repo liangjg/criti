@@ -19,29 +19,36 @@ calc_fixed_src()
     int cyc, i, j, skip_src;
     pth_arg_t *pth_args;
 
-    pth_args = malloc(base_num_threads * sizeof(pth_arg_t));
+    pth_args = malloc((base_num_threads + 1) * sizeof(pth_arg_t));
 
     init_external_src(pth_args);
 
-    for(i = 0; i < base_num_threads; i++) {
-        athread_create(i - 1, do_calc_fixed, &pth_args[i - 1]);
-        memcpy(&pth_args[i].RNG, &pth_args[i - 1].RNG, sizeof(RNG_t));
+    memcpy(&pth_args[0].RNG, &base_RNG, sizeof(RNG_t));
 
-        skip_src = pth_args[i - 1].src_cnt;
+    athread_init();
+
+    for(i = 0; i < base_num_threads; i++) {
+        athread_create(i, do_calc_fixed, &pth_args[i]);
+        memcpy(&pth_args[i + 1].RNG, &pth_args[i].RNG, sizeof(RNG_t));
+
+        skip_src = pth_args[i].src_cnt;
         for(j = 0; j < skip_src; j++)
-            get_rand_seed_host(&pth_args[i].RNG);
+            get_rand_seed_host(&pth_args[i + 1].RNG);
     }
 
     for(i = 0; i < base_num_threads; i++)
         athread_wait(i);
 
-    output_summary_fixed();
+    printf("neutron: %d\n", base_fixed_src.tot_neu_num);
 
     athread_halt();
 
     for(i = 0; i < base_num_threads; i++) {
+        base_fixed_src.tot_col_cnt += pth_args[i].col_cnt;
         free(pth_args[i].src);
         free(pth_args[i].bank);
     }
     free(pth_args);
+
+    output_summary_fixed();
 }

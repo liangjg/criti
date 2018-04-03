@@ -25,11 +25,6 @@ BEGIN_DECL
 void
 init_external_src(pth_arg_t *pth_args);
 
-void
-geometry_tracking_fixed(particle_status_t *par_status,
-                        nuc_xs_t *nuc_xs,
-                        RNG_t *RNG);
-
 int
 get_fis_neu_state_fixed(particle_status_t *par_status,
                         bank_t *cur_fixed_bank,
