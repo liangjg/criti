@@ -15,8 +15,8 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules)
 # Command line options
 #===============================================================================
 option(Pthread "Enable POSIX thread parallelism" ON)
-option(MPI     "Enable MPI parallelism"          OFF)
-option(pg      "Enable profile with gprof"       OFF)
+option(MPI "Enable MPI parallelism" OFF)
+option(pg "Enable profile with gprof" OFF)
 
 #===============================================================================
 # Enable C++ 11 standard
@@ -63,13 +63,14 @@ endif()
 
 if(MPI)
     add_definitions(-DUSE_MPI)
-    find_package(MPI REQUIRED)
-    include_directories(${MPI_C_INCLUDE_PATH})
+    #    find_package(MPI REQUIRED)
+    #    include_directories(${MPI_C_INCLUDE_PATH})
 endif()
 
 if(Pthread)
     add_definitions(-DUSE_PTHREAD)
-    set(COMPILE_FLAGS "${COMPILE_FLAGS} -pthread")
+    set(THREADS_PREFER_PTHREAD_FLAG ON)
+    find_package(Threads REQUIRED)
 endif()
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${COMPILE_FLAGS} ${IGNORED_WARNINGS}")
@@ -122,6 +123,9 @@ file(GLOB SRC_CPP ${CMAKE_SOURCE_DIR}/src/*.cpp)
 
 add_executable(criti ${SRC_C} ${SRC_CPP} ${SRC_H})
 
-if(MPI)
-    target_link_libraries(criti ${MPI_C_LIBRARIES})
+#if(MPI)
+#    target_link_libraries(criti ${MPI_C_LIBRARIES})
+#endif()
+if(Pthread)
+    target_link_libraries(criti Threads::Threads)
 endif()
