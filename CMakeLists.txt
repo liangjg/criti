@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.2)
-project(criti C CXX)
+project(criti
+        VERSION 0.4.4
+        LANGUAGES C CXX)
 
 # Check build directory
 if("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
@@ -102,6 +104,14 @@ message(STATUS "MPI parallel: turned ${MPI}")
 
 if(${UNIX})
     add_definitions(-DUNIX)
+endif()
+
+#===============================================================================
+# Code version definitions
+#===============================================================================
+
+if(criti_VERSION)
+    add_definitions(-DCODE_VERSION="${criti_VERSION}")
 endif()
 
 #===============================================================================

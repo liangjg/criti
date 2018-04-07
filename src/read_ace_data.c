@@ -8,6 +8,13 @@
 #include <unistd.h>
 
 
+#ifdef USE_MPI
+#include "parallel.h"
+
+
+extern parallel_t base_parallel;
+#endif
+
 #define MAX_LINES         51781
 #define CHAR_PER_LINE     81
 
@@ -36,10 +43,16 @@ read_ace_data()
     nuclide_t *nuc;
     FILE *xsdir_fp;
 
-    printf("Reading XSDIR/ACE library...");
+#ifdef USE_MPI
+    if(IS_MASTER)
+        printf("Reading XSDIR/ACE library...");
+#endif
     xsdir_fp = fopen("xsdir", "r");
     if(!xsdir_fp) {
-        puts("Library index file \"xsdir\" does not exist!");
+#ifdef USE_MPI
+        if(IS_MASTER)
+            puts("Library index file \"xsdir\" does not exist!");
+#endif
         release_resource();
         exit(0);
     }
@@ -54,7 +67,10 @@ read_ace_data()
         if(strcmp(temp, "directory") == 0) break;
         fgets(buf, 90, xsdir_fp);
         if(feof(xsdir_fp)) {
-            puts("keyword 'directory' is not found in xsdir file");
+#ifdef USE_MPI
+            if(IS_MASTER)
+                puts("keyword 'directory' is not found in xsdir file");
+#endif
             fclose(xsdir_fp);
             release_resource();
             exit(0);
@@ -69,22 +85,34 @@ read_ace_data()
             fscanf(xsdir_fp, "%lf %s %*d %d %d %d %*d %*d %*lf",
                    &nuc->atom_wgt, ace_path, &file_type, &start_addr, &nuc->XSS_sz);
             switch(_read_ace(ace_path, file_type, start_addr, nuc)) {
-                case FILE_NOT_EXIST:printf("file %s does not exist in directory %s.\n", ace_path, data_path);
+                case FILE_NOT_EXIST:
+#ifdef USE_MPI
+                    if(IS_MASTER)
+                        printf("file %s does not exist in directory %s.\n", ace_path, data_path);
+#endif
                     fclose(xsdir_fp);
                     release_resource();
                     exit(0);
-                case FILE_TYPE_ERR:printf("wrong ACE file type in xsdir, nuclide: %s.\n", nuc->id);
+                case FILE_TYPE_ERR:
+#ifdef USE_MPI
+                    if(IS_MASTER)
+                        printf("wrong ACE file type in xsdir, nuclide: %s.\n", nuc->id);
+#endif
                     fclose(xsdir_fp);
                     release_resource();
                     exit(0);
-                default:break;
+                default:
+                    break;
             }
         }
         fgets(buf, 90, xsdir_fp);
     }
 
     fclose(xsdir_fp);
-    puts("Finished.");
+#ifdef USE_MPI
+    if(IS_MASTER)
+        puts("Finished.");
+#endif
     chdir(cwd);
 }
 

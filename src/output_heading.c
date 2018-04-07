@@ -4,14 +4,18 @@
 
 #include "IO_releated.h"
 
+#ifdef USE_MPI
+#include "parallel.h"
 
-#define CODE_VERSION  "Beta 0.4.3"
+extern parallel_t base_parallel;
+#endif
+
 
 struct timeval start_time;
 struct timeval finish_time;
 extern IOfp_t base_IOfp;
 extern int base_num_threads;
-extern int base_num_procs;
+
 
 void
 output_heading()
@@ -31,20 +35,26 @@ output_heading()
     puts("      RRR   RRR      MM  MMMMM  MM    CCC            ");
     puts("      RRR    RRR     MM   MMM   MM     CCCCCCCCCC    ");
     puts("      RRR     RRR   MMM         MMM      CCCCCCCCC   ");
-    printf("\nCode version: %s\n", CODE_VERSION);
-    printf("\nBuild time  : %s %s\n", __TIME__, __DATE__);
+#ifdef CODE_VERSION
+    printf("\nCode version    : %s\n", CODE_VERSION);
+#else
+    printf("\nCode version    : Unknown version\n");
+#endif
+    printf("Build time      : %s %s\n", __TIME__, __DATE__);
 #ifdef GIT_SHA1
-    printf("Git commit  : %s\n", GIT_SHA1);
+    printf("Git commit      : %s\n", GIT_SHA1);
+#else
+    printf("Git commit      : Unknown GIT_SHA1\n");
 #endif
 #ifdef USE_PTHREAD
-    printf("Pthread parallel: ON, %d pthreads used\n", base_num_threads);
+    printf("Pthread parallel: ON, %d pthreads\n", base_num_threads);
 #else
-    puts("Pthread parallel: OFF\n");
+    printf("Pthread parallel: OFF\n");
 #endif
 #ifdef USE_MPI
-    printf("MPI parallel: ON, %d processes\n", base_num_procs);
+    printf("MPI parallel    : ON, %d processes\n\n", base_parallel.tot_procs);
 #else
-    puts("MPI parallel: OFF\n");
+    printf("MPI parallel    : OFF\n\n");
 #endif
 
     fputs("Copyrights Reserved by Reactor Engineering Analysis Laboratory(REAL).\n\n", base_IOfp.opt_fp);
@@ -56,20 +66,26 @@ output_heading()
     fputs("      RRR   RRR      MM  MMMMM  MM    CCC            \n", base_IOfp.opt_fp);
     fputs("      RRR    RRR     MM   MMM   MM     CCCCCCCCCC    \n", base_IOfp.opt_fp);
     fputs("      RRR     RRR   MMM         MMM      CCCCCCCCC   \n", base_IOfp.opt_fp);
-    fprintf(base_IOfp.opt_fp, "\nCode version: %s\n", CODE_VERSION);
-    fprintf(base_IOfp.opt_fp, "\nBuild time  : %s %s\n", __TIME__, __DATE__);
+#ifdef CODE_VERSION
+    fprintf(base_IOfp.opt_fp, "\nCode version    : %s\n", CODE_VERSION);
+#else
+    fprintf(base_IOfp.opt_fp, "\nCode version    : Unknown version\n");
+#endif
+    fprintf(base_IOfp.opt_fp, "Build time      : %s %s\n", __TIME__, __DATE__);
 #ifdef GIT_SHA1
-    fprintf(base_IOfp.opt_fp, "Git commit  : %s\n", GIT_SHA1);
+    fprintf(base_IOfp.opt_fp, "Git commit      : %s\n", GIT_SHA1);
+#else
+    fprintf(base_IOfp.opt_fp, "Git commit      : Unknown GIT_SHA1\n");
 #endif
 #ifdef USE_PTHREAD
-    fprintf(base_IOfp.opt_fp, "Pthread parallel: ON, %d pthreads used\n", base_num_threads);
+    fprintf(base_IOfp.opt_fp, "Pthread parallel: ON, %d pthreads\n", base_num_threads);
 #else
-    fputs("Pthread parallel: OFF\n", base_IOfp.opt_fp);
+    fprintf(base_IOfp.opt_fp, "Pthread parallel: OFF\n");
 #endif
 #ifdef USE_MPI
-    fprintf(base_IOfp.opt_fp, "MPI parallel: ON, %d processes\n", base_num_procs);
+    fprintf(base_IOfp.opt_fp, "MPI parallel    : ON, %d processes\n\n", base_parallel.tot_procs);
 #else
-    fputs("MPI parallel: OFF\n", base_IOfp.opt_fp);
+    fprintf(base_IOfp.opt_fp, "MPI parallel    : OFF\n\n");
 #endif
 
     printf("RMC Calculation Start.\nInput File = %s     %s \n\n", base_IOfp.inp_file_name, start_wall_clock_str);
@@ -80,7 +96,7 @@ output_heading()
 
     fputs("------------------ Input File Start --------------------\n", base_IOfp.opt_fp);
     char buf[200];
-    FILE *inp = fopen(base_IOfp.inp_file_name, "r");
+    FILE *inp = fopen(base_IOfp.inp_file_name, "rb");
     while(!feof(inp)) {
         if(fgets(buf, 200, inp))
             fputs(buf, base_IOfp.opt_fp);

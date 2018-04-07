@@ -75,9 +75,9 @@ END:
 
     map_release_iter(nuc_iter);
 
-    fputs("===================== Cross-section doppler broaden ====================\n", base_IOfp.mat_fp);
-    fprintf(base_IOfp.mat_fp, "Doppler broaden applied to %d nuclide.\n", cnt);
-    fputs("========================================================================\n", base_IOfp.mat_fp);
+//    fputs("===================== Cross-section doppler broaden ====================\n", base_IOfp.mat_fp);
+//    fprintf(base_IOfp.mat_fp, "Doppler broaden applied to %d nuclide.\n", cnt);
+//    fputs("========================================================================\n", base_IOfp.mat_fp);
 
     base_nuc_xs = malloc(base_num_threads * sizeof(void *));
     for(int i = 0; i < base_num_threads; i++)

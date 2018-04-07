@@ -6,17 +6,27 @@
 #include "IO_releated.h"
 
 
+#ifdef USE_MPI
+#include "parallel.h"
+
+
+extern parallel_t base_parallel;
+#endif
+
 extern criti_t base_criti;
 extern double base_start_wgt;
 extern IOfp_t base_IOfp;
 extern RNG_t base_RNG;
 extern int base_num_threads;
 
-void
+static void
 _combine_keff(int current_cycle);
 
-void
+static void
 _output_keff(int current_cycle);
+
+static void
+_load_balance_pth(pth_arg_t *pth_args);
 
 #define SWAP(_a, _b)    \
     do{    \
@@ -29,7 +39,7 @@ void
 process_cycle_end(int currenr_cycle,
                   pth_arg_t *pth_args)
 {
-    int i, j;
+    int i, j, id;
     int quotient, remainder;
 
     for(i = 0; i < base_num_threads; i++) {
@@ -39,21 +49,37 @@ process_cycle_end(int currenr_cycle,
             base_criti.keff_wgt_sum[j] += pth_args[i].keff_wgt_sum[j];
     }
 
+#ifdef USE_MPI
+    MPI_Allreduce(MPI_IN_PLACE, base_criti.keff_wgt_sum, 3, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+    MPI_Allreduce(&base_criti.tot_bank_cnt, &base_parallel.tot_bank_cnt, 1, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
+    if(currenr_cycle % 5 == 0)    /* 每5代做一次负载均衡，这里是进程之间，与下面线程之间的不冲突 */
+        load_balance(pth_args);
+#endif
+
+#ifndef USE_MPI
     if(base_criti.tot_bank_cnt < 5) {
         puts("Insufficient fission source to be sampled.");
         release_resource();
         exit(0);
     }
+#endif
 
+    /* 计算keff，并且主进程进行输出 */
     for(i = 0; i < 3; i++)
         base_criti.keff_cycle[i] = base_criti.keff_wgt_sum[i] / base_criti.tot_start_wgt;
     base_criti.keff_final = base_criti.keff_cycle[0];
-
     _combine_keff(currenr_cycle);
-    _output_keff(currenr_cycle);
+#ifdef USE_MPI
+    if(IS_MASTER)
+#endif
+        _output_keff(currenr_cycle);
 
     base_criti.cycle_neu_num = base_criti.tot_bank_cnt;
+#ifdef USE_MPI
+    base_start_wgt = ONE * base_criti.tot_start_wgt / base_parallel.tot_bank_cnt;
+#else
     base_start_wgt = ONE * base_criti.tot_start_wgt / base_criti.tot_bank_cnt;
+#endif
 
     quotient = base_criti.tot_bank_cnt / base_num_threads;
     remainder = base_criti.tot_bank_cnt - quotient * base_num_threads;
@@ -65,38 +91,40 @@ process_cycle_end(int currenr_cycle,
     for(i = 0; i < remainder; i++)
         pth_args[i].src_cnt++;
 
-    for(i = 0; i < base_num_threads; i++) {
-        /* 负载均衡策略 */
-        bank_t *dest, *src;
-        int diff = pth_args[i].bank_cnt - pth_args[i].src_cnt;
-        if(diff > 0) {
-            dest = pth_args[i + 1].src + diff;
-            src = pth_args[i].src + pth_args[i].src_cnt;
-            memmove(dest, pth_args[i + 1].src, pth_args[i + 1].bank_cnt * sizeof(bank_t));
-            memcpy(pth_args[i + 1].src, src, diff * sizeof(bank_t));
-            pth_args[i + 1].bank_cnt += diff;
-        } else if(diff < 0) {
-            diff = ~(diff - 1);    /* 求diff的绝对值 */
-            dest = pth_args[i].src + pth_args[i].bank_cnt;
-            src = pth_args[i + 1].src + diff;
-            memcpy(dest, pth_args[i + 1].src, diff * sizeof(bank_t));
-            pth_args[i + 1].bank_cnt -= diff;
-            memcpy(pth_args[i + 1].src, src, pth_args[i + 1].bank_cnt * sizeof(bank_t));
+#ifdef USE_MPI
+    if(currenr_cycle % 5 == 0) {
+        bank_t *start_addr;
+        start_addr = base_parallel.src;
+        for(i = 0; i < base_num_threads; i++) {
+            memcpy(pth_args[i].src, start_addr, pth_args[i].src_cnt * sizeof(bank_t));
+            start_addr += pth_args[i].src_cnt;
         }
+    } else {
+        _load_balance_pth(pth_args);
+        MPI_Allgather(&base_criti.tot_bank_cnt, 1, MPI_INT, base_parallel.src_load, 1, MPI_INT, MPI_COMM_WORLD);
+        base_parallel.rand_num_pos[0] = base_parallel.rand_num_sum;
+        for(id = 1; id < base_parallel.tot_procs; id++)
+            base_parallel.rand_num_pos[id] = base_parallel.rand_num_pos[id - 1] + base_parallel.src_load[id - 1];
+        base_parallel.rand_num_sum += base_parallel.tot_bank_cnt;
+    }
+    memcpy(&base_RNG, &pth_args[base_num_threads - 1].RNG, sizeof(RNG_t));
+    base_RNG.position = base_parallel.rand_num_pos[base_parallel.id];
+#else
+    _load_balance_pth(pth_args);
+    memcpy(&base_RNG, &pth_args[base_num_threads - 1].RNG, sizeof(RNG_t));
+#endif
 
+    /* reset criticality */
+    for(i = 0; i < base_num_threads; i++){
         pth_args[i].bank_cnt = 0;
         pth_args[i].col_cnt = 0;
         pth_args[i].keff_final = base_criti.keff_final;
         for(j = 0; j < 3; j++)
             pth_args[i].keff_wgt_sum[j] = ZERO;
     }
-
-    /* reset criticality */
     base_criti.tot_bank_cnt = 0;
     for(i = 0; i < 3; i++)
         base_criti.keff_wgt_sum[i] = ZERO;
-
-    memcpy(&base_RNG, &pth_args[base_num_threads - 1].RNG, sizeof(RNG_t));
 }
 
 void
@@ -203,6 +231,11 @@ go60:
 void
 _output_keff(int current_cycle)
 {
+    int tot_bank_cnt = base_criti.tot_bank_cnt;
+#ifdef USE_MPI
+    tot_bank_cnt = base_parallel.tot_bank_cnt;
+#endif
+
     /* cycle finish time */
     gettimeofday(&finish_time, NULL);
     double compute_time_min =
@@ -249,7 +282,7 @@ _output_keff(int current_cycle)
         fprintf(base_IOfp.opt_fp,
                 "%-6d  %-9d | %-f  %-f  %-f |                                                                                %-.4f\n",
                 current_cycle,
-                base_criti.tot_bank_cnt,
+                tot_bank_cnt,
                 base_criti.keff_cycle[0],
                 base_criti.keff_cycle[1],
                 base_criti.keff_cycle[2],
@@ -257,10 +290,36 @@ _output_keff(int current_cycle)
     }
     if(current_cycle > base_criti.inactive_cycle_num) {
         fprintf(base_IOfp.opt_fp, "%-6d  %-9d | %-f  %-f  %-f | %-f %-f  %-f %-f  %-f %-f | %-f %-f |  %-.4f\n",
-                current_cycle, base_criti.tot_bank_cnt, base_criti.keff_cycle[0],
+                current_cycle, tot_bank_cnt, base_criti.keff_cycle[0],
                 base_criti.keff_cycle[1], base_criti.keff_cycle[2],
                 base_criti.keff_individual_ave[0], base_criti.keff_individual_std[0], base_criti.keff_individual_ave[1],
                 base_criti.keff_individual_std[1], base_criti.keff_individual_ave[2], base_criti.keff_individual_std[2],
                 base_criti.keff_covw_ave[3], base_criti.keff_covw_std[3], compute_time_min);
+    }
+}
+
+void
+_load_balance_pth(pth_arg_t *pth_args)
+{
+    int i;
+    bank_t *dest, *src;
+
+    for(i = 0; i < base_num_threads; i++) {
+        /* 负载均衡策略 */
+        int diff = pth_args[i].bank_cnt - pth_args[i].src_cnt;
+        if(diff > 0) {
+            dest = pth_args[i + 1].src + diff;
+            src = pth_args[i].src + pth_args[i].src_cnt;
+            memmove(dest, pth_args[i + 1].src, pth_args[i + 1].bank_cnt * sizeof(bank_t));
+            memcpy(pth_args[i + 1].src, src, diff * sizeof(bank_t));
+            pth_args[i + 1].bank_cnt += diff;
+        } else if(diff < 0) {
+            diff = ~(diff - 1);    /* 求diff的绝对值 */
+            dest = pth_args[i].src + pth_args[i].bank_cnt;
+            src = pth_args[i + 1].src + diff;
+            memcpy(dest, pth_args[i + 1].src, diff * sizeof(bank_t));
+            pth_args[i + 1].bank_cnt -= diff;
+            memcpy(pth_args[i + 1].src, src, pth_args[i + 1].bank_cnt * sizeof(bank_t));
+        }
     }
 }

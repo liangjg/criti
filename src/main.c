@@ -8,7 +8,6 @@
 
 #include <unistd.h>
 #include "IO_releated.h"
-#include "RNG.h"
 #include "criticality.h"
 #include "fixed_source.h"
 #include "calculation.h"
@@ -18,13 +17,17 @@
 #include "map.h"
 
 
-#define CODE_VERSION  "Beta 0.4.3"
+#ifdef USE_MPI
+#include "parallel.h"
+
+parallel_t base_parallel;
+#endif
+
 
 /* 全局变量初始化 */
 unsigned base_warnings;
 double base_start_wgt;
 int base_num_threads;
-int base_num_procs;
 criti_t base_criti;
 fixed_src_t base_fixed_src;
 IOfp_t base_IOfp;
@@ -81,22 +84,53 @@ main(int argc,
     char mat_fn[MAX_FILENAME_LENGTH];
     char tally_fn[MAX_FILENAME_LENGTH];
     int c;
+
+#ifdef USE_MPI
+    MPI_Init(&argc, &argv);
+    MPI_Comm_size(MPI_COMM_WORLD, &base_parallel.tot_procs);
+    MPI_Comm_rank(MPI_COMM_WORLD, &base_parallel.id);
+
+    base_parallel.bank_load = malloc(base_parallel.tot_procs * sizeof(int));
+    base_parallel.bank_load_sum = malloc((base_parallel.tot_procs + 1) * sizeof(int));
+    base_parallel.src_load = malloc(base_parallel.tot_procs * sizeof(int));
+    base_parallel.src_load_sum = malloc((base_parallel.tot_procs + 1) * sizeof(int));
+    base_parallel.rand_num_pos = malloc(base_parallel.tot_procs * sizeof(int));
+    base_parallel.rand_num_sum = 0;
+
+    int block_length[1] = {8};
+    MPI_Aint indices[1] = {0};
+    MPI_Datatype old_types[1] = {MPI_DOUBLE};
+    MPI_Type_struct(1, block_length, indices, old_types, &base_parallel.bank_type);
+    MPI_Type_commit(&base_parallel.bank_type);
+#endif
+
     opterr = 0;
     base_num_threads = 1;    /* 默认使用单线程进行计算，除非用-s指定了线程数目 */
 
     while((c = getopt(argc, argv, "ho:s:")) != -1) {
         switch(c) {
             case 'h': {
-                printf("RMC -- Reactor Monte Carlo code, version: %s\n", CODE_VERSION);
-                puts("Usage: RMC [OPTION...] FILE");
-                puts("Copyright (c) 2000-2017 REAL Tsinghua University. All Rights Reserved.\n");
-                puts("General options:");
-                puts("  -h        Print this help");
-                puts("  -o        Specify output file");
-#ifdef USE_PTHREAD
-                puts("  -s        Specify how many POSIX threads to calculate simultaneously");
+#ifdef USE_MPI
+                if(IS_MASTER) {
 #endif
-                puts("");
+#ifdef CODE_VERSION
+                    printf("RMC -- Reactor Monte Carlo code, version: %s\n", CODE_VERSION);
+#else
+                    puts("RMC -- Reactor Monte Carlo code, version: Unknown version");
+#endif
+                    puts("Usage: RMC [OPTION...] FILE");
+                    puts("Copyright (c) 2000-2017 REAL Tsinghua University. All Rights Reserved.\n");
+                    puts("General options:");
+                    puts("  -h        Print this help");
+                    puts("  -o        Specify output file");
+#ifdef USE_PTHREAD
+                    puts("  -s        Specify how many POSIX threads to calculate simultaneously");
+#endif
+                    puts("");
+#ifdef USE_MPI
+                }
+                MPI_Finalize();
+#endif
                 return 0;
             }
             case 'o': {
@@ -107,7 +141,16 @@ main(int argc,
                 base_num_threads = *optarg - '0';
                 break;
             }
-            default:puts("Unknown option character!");
+            default:
+#ifdef USE_MPI
+                if(IS_MASTER){
+#endif
+                    printf("Unknown option \"-%c\"!\n", c);
+#ifdef USE_MPI
+                }
+                MPI_Finalize();
+#endif
+                return 0;
         }
     }
 
@@ -127,12 +170,22 @@ main(int argc,
 
     base_IOfp.inp_fp = fopen(base_IOfp.inp_file_name, "rb");
     if(!base_IOfp.inp_fp) {
-        printf("%s does not exist.\n", base_IOfp.inp_file_name);
+#ifdef USE_MPI
+        if(IS_MASTER)
+            printf("%s does not exist.\n", base_IOfp.inp_file_name);
+        MPI_Finalize();
+#endif
         return 0;
     }
 
-    base_IOfp.opt_fp = fopen(base_IOfp.opt_file_name, "wb");
-    base_IOfp.mat_fp = fopen(mat_fn, "wb");
+#ifdef USE_MPI
+    if(IS_MASTER){
+#endif
+        base_IOfp.opt_fp = fopen(base_IOfp.opt_file_name, "wb");
+        base_IOfp.mat_fp = fopen(mat_fn, "wb");
+#ifdef USE_MPI
+    }
+#endif
 
     /* set hash functions of every map_type */
     map_type *mat_type = (map_type *) malloc(sizeof(map_type));
@@ -180,7 +233,10 @@ main(int argc,
     CALC_MODE_T calc_mode;
 
     /* output heading */
-    output_heading();
+#ifdef USE_MPI
+    if(IS_MASTER)
+#endif
+        output_heading();
 
     /* read input file */
     read_input_blocks(&calc_mode);
@@ -195,7 +251,10 @@ main(int argc,
     convert_mat_nuc_den();
 
     /* 输出material文件 */
-    output_mat_file();
+#ifdef USE_MPI
+    if(IS_MASTER)
+#endif
+        output_mat_file();
 
     /* 多普勒展宽 */
     doppler_broaden();
@@ -205,24 +264,32 @@ main(int argc,
 
     /* run calculation */
     switch(calc_mode) {
-        case CRITICALITY:puts("\n******** Calculation mode: criticality ********\n");
+        case CRITICALITY:
+#ifdef USE_MPI
+            if(IS_MASTER)
+#endif
+                puts("\n******** Calculation mode: criticality ********\n");
             calc_criticality(base_criti.tot_cycle_num);
             break;
-        case FIXEDSOURCE:puts("\n******** Calculation mode: fixed-source ********\n");
+        case FIXEDSOURCE:
+#ifdef USE_MPI
+            if(IS_MASTER)
+#endif
+                puts("\n******** Calculation mode: fixed-source ********\n");
             calc_fixed_src();
             break;
-        case BURNUP:puts("\n******** Calculation mode: burnup ********\n");
-            //            calc_burnup();
-            break;
-        case POINTBURN:puts("\n******** Calculation mode: point burnup ********\n");
-            //            calc_point_burn();
-            break;
-        default:puts("\n******** Unknown calculation mode. ********\n");
-            break;
+        default:
+#ifdef USE_MPI
+            if(IS_MASTER)
+#endif
+                puts("\n******** Unknown calculation mode. ********\n");
     }
 
     /* output ending */
-    output_ending();
+#ifdef USE_MPI
+    if(IS_MASTER)
+#endif
+        output_ending();
 
     /* release all resource */
     release_resource();

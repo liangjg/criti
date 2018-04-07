@@ -4,6 +4,12 @@
 
 #include "IO_releated.h"
 
+#ifdef USE_MPI
+#include "parallel.h"
+
+
+extern parallel_t base_parallel;
+#endif
 
 extern IOfp_t base_IOfp;
 
@@ -19,7 +25,10 @@ read_input_blocks(CALC_MODE_T *calc_mode)
     char *ret;
     char *kw_start;
 
-    printf("Reading input file...");
+#ifdef USE_MPI
+    if(IS_MASTER)
+#endif
+        printf("Reading input file...");
 
     while((ret = fgets(buf, MAX_LINE_LENGTH, base_IOfp.inp_fp))) {
         /* find the first non-space character */
@@ -39,42 +48,45 @@ read_input_blocks(CALC_MODE_T *calc_mode)
 
             /* process all cases depending on key words */
             switch(_identify_kw(kw_start)) {
-            case 0:    /* UNIVERSE */
-                ret++;
-                read_universe_block(ret);
-                break;
-            case 1:    /* SURFACE */
-                read_surf_block();
-                break;
-            case 2:    /* MATERIAL */
-                read_material_block();
-                break;
-            case 3:    /* CRITICALITY */
-                *calc_mode = CRITICALITY;
-                read_criticality_block();
-                break;
-            case 4:    /* TALLY */
-                //                    read_tally_block();
-                break;
-            case 5:    /* FIXEDSOURCE */
-                *calc_mode = FIXEDSOURCE;
-                read_fixed_src_block();
-                break;
-            case 6:    /* DEPLETION */
-                *calc_mode = POINTBURN;
-                break;
-            case 7:    /* BURNUP */
-                *calc_mode = BURNUP;
-                //                    read_burnup_block();
-                break;
-            default:printf("unknown key word %s.\n", kw_start);
-                break;
+                case 0:    /* UNIVERSE */
+                    ret++;
+                    read_universe_block(ret);
+                    break;
+                case 1:    /* SURFACE */
+                    read_surf_block();
+                    break;
+                case 2:    /* MATERIAL */
+                    read_material_block();
+                    break;
+                case 3:    /* CRITICALITY */
+                    *calc_mode = CRITICALITY;
+                    read_criticality_block();
+                    break;
+                case 4:    /* TALLY */
+                    //                    read_tally_block();
+                    break;
+                case 5:    /* FIXEDSOURCE */
+                    *calc_mode = FIXEDSOURCE;
+                    read_fixed_src_block();
+                    break;
+                case 6:    /* DEPLETION */
+                    *calc_mode = POINTBURN;
+                    break;
+                case 7:    /* BURNUP */
+                    *calc_mode = BURNUP;
+                    //                    read_burnup_block();
+                    break;
+                default:
+                    printf("unknown key word %s.\n", kw_start);
+                    break;
             }
         }
     }
 
-    puts("Finished.");
-    //    check_input_block();
+#ifdef USE_MPI
+    if(IS_MASTER)
+#endif
+        puts("Finished.");
 }
 
 /* ------------------------ private API implementation ---------------------- */
