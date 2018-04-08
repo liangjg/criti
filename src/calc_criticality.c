@@ -18,8 +18,10 @@ extern universe_t *root_universe;
 extern int base_num_threads;
 extern RNG_t base_RNG;
 
+#ifdef USE_PTHREAD
 static int
 _set_cpu(int i);
+#endif
 
 static void *
 do_calc(void *args);
@@ -85,7 +87,7 @@ do_calc(void *args)
     nuc_xs_t *nuc_xs = pth_arg->nuc_xs;
     double *keff_wgt_sum = pth_arg->keff_wgt_sum;
 
-    _set_cpu(pth_arg->id);
+//    _set_cpu(pth_arg->id);
 
     for(int neu = 0; neu < tot_neu; neu++) {
         get_rand_seed(RNG);
@@ -163,6 +165,7 @@ do_calc(void *args)
     return NULL;
 }
 
+#ifdef USE_PTHREAD
 int
 _set_cpu(int i)
 {
@@ -171,3 +174,4 @@ _set_cpu(int i)
     CPU_SET(i, &mask);
     return pthread_setaffinity_np(pthread_self(), sizeof(mask), &mask);
 }
+#endif
