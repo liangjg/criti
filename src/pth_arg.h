@@ -18,8 +18,12 @@ typedef struct pth_arg_t {
     int bank_cnt;                  /* 总共产生的裂变源数目 */
     int col_cnt;                   /* 总共碰撞次数 */
     int id;
+    volatile int status;
     double keff_wgt_sum[3];
     double keff_final;
 } pth_arg_t;
 
+#define WAITING     0
+#define RUNNABLE    1
+#define COMPLETED   2
 #endif //CRITI_PTH_ARG_H

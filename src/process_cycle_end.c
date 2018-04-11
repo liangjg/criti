@@ -119,6 +119,7 @@ process_cycle_end(int currenr_cycle,
         pth_args[i].bank_cnt = 0;
         pth_args[i].col_cnt = 0;
         pth_args[i].keff_final = base_criti.keff_final;
+        pth_args[i].status = WAITING;
         for(j = 0; j < 3; j++)
             pth_args[i].keff_wgt_sum[j] = ZERO;
     }

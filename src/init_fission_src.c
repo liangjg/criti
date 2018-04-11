@@ -60,6 +60,7 @@ init_fission_src(pth_arg_t *pth_args)
         pth_args[i].nuc_xs = base_nuc_xs[i];
         pth_args[i].col_cnt = 0;
         pth_args[i].id = i;
+        pth_args[i].status = WAITING;
         pth_args[i].keff_final = base_criti.keff_final;
         for(j = 0; j < 3; j++)
             pth_args[i].keff_wgt_sum[j] = ZERO;

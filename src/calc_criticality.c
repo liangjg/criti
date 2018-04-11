@@ -2,9 +2,7 @@
 // Created by xaq on 10/26/17.
 //
 
-#define _GNU_SOURCE
 
-#include <sched.h>
 #include "RNG.h"
 #include "IO_releated.h"
 #include "pth_arg.h"
@@ -18,18 +16,12 @@ extern universe_t *root_universe;
 extern int base_num_threads;
 extern RNG_t base_RNG;
 
-#ifdef USE_PTHREAD
-static int
-_set_cpu(int i);
-#endif
-
 static void *
 do_calc(void *args);
 
 void
 calc_criticality(int tot_cycle_num)
 {
-    void *status;
     int i, j, cyc;
     pth_arg_t *pth_args = malloc(base_num_threads * sizeof(pth_arg_t));
 
@@ -39,12 +31,17 @@ calc_criticality(int tot_cycle_num)
 
     init_fission_src(pth_args);
 
+#ifdef USE_PTHREAD
+    for(i = 1; i < base_num_threads; i++)
+        pthread_create(&threads[i - 1], NULL, do_calc, &pth_args[i - 1]);
+#endif
+
     for(cyc = 1; cyc <= tot_cycle_num; cyc++) {
         memcpy(&pth_args[0].RNG, &base_RNG, sizeof(RNG_t));
 
 #ifdef USE_PTHREAD
         for(i = 1; i < base_num_threads; i++) {
-            pthread_create(&threads[i - 1], NULL, do_calc, &pth_args[i - 1]);
+            pth_args[i - 1].status= RUNNABLE;
             memcpy(&pth_args[i].RNG, &pth_args[i - 1].RNG, sizeof(RNG_t));
 
             int skip_src = pth_args[i - 1].src_cnt;
@@ -53,15 +50,19 @@ calc_criticality(int tot_cycle_num)
         }
 #endif
 
+        pth_args[base_num_threads - 1].status = RUNNABLE;
         do_calc(&pth_args[base_num_threads - 1]);
 
-#ifdef USE_PTHREAD
-        for(i = 0; i < base_num_threads - 1; i++)
-            pthread_join(threads[i], &status);
-#endif
+        for(i = 0; i < base_num_threads; i++)
+            while(pth_args[i].status != COMPLETED);
 
         process_cycle_end(cyc, pth_args);
     }
+#ifdef USE_PTHREAD
+    for(i = 1; i < base_num_threads; i++)
+        pthread_cancel(threads[i - 1]);
+#endif
+
     output_summary();
 
     for(i = 0; i < base_num_threads; i++) {
@@ -81,13 +82,19 @@ do_calc(void *args)
     particle_status_t par_status;
     pth_arg_t *pth_arg = (pth_arg_t *) args;
 
+START:
+    while(pth_arg->status != RUNNABLE){
+#ifdef USE_PTHREAD
+        pthread_testcancel()
+#endif
+        ;
+    }
+
     int tot_neu = pth_arg->src_cnt;
     RNG_t *RNG = &pth_arg->RNG;
     bank_t *fis_src = pth_arg->src;
     nuc_xs_t *nuc_xs = pth_arg->nuc_xs;
     double *keff_wgt_sum = pth_arg->keff_wgt_sum;
-
-//    _set_cpu(pth_arg->id);
 
     for(int neu = 0; neu < tot_neu; neu++) {
         get_rand_seed(RNG);
@@ -161,17 +168,13 @@ do_calc(void *args)
 
         pth_arg->col_cnt += col_cnt;
     }
-
-    return NULL;
-}
+    pth_arg->status = COMPLETED;
 
 #ifdef USE_PTHREAD
-int
-_set_cpu(int i)
-{
-    cpu_set_t mask;
-    CPU_ZERO(&mask);
-    CPU_SET(i, &mask);
-    return pthread_setaffinity_np(pthread_self(), sizeof(mask), &mask);
-}
+    if(pth_arg->id == base_num_threads - 1) goto END;
+    else goto START;
 #endif
+
+END:
+    return NULL;
+}
