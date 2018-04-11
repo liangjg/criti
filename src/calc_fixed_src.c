@@ -2,9 +2,7 @@
 // Created by x1314aq on 18-1-16.
 //
 
-#define _GNU_SOURCE
 
-#include <sched.h>
 #include "fixed_source.h"
 #include "IO_releated.h"
 #include "geometry.h"
@@ -16,11 +14,6 @@ extern universe_t *root_universe;
 extern fixed_src_t base_fixed_src;
 extern int base_num_threads;
 extern RNG_t base_RNG;
-
-#ifdef USE_PTHREAD
-static int
-_set_cpu(int i);
-#endif
 
 static void *
 do_calc(void *args);
@@ -84,8 +77,6 @@ do_calc(void *args)
     RNG_t *RNG = &pth_arg->RNG;
     bank_t *fsrc = pth_arg->src;
     nuc_xs_t *nuc_xs = pth_arg->nuc_xs;
-
-//    _set_cpu(pth_arg->id);
 
     for(int neu = 0; neu < tot_neu; neu++) {
         if(neu % 1000 == 0 && pth_arg->id == 0)
@@ -181,14 +172,3 @@ do_calc(void *args)
 
     return NULL;
 }
-
-#ifdef USE_PTHREAD
-int
-_set_cpu(int i)
-{
-    cpu_set_t mask;
-    CPU_ZERO(&mask);
-    CPU_SET(i, &mask);
-    return pthread_setaffinity_np(pthread_self(), sizeof(mask), &mask);
-}
-#endif
