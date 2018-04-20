@@ -12,7 +12,7 @@ reflect_par(surface_t *obj,
             double *loc_dir)
 {
     double surf_norm_vec[3];
-    get_surf_norm_vec(obj, pos, surf_norm_vec);
+    obj->funcs->get_surf_norm_vec(obj->paras, pos, surf_norm_vec);
 
     double temp = dir[0] * surf_norm_vec[0] + dir[1] * surf_norm_vec[1] + dir[2] * surf_norm_vec[2];
     if(LT_ZERO(temp)) {

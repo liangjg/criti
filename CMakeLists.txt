@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.2)
 project(criti
-        VERSION 0.4.5
+        VERSION 0.4.6
         LANGUAGES C CXX)
 
 # Check build directory

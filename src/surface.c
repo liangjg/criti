@@ -10,11 +10,13 @@ surf_init()
 {
     surface_t *_new_surf = (surface_t *) malloc(sizeof(surface_t));
     memset(_new_surf, 0x0, sizeof(surface_t));
+    _new_surf->funcs = (SURF_FUNC *) malloc(sizeof(SURF_FUNC));
     return _new_surf;
 }
 
 void
 surf_free(surface_t *obj)
 {
+    free(obj->funcs);
     free(obj);
 }

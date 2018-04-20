@@ -59,7 +59,7 @@ _simple_par_in_cell(const cell_t *obj,
     for(int i = 0; i < surfs_sz; i++) {
         surf_index = obj->surfs[i];
         surf = obj->surfs_addr[i];
-        surf_sense = calc_surf_sense(surf, pos, dir);
+        surf_sense = surf->funcs->calc_surf_sense(surf->paras, pos, dir);
         in_cell = _has_same_sign(surf_index, surf_sense);
         if(!in_cell) break;
     }
@@ -93,7 +93,7 @@ _complex_par_in_cell(const cell_t *obj,
                 c++;
             } while(ISNUMBER(*c));
             surf = obj->surfs_addr[index++];
-            surf_sense = calc_surf_sense(surf, pos, dir);
+            surf_sense = surf->funcs->calc_surf_sense(surf->paras, pos, dir);
             in_cell = _has_same_sign(surf_index, surf_sense);
             st[i_stack] = in_cell;
         } else if(*c == '-') {
@@ -107,7 +107,7 @@ _complex_par_in_cell(const cell_t *obj,
             }
             surf = obj->surfs_addr[index++];
             surf_index = (~surf_index) + 1;
-            surf_sense = calc_surf_sense(surf, pos, dir);
+            surf_sense = surf->funcs->calc_surf_sense(surf->paras, pos, dir);
             in_cell = _has_same_sign(surf_index, surf_sense);
             st[i_stack] = in_cell;
         } else if(*c == '&') {

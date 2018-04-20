@@ -8,7 +8,7 @@
 #include "common.h"
 
 
-typedef struct {
+typedef struct universe_t {
     int id;                  /* universe id */
     double origin[3];
     double rotation[3][3];
@@ -26,10 +26,6 @@ typedef struct {
 
     void **cells;             /* 存储的是直接的cell实例地址，而不是某个数组的下标 */
     int cells_sz;             /* 当前universe包含的cell数目 */
-
-    /* 在同一个universe内部，每个cell基于每个面的唯一的一个邻居(cell)的cell_id */
-    /* 当前neighbor_lists实现的是map嵌套map，即map<cell_index, map<surface_index, address of neighbor_cell_index>> */
-    //    map *neighbor_lists;
 
     void *parent;             /* 包含当前universe的的上级结构，可能是cell，也可能是另一个universe */
 } universe_t;

@@ -5,89 +5,307 @@
 #include "surface.h"
 
 
+#define RETURN(sense)  \
+    do{  \
+        if(GT_ZERO(sense)) return 1;  \
+        else return -1;  \
+    } while(0)
+
 int
-calc_surf_sense(surface_t *obj,
-                const double pos[3],
-                const double dir[3])
+calc_surf_sense_P(const double *paras,
+                  const double *pos,
+                  const double *dir)
 {
-    double sense;
     double x = pos[0];
     double y = pos[1];
     double z = pos[2];
-
-    switch(obj->type) {
-    case P: {
-        sense = obj->paras[0] * x + obj->paras[1] * y + obj->paras[2] * z - obj->paras[3];
-        break;
-    }
-    case PX: {
-        sense = x - obj->paras[0];
-        break;
-    }
-    case PY: {
-        sense = y - obj->paras[0];
-        break;
-    }
-    case PZ: {
-        sense = z - obj->paras[0];
-        break;
-    }
-    case SO: {
-        sense = SQUARE(x) + SQUARE(y) + SQUARE(z) - SQUARE(obj->paras[0]);
-        break;
-    }
-    case S: {
-        sense =
-            SQUARE(x - obj->paras[0]) + SQUARE(y - obj->paras[1]) + SQUARE(z - obj->paras[2]) - SQUARE(obj->paras[3]);
-        break;
-    }
-    case SX: {
-        sense = SQUARE(x - obj->paras[0]) + SQUARE(y) + SQUARE(z) - SQUARE(obj->paras[1]);
-        break;
-    }
-    case SY: {
-        sense = SQUARE(x) + SQUARE(y - obj->paras[0]) + SQUARE(z) - SQUARE(obj->paras[1]);
-        break;
-    }
-    case SZ: {
-        sense = SQUARE(x) + SQUARE(y) + SQUARE(z - obj->paras[0]) - SQUARE(obj->paras[1]);
-        break;
-    }
-    case C_X: {
-        sense = SQUARE(y - obj->paras[0]) + SQUARE(z - obj->paras[1]) - SQUARE(obj->paras[2]);
-        break;
-    }
-    case C_Y: {
-        sense = SQUARE(x - obj->paras[0]) + SQUARE(z - obj->paras[1]) - SQUARE(obj->paras[2]);
-        break;
-    }
-    case C_Z: {
-        sense = SQUARE(x - obj->paras[0]) + SQUARE(y - obj->paras[1]) - SQUARE(obj->paras[2]);
-        break;
-    }
-    case CX: {
-        sense = SQUARE(y) + SQUARE(z) - SQUARE(obj->paras[0]);
-        break;
-    }
-    case CY: {
-        sense = SQUARE(x) + SQUARE(z) - SQUARE(obj->paras[0]);
-        break;
-    }
-    case CZ: {
-        sense = SQUARE(x) + SQUARE(y) - SQUARE(obj->paras[0]);
-        break;
-    }
-    }
+    double sense = paras[0] * x + paras[1] * y + paras[2] * z - paras[3];
 
     if(fabs(sense) < EPSILON) {
-        double norm_vec[3];
-        get_surf_norm_vec(obj, pos, norm_vec);
         sense = ZERO;
+        for(int i = 0; i < 3; i++)
+            sense += dir[i] * paras[i];
+    }
+
+    RETURN(sense);
+}
+
+int
+calc_surf_sense_PX(const double *paras,
+                   const double *pos,
+                   const double *dir)
+{
+    double x = pos[0];
+    double y = pos[1];
+    double z = pos[2];
+    double sense = x - paras[0];
+
+    if(fabs(sense) < EPSILON) {
+        sense = ZERO;
+        double norm_vec[3] = {ONE, ZERO, ZERO};
         for(int i = 0; i < 3; i++)
             sense += dir[i] * norm_vec[i];
     }
 
-    if(GT_ZERO(sense)) return 1;
-    else if(LT_ZERO(sense)) return -1;
-    else return 0;
+    RETURN(sense);
+}
+
+int
+calc_surf_sense_PY(const double *paras,
+                   const double *pos,
+                   const double *dir)
+{
+    double x = pos[0];
+    double y = pos[1];
+    double z = pos[2];
+    double sense = y - paras[0];
+
+    if(fabs(sense) < EPSILON) {
+        sense = ZERO;
+        double norm_vec[3] = {ZERO, ONE, ZERO};
+        for(int i = 0; i < 3; i++)
+            sense += dir[i] * norm_vec[i];
+    }
+
+    RETURN(sense);
+}
+
+int
+calc_surf_sense_PZ(const double *paras,
+                   const double *pos,
+                   const double *dir)
+{
+    double x = pos[0];
+    double y = pos[1];
+    double z = pos[2];
+    double sense = z - paras[0];
+
+    if(fabs(sense) < EPSILON) {
+        sense = ZERO;
+        double norm_vec[3] = {ZERO, ZERO, ONE};
+        for(int i = 0; i < 3; i++)
+            sense += dir[i] * norm_vec[i];
+    }
+
+    RETURN(sense);
+}
+
+int
+calc_surf_sense_SO(const double *paras,
+                   const double *pos,
+                   const double *dir)
+{
+    double x = pos[0];
+    double y = pos[1];
+    double z = pos[2];
+    double sense = SQUARE(x) + SQUARE(y) + SQUARE(z) - SQUARE(paras[0]);
+
+    if(fabs(sense) < EPSILON) {
+        sense = ZERO;
+        double norm_vec[3] = {x, y, z};
+        for(int i = 0; i < 3; i++)
+            sense += dir[i] * norm_vec[i];
+    }
+
+    RETURN(sense);
+}
+
+int
+calc_surf_sense_S(const double *paras,
+                  const double *pos,
+                  const double *dir)
+{
+    double x = pos[0];
+    double y = pos[1];
+    double z = pos[2];
+    double sense = SQUARE(x - paras[0]) + SQUARE(y - paras[1]) + SQUARE(z - paras[2]) - SQUARE(paras[3]);
+
+    if(fabs(sense) < EPSILON) {
+        sense = ZERO;
+        double norm_vec[3] = {x - paras[0], y - paras[1], z - paras[2]};
+        for(int i = 0; i < 3; i++)
+            sense += dir[i] * norm_vec[i];
+    }
+
+    RETURN(sense);
+}
+
+int
+calc_surf_sense_SX(const double *paras,
+                   const double *pos,
+                   const double *dir)
+{
+    double x = pos[0];
+    double y = pos[1];
+    double z = pos[2];
+    double sense = SQUARE(x - paras[0]) + SQUARE(y) + SQUARE(z) - SQUARE(paras[1]);
+
+    if(fabs(sense) < EPSILON) {
+        sense = ZERO;
+        double norm_vec[3] = {x - paras[0], y, z};
+        for(int i = 0; i < 3; i++)
+            sense += dir[i] * norm_vec[i];
+    }
+
+    RETURN(sense);
+}
+
+int
+calc_surf_sense_SY(const double *paras,
+                   const double *pos,
+                   const double *dir)
+{
+    double x = pos[0];
+    double y = pos[1];
+    double z = pos[2];
+    double sense = SQUARE(x) + SQUARE(y - paras[0]) + SQUARE(z) - SQUARE(paras[1]);
+
+    if(fabs(sense) < EPSILON) {
+        sense = ZERO;
+        double norm_vec[3] = {x, y - paras[0], z};
+        for(int i = 0; i < 3; i++)
+            sense += dir[i] * norm_vec[i];
+    }
+
+    RETURN(sense);
+}
+
+int
+calc_surf_sense_SZ(const double *paras,
+                   const double *pos,
+                   const double *dir)
+{
+    double x = pos[0];
+    double y = pos[1];
+    double z = pos[2];
+    double sense = SQUARE(x) + SQUARE(y) + SQUARE(z - paras[0]) - SQUARE(paras[1]);
+
+    if(fabs(sense) < EPSILON) {
+        sense = ZERO;
+        double norm_vec[3] = {x, y, z - paras[0]};
+        for(int i = 0; i < 3; i++)
+            sense += dir[i] * norm_vec[i];
+    }
+
+    RETURN(sense);
+}
+
+int
+calc_surf_sense_C_X(const double *paras,
+                    const double *pos,
+                    const double *dir)
+{
+    double x = pos[0];
+    double y = pos[1];
+    double z = pos[2];
+    double sense = SQUARE(y - paras[0]) + SQUARE(z - paras[1]) - SQUARE(paras[2]);
+
+    if(fabs(sense) < EPSILON) {
+        sense = ZERO;
+        double norm_vec[3] = {ZERO, y - paras[0], z - paras[1]};
+        for(int i = 0; i < 3; i++)
+            sense += dir[i] * norm_vec[i];
+    }
+
+    RETURN(sense);
+}
+
+int
+calc_surf_sense_C_Y(const double *paras,
+                    const double *pos,
+                    const double *dir)
+{
+    double x = pos[0];
+    double y = pos[1];
+    double z = pos[2];
+    double sense = SQUARE(x - paras[0]) + SQUARE(z - paras[1]) - SQUARE(paras[2]);
+
+    if(fabs(sense) < EPSILON) {
+        sense = ZERO;
+        double norm_vec[3] = {x - paras[0], ZERO, z - paras[1]};
+        for(int i = 0; i < 3; i++)
+            sense += dir[i] * norm_vec[i];
+    }
+
+    RETURN(sense);
+}
+
+int
+calc_surf_sense_C_Z(const double *paras,
+                    const double *pos,
+                    const double *dir)
+{
+    double x = pos[0];
+    double y = pos[1];
+    double z = pos[2];
+    double sense = SQUARE(x - paras[0]) + SQUARE(y - paras[1]) - SQUARE(paras[2]);
+
+    if(fabs(sense) < EPSILON) {
+        sense = ZERO;
+        double norm_vec[3] = {x - paras[0], y - paras[1], ZERO};
+        for(int i = 0; i < 3; i++)
+            sense += dir[i] * norm_vec[i];
+    }
+
+    RETURN(sense);
+}
+
+int
+calc_surf_sense_CX(const double *paras,
+                   const double *pos,
+                   const double *dir)
+{
+    double x = pos[0];
+    double y = pos[1];
+    double z = pos[2];
+    double sense = SQUARE(y) + SQUARE(z) - SQUARE(paras[0]);
+
+    if(fabs(sense) < EPSILON) {
+        sense = ZERO;
+        double norm_vec[3] = {ZERO, y, z};
+        for(int i = 0; i < 3; i++)
+            sense += dir[i] * norm_vec[i];
+    }
+
+    RETURN(sense);
+}
+
+int
+calc_surf_sense_CY(const double *paras,
+                   const double *pos,
+                   const double *dir)
+{
+    double x = pos[0];
+    double y = pos[1];
+    double z = pos[2];
+    double sense = SQUARE(x) + SQUARE(z) - SQUARE(paras[0]);
+
+    if(fabs(sense) < EPSILON) {
+        sense = ZERO;
+        double norm_vec[3] = {x, ZERO, z};
+        for(int i = 0; i < 3; i++)
+            sense += dir[i] * norm_vec[i];
+    }
+
+    RETURN(sense);
+}
+
+int
+calc_surf_sense_CZ(const double *paras,
+                   const double *pos,
+                   const double *dir)
+{
+    double x = pos[0];
+    double y = pos[1];
+    double z = pos[2];
+    double sense = SQUARE(x) + SQUARE(y) - SQUARE(paras[0]);
+
+    if(fabs(sense) < EPSILON) {
+        sense = ZERO;
+        double norm_vec[3] = {x, y, ZERO};
+        for(int i = 0; i < 3; i++)
+            sense += dir[i] * norm_vec[i];
+    }
+
+    RETURN(sense);
 }

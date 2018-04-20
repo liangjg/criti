@@ -8,7 +8,7 @@
 #include "common.h"
 
 
-typedef struct {
+typedef struct cell_t{
     int id;                    /* cell id */
     int imp;                   /* imp关键字 */
     int surfs_sz;              /* 布尔表达式所包含的面的数目 */

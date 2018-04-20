@@ -39,7 +39,7 @@ calc_dist_to_bound(particle_status_t *par_status)
             signed_surf_index = cell->surfs[i];
             surf_index = abs(signed_surf_index);
             surf = cell->surfs_addr[i];
-            distance = calc_dist_to_surf(surf, par_status->loc_pos, par_status->loc_dir, surf_index == at_surf);
+            distance = surf->funcs->calc_dist_to_surf(surf->paras, par_status->loc_pos, par_status->loc_dir, surf_index == at_surf);
 
             if(distance > ZERO_DIST && dist_min - distance > OVERLAP_ERR) {
                 dist_min = distance;
@@ -84,7 +84,7 @@ calc_dist_to_bound(particle_status_t *par_status)
                 signed_surf_index = cell->surfs[j];
                 surf_index = abs(signed_surf_index);
                 surf = cell->surfs_addr[j];
-                distance = calc_dist_to_surf(surf, loc_pos, loc_dir, surf_index == at_surf);
+                distance = surf->funcs->calc_dist_to_surf(surf->paras, loc_pos, loc_dir, surf_index == at_surf);
 
                 if(distance > ZERO_DIST && dist_min - distance > OVERLAP_ERR) {
                     dist_min = distance;
