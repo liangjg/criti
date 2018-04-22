@@ -18,16 +18,16 @@ CXX_HOST := mpiCC
 LINKER := mpiCC
 
 # Set the C compiler flags
-C_FLAGS := -Wall -Wextra -pedantic -Wno-pointer-arith -O0 -g
+C_FLAGS := -Wall -Wextra -Wno-pointer-arith -O0 -OPT:IEEE_arith=1
 
 # Set the C defines
-C_DEFINES := -DUNIX
+C_DEFINES := -DUNIX -DCODE_VERSION=\"SW-0.1.3\"
 
 # Set the C header files search path
-C_INCLUDES :=
+C_INCLUDES := -I/usr/sw-mpp/mpi2/include
 
 # Set the CXX compiler flags
-CXX_FLAGS := -Wall -Wextra -pedantic -Wno-pointer-arith -O0 -g
+CXX_FLAGS := -Wall -Wextra -Wno-pointer-arith -O0 -OPT:IEEE_arith=1
 
 # Set the CXX defines
 CXX_DEFINES := -DUNIX
@@ -86,6 +86,7 @@ build/objs/init_fission_source.c.o \
 build/objs/interpolate_sab.c.o \
 build/objs/interpolate_xss_table.c.o \
 build/objs/locate_particle.c.o \
+build/objs/load_balance.c.o \
 build/objs/main.c.o \
 build/objs/map.c.o \
 build/objs/material.c.o \
@@ -343,6 +344,10 @@ build/objs/locate_particle.c.o: src/locate_particle.c
 	$(CC_SLAVE) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/locate_particle.c.o   -c src/locate_particle.c
 
 
+build/objs/load_balance.c.o: src/load_balance.c
+	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/load_balance.c.o  -c src/load_balance.c
+
+
 build/objs/main.c.o: src/main.c
 	$(CC_HOST) $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o build/objs/main.c.o   -c src/main.c
 
@@ -524,4 +529,4 @@ build/objs/read_material_block.cpp.o: src/read_material_block.cpp
 
 
 clean:
-	-rm -rf $(TARGET) $(criti_OBJECTS)
+	-rm -rf build/objs/*

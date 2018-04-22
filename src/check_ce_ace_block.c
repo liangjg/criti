@@ -46,14 +46,11 @@ check_ce_ace_block()
                 MT_max_4 = (int) (MAX(nuc->XSS[L3 + NMT_4 - 1], nuc->XSS[L3]));
                 MT_max_5 = (int) (MAX(nuc->XSS[L3 + NMT_5 - 1], nuc->XSS[L3]));
                 nuc->MTR_index_sz = MAX(110, MT_max_4 + 1);
-                nuc->MTR_index = (int *) malloc(
-                    sizeof(int) * nuc->MTR_index_sz);
+                nuc->MTR_index = (int *) malloc(sizeof(int) * nuc->MTR_index_sz);
                 nuc->LSIG_sz = MAX(110, MT_max_4 + 1);
-                nuc->LSIG = (int *) malloc(
-                    sizeof(int) * nuc->LSIG_sz);
+                nuc->LSIG = (int *) malloc(sizeof(int) * nuc->LSIG_sz);
                 nuc->LAND_sz = MT_max_5 + 3;
-                nuc->LAND = (int *) malloc(
-                    sizeof(int) * nuc->LAND_sz);
+                nuc->LAND = (int *) malloc(sizeof(int) * nuc->LAND_sz);
                 nuc->LAND[2] = (int) (nuc->XSS[L8]);
                 nuc->LDLW_sz = MT_max_5 + 3;
                 nuc->LDLW = (int *) malloc(sizeof(int) * nuc->LDLW_sz);
@@ -121,10 +118,8 @@ check_ce_ace_block()
                 int loc = Get_loc_of_MTR(nuc) - 1;
                 for(k = 1; k <= Get_non_el_mt_num_with_neu(nuc); k++) {
                     int MT_temp = (int) (nuc->XSS[loc + k]);
-
                     if(MT_temp <= 0) {
-                        printf("unknown MT number.\n   Nuc = %d, MT = XSS[%d] = %d.\n", nuc->zaid, loc + k,
-                               MT_temp);
+                        printf("unknown MT number.\n   Nuc = %d, MT = XSS[%d] = %d.\n", nuc->zaid, loc + k, MT_temp);
                         base_warnings++;
                     }
 

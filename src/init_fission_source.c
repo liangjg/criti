@@ -6,6 +6,13 @@
 #include "sample_method.h"
 
 
+#ifdef USE_MPI
+#include "parallel.h"
+
+
+extern parallel_t base_parallel;
+#endif
+
 extern criti_t base_criti;
 extern RNG_t base_RNG;
 extern double base_start_wgt;
@@ -15,16 +22,36 @@ extern int base_num_threads;
 void
 init_fission_source(pth_arg_t *pth_args)
 {
-    int i, j;
+    int i, j, id;
     int quotient, remainder;
 
-    printf("Initiating fission source...");
+#ifdef USE_MPI
+    if(IS_MASTER)
+#endif
+        printf("Initiating fission source...");
 
     base_criti.tot_start_wgt = ONE * base_criti.cycle_neu_num;
 
+#ifdef USE_MPI
+    int prev_neu_num = base_criti.cycle_neu_num;
+    quotient = prev_neu_num / base_parallel.tot_procs;
+    remainder = prev_neu_num - quotient * base_parallel.tot_procs;
+
+    for(id = 0; id < base_parallel.tot_procs; id++)
+        base_parallel.src_load[id] = quotient;
+    for(id = 0; id < remainder; id++)
+        base_parallel.src_load[id]++;
+    base_criti.cycle_neu_num = base_parallel.src_load[base_parallel.id];
+
+    base_parallel.rand_num_pos[0] = base_parallel.rand_num_sum;
+    for(id = 1; id < base_parallel.tot_procs; id++)
+        base_parallel.rand_num_pos[id] = base_parallel.rand_num_pos[id - 1] + base_parallel.src_load[id - 1];
+    base_RNG.position = base_parallel.rand_num_pos[base_parallel.id];
+#endif
+
     quotient = base_criti.cycle_neu_num / base_num_threads;
     remainder = base_criti.cycle_neu_num - quotient * base_num_threads;
-    for(i = 0; i < base_num_threads; i++){
+    for(i = 0; i < base_num_threads; i++) {
         pth_args[i].src_cnt = quotient;
         pth_args[i].nuc_xs = base_nuc_xs[i];
         pth_args[i].keff_final = base_criti.keff_final;
@@ -45,6 +72,11 @@ init_fission_source(pth_arg_t *pth_args)
         pth_args[i].src = malloc(sz * sizeof(bank_t));
         pth_args[i].bank = malloc(sz * sizeof(bank_t));
     }
+
+#ifdef USE_MPI
+    base_parallel.bank = malloc(2 * base_criti.cycle_neu_num * sizeof(bank_t));
+    base_parallel.src = malloc(2 * base_criti.cycle_neu_num * sizeof(bank_t));
+#endif
 
     double ksi1, ksi2, ksi3;
     bank_t *ksrc;
@@ -103,6 +135,10 @@ init_fission_source(pth_arg_t *pth_args)
     base_RNG.position_pre = -1000;
     base_RNG.position = 0;
 
+#ifdef USE_MPI
+    base_RNG.position = base_parallel.rand_num_pos[base_parallel.id];
+#endif
+
     for(i = 0; i < base_num_threads; i++) {
         ksrc_cnt = pth_args[i].src_cnt;
         for(j = 0; j < ksrc_cnt; j++) {
@@ -124,5 +160,10 @@ init_fission_source(pth_arg_t *pth_args)
     base_RNG.position_pre = -1000;
     base_RNG.position = 0;
 
-    puts("Finished.");
+#ifdef USE_MPI
+    base_RNG.position = base_parallel.rand_num_pos[base_parallel.id];
+
+    if(IS_MASTER)
+#endif
+        puts("Finished.");
 }

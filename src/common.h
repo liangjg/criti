@@ -13,7 +13,6 @@
 #include <time.h>
 #include <stdbool.h>
 #include <sys/time.h>
-#include <unistd.h>
 
 
 #ifdef USE_MPI
@@ -50,8 +49,6 @@
 
 #define KW_NUMBER       10
 #define MAX_KW_LENGTH   15
-
-#define CODE_VERSION  "Beta 0.2.0"
 
 #define WGT_CUTOFF    0.25
 #define EG0_CUTOFF    1.0E-20

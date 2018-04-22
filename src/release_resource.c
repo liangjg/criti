@@ -4,10 +4,14 @@
 
 #include "common.h"
 #include "map.h"
-#include "criticality.h"
 #include "IO_releated.h"
 #include "nuclide.h"
 
+#ifdef USE_MPI
+#include "parallel.h"
+
+parallel_t base_parallel;
+#endif
 
 extern map *base_univs;
 extern map *base_cells;
@@ -45,4 +49,15 @@ release_resource()
     if(base_IOfp.inp_fp) fclose(base_IOfp.inp_fp);
     if(base_IOfp.tally_fp) fclose(base_IOfp.tally_fp);
     if(base_IOfp.mat_fp) fclose(base_IOfp.mat_fp);
+
+#ifdef USE_MPI
+    MPI_Finalize();
+    free(base_parallel.bank_load);
+    free(base_parallel.bank_load_sum);
+    free(base_parallel.src_load);
+    free(base_parallel.src_load_sum);
+    free(base_parallel.rand_num_pos);
+    free(base_parallel.bank);
+    free(base_parallel.src);
+#endif
 }

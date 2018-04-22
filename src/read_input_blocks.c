@@ -5,6 +5,13 @@
 #include "IO_releated.h"
 
 
+#ifdef USE_MPI
+#include "parallel.h"
+
+
+extern parallel_t base_parallel;
+#endif
+
 extern IOfp_t base_IOfp;
 
 /* -------------------------- private prototypes ---------------------------- */
@@ -19,7 +26,10 @@ read_input_blocks(CALC_MODE_T *calc_mode)
     char *ret;
     char *kw_start;
 
-    printf("Reading input file...");
+#ifdef USE_MPI
+    if(IS_MASTER)
+#endif
+        printf("Reading input file...");
 
     while((ret = fgets(buf, MAX_LINE_LENGTH, base_IOfp.inp_fp))) {
         /* find the first non-space character */
@@ -66,13 +76,17 @@ read_input_blocks(CALC_MODE_T *calc_mode)
                     *calc_mode = BURNUP;
                     /*read_burnup_block();*/
                     break;
-                default:printf("unknown key word %s.\n", kw_start);
+                default:
+                    printf("unknown key word %s.\n", kw_start);
                     break;
             }
         }
     }
 
-    puts("Finished.");
+#ifdef USE_MPI
+    if(IS_MASTER)
+#endif
+        puts("Finished.");
 }
 
 /* ------------------------ private API implementation ---------------------- */
