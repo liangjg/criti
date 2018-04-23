@@ -7,7 +7,7 @@
 #ifdef USE_MPI
 #include "parallel.h"
 
-extern base_parallel;
+extern parallel_t base_parallel;
 #endif
 
 struct timeval start_time;

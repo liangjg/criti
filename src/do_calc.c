@@ -8,8 +8,6 @@
 #include "geometry.h"
 #include "slave.h"
 
-#define SZ_SRC    300
-#define SZ_BANK   600
 
 __thread_local volatile unsigned int get_reply, put_reply;
 __thread_local int my_id;
@@ -28,10 +26,10 @@ __thread_local nuc_xs_t *nuc_xs;
  * 模拟的source，600个用于存储产生的fission source；总大小约为:
  * sizeof(bank_t) * 900 = 64bytes * 900 = 57.6kB
  * ***********************************************************************/
-__thread_local bank_t src[SZ_SRC], bank[SZ_BANK];
+__thread_local bank_t *src, *bank;
 
 /* cur_bank_cnt为当前产生的裂变粒子数目，bank_cnt为总数 */
-__thread_local int bank_cnt, cur_bank_cnt;
+__thread_local int bank_cnt;
 
 /* 每个从核都需要一个存储在LDM中的particle_state对象，用于进行粒子输运 */
 __thread_local particle_status_t par_status;
@@ -55,9 +53,9 @@ _do_calc(int neu);
 void
 do_calc(void *args)
 {
-    int i, neu, time;
+    int i, neu;
     pth_arg_t *pth_arg;
-    int quotient, remainder;
+    cell_t *cell;
 
     pth_arg = (pth_arg_t *) args;
 
@@ -70,10 +68,6 @@ do_calc(void *args)
     /* 要模拟的粒子总数 */
     athread_get(PE_MODE, &pth_arg->src_cnt, &tot_neu, sizeof(int), &get_reply, 0, 0, 0);
     while(get_reply != 1);
-
-    /* quotient为需要传输数据的次数，如果remainder非零的话，则还要再传输一次数据 */
-    quotient = tot_neu / SZ_SRC;
-    remainder = tot_neu - quotient * SZ_SRC;
 
     /* 上一代的keff */
     athread_get(PE_MODE, &pth_arg->keff_final, &keff_final, sizeof(double), &get_reply, 0, 0, 0);
@@ -88,46 +82,72 @@ do_calc(void *args)
     while(get_reply != 4);
 
     /* 初始化部分变量 */
-    cur_bank_cnt = 0;
+    src = pth_arg->src;
+    bank = pth_arg->bank;
     bank_cnt = 0;
     col_cnt = 0;
     for(i = 0; i < 3; i++)
         keff_wgt_sum[i] = ZERO;
 
-    /* time表示一次传输，当次数小于quotient时，每次传输SZ_SRC个粒子 */
-    for(time = 0; time < quotient; time++) {
-        /* 取得这一代需要模拟的粒子信息, SZ_SRC个, 存储在src中 */
-        athread_get(PE_MODE, &pth_arg->src[time * SZ_SRC], src, SZ_SRC * sizeof(bank_t), &get_reply, 0, 0, 0);
-        while(get_reply != 5 + time);
+    for(neu = 0; neu < tot_neu; neu++){
+        get_rand_seed_slave(&RNG);
 
-        for(neu = 0; neu < SZ_SRC; neu++) {
-            _do_calc(neu);
+        /* 抽样要输运的粒子 */
+        memset(&par_status, 0x0, sizeof(particle_status_t));
+
+        for(i = 0; i < 3; i++) {
+            par_status.pos[i] = src[neu].pos[i];
+            par_status.dir[i] = src[neu].dir[i];
         }
 
-        /* 写回部分计算结果，主要是bank中的数据 */
-        athread_put(PE_MODE, bank, &pth_arg->bank[bank_cnt], cur_bank_cnt * sizeof(bank_t), &put_reply, 0, 0);
-        while(put_reply != 1 + time);
+        par_status.erg = src[neu].erg;
+        par_status.wgt = base_start_wgt;
+        par_status.cell = locate_particle(&par_status, root_universe, par_status.pos, par_status.dir);
 
-        bank_cnt += cur_bank_cnt;
-        cur_bank_cnt = 0;
+        if(!par_status.cell)
+            continue;
+
+        cell = par_status.cell;
+        par_status.mat = cell->mat;
+        par_status.cell_tmp = cell->tmp;
+
+        do {
+            /* geometry tracking: free flying */
+            geometry_tracking(&par_status, keff_wgt_sum, nuc_xs, &RNG);
+            if(par_status.is_killed) break;
+
+            /* sample collision nuclide */
+            sample_col_nuclide(&par_status, nuc_xs, &RNG);
+            if(par_status.is_killed) break;
+
+            /* calculate cross-section */
+            calc_col_nuc_cs(&par_status, &RNG);
+
+            /* treat fission */
+            treat_fission(&par_status, &RNG, keff_wgt_sum, bank, &bank_cnt, keff_final);
+
+            /* implicit capture(including fission) */
+            treat_implicit_capture(&par_status, &RNG);
+            if(par_status.is_killed) break;
+
+            /* sample collision type */
+            par_status.collision_type = sample_col_type(&par_status, &RNG);
+            if(par_status.is_killed) break;
+
+            /* sample exit state */
+            get_exit_state(&par_status, &RNG);
+            if(par_status.is_killed) break;
+
+            /* update particle state */
+            par_status.erg = par_status.exit_erg;
+            for(i = 0; i < 3; i++)
+                par_status.dir[i] = par_status.exit_dir[i];
+            double length = ONE / sqrt(SQUARE(par_status.dir[0]) + SQUARE(par_status.dir[1]) + SQUARE(par_status.dir[2]));
+            par_status.dir[0] *= length;
+            par_status.dir[1] *= length;
+            par_status.dir[2] *= length;
+        } while(++col_cnt < MAX_ITER);
     }
-
-    /* 如果remainder大于0，则还需要进行一次数据传输 */
-    if(remainder) {
-        athread_get(PE_MODE, &pth_arg->src[quotient * SZ_SRC], src, remainder * sizeof(bank_t), &get_reply, 0, 0, 0);
-        while(get_reply != 5 + quotient);
-
-        for(neu = 0; neu < remainder; neu++) {
-            _do_calc(neu);
-        }
-
-        athread_put(PE_MODE, bank, &pth_arg->bank[bank_cnt], cur_bank_cnt * sizeof(bank_t), &put_reply, 0, 0);
-        while(put_reply != 1 + quotient);
-
-        bank_cnt += cur_bank_cnt;
-    }
-
-    put_reply = 0;
 
     /* 写回计算结果 */
     athread_put(PE_MODE, keff_wgt_sum, pth_arg->keff_wgt_sum, 3 * sizeof(double), &put_reply, 0, 0);
@@ -143,73 +163,4 @@ do_calc(void *args)
         athread_put(PE_MODE, &RNG, &pth_arg->RNG, sizeof(RNG_t), &put_reply, 0, 0);
         while(put_reply != 4);
     }
-}
-
-void
-_do_calc(int neu)
-{
-    int i;
-    cell_t *cell;
-    bank_t *cur_src;
-
-    get_rand_seed_slave(&RNG);
-
-    /* 抽样要输运的粒子 */
-    memset(&par_status, 0x0, sizeof(particle_status_t));
-
-    cur_src = &src[neu];
-
-    for(i = 0; i < 3; i++) {
-        par_status.pos[i] = cur_src->pos[i];
-        par_status.dir[i] = cur_src->dir[i];
-    }
-
-    par_status.erg = cur_src->erg;
-    par_status.wgt = base_start_wgt;
-    par_status.cell = locate_particle(&par_status, root_universe, par_status.pos, par_status.dir);
-
-    if(!par_status.cell)
-        return;
-
-    cell = par_status.cell;
-    par_status.mat = cell->mat;
-    par_status.cell_tmp = cell->tmp;
-
-    do {
-        /* geometry tracking: free flying */
-        geometry_tracking(&par_status, keff_wgt_sum, nuc_xs, &RNG);
-        if(par_status.is_killed) break;
-
-        /* sample collision nuclide */
-        sample_col_nuclide(&par_status, nuc_xs, &RNG);
-        if(par_status.is_killed) break;
-
-        /* calculate cross-section */
-        calc_col_nuc_cs(&par_status, &RNG);
-
-        /* treat fission */
-        treat_fission(&par_status, &RNG, keff_wgt_sum, bank, &cur_bank_cnt, keff_final);
-
-        /* implicit capture(including fission) */
-        /* TODO: 把treat_implicit_capture_fixed一并考虑进来 */
-        treat_implicit_capture(&par_status, &RNG);
-        if(par_status.is_killed) break;
-
-        /* sample collision type */
-        par_status.collision_type = sample_col_type(&par_status, &RNG);
-        if(par_status.is_killed) break;
-
-        /* sample exit state */
-        get_exit_state(&par_status, &RNG);
-        if(par_status.is_killed) break;
-
-        /* update particle state */
-        par_status.erg = par_status.exit_erg;
-        for(i = 0; i < 3; i++)
-            par_status.dir[i] = par_status.exit_dir[i];
-        double length = ONE / sqrt(SQUARE(par_status.dir[0]) + SQUARE(par_status.dir[1]) + SQUARE(par_status.dir[2]));
-        par_status.dir[0] *= length;
-        par_status.dir[1] *= length;
-        par_status.dir[2] *= length;
-    } while(++col_cnt < MAX_ITER);
 }
