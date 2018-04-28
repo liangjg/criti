@@ -21,7 +21,7 @@ LINKER := mpiCC
 C_FLAGS := -Wall -Wextra -Wno-pointer-arith -O0 -OPT:IEEE_arith=1
 
 # Set the C defines
-C_DEFINES := -DUNIX -DCODE_VERSION=\"SW-0.1.4\"
+C_DEFINES := -DUNIX -DCODE_VERSION=\"SW-0.1.5\"
 
 # Set the C header files search path
 C_INCLUDES := -I/usr/sw-mpp/mpi2/include
@@ -64,15 +64,9 @@ build/objs/doppler_broaden.c.o \
 build/objs/find_lat_index.c.o \
 build/objs/find_neighbor_cell.c.o \
 build/objs/find_next_cell.c.o \
-build/objs/geometry_tracking.c.o \
-build/objs/geometry_tracking_fixed.c.o \
 build/objs/get_ce_exit_state.c.o \
 build/objs/get_delayed_nu.c.o \
 build/objs/get_erg_func_value.c.o \
-build/objs/get_exit_state.c.o \
-build/objs/get_exit_state_fixed.c.o \
-build/objs/get_fis_neu_state.c.o \
-build/objs/get_fis_neu_state_fixed.c.o \
 build/objs/get_law_type.c.o \
 build/objs/get_nuc_abs_scatt_cs.c.o \
 build/objs/get_nuc_mt_cs.c.o \
@@ -96,8 +90,6 @@ build/objs/offset_neighbor_lat.c.o \
 build/objs/output_ending.c.o \
 build/objs/output_heading.c.o \
 build/objs/output_mat_file.c.o \
-build/objs/output_summary.c.o \
-build/objs/output_summary_fixed.c.o \
 build/objs/particle_is_in_cell.c.o \
 build/objs/preprocess_geometry.c.o \
 build/objs/process_cycle_end.c.o \
@@ -112,8 +104,6 @@ build/objs/reflect_par.c.o \
 build/objs/release_resource.c.o \
 build/objs/rotate_dir.c.o \
 build/objs/sample_col_nuclide.c.o \
-build/objs/sample_col_type.c.o \
-build/objs/sample_col_type_fixed.c.o \
 build/objs/sample_free_fly_dis.c.o \
 build/objs/sample_maxwell_host.c.o \
 build/objs/sample_maxwell_slave.c.o \
@@ -125,8 +115,6 @@ build/objs/trans_univ_dir.c.o \
 build/objs/treat_URR.c.o \
 build/objs/treat_fission.c.o \
 build/objs/treat_free_gas_model.c.o \
-build/objs/treat_implicit_capture.c.o \
-build/objs/treat_implicit_capture_fixed.c.o \
 build/objs/treat_sab_collision_type.c.o \
 build/objs/universe.c.o \
 build/objs/vector.c.o \
@@ -137,13 +125,25 @@ build/objs/read_material_block.cpp.o
 # KSRC objects
 KSRC_OBJECTS = \
 build/objs/calc_criticality.c.o \
-build/objs/do_calc.c.o
+build/objs/do_calc.c.o \
+build/objs/geometry_tracking.c.o \
+build/objs/get_exit_state.c.o \
+build/objs/get_fis_neu_state.c.o \
+build/objs/output_summary.c.o \
+build/objs/sample_col_type.c.o \
+build/objs/treat_implicit_capture.c.o
 
 
 # FSRC objects
 FSRC_OBJECTS = \
 build/objs/calc_fixed_src.c.o \
-build/objs/do_calc_fixed.c.o
+build/objs/do_calc_fixed.c.o \
+build/objs/geometry_tracking_fixed.c.o \
+build/objs/get_exit_state_fixed.c.o \
+build/objs/get_fis_neu_state_fixed.c.o \
+build/objs/output_summary_fixed.c.o \
+build/objs/sample_col_type_fixed.c.o \
+build/objs/treat_implicit_capture_fixed.c.o
 
 
 # External object files for target criti

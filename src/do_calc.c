@@ -8,6 +8,7 @@
 #include "geometry.h"
 #include "slave.h"
 
+
 __thread_local volatile unsigned int get_reply, put_reply;
 __thread_local int my_id;
 
@@ -29,16 +30,15 @@ extern nuc_xs_t *base_nuc_xs;
 void
 do_calc(void *args)
 {
-    int i, neu, tot_neu;
+    int i, neu, tot_neu, MT;
+    double length;
     cell_t *cell;
 
     /* 每个从核的id */
     my_id = athread_get_id(-1);
 
-    get_reply = 0;
-    put_reply = 0;
-
     /* 直接从主核所传的参数复制 */
+    get_reply = 0;
     athread_get(PE_MODE, args, &pth_arg, sizeof(pth_arg_t), &get_reply, 0, 0, 0);
     while(get_reply != 1);
 
@@ -95,18 +95,18 @@ do_calc(void *args)
             if(par_status.is_killed) break;
 
             /* sample collision type */
-            par_status.collision_type = sample_col_type(&par_status, &pth_arg.RNG);
+            MT = sample_col_type(&par_status, &pth_arg.RNG);
             if(par_status.is_killed) break;
 
             /* sample exit state */
-            get_exit_state(&par_status, &pth_arg.RNG);
+            get_exit_state(&par_status, MT, &pth_arg.RNG);
             if(par_status.is_killed) break;
 
             /* update particle state */
             par_status.erg = par_status.exit_erg;
             for(i = 0; i < 3; i++)
                 par_status.dir[i] = par_status.exit_dir[i];
-            double length = ONE / sqrt(SQUARE(par_status.dir[0]) + SQUARE(par_status.dir[1]) + SQUARE(par_status.dir[2]));
+            length = ONE / sqrt(SQUARE(par_status.dir[0]) + SQUARE(par_status.dir[1]) + SQUARE(par_status.dir[2]));
             par_status.dir[0] *= length;
             par_status.dir[1] *= length;
             par_status.dir[2] *= length;
@@ -116,6 +116,7 @@ do_calc(void *args)
     ldm_free(nuc_xs, base_tot_nucs * sizeof(nuc_xs_t));
 
     /* 写回计算结果 */
+    put_reply = 0;
     athread_put(PE_MODE, &pth_arg, args, sizeof(pth_arg_t), &put_reply, 0, 0);
     while(put_reply != 1);
 }

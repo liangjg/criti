@@ -35,15 +35,14 @@ typedef struct particle_status_t {
     void *nuc;                  /* 当前发生碰撞的核素 */
     void *nuc_xs;               /* 当前发生碰撞的核素的截面 */
     void *sab_nuc;              /* 和当前碰撞核素相应的热化核素 */
-    int collision_type;         /* 当前反应的MT号 */
     double cell_tmp;            /* 当前cell的温度 */
     bool cell_tmp_changed;      /* 粒子穿面之后，所处的材料有没有发生变化 */
     bool mat_changed;           /* 粒子穿面之后，所处的材料温度有没有发生变化 */
 
     /* cross sections */
     int interp_N0;              /* Eg0 interpolation position */
-    double interp_K0;           /* Eg0 interpolation fraction */
     int interp_N;               /* Erg interpolation position */
+    double interp_K0;           /* Eg0 interpolation fraction */
     double interp_K;            /* Erg interpolation fraction */
     double macro_tot_cs;
     double macro_nu_fis_cs;

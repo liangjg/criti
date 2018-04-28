@@ -8,6 +8,7 @@
 
 void
 get_exit_state(particle_status_t *par_status,
+               int MT,
                RNG_t *RNG)
 {
     nuclide_t *nuc;
@@ -24,7 +25,7 @@ get_exit_state(particle_status_t *par_status,
         return;
     }
 
-    int emiss_neu_num = abs(Get_emiss_neu_num(nuc, par_status->collision_type));
+    int emiss_neu_num = abs(Get_emiss_neu_num(nuc, MT));
 
     if(emiss_neu_num == 0) {
         par_status->is_killed = true;
@@ -34,7 +35,7 @@ get_exit_state(particle_status_t *par_status,
 
     par_status->wgt *= emiss_neu_num;
 
-    get_ce_exit_state(par_status, RNG, par_status->collision_type, par_status->is_free_gas_col);
+    get_ce_exit_state(par_status, RNG, MT, par_status->is_free_gas_col);
 
     /* 这里似乎应该是出射能量而不是原本的能量 */
     if(par_status->erg <= EG0_CUTOFF)

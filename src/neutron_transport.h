@@ -60,6 +60,7 @@ sample_col_type_fixed(particle_status_t *par_status,
 
 void
 get_exit_state(particle_status_t *par_status,
+               int MT,
                RNG_t *RNG);
 
 void
