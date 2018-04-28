@@ -10,7 +10,6 @@
 extern fixed_src_t base_fixed_src;
 extern RNG_t base_RNG;
 extern double base_start_wgt;
-extern nuc_xs_t **base_nuc_xs;
 extern int base_num_threads;
 
 #define BANK_SZ    256
@@ -33,7 +32,6 @@ init_external_src(pth_arg_t *pth_args)
     remainder = tot_neu_num - quotient * base_num_threads;
     for(i = 0; i < base_num_threads; i++) {
         pth_args[i].src_cnt = quotient;
-        pth_args[i].nuc_xs = base_nuc_xs[i];
     }
 
     if(remainder)

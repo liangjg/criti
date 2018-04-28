@@ -10,10 +10,9 @@
 
 
 typedef struct pth_arg_t {
+    RNG_t RNG;
     bank_t *src;
     bank_t *bank;
-    nuc_xs_t *nuc_xs;
-    RNG_t RNG;
     int src_cnt;
     int bank_cnt;
     int col_cnt;

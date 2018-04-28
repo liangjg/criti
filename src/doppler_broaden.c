@@ -14,8 +14,9 @@ extern map *base_nucs;
 extern map *base_mats;
 extern IOfp_t base_IOfp;
 extern acedata_t base_acedata;
-extern nuc_xs_t **base_nuc_xs;
+extern nuc_xs_t *base_nuc_xs;
 extern int base_num_threads;
+extern int base_tot_nucs;
 
 static int
 _dppler_brdn_nuc_tmp(acedata_t *obj,
@@ -34,7 +35,6 @@ doppler_broaden()
     nuclide_t *nuc;
     cell_t *cell;
     map_entry *cell_entry, *nuc_entry;
-    int tot_nucs;
     int cnt;
     double broaden_tmp;
     bool first_time;    /* 是否所有cell都是相同的温度 */
@@ -44,10 +44,9 @@ doppler_broaden()
     map_iterator *cell_iter;
 
     cnt = 0;
-    tot_nucs = 0;
     while((nuc_entry = map_iter_next(nuc_iter))) {
         nuc = nuc_entry->v.val;
-        nuc->xs = tot_nucs++;
+        nuc->xs = base_tot_nucs++;
         nuc->broaden_tmp = nuc->tmp;
         if(!ISNUMBER(*nuc->id))
             continue;
@@ -79,9 +78,7 @@ END:
     map_release_iter(nuc_iter);
 
     /* 分配空间 */
-    base_nuc_xs = malloc(base_num_threads * sizeof(void *));
-    for(i = 0; i < base_num_threads; i++)
-        base_nuc_xs[i] = malloc(tot_nucs * sizeof(nuc_xs_t));
+    base_nuc_xs = malloc(base_tot_nucs * sizeof(nuc_xs_t));
 }
 
 int

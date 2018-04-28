@@ -16,7 +16,6 @@ extern parallel_t base_parallel;
 extern criti_t base_criti;
 extern RNG_t base_RNG;
 extern double base_start_wgt;
-extern nuc_xs_t **base_nuc_xs;
 extern int base_num_threads;
 
 void
@@ -53,7 +52,6 @@ init_fission_source(pth_arg_t *pth_args)
     remainder = base_criti.cycle_neu_num - quotient * base_num_threads;
     for(i = 0; i < base_num_threads; i++) {
         pth_args[i].src_cnt = quotient;
-        pth_args[i].nuc_xs = base_nuc_xs[i];
         pth_args[i].keff_final = base_criti.keff_final;
     }
     if(remainder)

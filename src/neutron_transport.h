@@ -40,11 +40,7 @@ calc_col_nuc_cs(particle_status_t *par_status,
 
 void
 treat_fission(particle_status_t *par_status,
-              RNG_t *RNG,
-              double *keff_wgt_sum,
-              bank_t *bank,
-              int *cur_bank_cnt,
-              double keff_final);
+              pth_arg_t *arg);
 
 void
 treat_implicit_capture(particle_status_t *par_status,

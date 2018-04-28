@@ -21,7 +21,7 @@ LINKER := mpiCC
 C_FLAGS := -Wall -Wextra -Wno-pointer-arith -O0 -OPT:IEEE_arith=1
 
 # Set the C defines
-C_DEFINES := -DUNIX -DCODE_VERSION=\"SW-0.1.2\"
+C_DEFINES := -DUNIX -DCODE_VERSION=\"SW-0.1.4\"
 
 # Set the C header files search path
 C_INCLUDES := -I/usr/sw-mpp/mpi2/include

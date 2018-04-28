@@ -28,12 +28,13 @@ parallel_t base_parallel;
 unsigned base_warnings;
 double base_start_wgt;
 int base_num_threads;
+int base_tot_nucs;
 criti_t base_criti;
 fixed_src_t base_fixed_src;
 IOfp_t base_IOfp;
 RNG_t base_RNG;
 acedata_t base_acedata;
-nuc_xs_t **base_nuc_xs;
+nuc_xs_t *base_nuc_xs;
 
 /* key: universe index; val: corresponding universe instance address */
 map *base_univs;

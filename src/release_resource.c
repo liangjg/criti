@@ -19,7 +19,7 @@ extern map *base_surfs;
 extern map *base_mats;
 extern map *base_nucs;
 extern IOfp_t base_IOfp;
-extern nuc_xs_t **base_nuc_xs;
+extern nuc_xs_t *base_nuc_xs;
 extern int base_num_threads;
 
 void
@@ -38,11 +38,7 @@ release_resource()
     map_free(base_nucs);
     free(base_nucs);
 
-    if(base_nuc_xs){
-        for(i = 0; i < base_num_threads; i++)
-            free(base_nuc_xs[i]);
-        free(base_nuc_xs);
-    }
+    free(base_nuc_xs);
 
     /* close all FILE structure if opened */
     if(base_IOfp.opt_fp) fclose(base_IOfp.opt_fp);

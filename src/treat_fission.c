@@ -7,15 +7,11 @@
 #include "criticality.h"
 
 
-static int fis_MT[5] = {18, 19, 20, 21, 38};
+//static int fis_MT[5] = {18, 19, 20, 21, 38};
 
 void
 treat_fission(particle_status_t *par_status,
-              RNG_t *RNG,
-              double *keff_wgt_sum,
-              bank_t *bank,
-              int *cur_bank_cnt,
-              double keff_final)
+                  pth_arg_t *arg)
 {
     nuclide_t *nuc;
     nuc_xs_t *cur_nuc_xs;
@@ -23,10 +19,11 @@ treat_fission(particle_status_t *par_status,
     bank_t *cur_fis_bank;
     double fis_R;
     int i;
+    int fis_MT[5] = {18, 19, 20, 21, 38};
 
     nuc = par_status->nuc;
     cur_nuc_xs = par_status->nuc_xs;
-    cur_fis_bank = &bank[*cur_bank_cnt];
+    cur_fis_bank = &arg->bank[arg->bank_cnt];
 
     if(cur_nuc_xs->fis <= ZERO) return;
 
@@ -45,18 +42,18 @@ treat_fission(particle_status_t *par_status,
         }
     }
 
-    keff_wgt_sum[1] += par_status->wgt * cur_nuc_xs->nu * cur_nuc_xs->fis / cur_nuc_xs->tot;
+    arg->keff_wgt_sum[1] += par_status->wgt * cur_nuc_xs->nu * cur_nuc_xs->fis / cur_nuc_xs->tot;
 
     if(nuc->LSIG[18] > 0) {
         if(fis_sub_cs[0] > 0) {
-            fis_R = par_status->wgt * cur_nuc_xs->nu * fis_sub_cs[0] / cur_nuc_xs->tot / keff_final;
-            *cur_bank_cnt += get_fis_neu_state(par_status, cur_fis_bank, RNG, fis_MT[0], fis_R, cur_nuc_xs->nu);
+            fis_R = par_status->wgt * cur_nuc_xs->nu * fis_sub_cs[0] / cur_nuc_xs->tot / arg->keff_final;
+            arg->bank_cnt += get_fis_neu_state(par_status, cur_fis_bank, &arg->RNG, fis_MT[0], fis_R, cur_nuc_xs->nu);
         }
     } else {
         for(i = 1; i < 5; i++) {
             if(fis_sub_cs[i] > 0) {
-                fis_R = par_status->wgt * cur_nuc_xs->nu * fis_sub_cs[i] / cur_nuc_xs->tot / keff_final;
-                *cur_bank_cnt += get_fis_neu_state(par_status, cur_fis_bank, RNG, fis_MT[i], fis_R, cur_nuc_xs->nu);
+                fis_R = par_status->wgt * cur_nuc_xs->nu * fis_sub_cs[i] / cur_nuc_xs->tot / arg->keff_final;
+                arg->bank_cnt += get_fis_neu_state(par_status, cur_fis_bank, &arg->RNG, fis_MT[i], fis_R, cur_nuc_xs->nu);
             }
         }
     }

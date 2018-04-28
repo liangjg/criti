@@ -51,8 +51,8 @@ typedef struct {
     double fis;
     double nu;
 
-    int inter_pos;
     double inter_frac;
+    int inter_pos;
 
     int ptable;              /* ptable=0说明该核素不存在概率表，大于0的值表示概率表的位置 */
 } nuc_xs_t;
