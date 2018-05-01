@@ -21,8 +21,8 @@ rotate_dir(double mu,
         return;
     }
     do {
-        ksi1 = TWO * get_rand_slave(RNG) - ONE;
-        ksi2 = TWO * get_rand_slave(RNG) - ONE;
+        ksi1 = TWO * get_rand(RNG) - ONE;
+        ksi2 = TWO * get_rand(RNG) - ONE;
         r = (ksi1 * ksi1) + (ksi2 * ksi2);
     } while(r > ONE);
     r = sqrt((ONE - (mu * mu)) / r);

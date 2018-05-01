@@ -37,7 +37,7 @@ calc_criticality()
 
             skip_src = pth_args[i].src_cnt;
             for(j = 0; j < skip_src; j++)
-                get_rand_seed_host(&pth_args[i + 1].RNG);
+                get_rand_seed(&pth_args[i + 1].RNG);
         }
 
         /* do_calc_master(&pth_arg[base_num_threads]); */
@@ -78,7 +78,7 @@ do_calc_master(void *args){
     keff_wgt_sum = pth_arg->keff_wgt_sum;
 
     for(neu = 0; neu < tot_neu; neu++) {
-        get_rand_seed_host(RNG);
+        get_rand_seed(RNG);
 
         [> 抽样要输运的粒子 <]
         memset(&par_status, 0x0, sizeof(particle_status_t));

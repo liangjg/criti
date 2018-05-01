@@ -48,7 +48,7 @@ init_external_src(pth_arg_t *pth_args)
             for(i = 0; i < base_num_threads; i++) {
                 fsrc_cnt = pth_args[i].src_cnt;
                 for(j = 0; j < fsrc_cnt; j++) {
-                    get_rand_seed_host(&base_RNG);
+                    get_rand_seed(&base_RNG);
                     fsrc = &pth_args[i].src[j];
                     fsrc->pos[0] = base_fixed_src.fsrc_paras[0];
                     fsrc->pos[1] = base_fixed_src.fsrc_paras[1];
@@ -65,11 +65,11 @@ init_external_src(pth_arg_t *pth_args)
             for(i = 0; i < base_num_threads; i++) {
                 fsrc_cnt = pth_args[i].src_cnt;
                 for(j = 0; j < fsrc_cnt; j++) {
-                    get_rand_seed_host(&base_RNG);
+                    get_rand_seed(&base_RNG);
                     fsrc = &pth_args[i].src[j];
-                    fsrc->pos[0] = base_fixed_src.fsrc_paras[0] + get_rand_host(&base_RNG) * len_x;
-                    fsrc->pos[1] = base_fixed_src.fsrc_paras[1] + get_rand_host(&base_RNG) * len_y;
-                    fsrc->pos[2] = base_fixed_src.fsrc_paras[2] + get_rand_host(&base_RNG) * len_z;
+                    fsrc->pos[0] = base_fixed_src.fsrc_paras[0] + get_rand(&base_RNG) * len_x;
+                    fsrc->pos[1] = base_fixed_src.fsrc_paras[1] + get_rand(&base_RNG) * len_y;
+                    fsrc->pos[2] = base_fixed_src.fsrc_paras[2] + get_rand(&base_RNG) * len_z;
                 }
             }
             break;
@@ -78,12 +78,12 @@ init_external_src(pth_arg_t *pth_args)
             for(i = 0; i < base_num_threads; i++) {
                 fsrc_cnt = pth_args[i].src_cnt;
                 for(j = 0; j < fsrc_cnt; j++) {
-                    get_rand_seed_host(&base_RNG);
+                    get_rand_seed(&base_RNG);
                     fsrc = &pth_args[i].src[j];
                     do {
-                        ksi1 = TWO * get_rand_host(&base_RNG) - ONE;
-                        ksi2 = TWO * get_rand_host(&base_RNG) - ONE;
-                        ksi3 = TWO * get_rand_host(&base_RNG) - ONE;
+                        ksi1 = TWO * get_rand(&base_RNG) - ONE;
+                        ksi2 = TWO * get_rand(&base_RNG) - ONE;
+                        ksi3 = TWO * get_rand(&base_RNG) - ONE;
                     } while(SQUARE(ksi1) + SQUARE(ksi2) + SQUARE(ksi3) > ONE);
                     fsrc->pos[0] = base_fixed_src.fsrc_paras[0] + base_fixed_src.fsrc_paras[3] * ksi1;
                     fsrc->pos[1] = base_fixed_src.fsrc_paras[1] + base_fixed_src.fsrc_paras[3] * ksi2;
@@ -97,13 +97,13 @@ init_external_src(pth_arg_t *pth_args)
             for(i = 0; i < base_num_threads; i++) {
                 fsrc_cnt = pth_args[i].src_cnt;
                 for(j = 0; j < fsrc_cnt; j++) {
-                    get_rand_seed_host(&base_RNG);
+                    get_rand_seed(&base_RNG);
                     fsrc = &pth_args[i].src[j];
                     do {
-                        ksi1 = TWO * get_rand_host(&base_RNG) - ONE;
-                        ksi2 = TWO * get_rand_host(&base_RNG) - ONE;
+                        ksi1 = TWO * get_rand(&base_RNG) - ONE;
+                        ksi2 = TWO * get_rand(&base_RNG) - ONE;
                     } while(SQUARE(ksi1) + SQUARE(ksi2) > ONE);
-                    fsrc->pos[0] = base_fixed_src.fsrc_paras[3] + get_rand_host(&base_RNG) * height;
+                    fsrc->pos[0] = base_fixed_src.fsrc_paras[3] + get_rand(&base_RNG) * height;
                     fsrc->pos[1] = base_fixed_src.fsrc_paras[0] + base_fixed_src.fsrc_paras[2] * ksi1;
                     fsrc->pos[2] = base_fixed_src.fsrc_paras[1] + base_fixed_src.fsrc_paras[2] * ksi2;
                 }
@@ -115,14 +115,14 @@ init_external_src(pth_arg_t *pth_args)
             for(i = 0; i < base_num_threads; i++) {
                 fsrc_cnt = pth_args[i].src_cnt;
                 for(j = 0; j < fsrc_cnt; j++) {
-                    get_rand_seed_host(&base_RNG);
+                    get_rand_seed(&base_RNG);
                     fsrc = &pth_args[i].src[j];
                     do {
-                        ksi1 = TWO * get_rand_host(&base_RNG) - ONE;
-                        ksi2 = TWO * get_rand_host(&base_RNG) - ONE;
+                        ksi1 = TWO * get_rand(&base_RNG) - ONE;
+                        ksi2 = TWO * get_rand(&base_RNG) - ONE;
                     } while(SQUARE(ksi1) + SQUARE(ksi2) > ONE);
                     fsrc->pos[0] = base_fixed_src.fsrc_paras[0] + base_fixed_src.fsrc_paras[2] * ksi1;
-                    fsrc->pos[1] = base_fixed_src.fsrc_paras[3] + get_rand_host(&base_RNG) * height;
+                    fsrc->pos[1] = base_fixed_src.fsrc_paras[3] + get_rand(&base_RNG) * height;
                     fsrc->pos[2] = base_fixed_src.fsrc_paras[1] + base_fixed_src.fsrc_paras[2] * ksi2;
                 }
             }
@@ -133,15 +133,15 @@ init_external_src(pth_arg_t *pth_args)
             for(i = 0; i < base_num_threads; i++) {
                 fsrc_cnt = pth_args[i].src_cnt;
                 for(j = 0; j < fsrc_cnt; j++) {
-                    get_rand_seed_host(&base_RNG);
+                    get_rand_seed(&base_RNG);
                     fsrc = &pth_args[i].src[j];
                     do {
-                        ksi1 = TWO * get_rand_host(&base_RNG) - ONE;
-                        ksi2 = TWO * get_rand_host(&base_RNG) - ONE;
+                        ksi1 = TWO * get_rand(&base_RNG) - ONE;
+                        ksi2 = TWO * get_rand(&base_RNG) - ONE;
                     } while(SQUARE(ksi1) + SQUARE(ksi2) > ONE);
                     fsrc->pos[0] = base_fixed_src.fsrc_paras[0] + base_fixed_src.fsrc_paras[2] * ksi1;
                     fsrc->pos[1] = base_fixed_src.fsrc_paras[1] + base_fixed_src.fsrc_paras[2] * ksi2;
-                    fsrc->pos[2] = base_fixed_src.fsrc_paras[3] + get_rand_host(&base_RNG) * height;
+                    fsrc->pos[2] = base_fixed_src.fsrc_paras[3] + get_rand(&base_RNG) * height;
                 }
             }
             break;
@@ -154,9 +154,9 @@ init_external_src(pth_arg_t *pth_args)
     for(i = 0; i < base_num_threads; i++) {
         fsrc_cnt = pth_args[i].src_cnt;
         for(j = 0; j < fsrc_cnt; j++) {
-            get_rand_seed_host(&base_RNG);
-            ksi1 = get_rand_host(&base_RNG);
-            ksi2 = get_rand_host(&base_RNG);
+            get_rand_seed(&base_RNG);
+            ksi1 = get_rand(&base_RNG);
+            ksi2 = get_rand(&base_RNG);
             fsrc = &pth_args[i].src[j];
             fsrc->dir[0] = TWO * ksi2 - ONE;
             fsrc->dir[1] = sqrt(ONE - SQUARE(fsrc->dir[0])) * cos(TWO * PI * ksi1);
@@ -165,7 +165,7 @@ init_external_src(pth_arg_t *pth_args)
                 fsrc->erg = base_fixed_src.fsrc_erg;
             else {
                 double T = 4.0 / 3.0;
-                fsrc->erg = sample_maxwell_host(&base_RNG, T);
+                fsrc->erg = sample_maxwell(&base_RNG, T);
             }
         }
     }

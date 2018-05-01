@@ -54,6 +54,6 @@ calc_erg_mu(const nuclide_t *nuc,
     if(!(*exit_mu_lab >= -1.000001 && *exit_mu_lab <= 1.000001)) {
         printf("exit mu_lab out of range. nuc=%d, MT=%d, Mu=%f\n", nuc->zaid, MT, *exit_mu_lab);
         base_warnings++;
-        *exit_mu_lab = TWO * get_rand_slave(RNG) - ONE;
+        *exit_mu_lab = TWO * get_rand(RNG) - ONE;
     }
 }

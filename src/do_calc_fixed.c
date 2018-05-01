@@ -112,7 +112,7 @@ _do_calc_fixed(int neu)
     if(neu % 100 == 0 && my_id == 0)
         printf("neutron: %d\n", neu * base_num_threads);
 
-    get_rand_seed_slave(&RNG);
+    get_rand_seed(&RNG);
 
     /* 抽样要输运的粒子 */
     memset(&par_status, 0x0, sizeof(particle_status_t));

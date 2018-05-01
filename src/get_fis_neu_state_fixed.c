@@ -21,13 +21,13 @@ get_fis_neu_state_fixed(particle_status_t *par_status,
     double erg = par_status->erg;
     double nu_delayed = get_delayed_nu(nuc, erg);
     double beta = nu_delayed / nu;
-    int fis_neu_num = (int) (nu + get_rand_slave(RNG));
+    int fis_neu_num = (int) (nu + get_rand(RNG));
 
     for(i = 0; i < fis_neu_num; i++){
-        if(get_rand_slave(RNG) < beta){
+        if(get_rand(RNG) < beta){
             int NPCR = Get_NPCR(nuc);
             int Loc = Get_loc_of_BDD(nuc);
-            double ksi = get_rand_slave(RNG);
+            double ksi = get_rand(RNG);
             double prob_sum = ZERO;
             for(j = 1; j < NPCR; j++){
                 int NR = (int) (nuc->XSS[Loc + 1]);
@@ -43,10 +43,10 @@ get_fis_neu_state_fixed(particle_status_t *par_status,
             int LDAT;
             int law_type = get_law_type(nuc, RNG, -j, erg, &LDAT);
             double exit_erg;
-            double exit_mu = TWO * get_rand_slave(RNG) - ONE;
+            double exit_mu = TWO * get_rand(RNG) - ONE;
             react_by_laws(nuc, RNG, -1, law_type, LDAT, erg, &exit_erg, &exit_mu);
 
-            double phi = TWO * PI * get_rand_slave(RNG);
+            double phi = TWO * PI * get_rand(RNG);
             par_status->exit_dir[0] = exit_mu;
             par_status->exit_dir[1] = sqrt(ONE - SQUARE(exit_mu)) * cos(phi);
             par_status->exit_dir[2] = sqrt(ONE - SQUARE(exit_mu)) * sin(phi);

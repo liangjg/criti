@@ -34,7 +34,7 @@ treat_URR(nuclide_t *nuc,
     int nj1 = loc_prob_table;
     int nj2 = loc_prob_table + length_table * 6;
 
-    double rand_num = get_rand_slave(RNG);
+    double rand_num = get_rand(RNG);
     for(;;) {
         if(nuc->XSS[nj1] >= rand_num)
             break;

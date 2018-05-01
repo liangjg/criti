@@ -20,7 +20,7 @@ sample_watt(RNG_t *RNG,
     //===============================================================================
     double w, ksi;
 
-    w = sample_maxwell_slave(RNG, a);
-    ksi = get_rand_slave(RNG);
+    w = sample_maxwell(RNG, a);
+    ksi = get_rand(RNG);
     return w + a * a * b / 4. + (TWO * ksi - ONE) * sqrt(a * a * b * w);
 }

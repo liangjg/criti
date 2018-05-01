@@ -1,14 +1,13 @@
 //
-// Created by xaq on 18-2-25.
+// Created by xaq on 10/27/17.
 //
 
 #include "sample_method.h"
-#include "common.h"
 
 
 double
-sample_maxwell_slave(RNG_t *RNG,
-                     double T)
+sample_maxwell(RNG_t *RNG,
+               double T)
 {
     //===============================================================================
     // MAXWELL_SPECTRUM samples an energy from the Maxwell fission distribution based
@@ -21,9 +20,9 @@ sample_maxwell_slave(RNG_t *RNG,
     double ksi1, ksi2, ksi3;
     double c;       // cosine of pi/2*r3
 
-    ksi1 = get_rand_slave(RNG);
-    ksi2 = get_rand_slave(RNG);
-    ksi3 = get_rand_slave(RNG);
+    ksi1 = get_rand(RNG);
+    ksi2 = get_rand(RNG);
+    ksi3 = get_rand(RNG);
     c = cos(PI / TWO * ksi3);
 
     return -T * (log(ksi1) + log(ksi2) * SQUARE(c));

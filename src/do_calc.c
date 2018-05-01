@@ -54,7 +54,7 @@ do_calc(void *args)
         nuc_xs[i].ptable = base_nuc_xs[i].ptable;
 
     for(neu = 0; neu < tot_neu; neu++){
-        get_rand_seed_slave(&pth_arg.RNG);
+        get_rand_seed(&pth_arg.RNG);
 
         /* 抽样要输运的粒子 */
         memset(&par_status, 0x0, sizeof(particle_status_t));

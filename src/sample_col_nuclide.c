@@ -18,7 +18,7 @@ sample_col_nuclide(particle_status_t *par_status,
     double sample_cutoff;
     int i;
 
-    sample_cutoff = par_status->macro_tot_cs * get_rand_slave(RNG);
+    sample_cutoff = par_status->macro_tot_cs * get_rand(RNG);
     mat = par_status->mat;
     sigt_sum2 = ZERO;
     for(i = 0; i < mat->tot_nuc_num; i++) {

@@ -49,7 +49,7 @@ get_law_type(const nuclide_t *nuc,
             E1 = nuc->XSS[LOCC + 4 + 2 * NR + j];
             if(incident_erg <= E1) {
                 E0 = nuc->XSS[LOCC + 4 + 2 * NR + j - 1];
-                if(get_rand_slave(RNG) < (incident_erg - E0) / (E1 - E0)) { //  En  or  En+1
+                if(get_rand(RNG) < (incident_erg - E0) / (E1 - E0)) { //  En  or  En+1
                     which_Pi = j + 1;
                     Pi = nuc->XSS[LOCC + 4 + 2 * NR + NE + j];
                 } else {
@@ -61,7 +61,7 @@ get_law_type(const nuclide_t *nuc,
         }
     }
 
-    ksi = get_rand_slave(RNG);
+    ksi = get_rand(RNG);
     while(ksi > Pi) {
         Pi = Pi + nuc->XSS[LDIS + LNW + 4 + 2 * NR + NE + which_Pi - 1];
         if(ksi <= Pi) {

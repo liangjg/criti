@@ -67,5 +67,5 @@ sample_free_fly_dis(particle_status_t *par_status,
         par_status->macro_nu_fis_cs = ZERO;
     }
 END:
-    return -log(get_rand_slave(RNG)) / par_status->macro_tot_cs;
+    return -log(get_rand(RNG)) / par_status->macro_tot_cs;
 }

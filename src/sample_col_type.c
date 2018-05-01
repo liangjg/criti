@@ -20,11 +20,11 @@ sample_col_type(particle_status_t *par_status,
     cur_nuc_xs = par_status->nuc_xs;
 
     while(1) {
-        if(get_rand_slave(RNG) * (cur_nuc_xs->el + cur_nuc_xs->inel) - cur_nuc_xs->el <= ZERO)
+        if(get_rand(RNG) * (cur_nuc_xs->el + cur_nuc_xs->inel) - cur_nuc_xs->el <= ZERO)
             return 2;
 
         double sum = ZERO;
-        double ksi = get_rand_slave(RNG) * cur_nuc_xs->inel;
+        double ksi = get_rand(RNG) * cur_nuc_xs->inel;
         int Loc = Get_loc_of_MTR(nuc) - 1;
         int MT_num = Get_non_el_mt_num_with_neu(nuc);
         for(i = 1; i <= MT_num; i++) {

@@ -11,12 +11,8 @@
 
 BEGIN_DECL
 double
-sample_maxwell_host(RNG_t *RNG,
+sample_maxwell(RNG_t *RNG,
                     double T);
-
-double
-sample_maxwell_slave(RNG_t *RNG,
-                     double T);
 
 double
 sample_watt(RNG_t *RNG,

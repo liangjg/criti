@@ -33,7 +33,7 @@ calc_fixed_src()
 
         skip_src = pth_args[i].src_cnt;
         for(j = 0; j < skip_src; j++)
-            get_rand_seed_host(&pth_args[i + 1].RNG);
+            get_rand_seed(&pth_args[i + 1].RNG);
     }
 
     for(i = 0; i < base_num_threads; i++)

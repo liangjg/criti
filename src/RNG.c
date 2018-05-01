@@ -1,5 +1,5 @@
 //
-// Created by xaq on 10/22/17.
+// Created by xaq on 18-2-26.
 //
 
 #include "RNG.h"
@@ -14,7 +14,7 @@ _get_skip_para(RNG_t *RNG,
 
 /* -------------------------- API implementation ---------------------------- */
 double
-get_rand_slave(RNG_t *RNG)
+get_rand(RNG_t *RNG)
 {
     double res = (double) RNG->seed * RNG->norm;
     RNG->seed = (((RNG->mult * RNG->seed) & RNG->mask) + RNG->add) & RNG->mask;
@@ -30,7 +30,7 @@ get_rand_slave(RNG_t *RNG)
 */
 
 void
-get_rand_seed_slave(RNG_t *RNG)
+get_rand_seed(RNG_t *RNG)
 {
     ULL GK = RNG->GK;
     ULL CK = RNG->CK;

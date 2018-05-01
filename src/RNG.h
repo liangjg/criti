@@ -39,16 +39,10 @@ extern "C" {
 #endif
 
 double
-get_rand_slave(RNG_t *RNG);
-
-double
-get_rand_host(RNG_t *RNG);
+get_rand(RNG_t *RNG);
 
 void
-get_rand_seed_slave(RNG_t *RNG);
-
-void
-get_rand_seed_host(RNG_t *RNG);
+get_rand_seed(RNG_t *RNG);
 
 void
 set_RNG_paras(RNG_t *RNG,
