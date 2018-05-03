@@ -7,6 +7,7 @@
 #include "neutron_transport.h"
 #include "geometry.h"
 #include "slave.h"
+#include "simd.h"
 
 
 __thread_local volatile unsigned int get_reply, put_reply;
@@ -16,7 +17,7 @@ __thread_local int my_id;
 __thread_local nuc_xs_t *nuc_xs;
 
 /* 每个从核都需要一个存储在LDM中的particle_state对象，用于进行粒子输运 */
-__thread_local particle_status_t par_status;
+__thread_local particle_status_t par_status __attribute__((aligned(64)));
 
 /* 每个从核的pth_arg_t结构，直接拷贝的参数 */
 __thread_local pth_arg_t pth_arg;
@@ -104,12 +105,15 @@ do_calc(void *args)
 
             /* update particle state */
             par_status.erg = par_status.exit_erg;
-            for(i = 0; i < 3; i++)
-                par_status.dir[i] = par_status.exit_dir[i];
-            length = ONE / sqrt(SQUARE(par_status.dir[0]) + SQUARE(par_status.dir[1]) + SQUARE(par_status.dir[2]));
-            par_status.dir[0] *= length;
-            par_status.dir[1] *= length;
-            par_status.dir[2] *= length;
+            doublev4 vec_dir;
+            simd_load(vec_dir, par_status.exit_dir);
+            length = ONE / sqrt(SQUARE(par_status.exit_dir[0]) + SQUARE(par_status.exit_dir[1]) + SQUARE(par_status.exit_dir[2]));
+            doublev4 vec_length = length;
+            vec_dir *= length;
+            simd_store(vec_dir, par_status.dir);
+//            par_status.dir[0] = par_status.exit_dir[0] * length;
+//            par_status.dir[1] = par_status.exit_dir[1] * length;
+//            par_status.dir[2] = par_status.exit_dir[2] * length;
         } while(++pth_arg.col_cnt < MAX_ITER);
     }
 

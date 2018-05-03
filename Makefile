@@ -18,7 +18,7 @@ CXX_HOST := mpiCC
 LINKER := mpiCC
 
 # Set the C compiler flags
-C_FLAGS := -O1 -OPT:IEEE_arith=1
+C_FLAGS := -O1 -OPT:IEEE_arith=1 -msimd
 
 # Set the C defines
 C_DEFINES := -DUNIX -DCODE_VERSION=\"SW-0.1.5\"
@@ -215,7 +215,7 @@ ksrc: CXX_DEFINES += -DKSRC
 ksrc: $(KSRC_TARGET)
 
 $(KSRC_TARGET): $(MPE_C_OBJECTS) $(MPE_CXX_OBJECTS) $(KSRC_OBJECTS) $(CPE_OBJECTS)
-	$(LINKER) $^ -lm_slave -o $@
+	$(LINKER) $^ -lm_slave -msimd -o $@
 
 
 $(MPE_C_OBJ_PATH)/%.o: $(SRC_PATH)/%.c

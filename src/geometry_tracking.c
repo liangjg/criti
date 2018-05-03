@@ -5,6 +5,7 @@
 #include "neutron_transport.h"
 #include "criticality.h"
 #include "geometry.h"
+#include "simd.h"
 
 
 void
@@ -19,6 +20,9 @@ geometry_tracking(particle_status_t *par_status,
     int iter_cnt = 0;
     bool par_on_surf = false;
     par_status->surf = 0;
+//    doublev4 vec_length;
+//    doublev4 vec_pos;
+//    doublev4 vec_dir;
 
     do {
         if(iter_cnt++ > MAX_ITER) {
@@ -53,6 +57,13 @@ geometry_tracking(particle_status_t *par_status,
         keff_wgt_sum[2] += par_status->wgt * par_status->macro_nu_fis_cs * distance;
 
         Fly_by_length(distance);
+//        vec_length = distance;
+//        simd_load(vec_dir, par_status->dir);
+//        vec_pos = vec_dir * vec_length;
+//        simd_store(vec_pos, par_status->pos);
+//        simd_load(vec_dir, par_status->loc_dir);
+//        vec_pos = vec_dir * vec_length;
+//        simd_store(vec_pos, par_status->loc_pos);
     } while(par_on_surf);
 
     keff_wgt_sum[0] += par_status->wgt * par_status->macro_nu_fis_cs / par_status->macro_tot_cs;

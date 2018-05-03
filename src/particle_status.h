@@ -10,15 +10,15 @@
 
 typedef struct particle_status_t {
     /* basic state */
-    bool is_killed;
-    double wgt;                 /* 粒子当前的权重 */
-    double pos[3];              /* 粒子在universe 0中的位置坐标 */
-    double dir[3];              /* 粒子在universe 0中的方向坐标 */
-    double exit_dir[3];
+    double pos[4];              /* 粒子在universe 0中的位置坐标 */
+    double dir[4];              /* 粒子在universe 0中的方向坐标 */
+    double exit_dir[4];
+    double loc_pos[4];          /* 粒子在当前universe中的坐标 */
+    double loc_dir[4];          /* 粒子在当前universe中的方向 */
     double erg;                 /* 粒子当前的能量 */
     double exit_erg;
-    double loc_pos[3];          /* 粒子在当前universe中的坐标 */
-    double loc_dir[3];          /* 粒子在当前universe中的方向 */
+    double wgt;                 /* 粒子当前的权重 */
+    bool is_killed;
 
     /* geometry state */
     void *loc_univs[8];         /* 粒子在定位到当前cell的过程中，进入的每一层universe */
