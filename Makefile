@@ -18,7 +18,7 @@ CXX_HOST := mpiCC
 LINKER := mpiCC
 
 # Set the C compiler flags
-C_FLAGS := -O1 -OPT:IEEE_arith=1 -msimd
+C_FLAGS := -O2 -OPT:IEEE_arith=1 -msimd
 
 # Set the C defines
 C_DEFINES := -DUNIX -DCODE_VERSION=\"SW-0.1.5\"
@@ -27,7 +27,7 @@ C_DEFINES := -DUNIX -DCODE_VERSION=\"SW-0.1.5\"
 C_INCLUDES := -I/usr/sw-mpp/mpi2/include
 
 # Set the CXX compiler flags
-CXX_FLAGS := -O1 -OPT:IEEE_arith=1
+CXX_FLAGS := -O2 -OPT:IEEE_arith=1
 
 # Set the CXX defines
 CXX_DEFINES := -DUNIX
