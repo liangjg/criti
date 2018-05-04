@@ -127,85 +127,85 @@ do_calc(void *args)
     ldm_free(nuc_xs, base_tot_nucs * sizeof(nuc_xs_t));
 
     /* 寄存器通信 */
-    int row = ROW(my_id);
-    int col = COL(my_id);
-    int target = (col + 1) & 0x07;
-    doublev4 send = {pth_arg.keff_wgt_sum[0], pth_arg.keff_wgt_sum[1], pth_arg.keff_wgt_sum[2], 0.0};
-    doublev4 recv;
-    //intv8 send2 = {pth_arg.col_cnt, pth_arg.bank_cnt};
-    //intv8 recv2;
-    if(col % 2) {    //1,3,5,7 接受
-        REG_GETR(recv);
-        //REG_GETR(recv2);
-        send += recv;
-        //send2 += recv2;
-        if(col == 3 || col == 7) {    //3,7 接受
-            REG_GETR(recv);
-            //REG_GETR(recv2);
-            send += recv;
-            //send2 += recv2;
-            if(col == 7) {
-                REG_GETR(recv);
-                //REG_GETR(recv2);
-                send += recv;
-                //send2 += recv2;
-
-                /* 现在所有数据已经都在第7列，下面开始处理第7列的数据 */
-                if(row % 2) {   //1,3,5,7 接受
-                    REG_GETC(recv);
-                    //REG_GETC(recv2);
-                    send += recv;
-                    //send2 += recv2;
-                    if(row == 3 || row == 7) {
-                        REG_GETC(recv);
-                        //REG_GETC(recv2);
-                        send += recv;
-                        //send2 += recv2;
-                        if(row == 7) {
-                            REG_GETC(recv);
-                            //REG_GETC(recv2);
-                            send += recv;
-                            //send2 += recv2;
-                            pth_arg.keff_wgt_sum[0] = ((double *) (&send))[0];
-                            pth_arg.keff_wgt_sum[1] = ((double *) (&send))[1];
-                            pth_arg.keff_wgt_sum[2] = ((double *) (&send))[2];
-                            //pth_arg.col_cnt = ((int *) (&send2))[0];
-                            //pth_arg.bank_cnt = ((int *) (&send2))[1];
-                        }
-                        else {
-                            target = 7;
-                            REG_PUTC(send, target);
-                            //REG_PUTC(send2, target);
-                        }
-                    }
-                    else {
-                        target = (row + 2) & 0x07;
-                        REG_PUTC(send, target);
-                        //REG_PUTC(send2, target);
-                    }
-                }
-                else {    //0,2,4,6 发送
-                    target = (row + 1) & 0x07;
-                    REG_PUTC(send, target);
-                    //REG_PUTC(send2, target);
-                }
-            }
-            else {    //3 发送
-                target = 7;
-                REG_PUTR(send, target);
-                //REG_PUTR(send2, target);
-            }
-        }
-        else {    //1,5 发送
-            target = (col + 2) & 0x07;
-            REG_PUTR(send, target);
-            //REG_PUTR(send2, target);
-        }
-    }
-    else {     //0,2,4,6 发送
-        REG_PUTR(send, target);
-        //REG_PUTR(send2, target);
-    }
+    //int row = ROW(my_id);
+    //int col = COL(my_id);
+    //int target = (col + 1) & 0x07;
+    //doublev4 send = {pth_arg.keff_wgt_sum[0], pth_arg.keff_wgt_sum[1], pth_arg.keff_wgt_sum[2], 0.0};
+    //doublev4 recv;
+    ////intv8 send2 = {pth_arg.col_cnt, pth_arg.bank_cnt};
+    ////intv8 recv2;
+    //if(col % 2) {    //1,3,5,7 接受
+    //    REG_GETR(recv);
+    //    //REG_GETR(recv2);
+    //    send += recv;
+    //    //send2 += recv2;
+    //    if(col == 3 || col == 7) {    //3,7 接受
+    //        REG_GETR(recv);
+    //        //REG_GETR(recv2);
+    //        send += recv;
+    //        //send2 += recv2;
+    //        if(col == 7) {
+    //            REG_GETR(recv);
+    //            //REG_GETR(recv2);
+    //            send += recv;
+    //            //send2 += recv2;
+    //
+    //            /* 现在所有数据已经都在第7列，下面开始处理第7列的数据 */
+    //            if(row % 2) {   //1,3,5,7 接受
+    //                REG_GETC(recv);
+    //                //REG_GETC(recv2);
+    //                send += recv;
+    //                //send2 += recv2;
+    //                if(row == 3 || row == 7) {
+    //                    REG_GETC(recv);
+    //                    //REG_GETC(recv2);
+    //                    send += recv;
+    //                    //send2 += recv2;
+    //                    if(row == 7) {
+    //                        REG_GETC(recv);
+    //                        //REG_GETC(recv2);
+    //                        send += recv;
+    //                        //send2 += recv2;
+    //                        pth_arg.keff_wgt_sum[0] = ((double *) (&send))[0];
+    //                        pth_arg.keff_wgt_sum[1] = ((double *) (&send))[1];
+    //                        pth_arg.keff_wgt_sum[2] = ((double *) (&send))[2];
+    //                        //pth_arg.col_cnt = ((int *) (&send2))[0];
+    //                        //pth_arg.bank_cnt = ((int *) (&send2))[1];
+    //                    }
+    //                    else {
+    //                        target = 7;
+    //                        REG_PUTC(send, target);
+    //                        //REG_PUTC(send2, target);
+    //                    }
+    //                }
+    //                else {
+    //                    target = (row + 2) & 0x07;
+    //                    REG_PUTC(send, target);
+    //                    //REG_PUTC(send2, target);
+    //                }
+    //            }
+    //            else {    //0,2,4,6 发送
+    //                target = (row + 1) & 0x07;
+    //                REG_PUTC(send, target);
+    //                //REG_PUTC(send2, target);
+    //            }
+    //        }
+    //        else {    //3 发送
+    //            target = 7;
+    //            REG_PUTR(send, target);
+    //            //REG_PUTR(send2, target);
+    //        }
+    //    }
+    //    else {    //1,5 发送
+    //        target = (col + 2) & 0x07;
+    //        REG_PUTR(send, target);
+    //        //REG_PUTR(send2, target);
+    //    }
+    //}
+    //else {     //0,2,4,6 发送
+    //    REG_PUTR(send, target);
+    //    //REG_PUTR(send2, target);
+    //}
 
     /* 写回计算结果 */
         put_reply = 0;

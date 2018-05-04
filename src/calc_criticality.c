@@ -4,16 +4,21 @@
 
 #include "criticality.h"
 #include "IO_releated.h"
+#include "geometry.h"
+#include "neutron_transport.h"
 #include <athread.h>
 
 
-extern SLAVE_FUN (do_calc)(void *args);
+//extern SLAVE_FUN (do_calc)(void *args);
 
-/*static void do_calc_master(void *args);*/
+static void do_calc_master(void *args);
 
 extern criti_t base_criti;
 extern int base_num_threads;
 extern RNG_t base_RNG;
+extern universe_t *root_universe;
+extern double base_start_wgt;
+extern nuc_xs_t *base_nuc_xs;
 
 void
 calc_criticality()
@@ -21,36 +26,36 @@ calc_criticality()
     int cyc, i, j, skip_src;
     pth_arg_t *pth_args;
 
-    pth_args = malloc((base_num_threads + 1) * sizeof(pth_arg_t));
+    pth_args = malloc(base_num_threads * sizeof(pth_arg_t));
 
     /* 初始化裂变源 */
     init_fission_source(pth_args);
 
-    athread_init();
+    //athread_init();
 
     for(cyc = 1; cyc <= base_criti.tot_cycle_num; cyc++) {
         memcpy(&pth_args[0].RNG, &base_RNG, sizeof(RNG_t));
 
-        for(i = 0; i < base_num_threads; i++) {
-            athread_create(i, do_calc, &pth_args[i]);
-            memcpy(&pth_args[i + 1].RNG, &pth_args[i].RNG, sizeof(RNG_t));
+        //for(i = 0; i < base_num_threads; i++) {
+        //    athread_create(i, do_calc, &pth_args[i]);
+        //    memcpy(&pth_args[i + 1].RNG, &pth_args[i].RNG, sizeof(RNG_t));
 
-            skip_src = pth_args[i].src_cnt;
-            for(j = 0; j < skip_src; j++)
-                get_rand_seed(&pth_args[i + 1].RNG);
-        }
+        //    skip_src = pth_args[i].src_cnt;
+        //    for(j = 0; j < skip_src; j++)
+        //        get_rand_seed(&pth_args[i + 1].RNG);
+        //}
 
-        /* do_calc_master(&pth_arg[base_num_threads]); */
+        do_calc_master(&pth_args[base_num_threads - 1]);
 
-        for(i = 0; i < base_num_threads; i++)
-            athread_wait(i);
+        //for(i = 0; i < base_num_threads; i++)
+        //    athread_wait(i);
 
         /* 处理这一代计算完之后的结果 */
         process_cycle_end(cyc, pth_args);
     }
     output_summary();
 
-    athread_halt();
+    //athread_halt();
 
     for(i = 0; i < base_num_threads; i++) {
         free(pth_args[i].src);
@@ -59,7 +64,7 @@ calc_criticality()
     free(pth_args);
 }
 
-/*void
+void
 do_calc_master(void *args){
     particle_status_t par_status;
     pth_arg_t *pth_arg;
@@ -69,18 +74,18 @@ do_calc_master(void *args){
     nuc_xs_t *nuc_xs;
     double *keff_wgt_sum, length;
     cell_t *cell;
+    int MT;
 
     pth_arg = (pth_arg_t *) args;
     tot_neu = pth_arg->src_cnt;
     RNG = &pth_arg->RNG;
     fis_src = pth_arg->src;
-    nuc_xs = pth_arg->nuc_xs;
+    nuc_xs = base_nuc_xs;
     keff_wgt_sum = pth_arg->keff_wgt_sum;
 
     for(neu = 0; neu < tot_neu; neu++) {
         get_rand_seed(RNG);
 
-        [> 抽样要输运的粒子 <]
         memset(&par_status, 0x0, sizeof(particle_status_t));
 
         cur_src = &fis_src[neu];
@@ -104,7 +109,6 @@ do_calc_master(void *args){
         par_status.mat = cell->mat;
         par_status.cell_tmp = cell->tmp;
 
-        [> 输运粒子 <]
         col_cnt = 0;
         do {
             geometry_tracking(&par_status, keff_wgt_sum, nuc_xs, RNG);
@@ -120,13 +124,12 @@ do_calc_master(void *args){
             treat_implicit_capture(&par_status, RNG);
             if(par_status.is_killed) break;
 
-            par_status.collision_type = sample_col_type(&par_status, RNG);
+            MT = sample_col_type(&par_status, RNG);
             if(par_status.is_killed) break;
 
-            get_exit_state(&par_status, RNG);
+            get_exit_state(&par_status, MT, RNG);
             if(par_status.is_killed) break;
 
-            [> 更新粒子状态信息 <]
             par_status.erg = par_status.exit_erg;
             for(i = 0; i < 3; i++)
                 par_status.dir[i] = par_status.exit_dir[i];
@@ -138,4 +141,4 @@ do_calc_master(void *args){
         } while(++col_cnt < MAX_ITER);
         pth_arg->col_cnt += col_cnt;
     }
-}*/
+}

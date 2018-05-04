@@ -10,7 +10,6 @@
 extern map *base_nucs;
 extern map *base_mats;
 extern nuc_xs_t *base_nuc_xs;
-extern int base_num_threads;
 
 void
 check_ce_ace_block()

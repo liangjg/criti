@@ -15,7 +15,6 @@ extern map *base_mats;
 extern IOfp_t base_IOfp;
 extern acedata_t base_acedata;
 extern nuc_xs_t *base_nuc_xs;
-extern int base_num_threads;
 extern int base_tot_nucs;
 
 static int

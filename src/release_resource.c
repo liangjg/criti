@@ -20,7 +20,6 @@ extern map *base_mats;
 extern map *base_nucs;
 extern IOfp_t base_IOfp;
 extern nuc_xs_t *base_nuc_xs;
-extern int base_num_threads;
 
 void
 release_resource()
