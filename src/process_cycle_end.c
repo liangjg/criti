@@ -41,6 +41,7 @@ process_cycle_end(int current_cycle,
 {
     int i, j;
     int quotient, remainder;
+    int cpe_neu, mpe_neu;
 
     for(i = 0; i < base_num_threads; i++) {
         base_criti.tot_col_cnt += pth_args[i].col_cnt;
@@ -84,15 +85,16 @@ process_cycle_end(int current_cycle,
     base_start_wgt = ONE * base_criti.tot_start_wgt / base_criti.tot_bank_cnt;
 #endif
 
-    quotient = base_criti.tot_bank_cnt / base_num_threads;
-    remainder = base_criti.tot_bank_cnt - quotient * base_num_threads;
+    cpe_neu = base_criti.tot_bank_cnt * 2 / 3;
+    quotient = cpe_neu / (base_num_threads - 1);
+    remainder = base_criti.tot_bank_cnt - quotient * (base_num_threads - 1);
 
-    for(i = 0; i < base_num_threads; i++) {
+    for(i = 0; i < base_num_threads - 1; i++) {
         SWAP(pth_args[i].src, pth_args[i].bank);
         pth_args[i].src_cnt = quotient;
     }
-    for(i = 0; i < remainder; i++)
-        pth_args[i].src_cnt++;
+    SWAP(pth_args[base_num_threads - 1].src, pth_args[base_num_threads - 1].bank);
+    pth_args[base_num_threads - 1].src_cnt = remainder;
 
 #ifdef USE_MPI
     bank_t *start_addr;

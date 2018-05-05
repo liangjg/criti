@@ -106,8 +106,8 @@ main(int argc,
 #endif
 
     opterr = 0;
-    //base_num_threads = NUMBER_SLAVES;
-    base_num_threads = 1;
+    base_num_threads = NUMBER_SLAVES + 1;    /* 64个从核加1个主核 */
+    //base_num_threads = 1;
 
     while((c = getopt(argc, argv, "ho:s:")) != -1) {
         switch(c) {
