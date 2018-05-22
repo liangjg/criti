@@ -45,14 +45,14 @@ read_ace_data()
 
 #ifdef USE_MPI
     if(IS_MASTER)
-        printf("Reading XSDIR/ACE library...");
 #endif
+        printf("Reading XSDIR/ACE library...");
     xsdir_fp = fopen("xsdir", "r");
     if(!xsdir_fp) {
 #ifdef USE_MPI
         if(IS_MASTER)
-            puts("Library index file \"xsdir\" does not exist!");
 #endif
+            puts("Library index file \"xsdir\" does not exist!");
         release_resource();
         exit(0);
     }
@@ -69,8 +69,8 @@ read_ace_data()
         if(feof(xsdir_fp)) {
 #ifdef USE_MPI
             if(IS_MASTER)
-                puts("keyword 'directory' is not found in xsdir file");
 #endif
+                puts("keyword 'directory' is not found in xsdir file");
             fclose(xsdir_fp);
             release_resource();
             exit(0);
@@ -88,16 +88,18 @@ read_ace_data()
                 case FILE_NOT_EXIST:
 #ifdef USE_MPI
                     if(IS_MASTER)
-                        printf("file %s does not exist in directory %s.\n", ace_path, data_path);
 #endif
+                        printf("file %s does not exist in directory %s.\n", ace_path, data_path);
+
                     fclose(xsdir_fp);
                     release_resource();
                     exit(0);
                 case FILE_TYPE_ERR:
 #ifdef USE_MPI
                     if(IS_MASTER)
-                        printf("wrong ACE file type in xsdir, nuclide: %s.\n", nuc->id);
 #endif
+                        printf("wrong ACE file type in xsdir, nuclide: %s.\n", nuc->id);
+
                     fclose(xsdir_fp);
                     release_resource();
                     exit(0);
@@ -111,8 +113,8 @@ read_ace_data()
     fclose(xsdir_fp);
 #ifdef USE_MPI
     if(IS_MASTER)
-        puts("Finished.");
 #endif
+        puts("Finished.");
     chdir(cwd);
 }
 

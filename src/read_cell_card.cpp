@@ -5,36 +5,71 @@
 #include "IO_releated.h"
 #include "cell.h"
 #include "map.h"
-#include <stack>
 #include <string>
 #include <vector>
+#include <stack>
 
 
 extern map *base_cells;
 extern IOfp_t base_IOfp;
 
+static int cell_index;
+
 /* -------------------------- private prototypes ---------------------------- */
-char *
+static char *
 _generate_rpn(const char *exp,
               bool &is_simple);
 
-char
-_order_between(char a,
-               char b,
-               bool &is_simple);
-
-int
+static int
 _identify_cell_kw(char *kw);
 
-void
+static void
 _extract_surfs_from_rpn(cell_t *cell);
 
-void
+static void
 _simplify(const char *exp,
           char **simplified_exp);
 
-void
+static void
 _transform(std::string &s);
+
+struct node {
+    union {
+        char optr;
+        int opnd;
+    } val;
+    struct node *lchild;
+    struct node *rchild;
+};
+
+static int
+_find_lowest_prio_optr(char *);
+
+static bool
+_match_pare(const char *,
+            int,
+            int);
+
+static struct node *
+_build_binary_tree(char *);
+
+static struct node *
+_do_build(char *);
+
+static void
+_post_traversal(struct node *,
+                std::string &);
+
+static void
+_in_traversal(struct node *,
+              std::string &);
+
+static void
+_pre_traversal(struct node *,
+               std::string &);
+
+static void
+_destroy_binary_tree(struct node *);
 
 /* ----------------------------- API implementation ------------------------- */
 void
@@ -60,6 +95,7 @@ read_cell_card(universe_t *univ)
         cell_t *cell = cell_init();
         cell->id = index;
         cell->parent = univ;
+        cell_index = index;
         map_put(base_cells, index, cell);
         cells.push_back(cell);
 
@@ -144,101 +180,34 @@ _generate_rpn(const char *exp,
               bool &is_simple)
 {
     char *simplified_exp;
-    /* *************************************************************
+    char *rpn;
+    struct node *root;
+    std::string str;
+    std::string infix;
+
+    /* ********************************************
      * 将原表达式中的'!'运算符去掉，一定程度上简化表达式；
-     * 其中simplified_exp指向由_simplify分配好的地址，存放化简后的表达式；
-     * 在此函数结束处释放掉
-     * *************************************************************/
+     * 其中simplified_exp指向由_simplify分配好的地址，
+     * 存放化简后的表达式；在此函数结束处释放掉
+     * ********************************************/
     _simplify(exp, &simplified_exp);
-    exp = simplified_exp;
-
-    size_t len = strlen(exp);
-    char *rpn = (char *) malloc(2 * len * sizeof(char));
-    size_t i = 0;
-    char c = '\0';
-
-    std::stack<char> optr;
-    optr.push(c);
-
-    while(!optr.empty()) {
-        if(ISNUMBER(*exp)) {
-            do {
-                rpn[i++] = *exp++;
-            } while(ISNUMBER(*exp));
-            rpn[i++] = ' ';
-        } else if(*exp == '-') {
-            rpn[i++] = *exp++;
-        } else if(ISSPACE(*exp)) {
-            exp++;
-            continue;
-        } else {
-            switch(_order_between(optr.top(), *exp, is_simple)) {
-            case '<':c = *exp++;
-                optr.push(c);
-                break;
-            case '=': /* 只可能是左括号碰到右括号，或者头哨兵碰到尾哨兵 */
-                optr.pop();
-                exp++;
-                break;
-            case '>':c = optr.top();
-                optr.pop();
-                rpn[i++] = c;
-                rpn[i++] = ' ';
-                break;
-            default:printf("Error expression!\n");
-                release_resource();
-                exit(0);
-            }
+    for(char *c = simplified_exp; *c != '\0'; c++)
+        if(*c == ':') {
+            is_simple = false;
+            break;
         }
-    }
-    rpn[i] = '\0';
-    free(simplified_exp);
-    return rpn;
-}
 
-char
-_order_between(char a,
-               char b,
-               bool &is_simple)
-{
-    int p, q;
-    switch(a) {
-    case '&':p = INTER;
-        break;
-    case ':':is_simple = false;
-        p = UNION;
-        break;
-    case '!':is_simple = false;
-        p = COMPLEMENT;
-        break;
-    case '(':p = L_P;
-        break;
-    case ')':p = R_P;
-        break;
-    case '\0':p = EOE;
-        break;
-    default:printf("Error: unknown operator %c\n", a);
-        release_resource();
-        exit(0);
-    }
-    switch(b) {
-    case '&':q = INTER;
-        break;
-    case ':':q = UNION;
-        break;
-    case '!':q = COMPLEMENT;
-        break;
-    case '(':q = L_P;
-        break;
-    case ')':q = R_P;
-        break;
-    case '\0':q = EOE;
-        break;
-    default:printf("Error: unknown operator %c\n", b);
-        release_resource();
-        exit(0);
-    }
-    return priority[p][q];
+    root = _build_binary_tree(simplified_exp);
+    _post_traversal(root, str);
+
+    rpn = (char *) malloc((str.size() + 1) * sizeof(char));
+    memcpy(rpn, str.c_str(), str.size());
+    rpn[str.size()] = '\0';
+    _in_traversal(root, infix);
+
+    free(simplified_exp);
+    _destroy_binary_tree(root);
+    return rpn;
 }
 
 void
@@ -324,4 +293,171 @@ _transform(std::string &s)
             while(ISNUMBER(s[i])) i++;
         } else i++;
     }
+}
+
+struct node *
+_build_binary_tree(char *exp)
+{
+    if(!exp) return NULL;
+    return _do_build(exp);
+}
+
+int
+_find_lowest_prio_optr(char *exp)
+{
+    int num_of_rp = 0;
+    int end = strlen(exp);
+
+    for(int i = end - 1; i > 0; i--) {
+        if(exp[i] == ')') num_of_rp++;
+        else if(exp[i] == '(') num_of_rp--;
+        else if(num_of_rp == 0 && (exp[i] == '&' || exp[i] == ':')) return i;
+    }
+    return -1;
+}
+
+bool
+_match_pare(const char *exp,
+            int start,
+            int end)
+{
+    int num = 0;
+    for(int i = start + 1; i < end - 1; i++) {
+        if(exp[i] == '(') num++;
+        else if(exp[i] == ')') num--;
+        if(num < 0) return false;
+    }
+    return num == 0;
+}
+
+struct node *
+_do_build(char *exp)
+{
+    struct node *bin_tree = NULL;
+    int start = 0;
+    int end;
+    int num_of_optr = 0;
+
+    while(!(*exp == '-' || ISNUMBER(*exp) || *exp == '(')) {
+        if(*exp != ' ' && *exp != '+') {
+            printf("cell %d has wrong expression: %s\n", cell_index, exp);
+            exit(1);
+        }
+        exp++;
+    }
+    end = strlen(exp);
+    while(!(exp[end - 1] == ')' || ISNUMBER(exp[end - 1]))) {
+        if(exp[end - 1] != ' ') {
+            printf("cell %d has wrong expression: %s\n", cell_index, exp);
+            exit(1);
+        }
+        exp[--end] = '\0';
+    }
+    while(*exp == '(' && exp[end - 1] == ')' && _match_pare(exp, 0, end)) {
+        exp[--end] = '\0';
+        *exp++ = '\0';
+    }
+
+    end = strlen(exp);
+    for(int i = start; i < end; i++) {
+        if(exp[i] == '&' || exp[i] == ':')
+            num_of_optr++;
+    }
+
+    /* ************************************************************************
+     * End of recursion.
+     * The expectation is that there is only one operand, positive or negative.
+     * But in fact there may be three cases.
+     * 1. Only one operand left;
+     * 2. More than one operand without operators;
+     * 3. Nothing at all, no operands between operators;
+     * ************************************************************************/
+    if(num_of_optr == 0) {
+        int digit_start;
+        int val = 0;
+        if(start == end) {
+            printf("cell %d has wrong expression: %s\n", cell_index, exp);
+            exit(1);
+        }
+        digit_start = start;
+        if(exp[start] == '-') digit_start++;
+        for(int i = digit_start; i < end; i++) {
+            if(ISNUMBER(exp[i])) {
+                val *= 10;
+                val += exp[i] - '0';
+            } else    /* 多个运算数之间没有运算符 */
+            {
+                printf("cell %d has wrong expression: %s\n", cell_index, exp);
+                exit(1);
+            }
+        }
+        if(exp[start] == '-') val *= -1;
+        bin_tree = (struct node *) malloc(sizeof(struct node));
+        bin_tree->val.opnd = val;
+        bin_tree->lchild = NULL;
+        bin_tree->rchild = NULL;
+    } else {
+        int med = _find_lowest_prio_optr(exp);
+        if(med == -1) {
+            printf("cell %d has wrong expression: %s\n", cell_index, exp);
+            exit(1);
+        }
+        bin_tree = (struct node *) malloc(sizeof(struct node));
+        bin_tree->val.optr = exp[med];
+        exp[med] = '\0';
+        bin_tree->lchild = _do_build(exp);
+        bin_tree->rchild = _do_build(exp + med + 1);
+    }
+    return bin_tree;
+}
+
+/* **********************************************************
+ * Generate RPN through post-order traversal.
+ * Of cause, it will generate prefix expression through
+ * pre-order traversal, and infix expression through in-order
+ * traversal;
+ * **********************************************************/
+void
+_post_traversal(struct node *root,
+                std::string &str)
+{
+    if(!root) return;
+    if(root->lchild) _post_traversal(root->lchild, str);
+    if(root->rchild) _post_traversal(root->rchild, str);
+
+    if(!root->lchild && !root->rchild)
+        str += std::to_string(root->val.opnd) += ' ';
+    else {
+        str.push_back(root->val.optr);
+        str += ' ';
+    }
+}
+
+void
+_in_traversal(struct node *root,
+              std::string &str)
+{
+    if(!root) return;
+    if(root->lchild) {
+        str.push_back('(');
+        _in_traversal(root->lchild, str);
+        str.push_back(')');
+    }
+    if(!root->lchild && !root->rchild)
+        str += std::to_string(root->val.opnd);
+    else{
+        str.push_back(root->val.optr);
+        str.push_back('(');
+        _in_traversal(root->rchild, str);
+        str.push_back(')');
+    }
+}
+
+void
+_destroy_binary_tree(node *root)
+{
+    if(!root) return;
+    if(root->lchild) _destroy_binary_tree(root->lchild);
+    if(root->rchild) _destroy_binary_tree(root->rchild);
+    free(root);
 }
