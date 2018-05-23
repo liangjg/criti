@@ -14,6 +14,7 @@ cell_init()
     _new_cell->vol = 1.0;
     _new_cell->is_inner_cell = false;
     _new_cell->rpn = NULL;
+    _new_cell->expr = NULL;
     _new_cell->surfs = NULL;
     _new_cell->surfs_addr = NULL;
     _new_cell->surfs_sz = 0;
@@ -31,6 +32,7 @@ void
 cell_free(cell_t *obj)
 {
     free(obj->rpn);
+    free(obj->expr);
     free(obj->surfs);
     free(obj->surfs_addr);
     for(int i = 0; i < obj->surfs_sz; i++)

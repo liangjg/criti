@@ -99,10 +99,12 @@ read_cell_card(universe_t *univ)
         map_put(base_cells, index, cell);
         cells.push_back(cell);
 
-        char *rpn_start = ret;
+        char *expr = ret;
         while(!ISALPHA(*ret)) ret++;
         *(ret - 1) = 0;
-        cell->rpn = _generate_rpn(rpn_start, is_simple);
+        cell->expr = (char *) malloc(sizeof(char) * (ret - expr));
+        memcpy(cell->expr, expr, (ret - expr) * sizeof(char));
+        cell->rpn = _generate_rpn(expr, is_simple);
         cell->simple = is_simple;
         _extract_surfs_from_rpn(cell);
         while(!ISRETURN(*ret) && !ISCOMMENT(*ret)) {
@@ -182,8 +184,7 @@ _generate_rpn(const char *exp,
     char *simplified_exp;
     char *rpn;
     struct node *root;
-    std::string str;
-    std::string infix;
+    std::string postfix;
 
     /* ********************************************
      * 将原表达式中的'!'运算符去掉，一定程度上简化表达式；
@@ -198,12 +199,11 @@ _generate_rpn(const char *exp,
         }
 
     root = _build_binary_tree(simplified_exp);
-    _post_traversal(root, str);
+    _post_traversal(root, postfix);
 
-    rpn = (char *) malloc((str.size() + 1) * sizeof(char));
-    memcpy(rpn, str.c_str(), str.size());
-    rpn[str.size()] = '\0';
-    _in_traversal(root, infix);
+    rpn = (char *) malloc((postfix.size() + 1) * sizeof(char));
+    memcpy(rpn, postfix.c_str(), postfix.size());
+    rpn[postfix.size()] = '\0';
 
     free(simplified_exp);
     _destroy_binary_tree(root);
@@ -256,7 +256,7 @@ _simplify(const char *exp,
     while((found = s.find('!')) != std::string::npos) {
         s.erase(found, 1);
         start = found;
-        if(s[start] == '(') {
+        if(s[start] == '(') {    /* 面布尔表达式 */
             num_of_lp++;
             pos = start + 1;
             while(num_of_lp) {
@@ -264,10 +264,26 @@ _simplify(const char *exp,
                 else if(s[pos] == ')') num_of_lp--;
                 pos++;
             }
+            std::string sub_s = s.substr(start, pos - start);
+            _transform(sub_s);
+            s.replace(start, pos - start, sub_s);
+        } else {    /* 此时表示对栅元取非 */
+            int cell_id = s[start] - '0';
+            pos = start + 1;
+            while(ISNUMBER(s[pos])){
+                cell_id *= 10;
+                cell_id += s[pos] - '0';
+            }
+            cell_t *cell = (cell_t *) map_get(base_cells, cell_id);
+            if(!cell)
+                printf("cell %d has wrong expression: specified cell %d has not been initialized.\n", cell_index, cell_id);
+            std::string cell_expr(cell->expr);
+            cell_expr.insert(0, 1, '(');
+            cell_expr.insert(0, 1, '!');
+            cell_expr.push_back(')');
+            s.replace(start, pos, cell_expr);
+            continue;
         }
-        std::string sub_s = s.substr(start, pos - start);
-        _transform(sub_s);
-        s.replace(start, pos - start, sub_s);
     }
 
     size_t sz = s.size() + 1;

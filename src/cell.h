@@ -20,6 +20,7 @@ typedef struct cell_t{
     int *surfs;                /* 当前cell的全部边界面编号，包含符号在内 */
     void **surfs_addr;         /* 对应于每个边界面的surface实例的地址 */
     char *rpn;                 /* 面布尔表达式转换而来的RPN表达式 */
+    char *expr;                /* 原始的中缀表达式 */
 
     void *fill;                /* fill关键字，指向当前cell所包含的universe实例的地址 */
     void *parent;              /* 指向包含当前cell的上级universe结构 */
