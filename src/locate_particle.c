@@ -35,8 +35,8 @@ locate_particle(particle_status_t *par_status,
     cell_sz = par_status->loc_sz;
 
     while(1) {
-        if(++level > 99) {
-            puts("terminate locating particle because of too many levels (>99).");
+        if(++level > 8) {
+            puts("terminate locating particle because of too many levels (>8).");
             return NULL;
         }
 

@@ -104,8 +104,12 @@ check_ce_ace_block()
                 int data_length = num_prob_erg * 6 * num_prob_tab;
 
                 for(int i = 0; i < data_length; i++) {
-                    if(nuc->XSS[start_loc + i] < ZERO)
+                    if(nuc->XSS[start_loc + i] < ZERO){
+                        printf("Find negative value %lf (xss[%d]) in ptable of %s. ptable is diabled to avoid error.\n",
+                               nuc->XSS[start_loc + i], start_loc + i, nuc->id);
                         nuc->JXS[23] = 0;    /* 关闭该核素的概率表 */
+                        break;
+                    }
                 }
                 for(int i = 0; i < base_num_threads; i++)
                     base_nuc_xs[i][nuc->xs].ptable = Get_loc_of_LUNR(nuc);
