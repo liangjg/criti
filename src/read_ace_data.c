@@ -38,8 +38,10 @@ read_ace_data()
     char temp[16];
     char buf[90];
     int file_type, start_addr;
+    int err;
 
     map_entry *nuc_entry;
+    map_iterator *nuc_iter;
     nuclide_t *nuc;
     FILE *xsdir_fp;
 
@@ -108,11 +110,35 @@ read_ace_data()
     }
 
     fclose(xsdir_fp);
+    chdir(cwd);
+
+    nuc_iter = map_get_iter(base_nucs);
+    err = 0;
+    while((nuc_entry = map_iter_next(nuc_iter))) {
+        nuc = (nuclide_t *) nuc_entry->v.val;
+        if(!nuc->XSS) {
+            err++;
+#ifdef USE_MPI
+            if(IS_MASTER)
+#endif
+                printf("\nNuclide %s is not found in xsdir file!\n", nuc->id);
+        }
+    }
+    map_release_iter(nuc_iter);
+
+    if(err) {
+#ifdef USE_MPI
+        if(IS_MASTER)
+#endif
+            printf("%d nuclides are not found in xsdir file!", err);
+        release_resource();
+        exit(0);
+    }
+
 #ifdef USE_MPI
     if(IS_MASTER)
 #endif
         puts("Finished.");
-    chdir(cwd);
 }
 
 int

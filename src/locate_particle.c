@@ -27,17 +27,17 @@ locate_particle(particle_status_t *par_status,
 
     univ = start_univ;
     found_cell = NULL;
-    level = 0;
 
     /* 清空当前univs和cells，全部重新定位 */
     if(univ == root_universe)
         par_status->loc_sz = 0;
     univ_sz = par_status->loc_sz;
     cell_sz = par_status->loc_sz;
+    level = par_status->loc_sz;
 
     while(1) {
-        if(++level > 99) {
-            puts("terminate locating particle because of too many levels (>99).");
+        if(level++ >= 8) {
+            puts("terminate locating particle because of too many levels (>8).");
             return NULL;
         }
 

@@ -99,7 +99,7 @@ read_cell_card(universe_t *univ)
                     break;
                 case 3:    /* tmp argument */
                     while(!ISNUMBER(*ret)) ret++;
-                    cell->tmp = strtod(ret, &end);
+                    cell->tmp = strtod(ret, &end) * 1.3806505E-23 / (1.6022E-19) * 1.0E-6;    /* convert to KT(MeV) */
                     ret = end;
                     break;
                 case 4:    /* vol argument */

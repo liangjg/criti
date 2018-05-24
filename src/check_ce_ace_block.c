@@ -6,6 +6,11 @@
 #include "map.h"
 #include "material.h"
 
+#ifdef USE_MPI
+#include "parallel.h"
+
+extern parallel_t base_parallel;
+#endif
 
 extern map *base_nucs;
 extern map *base_mats;
@@ -56,7 +61,10 @@ check_ce_ace_block()
                 for(j = 1; j <= NMT_4; j++) {
                     int MT_temp = (int) (nuc->XSS[L3 + j - 1]);
                     if(MT_temp <= 0) {
-                        printf("negative MT = %d for nuclide %s", MT_temp, nuc->id);
+#ifdef USE_MPI
+                        if(IS_MASTER)
+#endif
+                            printf("negative MT = %d for nuclide %s", MT_temp, nuc->id);
                         release_resource();
                         exit(0);
                     }
@@ -96,6 +104,11 @@ check_ce_ace_block()
 
                 for(i = 0; i < data_length; i++) {
                     if(nuc->XSS[start_loc + i] < ZERO){
+#ifdef USE_MPI
+                        if(IS_MASTER)
+#endif
+                            printf("Find negative value %lf (xss[%d]) in ptable of %s. ptable is diabled to avoid error.\n",
+                                   nuc->XSS[start_loc + i], start_loc + i, nuc->id);
                         nuc->JXS[23] = 0;
                         break;
                     }
