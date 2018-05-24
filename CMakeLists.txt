@@ -58,7 +58,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # Set compile/link flags
 #===============================================================================
 set(COMPILE_FLAGS "-m64 -Wall -Wextra -pedantic")
-set(IGNORED_WARNINGS "-Wno-pointer-arith")
+set(IGNORED_WARNINGS "-Wno-pointer-arith -Wno-unused-result")
 if(CMAKE_C_COMPILER_ID MATCHES "Clang")
     set(IGNORED_WARNINGS "${IGNORED_WARNINGS} -Wno-newline-eof")
 endif()

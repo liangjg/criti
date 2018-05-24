@@ -62,8 +62,23 @@ read_ace_data()
 
     fscanf(xsdir_fp, "%*[^=]=%s", data_path);
 
-    getcwd(cwd, 256);
-    chdir(data_path);
+    if(!getcwd(cwd, 256)) {
+#ifdef USE_MPI
+        if(IS_MASTER)
+#endif
+            puts("Error in getting current working directory. Possibly due to path name is too long (>256).");
+        release_resource();
+        exit(0);
+    }
+
+    if(chdir(data_path) != 0) {
+#ifdef USE_MPI
+        if(IS_MASTER)
+#endif
+            puts("Error in changing working directory. Possibly due to path name is too long (>256).");
+        release_resource();
+        exit(0);
+    }
 
     while(true) {
         fscanf(xsdir_fp, "%s", temp);
@@ -114,7 +129,14 @@ read_ace_data()
     }
 
     fclose(xsdir_fp);
-    chdir(cwd);
+    if(chdir(cwd) != 0) {
+#ifdef USE_MPI
+        if(IS_MASTER)
+#endif
+        puts("Error in changing working directory. Possibly due to path name is too long (>256).");
+        release_resource();
+        exit(0);
+    }
 
     nuc_iter = map_get_iter(base_nucs);
     err = 0;
