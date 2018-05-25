@@ -16,7 +16,6 @@ static void do_calc_master(void *args);
 extern criti_t base_criti;
 extern int base_num_threads;
 extern RNG_t base_RNG;
-extern universe_t *root_universe;
 extern double base_start_wgt;
 extern nuc_xs_t *base_nuc_xs;
 
@@ -97,7 +96,7 @@ do_calc_master(void *args){
 
         par_status.erg = cur_src->erg;
         par_status.wgt = base_start_wgt;
-        par_status.cell = locate_particle(&par_status, root_universe, par_status.pos, par_status.dir);
+        par_status.cell = locate_particle(&par_status, NULL, par_status.pos, par_status.dir);
 
         if(!par_status.cell)
             continue;

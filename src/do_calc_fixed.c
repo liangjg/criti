@@ -41,7 +41,6 @@ __thread_local particle_status_t par_status;
 __thread_local int col_cnt, cur_col_cnt;
 
 extern double base_start_wgt;
-extern universe_t *root_universe;
 extern int base_num_threads;
 
 void
@@ -126,7 +125,7 @@ _do_calc_fixed(int neu)
 
     par_status.erg = cur_src->erg;
     par_status.wgt = base_start_wgt;
-    par_status.cell = locate_particle(&par_status, root_universe, par_status.pos, par_status.dir);
+    par_status.cell = locate_particle(&par_status, NULL, par_status.pos, par_status.dir);
 
     if(!par_status.cell)
         return;
@@ -178,7 +177,7 @@ _do_calc_fixed(int neu)
 
             par_status.erg = cur_src->erg;
             par_status.wgt = cur_src->wgt;
-            par_status.cell = locate_particle(&par_status, root_universe, par_status.pos, par_status.dir);
+            par_status.cell = locate_particle(&par_status, NULL, par_status.pos, par_status.dir);
 
             if(!par_status.cell)
                 continue;
