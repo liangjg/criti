@@ -5,7 +5,6 @@
 #include "IO_releated.h"
 #include "map.h"
 #include "nuclide.h"
-#include <unistd.h>
 
 
 #ifdef USE_MPI
@@ -22,9 +21,6 @@ extern parallel_t base_parallel;
 #define FILE_TYPE_ERR     2
 
 extern map *base_nucs;
-/* 如果路径太长了可能会导致缓冲区溢出 */
-static char data_path[256];
-static char cwd[256];
 
 int
 _read_ace(const char *ace_path,
@@ -35,9 +31,10 @@ _read_ace(const char *ace_path,
 void
 read_ace_data()
 {
-    char ace_path[64];
+    char data_path[512];
     char temp[16];
     char buf[90];
+    size_t len;
     int file_type, start_addr;
     int err;
 
@@ -61,24 +58,8 @@ read_ace_data()
     }
 
     fscanf(xsdir_fp, "%*[^=]=%s", data_path);
-
-    if(!getcwd(cwd, 256)) {
-#ifdef USE_MPI
-        if(IS_MASTER)
-#endif
-            puts("Error in getting current working directory. Possibly due to path name is too long (>256).");
-        release_resource();
-        exit(0);
-    }
-
-    if(chdir(data_path) != 0) {
-#ifdef USE_MPI
-        if(IS_MASTER)
-#endif
-            puts("Error in changing working directory. Possibly due to path name is too long (>256).");
-        release_resource();
-        exit(0);
-    }
+    len = strlen(data_path);
+    data_path[len++] = '/';
 
     while(true) {
         fscanf(xsdir_fp, "%s", temp);
@@ -101,13 +82,13 @@ read_ace_data()
         if(nuc_entry) {
             nuc = (nuclide_t *) nuc_entry->v.val;
             fscanf(xsdir_fp, "%lf %s %*d %d %d %d %*d %*d %*lf",
-                   &nuc->atom_wgt, ace_path, &file_type, &start_addr, &nuc->XSS_sz);
-            switch(_read_ace(ace_path, file_type, start_addr, nuc)) {
+                   &nuc->atom_wgt, &data_path[len], &file_type, &start_addr, &nuc->XSS_sz);
+            switch(_read_ace(data_path, file_type, start_addr, nuc)) {
                 case FILE_NOT_EXIST:
 #ifdef USE_MPI
                     if(IS_MASTER)
 #endif
-                        printf("file %s does not exist in directory %s.\n", ace_path, data_path);
+                        printf("file %s does not exist.\n", data_path);
 
                     fclose(xsdir_fp);
                     release_resource();
@@ -127,16 +108,7 @@ read_ace_data()
         }
         fgets(buf, 90, xsdir_fp);
     }
-
     fclose(xsdir_fp);
-    if(chdir(cwd) != 0) {
-#ifdef USE_MPI
-        if(IS_MASTER)
-#endif
-        puts("Error in changing working directory. Possibly due to path name is too long (>256).");
-        release_resource();
-        exit(0);
-    }
 
     nuc_iter = map_get_iter(base_nucs);
     err = 0;
