@@ -65,7 +65,7 @@ find_neighbor_cell(particle_status_t *par_status)
     }
 
     if(!found)
-        found_cell = locate_particle(par_status, par_status->loc_univs[0], par_status->pos, par_status->dir);
+        found_cell = locate_particle(par_status, NULL, par_status->pos, par_status->dir);
 
     par_status->cell = found_cell;
 }

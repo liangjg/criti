@@ -31,7 +31,6 @@ __thread_local pth_arg_t pth_arg;
 
 /* 主核上的变量 */
 extern double base_start_wgt;
-extern universe_t *root_universe;
 extern int base_tot_nucs;
 extern nuc_xs_t *base_nuc_xs;
 
@@ -74,7 +73,7 @@ do_calc(void *args)
 
         par_status.erg = pth_arg.src[neu].erg;
         par_status.wgt = base_start_wgt;
-        par_status.cell = locate_particle(&par_status, root_universe, par_status.pos, par_status.dir);
+        par_status.cell = locate_particle(&par_status, NULL, par_status.pos, par_status.dir);
 
         if(!par_status.cell)
             continue;
