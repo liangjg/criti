@@ -63,18 +63,11 @@ read_input_blocks(CALC_MODE_T *calc_mode)
                     read_criticality_block();
                     break;
                 case 4:    /* TALLY */
-                    //                    read_tally_block();
+                    read_tally_block();
                     break;
                 case 5:    /* FIXEDSOURCE */
                     *calc_mode = FIXEDSOURCE;
                     read_fixed_src_block();
-                    break;
-                case 6:    /* DEPLETION */
-                    *calc_mode = POINTBURN;
-                    break;
-                case 7:    /* BURNUP */
-                    *calc_mode = BURNUP;
-                    //                    read_burnup_block();
                     break;
                 default:
                     printf("unknown key word %s.\n", kw_start);

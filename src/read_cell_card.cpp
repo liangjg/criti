@@ -374,7 +374,7 @@ _do_build(char *exp)
     int num_of_optr = 0;
 
     while(!(*exp == '-' || ISNUMBER(*exp) || *exp == '(')) {
-        if(*exp != ' ' && *exp != '+') {
+        if(!(ISSPACE(*exp) || *exp == '+')) {
             printf("cell %d has wrong expression: %s\n", cell_index, exp);
             exit(1);
         }
@@ -382,7 +382,7 @@ _do_build(char *exp)
     }
     end = strlen(exp);
     while(!(exp[end - 1] == ')' || ISNUMBER(exp[end - 1]))) {
-        if(exp[end - 1] != ' ') {
+        if(!ISSPACE(exp[end - 1])) {
             printf("cell %d has wrong expression: %s\n", cell_index, exp);
             exit(1);
         }

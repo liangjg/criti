@@ -39,9 +39,6 @@ void
 read_criticality_block();
 
 void
-read_burnup_block();
-
-void
 read_fixed_src_block();
 
 void

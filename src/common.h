@@ -39,7 +39,7 @@
 #define ISLOWER(_c)     ((97 <= (_c)) && ((_c) <= 122))
 #define ISALPHA(_c)     (ISLOWER(_c) || ISUPPER(_c))
 #define ISRETURN(_c)    (((_c) == 10) || ((_c) == 13))
-#define ISSPACE(_c)     ((_c) == 32)
+#define ISSPACE(_c)     ((_c) == 32 || (_c) == 9)
 #define ISCOMMENT(_c)   ((_c) == 47)
 #define TOUPPER(_c)     ((_c) &= 95)
 #define TOLOWER(_c)     ((_c) |= 32)
