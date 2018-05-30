@@ -272,7 +272,7 @@ _simplify(const char *exp,
             pos = start + 1;
             while(ISNUMBER(s[pos])){
                 cell_id *= 10;
-                cell_id += s[pos] - '0';
+                cell_id += s[pos++] - '0';
             }
             cell_t *cell = (cell_t *) map_get(base_cells, cell_id);
             if(!cell)
