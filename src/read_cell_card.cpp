@@ -100,7 +100,17 @@ read_cell_card(universe_t *univ)
         cells.push_back(cell);
 
         char *expr = ret;
-        while(!ISALPHA(*ret)) ret++;
+        while(!ISALPHA(*ret)) {
+            if(*ret != '+' && *ret != '-' &&
+               !ISNUMBER(*ret) && !ISSPACE(*ret) &&
+               *ret != '(' && *ret != ')' &&
+               *ret != '&' && *ret != ':' && *ret != '!') {
+                printf("cell %d has unexpected character %c.\n", cell_index, *ret);
+                release_resource();
+                exit(0);
+            }
+            ret++;
+        }
         *(ret - 1) = 0;
         cell->expr = (char *) malloc(sizeof(char) * (ret - expr));
         memcpy(cell->expr, expr, (ret - expr) * sizeof(char));
@@ -256,13 +266,19 @@ _simplify(const char *exp,
     while((found = s.find('!')) != std::string::npos) {
         s.erase(found, 1);
         start = found;
+        while(s[start] != '(' && !ISNUMBER(s[start])) start++;
         if(s[start] == '(') {    /* 面布尔表达式 */
             num_of_lp++;
             pos = start + 1;
-            while(num_of_lp) {
+            while(num_of_lp && s[pos]) {
                 if(s[pos] == '(') num_of_lp++;
                 else if(s[pos] == ')') num_of_lp--;
                 pos++;
+            }
+            if(num_of_lp) {
+                printf("cell %d has mismatched parentheses: %s.\n", cell_index, exp);
+                release_resource();
+                exit(0);
             }
             std::string sub_s = s.substr(start, pos - start);
             _transform(sub_s);
@@ -275,8 +291,11 @@ _simplify(const char *exp,
                 cell_id += s[pos++] - '0';
             }
             cell_t *cell = (cell_t *) map_get(base_cells, cell_id);
-            if(!cell)
+            if(!cell) {
                 printf("cell %d has wrong expression: specified cell %d has not been initialized.\n", cell_index, cell_id);
+                release_resource();
+                exit(0);
+            }
             std::string cell_expr(cell->expr);
             cell_expr.insert(0, 1, '(');
             cell_expr.insert(0, 1, '!');
