@@ -197,7 +197,7 @@ _read_ace(const char *ace_path,
             nuc->zaid = nuc->NXS[2];
 
         fseek(ace_fp, start_addr * 4096, SEEK_SET);
-        nuc->XSS = (double *) malloc((nuc->XSS_sz + 1) * sizeof(double));
+        nuc->XSS = calloc(nuc->XSS_sz + 1, sizeof(double));
         fread(nuc->XSS + 1, sizeof(double), nuc->XSS_sz, ace_fp);
     } else {
         fclose(ace_fp);

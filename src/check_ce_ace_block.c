@@ -31,9 +31,9 @@ check_ce_ace_block()
             int NMT_4 = Get_non_el_mt_num(nuc);
             if(NMT_4 == 0) {
                 nuc->MTR_index_sz = 110;
-                nuc->MTR_index = (int *) malloc(sizeof(int) * nuc->MTR_index_sz);
+                nuc->MTR_index = calloc(nuc->MTR_index_sz, sizeof(int));
                 nuc->LAND_sz = 3;
-                nuc->LAND = (int *) malloc(sizeof(int) * nuc->LAND_sz);
+                nuc->LAND = calloc(nuc->LAND_sz, sizeof(int));
                 nuc->LAND[2] = (int) (nuc->XSS[Get_loc_of_LAND(nuc)]);
             } else {
                 int L3, L6, L8, L10, NMT_5, MT_max_4, MT_max_5;
@@ -45,14 +45,14 @@ check_ce_ace_block()
                 MT_max_4 = (int) (MAX(nuc->XSS[L3 + NMT_4 - 1], nuc->XSS[L3]));
                 MT_max_5 = (int) (MAX(nuc->XSS[L3 + NMT_5 - 1], nuc->XSS[L3]));
                 nuc->MTR_index_sz = MAX(110, MT_max_4 + 1);
-                nuc->MTR_index = (int *) malloc(sizeof(int) * nuc->MTR_index_sz);
+                nuc->MTR_index = calloc(nuc->MTR_index_sz, sizeof(int));
                 nuc->LSIG_sz = MAX(110, MT_max_4 + 1);
-                nuc->LSIG = (int *) malloc(sizeof(int) * nuc->LSIG_sz);
+                nuc->LSIG = calloc(nuc->LSIG_sz, sizeof(int));
                 nuc->LAND_sz = MT_max_5 + 3;
-                nuc->LAND = (int *) malloc(sizeof(int) * nuc->LAND_sz);
+                nuc->LAND = calloc(nuc->LAND_sz, sizeof(int));
                 nuc->LAND[2] = (int) (nuc->XSS[L8]);
                 nuc->LDLW_sz = MT_max_5 + 3;
-                nuc->LDLW = (int *) malloc(sizeof(int) * nuc->LDLW_sz);
+                nuc->LDLW = calloc(nuc->LDLW_sz, sizeof(int));
                 for(j = 1; j <= NMT_4; j++) {
                     int MT_temp = (int) (nuc->XSS[L3 + j - 1]);
                     if(MT_temp <= 0) {
@@ -66,7 +66,7 @@ check_ce_ace_block()
                         old_addr = nuc->MTR_index;
                         old_sz = nuc->MTR_index_sz;
                         nuc->MTR_index_sz = MT_temp + 1;
-                        nuc->MTR_index = (int *) malloc(sizeof(int) * nuc->MTR_index_sz);
+                        nuc->MTR_index = calloc(nuc->MTR_index_sz, sizeof(int));
                         memcpy(nuc->MTR_index, old_addr, old_sz * sizeof(int));
                         free(old_addr);
 
@@ -74,7 +74,7 @@ check_ce_ace_block()
                         old_addr = nuc->LSIG;
                         old_sz = nuc->LSIG_sz;
                         nuc->LSIG_sz = MT_temp + 1;
-                        nuc->LSIG = (int *) malloc(sizeof(int) * nuc->LSIG_sz);
+                        nuc->LSIG = calloc(nuc->LSIG_sz, sizeof(int));
                         memcpy(nuc->LSIG, old_addr, old_sz * sizeof(int));
                         free(old_addr);
                     }
@@ -105,9 +105,9 @@ check_ce_ace_block()
 
             int NE = Get_erg_grid_num(nuc);
             nuc->fis_XSS_sz = NE + 1;
-            nuc->fis_XSS = (double *) malloc(sizeof(double) * (NE + 1));
+            nuc->fis_XSS = calloc(nuc->fis_XSS_sz, sizeof(double));
             nuc->inel_XSS_sz = NE + 1;
-            nuc->inel_XSS = (double *) malloc(sizeof(double) * (NE + 1));
+            nuc->inel_XSS = calloc(nuc->inel_XSS_sz, sizeof(double));
 
             bool MT_18_exist = false;
             for(j = 1; j <= Get_erg_grid_num(nuc); j++) {

@@ -65,6 +65,7 @@ message(STATUS "CXX compiler flags: ${CMAKE_CXX_FLAGS}")
 
 if (${UNIX})
     add_definitions(-DUNIX)
+    add_definitions(-DKSRC)
 endif ()
 
 #===============================================================================

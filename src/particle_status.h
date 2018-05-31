@@ -10,11 +10,11 @@
 
 typedef struct particle_status_t {
     /* basic state */
-    double pos[4];              /* 粒子在universe 0中的位置坐标 */
-    double dir[4];              /* 粒子在universe 0中的方向坐标 */
-    double exit_dir[4];
-    double loc_pos[4];          /* 粒子在当前universe中的坐标 */
-    double loc_dir[4];          /* 粒子在当前universe中的方向 */
+    double pos[3];              /* 粒子在universe 0中的位置坐标 */
+    double dir[3];              /* 粒子在universe 0中的方向坐标 */
+    double exit_dir[3];
+    double loc_pos[3];          /* 粒子在当前universe中的坐标 */
+    double loc_dir[3];          /* 粒子在当前universe中的方向 */
     double erg;                 /* 粒子当前的能量 */
     double exit_erg;
     double wgt;                 /* 粒子当前的权重 */

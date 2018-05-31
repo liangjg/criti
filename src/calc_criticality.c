@@ -6,7 +6,6 @@
 #include "IO_releated.h"
 #include "geometry.h"
 #include "neutron_transport.h"
-#include <athread.h>
 
 
 //extern SLAVE_FUN (do_calc)(void *args);
@@ -26,7 +25,7 @@ calc_criticality()
     int cyc, i, j, skip_src;
     pth_arg_t *pth_args;
 
-    pth_args = malloc(base_num_threads * sizeof(pth_arg_t));
+    pth_args = calloc(base_num_threads, sizeof(pth_arg_t));
 
     /* 初始化裂变源 */
     init_fission_source(pth_args);
