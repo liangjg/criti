@@ -23,7 +23,7 @@ void
 calc_criticality(int tot_cycle_num)
 {
     int i, j, cyc;
-    pth_arg_t *pth_args = malloc(base_num_threads * sizeof(pth_arg_t));
+    pth_arg_t *pth_args = calloc(base_num_threads, sizeof(pth_arg_t));
 
 #ifdef USE_PTHREAD
     pthread_t *threads = malloc(base_num_threads * sizeof(pthread_t));
