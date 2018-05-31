@@ -50,19 +50,12 @@ init_fission_source(pth_arg_t *pth_args)
 
     quotient = base_criti.cycle_neu_num / base_num_threads;
     remainder = base_criti.cycle_neu_num - quotient * base_num_threads;
-    for(i = 0; i < base_num_threads; i++) {
+    for(i = 0; i < base_num_threads - 1; i++) {
         pth_args[i].src_cnt = quotient;
         pth_args[i].keff_final = base_criti.keff_final;
     }
-    if(remainder)
-        for(i = 0; i < remainder; i++)
-            pth_args[i].src_cnt++;
-
-    /* TODO:可以考虑让主核来模拟多余的部分
-     * pth_args[base_num_threads].src_cnt = remainder;
-     * pth_args[base_num_threads].nuc_xs = base_nuc_xs[base_num_threads];
-     * pth_args[base_num_threads].keff_final = base_criti.keff_final;
-    */
+    pth_args[base_num_threads - 1].src_cnt = remainder + quotient;
+    pth_args[base_num_threads - 1].keff_final = base_criti.keff_final;
 
     for(i = 0; i < base_num_threads; i++) {
         int sz = 5 * pth_args[i].src_cnt;

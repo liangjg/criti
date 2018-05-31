@@ -6,9 +6,10 @@
 #include "IO_releated.h"
 #include "geometry.h"
 #include "neutron_transport.h"
+#include <athread.h>
 
 
-//extern SLAVE_FUN (do_calc)(void *args);
+extern SLAVE_FUN (do_calc)(void *args);
 
 static void do_calc_master(void *args);
 
@@ -30,31 +31,31 @@ calc_criticality()
     /* 初始化裂变源 */
     init_fission_source(pth_args);
 
-    //athread_init();
+    athread_init();
 
     for(cyc = 1; cyc <= base_criti.tot_cycle_num; cyc++) {
         memcpy(&pth_args[0].RNG, &base_RNG, sizeof(RNG_t));
 
-        //for(i = 0; i < base_num_threads; i++) {
-        //    athread_create(i, do_calc, &pth_args[i]);
-        //    memcpy(&pth_args[i + 1].RNG, &pth_args[i].RNG, sizeof(RNG_t));
+        for(i = 0; i < base_num_threads - 1; i++) {
+            athread_create(i, do_calc, &pth_args[i]);
+            memcpy(&pth_args[i + 1].RNG, &pth_args[i].RNG, sizeof(RNG_t));
 
-        //    skip_src = pth_args[i].src_cnt;
-        //    for(j = 0; j < skip_src; j++)
-        //        get_rand_seed(&pth_args[i + 1].RNG);
-        //}
+            skip_src = pth_args[i].src_cnt;
+            for(j = 0; j < skip_src; j++)
+                get_rand_seed(&pth_args[i + 1].RNG);
+        }
 
         do_calc_master(&pth_args[base_num_threads - 1]);
 
-        //for(i = 0; i < base_num_threads; i++)
-        //    athread_wait(i);
+        for(i = 0; i < base_num_threads - 1; i++)
+            athread_wait(i);
 
         /* 处理这一代计算完之后的结果 */
         process_cycle_end(cyc, pth_args);
     }
     output_summary();
 
-    //athread_halt();
+    athread_halt();
 
     for(i = 0; i < base_num_threads; i++) {
         free(pth_args[i].src);

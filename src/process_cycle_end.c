@@ -48,10 +48,6 @@ process_cycle_end(int current_cycle,
         for(j = 0; j < 3; j++)
             base_criti.keff_wgt_sum[j] += pth_args[i].keff_wgt_sum[j];
     }
-    //base_criti.tot_col_cnt = pth_args[base_num_threads - 1].col_cnt;
-    //base_criti.tot_bank_cnt = pth_args[base_num_threads - 1].bank_cnt;
-    //for(i = 0; i < 3; i++)
-    //    base_criti.keff_wgt_sum[i] = pth_args[base_num_threads - 1].keff_wgt_sum[i];
 
 #ifdef USE_MPI
     MPI_Allreduce(MPI_IN_PLACE, base_criti.keff_wgt_sum, 3, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
@@ -87,12 +83,12 @@ process_cycle_end(int current_cycle,
     quotient = base_criti.tot_bank_cnt / base_num_threads;
     remainder = base_criti.tot_bank_cnt - quotient * base_num_threads;
 
-    for(i = 0; i < base_num_threads; i++) {
+    for(i = 0; i < base_num_threads - 1; i++) {
         SWAP(pth_args[i].src, pth_args[i].bank);
         pth_args[i].src_cnt = quotient;
     }
-    for(i = 0; i < remainder; i++)
-        pth_args[i].src_cnt++;
+    SWAP(pth_args[base_num_threads - 1].src, pth_args[base_num_threads - 1].bank);
+    pth_args[base_num_threads - 1].src_cnt = quotient + remainder;
 
 #ifdef USE_MPI
     bank_t *start_addr;

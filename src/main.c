@@ -106,7 +106,7 @@ main(int argc,
 #endif
 
     opterr = 0;
-    base_num_threads = 1;
+    base_num_threads = NUMBER_SLAVES + 1;
 
     while((c = getopt(argc, argv, "ho:s:")) != -1) {
         switch(c) {
