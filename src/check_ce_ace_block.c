@@ -6,6 +6,11 @@
 #include "map.h"
 #include "material.h"
 
+#ifdef USE_MPI
+#include "parallel.h"
+
+extern parallel_t base_parallel;
+#endif
 
 extern map *base_nucs;
 extern map *base_mats;
@@ -62,7 +67,10 @@ check_ce_ace_block()
                 for(int j = 1; j <= NMT_4; j++) {
                     int MT_temp = (int) (nuc->XSS[L3 + j - 1]);
                     if(MT_temp <= 0) {
-                        printf("negative MT = %d for nuclide %s", MT_temp, nuc->id);
+#ifdef USE_MPI
+                        if(IS_MASTER)
+#endif
+                            printf("negative MT = %d for nuclide %s", MT_temp, nuc->id);
                         release_resource();
                         exit(0);
                     }
@@ -102,7 +110,10 @@ check_ce_ace_block()
 
                 for(int i = 0; i < data_length; i++) {
                     if(nuc->XSS[start_loc + i] < ZERO){
-                        printf("Find negative value %lf (xss[%d]) in ptable of %s. ptable is diabled to avoid error.\n",
+#ifdef USE_MPI
+                        if(IS_MASTER)
+#endif
+                            printf("Find negative value %lf (xss[%d]) in ptable of %s. ptable is diabled to avoid error.\n",
                                nuc->XSS[start_loc + i], start_loc + i, nuc->id);
                         nuc->JXS[23] = 0;    /* 关闭该核素的概率表 */
                         break;
@@ -127,8 +138,10 @@ check_ce_ace_block()
                     int MT_temp = (int) (nuc->XSS[loc + k]);
 
                     if(MT_temp <= 0) {
-                        printf("unknown MT number.\n   Nuc = %d, MT = XSS[%d] = %d.\n", nuc->zaid, loc + k,
-                               MT_temp);
+#ifdef USE_MPI
+                        if(IS_MASTER)
+#endif
+                            printf("unknown MT number.\n   Nuc = %d, MT = XSS[%d] = %d.\n", nuc->zaid, loc + k, MT_temp);
                         base_warnings++;
                     }
 
@@ -136,7 +149,10 @@ check_ce_ace_block()
                     int SIG_IE = (int) (nuc->XSS[IE_LOCA]);
                     int SIG_NE = (int) (nuc->XSS[IE_LOCA + 1]);
                     if((SIG_IE + SIG_NE - 1) != NE) {
-                        printf("Abnormal cross-section of reaction MT=%d in nuc=%s \n", MT_temp, nuc->id);
+#ifdef USE_MPI
+                        if(IS_MASTER)
+#endif
+                            printf("Abnormal cross-section of reaction MT=%d in nuc=%s \n", MT_temp, nuc->id);
                         release_resource();
                         exit(0);
                     }
