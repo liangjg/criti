@@ -16,6 +16,7 @@ extern IOfp_t base_IOfp;
 extern acedata_t base_acedata;
 extern nuc_xs_t **base_nuc_xs;
 extern int base_num_threads;
+extern int base_tot_nucs;
 
 int
 _dppler_brdn_nuc_tmp(acedata_t *obj,
@@ -79,6 +80,7 @@ END:
 //    fprintf(base_IOfp.mat_fp, "Doppler broaden applied to %d nuclide.\n", cnt);
 //    fputs("========================================================================\n", base_IOfp.mat_fp);
 
+    base_tot_nucs = tot_nucs;
     base_nuc_xs = malloc(base_num_threads * sizeof(void *));
     for(int i = 0; i < base_num_threads; i++)
         base_nuc_xs[i] = malloc(tot_nucs * sizeof(nuc_xs_t));

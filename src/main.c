@@ -34,6 +34,7 @@ IOfp_t base_IOfp;
 RNG_t base_RNG;
 acedata_t base_acedata;
 nuc_xs_t **base_nuc_xs;
+int base_tot_nucs;
 
 /* key: universe index; val: corresponding universe instance address */
 map *base_univs;
