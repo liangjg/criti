@@ -16,7 +16,7 @@ extern parallel_t base_parallel;
 #endif
 
 #define MAX_LINES         51781
-#define CHAR_PER_LINE     81
+#define CHAR_PER_LINE     90
 
 #define FILE_NOT_EXIST    1
 #define FILE_TYPE_ERR     2

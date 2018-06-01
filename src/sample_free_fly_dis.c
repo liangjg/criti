@@ -8,6 +8,7 @@
 
 
 extern acedata_t base_acedata;
+extern int base_tot_nucs;
 
 double
 sample_free_fly_dis(particle_status_t *par_status,
@@ -45,17 +46,33 @@ sample_free_fly_dis(particle_status_t *par_status,
      * calculate total cross section of each nuclide,
      * and then, sum them up.
      *************************************************/
+    if(erg_changed)
+        for(i = 0; i < base_tot_nucs; i++)
+            nuc_xs[i].inter_pos = -1;
 
     for(i = 0; i < mat->tot_nuc_num; i++) {
         nuc = mat->nucs[i];
         cur_nuc_xs = &nuc_xs[nuc->xs];
         sab_nuc = mat->sab_nuc;
-        nuc_atom_den = mat->nuc_atom_den[i];
+//        nuc_atom_den = mat->nuc_atom_den[i];
+
+        if(cur_nuc_xs->inter_pos > 0 && !sab_nuc && !par_status->cell_tmp_changed)
+            continue;
 
         if(sab_nuc && (sab_nuc->zaid != nuc->zaid || par_status->erg >= mat->sab_nuc_esa))
             sab_nuc = NULL;
 
         get_nuc_tot_fis_cs(&base_acedata, nuc, sab_nuc, cur_nuc_xs, RNG, par_status->erg, par_status->cell_tmp);
+
+//        par_status->macro_tot_cs += nuc_atom_den * cur_nuc_xs->tot;
+//        if(GT_ZERO(cur_nuc_xs->fis))
+//            par_status->macro_nu_fis_cs += nuc_atom_den * cur_nuc_xs->fis * cur_nuc_xs->nu;
+    }
+
+    for(i = 0; i < mat->tot_nuc_num; i++){
+        nuc = mat->nucs[i];
+        cur_nuc_xs = &nuc_xs[nuc->xs];
+        nuc_atom_den = mat->nuc_atom_den[i];
 
         par_status->macro_tot_cs += nuc_atom_den * cur_nuc_xs->tot;
         if(GT_ZERO(cur_nuc_xs->fis))
