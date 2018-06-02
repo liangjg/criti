@@ -106,9 +106,11 @@ main(int argc,
 #endif
 
     opterr = 0;
-    base_num_threads = 1;    /* 默认使用单线程进行计算，除非用-s指定了线程数目 */
+    /* 设置默认参数 */
+    base_num_threads = 1;
+    strcpy(base_IOfp.xsdir_file_name, "xsdir");
 
-    while((c = getopt(argc, argv, "ho:s:")) != -1) {
+    while((c = getopt(argc, argv, "ho:s:x:")) != -1) {
         switch(c) {
             case 'h': {
 #ifdef USE_MPI
@@ -124,6 +126,7 @@ main(int argc,
                     puts("General options:");
                     puts("  -h        Print this help");
                     puts("  -o        Specify output file");
+                    puts("  -x        Specify xsdir file, the default is \"xsdir\"");
 #ifdef USE_PTHREAD
                     puts("  -s        Specify how many POSIX threads to calculate simultaneously");
 #endif
@@ -140,6 +143,10 @@ main(int argc,
             }
             case 's': {
                 base_num_threads = *optarg - '0';
+                break;
+            }
+            case 'x': {
+                strcpy(base_IOfp.xsdir_file_name, optarg);
                 break;
             }
             default:

@@ -17,6 +17,7 @@ typedef struct {
 
     char inp_file_name[MAX_FILENAME_LENGTH];
     char opt_file_name[MAX_FILENAME_LENGTH];
+    char xsdir_file_name[MAX_FILENAME_LENGTH];
 } IOfp_t;
 
 BEGIN_DECL
