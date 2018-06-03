@@ -52,6 +52,9 @@ void
 output_mat_file();
 
 void
+output_tally_file();
+
+void
 output_summary();
 
 void

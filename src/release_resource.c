@@ -6,6 +6,7 @@
 #include "map.h"
 #include "IO_releated.h"
 #include "fixed_source.h"
+#include "tally.h"
 
 #ifdef USE_MPI
 #include "parallel.h"
@@ -22,10 +23,13 @@ extern fixed_src_t base_fixed_src;
 extern IOfp_t base_IOfp;
 extern nuc_xs_t **base_nuc_xs;
 extern int base_num_threads;
+extern tally_t base_tally;
 
 void
 release_resource()
 {
+    int i;
+
     map_free(base_univs);
     free(base_univs);
     map_free(base_cells);
@@ -38,10 +42,13 @@ release_resource()
     free(base_nucs);
 
     if(base_nuc_xs){
-        for(int i = 0; i < base_num_threads; i++)
+        for(i = 0; i < base_num_threads; i++)
             free(base_nuc_xs[i]);
         free(base_nuc_xs);
     }
+
+    /* 释放tally相关结构 */
+    tally_free(&base_tally);
 
     /* close all FILE structure if opened */
     if(base_IOfp.opt_fp) fclose(base_IOfp.opt_fp);

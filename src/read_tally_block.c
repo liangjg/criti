@@ -7,8 +7,10 @@
 
 
 #define ERR_CELL_CARD    1
+#define INITIAL_CAP      4
 
 extern IOfp_t base_IOfp;
+extern tally_t base_tally;
 
 static cell_tally_t *
 _read_cell_tally(int);
@@ -29,17 +31,37 @@ read_tally_block()
     char buf[64];
     int id;
     char *c;
-    cell_tally_t *cell_tally;
-    mesh_tally_t *mesh_tally;
+    int cell_tally_cap, mesh_tally_cap;
+    void *old_addr;
+
+    cell_tally_cap = INITIAL_CAP;
+    mesh_tally_cap = INITIAL_CAP;
+
+    base_tally.cell_tallies = calloc(cell_tally_cap, sizeof(cell_tally_t *));
+    base_tally.mesh_tallies = calloc(mesh_tally_cap, sizeof(mesh_tally_t *));
 
     while(fscanf(base_IOfp.inp_fp, "%s %d", buf, &id) == 2) {
         for(c = buf; *c; c++)
             *c = TOUPPER(*c);
 
         if(strcmp(buf, "CELLTALLY") == 0) {
-            cell_tally = _read_cell_tally(id);
+            base_tally.cell_tallies[base_tally.cell_tally_sz++] = _read_cell_tally(id);
+            if(base_tally.cell_tally_sz == cell_tally_cap) {
+                old_addr = base_tally.cell_tallies;
+                cell_tally_cap <<= 1;
+                base_tally.cell_tallies = calloc(cell_tally_cap, sizeof(cell_tally_t *));
+                memcpy(base_tally.cell_tallies, old_addr, base_tally.cell_tally_sz * sizeof(cell_tally_t *));
+                free(old_addr);
+            }
         } else if(strcmp(buf, "MESHTALLY") == 0) {
-            mesh_tally = _read_mesh_tally(id);
+            base_tally.mesh_tallies[base_tally.mesh_tally_sz++] = _read_mesh_tally(id);
+            if(base_tally.mesh_tally_sz == mesh_tally_cap) {
+                old_addr = base_tally.mesh_tallies;
+                mesh_tally_cap <<= 1;
+                base_tally.mesh_tallies = calloc(mesh_tally_cap, sizeof(mesh_tally_t *));
+                memcpy(base_tally.mesh_tallies, old_addr, base_tally.mesh_tally_sz * sizeof(mesh_tally_t *));
+                free(old_addr);
+            }
         } else if(strcmp(buf, "CSTALLY") == 0)
             _read_xs_tally();
         else {

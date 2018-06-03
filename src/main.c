@@ -15,6 +15,7 @@
 #include "material.h"
 #include "geometry.h"
 #include "map.h"
+#include "tally.h"
 
 
 #ifdef USE_MPI
@@ -35,6 +36,7 @@ RNG_t base_RNG;
 acedata_t base_acedata;
 nuc_xs_t **base_nuc_xs;
 int base_tot_nucs;
+tally_t base_tally;
 
 /* key: universe index; val: corresponding universe instance address */
 map *base_univs;
@@ -191,6 +193,8 @@ main(int argc,
 #endif
         base_IOfp.opt_fp = fopen(base_IOfp.opt_file_name, "wb");
         base_IOfp.mat_fp = fopen(mat_fn, "wb");
+        if(HAS_CELL_TALLY(&base_tally) || HAS_MESH_TALLY(&base_tally) || HAS_XS_TALLY(&base_tally))
+            base_IOfp.tally_fp = fopen(tally_fn, "wb");
 #ifdef USE_MPI
     }
 #endif
@@ -298,6 +302,12 @@ main(int argc,
     if(IS_MASTER)
 #endif
         output_ending();
+
+    /* output tally file */
+#ifdef USE_MPI
+    if(IS_MASTER)
+#endif
+        output_tally_file();
 
     /* release all resource */
     release_resource();
