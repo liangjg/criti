@@ -11,7 +11,7 @@ _match(cell_tally_t *,
        int);
 
 void
-tally_flux(cell_tally_t *obj,
+ctally_flux(cell_tally_t *obj,
            particle_status_t *par_status,
            double tklen)
 {
@@ -38,12 +38,36 @@ tally_flux(cell_tally_t *obj,
 }
 
 void
+ctally_power(cell_tally_t *obj,
+             particle_status_t *par_status,
+             double tklen)
+{
+
+}
+
+void
+ctally_fis_rate(cell_tally_t *obj,
+                particle_status_t *par_status,
+                double tklen)
+{
+
+}
+
+void
+ctally_abs_rate(cell_tally_t *obj,
+                particle_status_t *par_status,
+                double tklen)
+{
+
+}
+
+void
 cell_tally_free(cell_tally_t *obj)
 {
     int i;
 
     free(obj->erg_bin);
-    for(i = 0; i < obj->cells_sz; i++){
+    for(i = 0; i < obj->cells_sz; i++) {
         free(obj->cells[i]);
         free(obj->result[i]);
     }

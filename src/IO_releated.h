@@ -46,18 +46,6 @@ void
 read_tally_block();
 
 void
-read_cell_tally_card();
-
-void
-read_mesh_tally_card();
-
-void
-read_tally_cells();
-
-void
-read_cs_tally_card();
-
-void
 read_ace_data();
 
 void

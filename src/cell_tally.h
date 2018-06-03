@@ -27,24 +27,24 @@ typedef struct cell_tally_t cell_tally_t;
 
 BEGIN_DECL
 /* type 1: 栅元通量 */
-void tally_flux(cell_tally_t *,
+void ctally_flux(cell_tally_t *,
                 particle_status_t *,
                 double);
 
 /* type 2: 栅元功率 */
-void tally_power(cell_tally_t *,
-                 particle_status_t *,
-                 double);
+void ctally_power(cell_tally_t *,
+                  particle_status_t *,
+                  double);
 
 /* type 3: 栅元裂变反应率 */
-void tally_fis_rate(cell_tally_t *,
-                    particle_status_t *,
-                    double);
+void ctally_fis_rate(cell_tally_t *,
+                     particle_status_t *,
+                     double);
 
 /* type 4: 栅元吸收反应率 */
-void tally_abs_rate(cell_tally_t *,
-                    particle_status_t *,
-                    double);
+void ctally_abs_rate(cell_tally_t *,
+                     particle_status_t *,
+                     double);
 
 void cell_tally_free(cell_tally_t *);
 END_DECL
