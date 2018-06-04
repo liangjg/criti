@@ -10,12 +10,12 @@ tally_free(tally_t *tally)
 {
     int i;
 
-    if(HAS_CELL_TALLY(tally))
+    if(tally->cell_tally_sz)
         for(i = 0; i < tally->cell_tally_sz; i++)
             cell_tally_free(tally->cell_tallies[i]);
     free(tally->cell_tallies);
 
-    if(HAS_MESH_TALLY(tally))
+    if(tally->mesh_tally_sz)
         for(i = 0; i < tally->mesh_tally_sz; i++)
             mesh_tally_free(tally->mesh_tallies[i]);
     free(tally->mesh_tallies);

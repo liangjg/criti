@@ -18,6 +18,7 @@ typedef struct pth_arg_t {
     int bank_cnt;                  /* 总共产生的裂变源数目 */
     int col_cnt;                   /* 总共碰撞次数 */
     int id;
+    int active_cycle;
     volatile int status;
     double keff_wgt_sum[3];
     double keff_final;

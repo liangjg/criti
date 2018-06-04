@@ -17,7 +17,8 @@ void
 geometry_tracking(particle_status_t *par_status,
                   double *keff_wgt_sum,
                   nuc_xs_t *nuc_xs,
-                  RNG_t *RNG);
+                  RNG_t *RNG,
+                  int act_cycle);
 
 double
 sample_free_fly_dis(particle_status_t *par_status,

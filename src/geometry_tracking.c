@@ -4,13 +4,18 @@
 
 #include "neutron_transport.h"
 #include "geometry.h"
+#include "tally.h"
+
+
+extern tally_t base_tally;
 
 
 void
 geometry_tracking(particle_status_t *par_status,
                   double *keff_wgt_sum,
                   nuc_xs_t *nuc_xs,
-                  RNG_t *RNG)
+                  RNG_t *RNG,
+                  int act_cycle)
 {
     double FFL;    /* free fly length */
     double DTB;    /* distance to boundary */
@@ -51,6 +56,17 @@ geometry_tracking(particle_status_t *par_status,
         }
 
         keff_wgt_sum[2] += par_status->wgt * par_status->macro_nu_fis_cs * distance;
+
+        if(act_cycle > 0) {
+            int i;
+            if(base_tally.cell_tally_sz)
+                for(i = 0; i < base_tally.cell_tally_sz; i++)
+                    base_tally.cell_tallies[i]->do_tally(base_tally.cell_tallies[i], par_status, distance);
+
+            if(base_tally.mesh_tally_sz)
+                for(i = 0; i < base_tally.mesh_tally_sz; i++)
+                    base_tally.mesh_tallies[i]->do_tally(base_tally.mesh_tallies[i], par_status, distance);
+        }
 
         Fly_by_length(distance);
     } while(par_on_surf);

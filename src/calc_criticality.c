@@ -91,6 +91,7 @@ START:
     }
 
     int tot_neu = pth_arg->src_cnt;
+    int act_cycle = pth_arg->active_cycle;
     RNG_t *RNG = &pth_arg->RNG;
     bank_t *fis_src = pth_arg->src;
     nuc_xs_t *nuc_xs = pth_arg->nuc_xs;
@@ -128,7 +129,7 @@ START:
 
         do {
             /* geometry tracking: free flying */
-            geometry_tracking(&par_status, keff_wgt_sum, nuc_xs, RNG);
+            geometry_tracking(&par_status, keff_wgt_sum, nuc_xs, RNG, act_cycle);
             if(par_status.is_killed) break;
 
             /* sample collision nuclide */
